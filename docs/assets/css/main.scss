@@ -1,4 +1,8 @@
---- # Only the main Sass file needs front matter (the dashes are enough) --- @import "minima";
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+
+@import "minima";
 
 // Basic styling
 html,
@@ -64,6 +68,30 @@ body {
 .site-header {
   border-bottom: 1px solid #e8e8e8;
   padding: 15px 0;
+}
+
+// Custom styles for minima theme
+.minima-theme {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.minima-theme a {
+  color: #2a7ae2;
+}
+
+.minima-theme a:hover {
+  text-decoration: underline;
+}
+
+.minima-theme .header {
+  background-color: #2a7ae2;
+  color: #fff;
+}
+
+.minima-theme .footer {
+  background-color: #333;
+  color: #fff;
 }
 
 @media screen and (max-width: 800px) {

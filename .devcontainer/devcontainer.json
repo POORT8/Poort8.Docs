@@ -35,5 +35,10 @@
       }
     }
   },
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "tasks": {
+    "test": "bundle exec htmlproofer ./_site --disable-external",
+    "build": "bundle install && bundle exec jekyll build --source docs",
+    "launch": "bundle exec jekyll serve --livereload --source docs"
+  }
 }
