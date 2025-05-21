@@ -12,16 +12,21 @@ navigation:
     url: "/"
   - title: "HeyWim"
     url: "/heywim"
+    has_children: true
   - title: "NoodleBar"
     url: "/noodlebar"
+    has_children: true
   - title: "Keyper"
     url: "/keyper"
+    has_children: true
   - title: "DVU"
     url: "/dvu"
+    has_children: true
 
 plugins:
   - jekyll-github-metadata
   - jekyll-redirect-from
+  - jekyll-navigation
 
 minima:
   sidebar:
