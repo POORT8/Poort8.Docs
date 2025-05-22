@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang=" en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Quick Start | Poort8 Docs</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Quick Start" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Documentation portal for Poort8 products" />
+<meta property="og:description" content="Documentation portal for Poort8 products" />
+<link rel="canonical" href="https://docs.poort8.nl/keyper/quick-start.html" />
+<meta property="og:url" content="https://docs.poort8.nl/keyper/quick-start.html" />
+<meta property="og:site_name" content="Poort8 Docs" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Quick Start" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Documentation portal for Poort8 products","headline":"Quick Start","url":"https://docs.poort8.nl/keyper/quick-start.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/main.css"><link type="application/atom+xml" rel="alternate" href="https://docs.poort8.nl/feed.xml" title="Poort8 Docs" /></head><body><header class="site-header">
+  <div class="wrapper">
+    <a class="site-title" href="/">Poort8 Docs</a>
+    <nav class="site-nav">
+      <div class="trigger"><a class="page-link" href="/">Poort8 Docs</a><a class="page-link" href="/guide.html">Product Guide</a></div>
+    </nav>
+  </div>
+</header>
+<!-- CUSTOM LAYOUT INDICATOR -->
+
+  <main class="page-content" aria-label="Content">
+    <div class="wrapper">
+      <div class="page-container">
+        <!-- Always show the sidebar -->
+        <div class="sidebar"><nav class="site-nav">
+  <ul class="nav-list">
+    
+    
+    <li
+      class="nav-item">
+      <a href="/heywim/">HeyWim</a>
+
+      
+      <ul class="nav-sublist">
+        
+        <li class="nav-subitem">
+          <a href="/heywim/faq.html">FAQ</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/heywim/quick-start.html">Quick Start</a>
+
+          
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li
+      class="nav-item active">
+      <a href="/keyper/">Keyper</a>
+
+      
+      <ul class="nav-sublist">
+        
+        <li class="nav-subitem">
+          <a href="/keyper/implementations/">Implementations</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/keyper/faq.html">FAQ</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem active">
+          <a href="/keyper/quick-start.html">Quick Start</a>
+
+          
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li
+      class="nav-item">
+      <a href="/noodlebar/">Noodlebar</a>
+
+      
+      <ul class="nav-sublist">
+        
+        <li class="nav-subitem">
+          <a href="/noodlebar/faq.html">FAQ</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/noodlebar/quick-start.html">Quick Start</a>
+
+          
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li
+      class="nav-item">
+      <a href="/">Poort8 Docs</a>
+
+      
+    </li>
+    
+    <li
+      class="nav-item">
+      <a href="/guide.html">Product Guide</a>
+
+      
+    </li>
+    
+    
+  </ul>
+</nav></div>
+        <div class="main-content">
+          <h2 id="goal">Goal</h2>
+
+<p>Enable a federated consumer app to request and obtain multi-party data access approvals via Keyper Approve.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+  <li>Obtain Keyper Approve API credentials from Poort8.</li>
+  <li>Embed form logic in your app to collect requester and approver details and construct the POST body.</li>
+</ul>
+
+<h2 id="steps">Steps</h2>
+
+<ol>
+  <li><strong>User submits consent form</strong>
+Collect requester and approver fields: email, organization name, EORI, and building address.</li>
+  <li>
+    <p><strong>Call Keyper Approve API</strong>
+POST to /api/approval-links with a JSON body derived from form inputs (dataspace URLs, expiresInSeconds, redirectUrl, orchestration settings).</p>
+
+    <p><strong>Implementation-specific documentation:</strong></p>
+    <ul>
+      <li><a href="implementations/dvu/context.html">DVU Data Services Integration</a> - For DVU service providers requesting energy data approval</li>
+      <li><a href="implementations/gir/context.html">GIR Implementation</a> - Global Installation Registry</li>
+      <li><a href="implementations/cda/context.html">CDA Implementation</a> - Centralized Data Access</li>
+      <li><a href="implementations/gds/context.html">GDS Implementation</a> - Global Data Space</li>
+    </ul>
+  </li>
+  <li><strong>Verify link status</strong>
+Inspect the response; when “status”: “Active”, the approval link is live and the approver has been notified by email.</li>
+  <li><strong>Redirect user</strong>
+Send the requester or approver to your dashboard or thank-you page via the redirectUrl, including the approval link ID and any encoded parameters.</li>
+</ol>
+
+        </div>
+      </div>
+    </div>
+  </main><footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p>Documentation portal for Poort8 products</p>
+      </div>
+    </div>
+  </div>
+</footer>
+</body>
+
+</html>

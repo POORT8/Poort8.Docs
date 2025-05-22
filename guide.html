@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang=" en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Product Guide | Poort8 Docs</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Product Guide" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Documentation portal for Poort8 products" />
+<meta property="og:description" content="Documentation portal for Poort8 products" />
+<link rel="canonical" href="https://docs.poort8.nl/guide.html" />
+<meta property="og:url" content="https://docs.poort8.nl/guide.html" />
+<meta property="og:site_name" content="Poort8 Docs" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Product Guide" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Documentation portal for Poort8 products","headline":"Product Guide","url":"https://docs.poort8.nl/guide.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/main.css"><link type="application/atom+xml" rel="alternate" href="https://docs.poort8.nl/feed.xml" title="Poort8 Docs" /></head><body><header class="site-header">
+  <div class="wrapper">
+    <a class="site-title" href="/">Poort8 Docs</a>
+    <nav class="site-nav">
+      <div class="trigger"><a class="page-link" href="/">Poort8 Docs</a><a class="page-link" href="/guide.html">Product Guide</a></div>
+    </nav>
+  </div>
+</header>
+<!-- CUSTOM LAYOUT INDICATOR -->
+
+  <main class="page-content" aria-label="Content">
+    <div class="wrapper">
+      <div class="page-container">
+        <!-- Always show the sidebar -->
+        <div class="sidebar"><nav class="site-nav">
+  <ul class="nav-list">
+    
+    
+    <li
+      class="nav-item">
+      <a href="/heywim/">HeyWim</a>
+
+      
+      <ul class="nav-sublist">
+        
+        <li class="nav-subitem">
+          <a href="/heywim/faq.html">FAQ</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/heywim/quick-start.html">Quick Start</a>
+
+          
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li
+      class="nav-item">
+      <a href="/keyper/">Keyper</a>
+
+      
+      <ul class="nav-sublist">
+        
+        <li class="nav-subitem">
+          <a href="/keyper/implementations/">Implementations</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/keyper/faq.html">FAQ</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/keyper/quick-start.html">Quick Start</a>
+
+          
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li
+      class="nav-item">
+      <a href="/noodlebar/">Noodlebar</a>
+
+      
+      <ul class="nav-sublist">
+        
+        <li class="nav-subitem">
+          <a href="/noodlebar/faq.html">FAQ</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/noodlebar/quick-start.html">Quick Start</a>
+
+          
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li
+      class="nav-item">
+      <a href="/">Poort8 Docs</a>
+
+      
+    </li>
+    
+    <li
+      class="nav-item active">
+      <a href="/guide.html">Product Guide</a>
+
+      
+    </li>
+    
+    
+  </ul>
+</nav></div>
+        <div class="main-content">
+          <h1 id="poort8-dataspaceproduct-guide">Poort8 Dataspace Product Guide</h1>
+
+<p><em>A high‑level orientation for business stakeholders and architects starting with Poort8’s modular dataspace tooling.</em></p>
+
+<hr />
+
+<h2 id="1-an-intro-to-approval-flows-how-a-dataspace-facilitates-trusted-access">1. An intro to Approval Flows: How a Dataspace Facilitates Trusted Access</h2>
+
+<p><strong>Goal:</strong> a requester obtains controlled access to another party’s data without a central hub.</p>
+
+<ol>
+  <li><strong>Compose request &amp; create approval link</strong> – A third‑party or federative app gathers the required transaction data and calls <strong><code class="language-plaintext highlighter-rouge">POST /approval‑links</code></strong> on <strong>Keyper Approve</strong>.</li>
+  <li><strong>Email hand‑off</strong> – Keyper Approve emails the generated approval URL to the data owner (sometimes the same user if they want to access their own info through the federated app).</li>
+  <li><strong>Explicit consent &amp; policy capture</strong> – Within Keyper Approve the owner reviews the request, sets conditions, and approves. The resulting policies are stored in (one of) the Dataspace’s federated catalogues, e.g. NoodleBar’s Authorization Registry and Organization Registry.</li>
+  <li><strong>Identity proof</strong> – The owner authenticates via <strong>eHerkenning</strong> or <strong>email</strong>. Identity attributes are verified against the Dataspace’s organization or participant registry, e.g. NoodleBar’s Organisation Registry.</li>
+  <li><strong>Runtime authentication</strong> – Connectors retrieve OAuth/iSHARE tokens from the data service, which can be provided by NoodleBar’s Secure Token Service (STS). The STS verifies identity attributes against the Dataspace’s organization or participant registry, e.g. NoodleBar’s Organisation Registry.</li>
+  <li><strong>Runtime authorization</strong> – The data service’s connector enforces access control, by checking  access conditions for the request against the Dataspace’s authorization registry, e.g. NoodleBar’s Authorization Registry.</li>
+</ol>
+
+<p>This single flow simultaneously solves:</p>
+
+<ul>
+  <li><strong>User consent</strong> (step 3)</li>
+  <li><strong>Organisational identity</strong> (step 4)</li>
+  <li><strong>Policy enforcement at runtime</strong> (step 6)</li>
+</ul>
+
+<hr />
+
+<h2 id="2-focused-perspectives">2. Focused Perspectives</h2>
+
+<h3 id="21-consent--policy-management">2.1 Consent &amp; Policy Management</h3>
+
+<p><em>Pain‑point:</em> “I need explicit, auditable approval.”
+<em>Product:</em> <strong>Keyper Approve</strong>
+<em>Capabilities:</em> approval‑link orchestration, email notifications, multi‑step approvals, policy editor, audit trail.</p>
+
+<h3 id="22-party-onboarding--identity">2.2 Party Onboarding &amp; Identity</h3>
+
+<p><em>Pain‑point:</em> “I must be sure who I’m dealing with.”
+<em>Product:</em> <strong>NoodleBar Organization Registry and Authorization Registry</strong>
+<em>Capabilities:</em> organisation registration, attribute validation, eHerkenning integration, DNS‑based email binding, OAuth M2M setup.</p>
+
+<h3 id="23-runtime-access-enforcement">2.3 Runtime Access Enforcement</h3>
+
+<p><em>Pain‑point:</em> “Policies must hold during data exchange.”
+<em>Products:</em> <strong>NoodleBar + Connectors</strong> &amp; <strong>Keyper Approve tokens</strong>
+<em>Capabilities:</em> iSHARE/OAuth scopes, request–offer matching, connector packages, execution notifications &amp; failure callbacks.</p>
+
+<hr />
+
+<h2 id="3-optional-orchestration-enhancements">3. Optional Orchestration Enhancements</h2>
+
+<p>Keyper Approve supports several enhancements to the introductory approval flow:</p>
+
+<ul>
+  <li><strong>Metadata enrichment (auto)</strong> – support integration of backend services to augment transactions before approval.</li>
+  <li><strong>Metadata app (manual)</strong> – support integration of redirects to web apps for a user to add extra metadata.</li>
+  <li><strong>Chained redirects</strong> – After approval, forward the same user to the next app in a composite journey.</li>
+  <li><strong>Execution notifications</strong> – Push success messages to stakeholders.</li>
+  <li><strong>Failure feedback</strong> – Callback or email when transactions cannot be executed.</li>
+</ul>
+
+<hr />
+
+<h2 id="4-supporting-flows--demonstrator">4. Supporting Flows &amp; Demonstrator</h2>
+
+<ul>
+  <li><strong>Party onboarding</strong> – Administrators register participants in OR/AR and configure authentication.</li>
+  <li><strong>Federated matching</strong> – NoodleBar matches requests and offers without a central hub.</li>
+  <li><strong>DRIAD “Ready‑in‑a‑Day”</strong> – Workshop that walks through onboarding → approval flow → data access using a prototype federative app.</li>
+</ul>
+
+<hr />
+
+<h2 id="5-quick-producttoneed-matrix">5. Quick Product‑to‑Need Matrix</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Role / Need</th>
+      <th>Keyper Approve</th>
+      <th>NoodleBar</th>
+      <th>Connectors</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Initiator</td>
+      <td>Dataspace Prototyping</td>
+      <td>Dataspace Prototyping</td>
+      <td>–</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>Administrator</td>
+      <td>–</td>
+      <td>Management of organisations, Support for policy holders</td>
+      <td>–</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>Data Owner</td>
+      <td>Consent &amp; policy manager</td>
+      <td>–</td>
+      <td>–</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>Provider</td>
+      <td>–</td>
+      <td>Registry checks</td>
+      <td>Provider connector</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>Consumer</td>
+      <td>Requests or view status</td>
+      <td>–</td>
+      <td>Consumer connector</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p><strong>Next steps:</strong> Deep‑dive into <a href="#">Keyper Approve API</a> or <a href="#">NoodleBar API</a> when you’re ready to implement.</p>
+</blockquote>
+
+        </div>
+      </div>
+    </div>
+  </main><footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p>Documentation portal for Poort8 products</p>
+      </div>
+    </div>
+  </div>
+</footer>
+</body>
+
+</html>

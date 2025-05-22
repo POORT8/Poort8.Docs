@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang=" en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>DVU Context | Poort8 Docs</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="DVU Context" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Documentation portal for Poort8 products" />
+<meta property="og:description" content="Documentation portal for Poort8 products" />
+<link rel="canonical" href="https://docs.poort8.nl/keyper/implementations/dvu/context.html" />
+<meta property="og:url" content="https://docs.poort8.nl/keyper/implementations/dvu/context.html" />
+<meta property="og:site_name" content="Poort8 Docs" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="DVU Context" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Documentation portal for Poort8 products","headline":"DVU Context","url":"https://docs.poort8.nl/keyper/implementations/dvu/context.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/main.css"><link type="application/atom+xml" rel="alternate" href="https://docs.poort8.nl/feed.xml" title="Poort8 Docs" /></head><body><header class="site-header">
+  <div class="wrapper">
+    <a class="site-title" href="/">Poort8 Docs</a>
+    <nav class="site-nav">
+      <div class="trigger"><a class="page-link" href="/">Poort8 Docs</a><a class="page-link" href="/guide.html">Product Guide</a></div>
+    </nav>
+  </div>
+</header>
+<!-- CUSTOM LAYOUT INDICATOR -->
+
+  <main class="page-content" aria-label="Content">
+    <div class="wrapper">
+      <div class="page-container">
+        <!-- Always show the sidebar -->
+        <div class="sidebar"><nav class="site-nav">
+  <ul class="nav-list">
+    
+    
+    <li
+      class="nav-item">
+      <a href="/heywim/">HeyWim</a>
+
+      
+      <ul class="nav-sublist">
+        
+        <li class="nav-subitem">
+          <a href="/heywim/faq.html">FAQ</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/heywim/quick-start.html">Quick Start</a>
+
+          
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li
+      class="nav-item active">
+      <a href="/keyper/">Keyper</a>
+
+      
+      <ul class="nav-sublist">
+        
+        <li class="nav-subitem active">
+          <a href="/keyper/implementations/">Implementations</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/keyper/faq.html">FAQ</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/keyper/quick-start.html">Quick Start</a>
+
+          
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li
+      class="nav-item">
+      <a href="/noodlebar/">Noodlebar</a>
+
+      
+      <ul class="nav-sublist">
+        
+        <li class="nav-subitem">
+          <a href="/noodlebar/faq.html">FAQ</a>
+
+          
+        </li>
+        
+        <li class="nav-subitem">
+          <a href="/noodlebar/quick-start.html">Quick Start</a>
+
+          
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li
+      class="nav-item">
+      <a href="/">Poort8 Docs</a>
+
+      
+    </li>
+    
+    <li
+      class="nav-item">
+      <a href="/guide.html">Product Guide</a>
+
+      
+    </li>
+    
+    
+  </ul>
+</nav></div>
+        <div class="main-content">
+          <h1 id="dvu-implementation-context">DVU Implementation Context</h1>
+
+<h2 id="implementatie-instructie-keyper-approve-voor-dvu-diensten-toestemming-voor-energiedata-via-dvu">Implementatie-instructie Keyper Approve voor DVU diensten: Toestemming voor Energiedata via DVU</h2>
+
+<h3 id="doel">Doel</h3>
+
+<p>Gebruikers van een applicatie moeten toestemming vragen aan de energiecontractant om energiedata op te halen. Dit gebeurt via een formulier op de website van de applicatie en een achterliggende API-call naar Keyper Approve.</p>
+
+<hr />
+
+<h3 id="stap-1-formulier-op-de-website">Stap 1: Formulier op de website</h3>
+
+<h4 id="velden-aanvrager-invullend-persoon">Velden aanvrager (invullend persoon)</h4>
+
+<ul>
+  <li>E-mailadres</li>
+  <li>Organisatie</li>
+  <li>Organisatie-id (EORI)</li>
+  <li>Adres aan te vragen gebouw
+    <ul>
+      <li>Straatnaam</li>
+      <li>Huisnummer</li>
+      <li>Postcode</li>
+      <li>Plaats</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="velden-energiecontractant-approver-via-keyper-approve">Velden energiecontractant (approver via Keyper Approve)</h4>
+
+<ul>
+  <li>E-mailadres</li>
+  <li>Organisatie </li>
+  <li>Organisatie-id (EORI)</li>
+</ul>
+
+<p>Client-side validatie verplicht voor e-mail, EORI-nummer en verplichte velden. Helaas ondersteunt DVU op dit moment nog geen KVK nummers.</p>
+
+<hr />
+
+<h3 id="stap-2-aanroepen-van-de-keyper-api">Stap 2: Aanroepen van de Keyper API</h3>
+
+<p><a href="https://keyper-preview.poort8.nl/scalar/#tag/approval-links/POST/api/approval-links">https://keyper-preview.poort8.nl/scalar/#tag/approval-links/POST/api/approval-links</a></p>
+
+<p>Bij formulierverzending stuur je een POST-verzoek naar:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>POST https://keyper-preview.poort8.nl/api/approval-links
+Content-Type: application/json
+</code></pre></div></div>
+
+<h4 id="json-body-voorbeeld-voor-dvu-op-basis-van-formulierinvoer">JSON-body voorbeeld voor DVU op basis van formulierinvoer</h4>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"authenticationMethods"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"eherkenning"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"requester"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;EMAIL_AANVRAGER&gt;"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"organization"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;ORGANISATIE_AANVRAGER&gt;"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"organizationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;EORI_AANVRAGER&gt;"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"approver"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;EMAIL_ENERGIECONTRACTANT&gt;"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"organization"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;ORANISATIE_ENERGIECONTRACTANT&gt;"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"organizationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;EORI_ENERGIECONTRACTANT&gt;"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"dataspace"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dvu"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"policyUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://dvu-test.azurewebsites.net/api/policies/"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"organizationUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://dvu-test.azurewebsites.net/api/organization-registry/__ORGANIZATIONID__"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"resourceGroupUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://dvu-test.azurewebsites.net/api/resourcegroups/"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"this keyper approve link was generated by bespaargarant"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"reference"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;EIGEN_REF&gt;"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"expiresInSeconds"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;GELDIGHEID&gt;"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"redirectUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://dvu-test.azurewebsites.net/voegeengebouwtoe/__APPROVALLINKID__?adres=&lt;ENCODED_ADRES&gt;"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"orchestration"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"notifications"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"approver"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"sendEmailAtEvent"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"ApprovalRequested"</span><span class="p">]</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"requester"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"sendEmailAtEvent"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"ApprovalApproved"</span><span class="p">]</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<ul>
+  <li>Gebruik URL encoding voor het adres in <code class="language-plaintext highlighter-rouge">redirectUrl</code>.</li>
+  <li>Het respons-object bevat een veld “status”. Als deze “Active” is, dan is de link succesvol aangemaakt. De approver wordt  automatisch per email om reactie verzocht.</li>
+  <li>Kies een geldigheid (in seconden) voor hoe lang de link actief is, bijvoorbeeld 1 week (604.800 seconden).</li>
+  <li>Gebruik een referentie voor gebruik in de app.</li>
+</ul>
+
+<hr />
+
+<h3 id="aandachtspunten">Aandachtspunten</h3>
+
+<ul>
+  <li>
+    <p><strong>Redirect</strong>: de huidige redirect is een placeholder. Wat is de juiste pagina voor afronding of vervolgstap voor de gebruiker? Moet deze terug naar een dashboard, gebouw-koppelscherm of bedankpagina?</p>
+  </li>
+  <li>
+    <p><strong>Testomgeving</strong>: de testomgeving voert <strong>geen volledige verificaties</strong> uit (zoals eHerkenning-authenticatie of validatie van organisatiegegevens). Gebruik dit uitsluitend voor functionele tests.</p>
+  </li>
+  <li>
+    <p>Het <strong>orchestration</strong> object is nog in ontwikkeling. Hier worden nog (breaking) changes verwacht.</p>
+  </li>
+  <li>
+    <p>Normaal gesproken wordt bij het aanmaken van een <strong>Keyper Approve link</strong> direct een <code class="language-plaintext highlighter-rouge">url</code> teruggestuurd waarmee het goedkeuringsproces kan worden begonnen. In de DVU Approve-flow moet de <code class="language-plaintext highlighter-rouge">approver</code> eerst zelf aanvullende informatie toevoegen via DVU. De <code class="language-plaintext highlighter-rouge">approver</code> wordt automatisch per mail genotificeerd en naar dit proces geleid. Daarom kan de Keyper Approve link die is aangemaakt niet direct gebruikt worden. Toon deze dus niet aan de gebruiker want deze kan hem niet succesvol afronden.</p>
+  </li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </main><footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p>Documentation portal for Poort8 products</p>
+      </div>
+    </div>
+  </div>
+</footer>
+</body>
+
+</html>
