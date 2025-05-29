@@ -35,7 +35,22 @@ Gebruikers van een applicatie moeten toestemming vragen aan de energiecontractan
 
 ### Stap 1: Registration of an installation
 
-#work-in-progress
+Verzamel in de FormulierenApp de gegevens die nodig zijn om de
+approval‑link op te bouwen:
+
+#### Velden registrant
+
+- KvK-nummer van de registrant (`{{registrarChamberOfCommerceNumber}}`)
+- E-mailadres van de registrant (`{{requesterEmail}}`)
+- Installatie-ID (`{{installationID}}`)
+- VBO-ID (`{{vboID}}`)
+
+#### Velden installatie-eigenaar
+
+- E-mailadres (`{{approverEmail}}`)
+- KvK-nummer van de eigenaar (`{{installationOwnerChamberOfCommerceNumber}}`)
+
+Deze waardes vult de applicatie in de JSON-body van stap&nbsp;2.
 
 ### Stap 2: Aanroepen van de Keyper API
 
@@ -48,7 +63,7 @@ POST https://keyper-preview.poort8.nl/api/approval-links
 Content-Type: application/json
 ```
 
-#### JSON-body voorbeeld voor DVU op basis van informatie registrant
+#### JSON-body voorbeeld voor GIR op basis van informatie registrant
 
 Create an approval link via the Keyper API using the following template. Replace the placeholders with values from your own application.
 
@@ -60,8 +75,8 @@ Create an approval link via the Keyper API using the following template. Replace
       "issuedAt": 1739881378,
       "notBefore": 1739881378,
       "expiration": 1839881378,
-      "issuerId": "{{installationOwnerChamberOfCommerceNumber}}",
-      "subjectId": "{{registrarChamberOfCommerceNumber}}",
+      "issuerId": "NL.KVK.{{installationOwnerChamberOfCommerceNumber}}",
+      "subjectId": "NL.KVK.{{registrarChamberOfCommerceNumber}}",
       "serviceProvider": "NL.KVK.27248698",
       "action": "write",
       "resourceId": "{{vboID}}",
@@ -74,7 +89,7 @@ Create an approval link via the Keyper API using the following template. Replace
       "issuedAt": 1739881378,
       "notBefore": 1739881378,
       "expiration": 1839881378,
-      "issuerId": "{{installationOwnerChamberOfCommerceNumber}}",
+      "issuerId": "NL.KVK.{{installationOwnerChamberOfCommerceNumber}}",
       "subjectId": "NL.KVK.39098825",
       "serviceProvider": "NL.KVK.27248698",
       "action": "read",
