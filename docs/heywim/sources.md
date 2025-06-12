@@ -16,7 +16,7 @@ Would you like to connect a specific data provider? That’s possible — we off
 Would you like to know exactly which sources we currently support, or do you have a specific data provider in mind? Please contact our team at hello@poort8.nl, and we’ll be happy to help.
 
 ## Ocean carrier sources
-Underneath, you will find a list of connected carrier sources. For some carrier API's, the customers' API credentails are required to retrieve data. Whilst it's possible to retrieve data without it, using the offical carrier API is recommended, as it is more efficient and reliable. It will also result in better data quality, and most of the time, more data overall.
+Underneath, you will find a list of connected carrier sources. For some carrier API's, customer action is required to retrieve data, such as making an account for the carrier API developer portal and requesting API credentials. Whilst it's possible to retrieve data without it, using the offical carrier API is recommended, as it is more efficient and reliable. It will also result in better data quality, and most of the time, more data overall.
 
 | Carrier         | Connection type | Customer action required | Information supplied by customer  | DCSA from source | Vessel data      | Container data   | Notes                               |
 | --------------- | --------------- | ------------------------ | --------------------------------- | ---------------- | ---------------- | ---------------- | ----------------------------------- |
