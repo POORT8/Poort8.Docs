@@ -18,30 +18,30 @@ Would you like to know exactly which sources we currently support, or do you hav
 ## Ocean carrier sources
 Underneath, you will find a list of connected carrier sources. For some carrier API's, the customers' API credentails are required to retrieve data. Whilst it's possible to retrieve data without it, using the offical carrier API is recommended, as it is more efficient and reliable. It will also result in better data quality, and most of the time, more data overall.
 
-| Carrier         | Connection type | Custom API credentials required | Information supplied by customer  | DCSA | Vessel data      | Container data   | Notes                               |
-| --------------- | --------------- | ------------------------------- | --------------------------------- | ---- | ---------------- | ---------------- | ----------------------------------- |
-| **Arkas**       | External source | ❌                              | Container number                  | ❌   | Estimated/actual | Actual           | EDT available; No times, dates only |
-| **CMA CGM**     | API             | ❌                              | Container number                  | ✅   | Estimated/actual | Estimated/actual |                                     |
-| **COSCO**       | API             | ❌                              | Container number                  | ❌   | Estimated/actual | Actual           |                                     |
-| **Evergreen**   | API             | ✅                              | Container number, bill of lading¹ | ✅   | Estimated/actual | Actual           |                                     |
-|                 | API             | ✅                              | Container number                  | ✅   | Not available    | Actual           |                                     |
-|                 |                 | ❌                              | Container number, bill of lading¹ | ❌   | Estimated        | Actual           | No times, dates only                |
-|                 |                 | ❌                              | Container number                  | ❌   | Not available    | Actual           | No times, dates only                |
-| **Hapag-Lloyd** | API             | ✅                              | Container number                  | ✅   | Estimated/actual | Estimated/actual |                                     |
-|                 |                 | ❌                              | Container number                  | ❌   | Estimated/actual | Actual           |                                     |
-| **HMM**         | API             | ❌                              | Container number, bill of lading² | ✅   | Estimated/actual | Estimated/actual |                                     |
-|                 | API             | ❌                              | Container number                  | ✅   | Estimated/actual | Estimated/actual |                                     |
-| **Maersk**      | API             | ✅                              | Container number, bill of lading² | ✅   | Estimated/actual | Actual           | Truck/rail ETA/ETD's available      |
-|                 | API             | ✅                              | Container number                  | ✅   | Estimated/actual | Actual           | Truck/rail ETA/ETD's available      |
-|                 |                 | ❌                              | Container number                  | ❌   | Estimated/actual | Actual           |                                     |
-| **MSC**         | API             | ❌                              | Container number, bill of lading² | ✅   | Estimated/actual | Actual           |                                     |
-|                 | API             | ❌                              | Container number                  | ✅   | Estimated/actual | Actual           |                                     |
-| **ONE**         | API             | ❌                              | Container number                  | ❌   | Estimated/actual | Estimated/actual |                                     |
-| **OOCL**        | API             | ✅                              | Container number                  | ❌   | Estimated/actual | Estimated/actual |                                     |
-|                 |                 | ❌                              | Container number                  | ❌   | Estimated/actual | Actual           |                                     |
-| **Yang Ming**   | API             | ✅                              | Container number                  | ✅   | Estimated/actual | Estimated/actual |                                     |
-|                 |                 | ❌                              | Container number                  | ❌   | Estimated/actual | Actual           |                                     |
-| **ZIM**         | API             | ❌                              | Container number                  | ✅   | Estimated/actual | Estimated/actual |                                     |
+| Carrier         | Connection type | Customer action required | Information supplied by customer  | DCSA from source | Vessel data      | Container data   | Notes                               |
+| --------------- | --------------- | ------------------------ | --------------------------------- | ---------------- | ---------------- | ---------------- | ----------------------------------- |
+| **Arkas**       | External source | ❌                       | Container number                  | ❌               | Estimated/actual | Actual           | EDT available; No times, dates only |
+| **CMA CGM**     | API             | ❌                       | Container number                  | ✅               | Estimated/actual | Estimated/actual |                                     |
+| **COSCO**       | API             | ❌                       | Container number                  | ❌               | Estimated/actual | Actual           |                                     |
+| **Evergreen**   | API             | ✅                       | Container number, bill of lading¹ | ✅               | Estimated/actual | Actual           |                                     |
+|                 | API             | ✅                       | Container number                  | ✅               | Not available    | Actual           |                                     |
+|                 |                 | ❌                       | Container number, bill of lading¹ | ❌               | Estimated        | Actual           | No times, dates only                |
+|                 |                 | ❌                       | Container number                  | ❌               | Not available    | Actual           | No times, dates only                |
+| **Hapag-Lloyd** | API             | ✅                       | Container number                  | ✅               | Estimated/actual | Estimated/actual |                                     |
+|                 |                 | ❌                       | Container number                  | ❌               | Estimated/actual | Actual           |                                     |
+| **HMM**         | API             | ❌                       | Container number, bill of lading² | ✅               | Estimated/actual | Estimated/actual |                                     |
+|                 | API             | ❌                       | Container number                  | ✅               | Estimated/actual | Estimated/actual |                                     |
+| **Maersk**      | API             | ✅                       | Container number, bill of lading² | ✅               | Estimated/actual | Actual           | Truck/rail ETA/ETD's available      |
+|                 | API             | ✅                       | Container number                  | ✅               | Estimated/actual | Actual           | Truck/rail ETA/ETD's available      |
+|                 |                 | ❌                       | Container number                  | ❌               | Estimated/actual | Actual           |                                     |
+| **MSC**         | API             | ❌                       | Container number, bill of lading² | ✅               | Estimated/actual | Actual           |                                     |
+|                 | API             | ❌                       | Container number                  | ✅               | Estimated/actual | Actual           |                                     |
+| **ONE**         | API             | ❌                       | Container number                  | ❌               | Estimated/actual | Estimated/actual |                                     |
+| **OOCL**        | API             | ✅                       | Container number                  | ❌               | Estimated/actual | Actual           |                                     |
+|                 |                 | ❌                       | Container number                  | ❌               | Estimated/actual | Actual           |                                     |
+| **Yang Ming**   | API             | ✅                       | Container number                  | ✅               | Estimated/actual | Actual           |                                     |
+|                 |                 | ❌                       | Container number                  | ❌               | Estimated/actual | Actual           |                                     |
+| **ZIM**         | API             | ❌                       | Container number                  | ✅               | Estimated/actual | Actual           |                                     |
 
 ¹ This parameter is optional, but recommended because it results in retrieving more information.
 
