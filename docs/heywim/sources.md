@@ -1,5 +1,5 @@
 ---
-title: "HwyWim - Data Sources"
+title: "HeyWim - Data Sources"
 parent: "HeyWim"
 nav_order: 15
 layout: default
