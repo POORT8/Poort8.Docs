@@ -40,15 +40,15 @@ approval‑link op te bouwen:
 
 #### Velden registrant
 
-- KvK-nummer van de registrant (`{{registrarChamberOfCommerceNumber}}`)
-- E-mailadres van de registrant (`{{requesterEmail}}`)
-- Installatie-ID (`{{installationID}}`)
-- VBO-ID (`{{vboID}}`)
+- KvK-nummer van de registrant (`\{\{registrarChamberOfCommerceNumber\}\}`)
+- E-mailadres van de registrant (`\{\{requesterEmail\}\}`)
+- Installatie-ID (`\{\{installationID\}\}`)
+- VBO-ID (`\{\{vboID\}\}`)
 
 #### Velden installatie-eigenaar
 
-- E-mailadres (`{{approverEmail}}`)
-- KvK-nummer van de eigenaar (`{{installationOwnerChamberOfCommerceNumber}}`)
+- E-mailadres (`\{\{approverEmail\}\}`)
+- KvK-nummer van de eigenaar (`\{\{installationOwnerChamberOfCommerceNumber\}\}`)
 
 Deze waardes vult de applicatie in de JSON-body van stap&nbsp;2.
 
@@ -75,13 +75,13 @@ Create an approval link via the Keyper API using the following template. Replace
       "issuedAt": 1739881378,
       "notBefore": 1739881378,
       "expiration": 1839881378,
-      "issuerId": "NL.KVK.{{installationOwnerChamberOfCommerceNumber}}",
-      "subjectId": "NL.KVK.{{registrarChamberOfCommerceNumber}}",
+      "issuerId": "NL.KVK.\{\{installationOwnerChamberOfCommerceNumber\}\}",
+      "subjectId": "NL.KVK.\{\{registrarChamberOfCommerceNumber\}\}",
       "serviceProvider": "NL.KVK.27248698",
       "action": "write",
-      "resourceId": "{{vboID}}",
+      "resourceId": "\{\{vboID\}\}",
       "type": "vboID",
-      "attribute": "{{installationID}}",
+      "attribute": "\{\{installationID\}\}",
       "license": "0005"
     },
     {
@@ -89,11 +89,11 @@ Create an approval link via the Keyper API using the following template. Replace
       "issuedAt": 1739881378,
       "notBefore": 1739881378,
       "expiration": 1839881378,
-      "issuerId": "NL.KVK.{{installationOwnerChamberOfCommerceNumber}}",
+      "issuerId": "NL.KVK.\{\{installationOwnerChamberOfCommerceNumber\}\}",
       "subjectId": "NL.KVK.39098825",
       "serviceProvider": "NL.KVK.27248698",
       "action": "read",
-      "resourceId": "{{vboID}}",
+      "resourceId": "\{\{vboID\}\}",
       "type": "vboID",
       "attribute": "*",
       "license": "0005",
@@ -101,14 +101,14 @@ Create an approval link via the Keyper API using the following template. Replace
     }
   ],
   "requester": {
-    "email": "{{requesterEmail}}",
-    "organization": "{{registrarChamberOfCommerceNumber}}",
-    "organizationId": "{{registrarChamberOfCommerceNumber}}"
+    "email": "\{\{requesterEmail\}\}",
+    "organization": "\{\{registrarChamberOfCommerceNumber\}\}",
+    "organizationId": "\{\{registrarChamberOfCommerceNumber\}\}"
   },
   "approver": {
-    "email": "{{approverEmail}}",
-    "organization": "{{installationOwnerChamberOfCommerceNumber}}",
-    "organizationId": "{{installationOwnerChamberOfCommerceNumber}}"
+    "email": "\{\{approverEmail\}\}",
+    "organization": "\{\{installationOwnerChamberOfCommerceNumber\}\}",
+    "organizationId": "\{\{installationOwnerChamberOfCommerceNumber\}\}"
   },
   "dataspace": {
     "name": "DSGO",
