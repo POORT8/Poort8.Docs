@@ -276,6 +276,78 @@ curl -X GET "https://dvu-test.azurewebsites.net/api/resourcegroups?vbo=061301000
 - **EORI validatie**: Het `issuer` parameter moet exact overeenkomen met de `clientId` in je access token
 - **Client assertion**: Gebruik een nieuwe `jti` (JWT ID) voor elke client assertion om replay attacks te voorkomen
 
+## Stap 4: Energiedata ophalen bij Smart Data Solutions (SDS)
+
+Na het verkrijgen van VBO-identifiers en EAN-codes via de DVU API (Stap 3) kun je de daadwerkelijke energiedata ophalen bij Smart Data Solutions. Dit proces gebruikt hetzelfde iSHARE authenticatiepatroon, maar dan gericht op de SDS endpoints.
+
+### Authenticatie: iSHARE Access Token voor SDS
+
+Het authenticatieproces voor SDS volgt dezelfde stappen als voor DVU, maar met SDS-specifieke endpoints en EORI.
+
+#### Stap 1: Genereer Client Assertion JWT voor SDS
+
+Het genereren van een client assertion JWT voor SDS volgt exact hetzelfde proces als beschreven in **Stap 3.1**. Het enige verschil is de `aud` (audience) waarde in de JWT claims:
+
+- **DVU EORI** (Stap 3): `"aud": "EU.EORI.NL822555025"`
+- **SDS EORI** (Stap 4): `"aud": "EU.EORI.NL851872426"`
+
+**JWT Claims voor SDS:**
+```json
+{
+  "iss": "EU.EORI.NL123456789",           // Jouw EORI nummer (Party Identifier)
+  "sub": "EU.EORI.NL123456789",           // Zelfde als iss  
+  "aud": "EU.EORI.NL851872426",           // SDS EORI (verschil met Stap 3)
+  "iat": 1750665132,                      // Unix timestamp (nu)
+  "exp": 1750665162,                      // Unix timestamp (30 seconden later)
+  "jti": "378a47c4-2822-4ca5-a49a-7e5a1cc7ea59"  // Unieke UUID voor deze JWT
+}
+```
+
+Voor de volledige JWT header structuur en implementatie hulpmiddelen, zie **Stap 3.1**.
+
+#### Stap 2: Verkrijg Access Token bij SDS
+
+```http
+POST https://dvu-test.smartdatasolutions.nl/Token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&scope=iSHARE&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_id=EU.EORI.NL123456789&client_assertion=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
+```
+
+**Response:**
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGci...",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+```
+
+### Energiedata Ophalen bij SDS
+
+**⚠️ Belangrijk**: De volledige documentatie voor SDS data endpoints wordt bijgewerkt zodra SDS ondersteuning voor query parameters heeft geïmplementeerd.
+
+#### Placeholder: SDS Data Endpoint
+
+```http
+GET https://dvu-test.smartdatasolutions.nl/service
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci...
+```
+
+**Query Parameters** (definitief formaat volgt na SDS migratie):
+
+| Parameter | Type | Verplicht | Beschrijving |
+|-----------|------|-----------|--------------|
+| `ean` | string | Ja | EAN code(s) verkregen via DVU API |
+
+#### Response Format
+
+Volgt later.
+
+#### Error Responses
+
+Volgt later.
+
 ## Sequence diagram toegang aanvragen tot gebouwen in bulk
 
 De onderstaande sequence toont het DVU goedkeuringsproces voor meerdere gebouwen tegelijk.
