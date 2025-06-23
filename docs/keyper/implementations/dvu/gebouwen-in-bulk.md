@@ -102,6 +102,180 @@ Content-Type: application/json
 - Kies een geldigheid (in seconden) voor hoe lang de link actief is, bijvoorbeeld 1 week (604.800 seconden).
 - Gebruik een referentie voor gebruik in de app.
 
+## Stap 3: VBO en EAN gegevens ophalen via DVU API
+
+Na de goedkeuring via Keyper Approve kunnen developers de VBO-identifiers en bijbehorende EAN-codes ophalen via de DVU API. Dit gebeurt in het laatste deel van onderstaand sequence diagram: `eLoket->AR: ophalen vboIds + EANs`.
+
+### Authenticatie: iSHARE Access Token Verkrijgen
+
+Alle DVU API calls vereisen een geldig iSHARE access token. Dit verkrijg je in twee stappen:
+
+#### Stap 1: Genereer Client Assertion JWT
+
+Voor iSHARE authenticatie heb je een client assertion JWT nodig. Deze bevat je organisatie-gegevens en is ondertekend met je private key en moet een x5c header bevatten met je certificaat chain.
+
+**Vereiste JWT Header:**
+```json
+{
+  "alg": "RS256",
+  "typ": "JWT", 
+  "x5c": ["MIIEfzCCAmegAwIBAgII..."]  // Jouw certificaat chain (base64)
+}
+```
+
+**Vereiste JWT Claims:**
+```json
+{
+  "iss": "EU.EORI.NL123456789",           // Jouw EORI nummer (Party Identifier)
+  "sub": "EU.EORI.NL123456789",           // Zelfde als iss  
+  "aud": "EU.EORI.NL822555025",           // DVU EORI
+  "iat": 1750665132,                      // Unix timestamp (nu)
+  "exp": 1750665162,                      // Unix timestamp (30 seconden later)
+  "jti": "378a47c4-2822-4ca5-a49a-7e5a1cc7ea59"  // Unieke UUID voor deze JWT
+}
+```
+
+**Implementatie Hulpmiddelen:**
+- **Voor .NET developers**: Gebruik het [Poort8.iSHARE.Core NuGet package](https://github.com/POORT8/Poort8.Ishare.Core/blob/master/README.md) voor eenvoudige JWT generatie.
+- **Voor Python developers**: Zie [iSHARE Python code snippets](https://github.com/iSHAREScheme/code-snippets/blob/master/Python/access_token.py) voor complete implementatie.
+- **Voor andere platforms**: Volg de [iSHARE Client Assertion specificatie](https://dev.ishare.eu/reference/ishare-jwt/client-assertion) voor JWT creation.
+
+#### Stap 2: Verkrijg Access Token
+
+```http
+POST https://dvu-test.azurewebsites.net/iSHARE/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&scope=iSHARE&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_id=EU.EORI.NL123456789&client_assertion=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
+```
+
+**Response:**
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGci...",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+```
+
+### VBO en EAN Data Ophalen
+
+Met je access token kun je nu VBO en EAN gegevens ophalen via de Resource Groups API:
+
+```http
+GET https://dvu-test.azurewebsites.net/api/resourcegroups?issuer=EU.EORI.NL123456789
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci...
+```
+
+#### Query Parameters
+
+| Parameter | Type | Verplicht | Beschrijving |
+|-----------|------|-----------|--------------|
+| `issuer` | string | Ja | Jouw EORI nummer (zelfde als in client assertion) |
+| `vbo` | string | Nee* | Filter op specifiek VBO ID |
+| `ean` | string | Nee* | Filter op specifiek EAN ID |
+
+*Tenminste één van `vbo` of `ean` moet worden opgegeven als je wilt filteren
+
+#### Response Format
+
+**Success Response (200 OK):**
+```json
+{
+  "resourceGroupId": "dvu:resource:871689260010498601",
+  "useCase": "DVU",
+  "name": "871689260010498601",
+  "description": "Verblijfsobject",
+  "resources": [
+    {
+      "resourceId": "dvu:resource:0613010000206776",
+      "useCase": "DVU",
+      "name": "0613010000206776",
+      "description": "EAN"
+    },
+    {
+      "resourceId": "dvu:resource:0613010000206776", 
+      "useCase": "DVU",
+      "name": "0613010000206776",
+      "description": "EAN"
+    }
+  ]
+}
+```
+
+#### Error Responses
+
+**401 Unauthorized** - Geen geldig token:
+```json
+{
+  "error": "Unauthorized",
+  "message": "No valid bearer token provided"
+}
+```
+
+**403 Forbidden** - Token clientId komt niet overeen met issuer:
+```json
+{
+  "error": "Forbidden", 
+  "message": "Token clientId does not match requested issuer"
+}
+```
+
+**404 Not Found** - Geen resources gevonden:
+```json
+{
+  "error": "Not Found",
+  "message": "No resources found for the specified criteria"
+}
+```
+
+### Complete API Voorbeelden
+
+#### Voorbeeld 1: Alle VBOs en EANs voor een organisatie ophalen
+
+```bash
+# Verkrijg access token
+curl -X POST "https://dvu-test.azurewebsites.net/iSHARE/connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials&scope=iSHARE&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_id=EU.EORI.NL123456789&client_assertion=eyJ0eXAiOiJKV1QiLCJhbGci..."
+
+# Haal alle resources op voor organisatie
+curl -X GET "https://dvu-test.azurewebsites.net/api/resourcegroups?issuer=EU.EORI.NL123456789" \
+  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci..."
+```
+
+#### Voorbeeld 2: Specifiek VBO met alle bijbehorende EANs
+
+```bash
+curl -X GET "https://dvu-test.azurewebsites.net/api/resourcegroups?vbo=0613010000206776&issuer=EU.EORI.NL123456789" \
+  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci..."
+```
+
+#### Voorbeeld 3: VBO opzoeken via EAN
+
+```bash
+curl -X GET "https://dvu-test.azurewebsites.net/api/resourcegroups?ean=871689260010498595&issuer=EU.EORI.NL123456789" \
+  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci..."
+```
+
+**Response:** Retourneert het VBO waarin deze EAN zich bevindt, inclusief alle andere EANs in dat VBO.
+
+#### Voorbeeld 4: Specifieke combinatie VBO + EAN
+
+```bash
+curl -X GET "https://dvu-test.azurewebsites.net/api/resourcegroups?vbo=0613010000206776&ean=871689260010498595&issuer=EU.EORI.NL123456789" \
+  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci..."
+```
+
+**Response:** Retourneert het opgegeven VBO, maar filtert de resources naar alleen de opgegeven EAN.
+
+### Belangrijke Opmerkingen
+
+- **Token geldigheid**: Access tokens zijn 1 uur geldig (`expires_in: 3600`)
+- **Rate limiting**: Respecteer eventuele rate limits van de API
+- **EORI validatie**: Het `issuer` parameter moet exact overeenkomen met de `clientId` in je access token
+- **Client assertion**: Gebruik een nieuwe `jti` (JWT ID) voor elke client assertion om replay attacks te voorkomen
+
 ## Sequence diagram toegang aanvragen tot gebouwen in bulk
 
 De onderstaande sequence toont het DVU goedkeuringsproces voor meerdere gebouwen tegelijk.
