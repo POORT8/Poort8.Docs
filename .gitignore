@@ -49,3 +49,6 @@ tmp/
 *~.nib
 .env
 .env.*
+
+# GitHub Copilot
+.github/copilot-instructions.md
