@@ -1,5 +1,5 @@
 # Poort8 Documentation Site — Developer Specification
-*Target environment: **GitHub Pages** + **GitHub Actions** · Generator: **Jekyll 4.x** with **Minima 3.x***
+*Target environment: **GitHub Pages** · Generator: **Docsify 4.x** · Domain: **docs2.poort8.nl***
 
 ---
 
@@ -7,174 +7,240 @@
 
 | Goal | Detail |
 |------|--------|
-| **Single docs portal** | Host all Poort8 product docs at `https://docs.poort8.nl/`. |
-| **Multi-product structure** | Products: **HeyWim · Keyper · Noodlebar**.<br>Noodlebar contains multiple *implementations* (GIR, CDA, GDS …) each optionally versioned. |
-| **Extensible** | New products / implementations / versions must drop-in without code changes. |
-| **Corporate branding** | Use Poort8 logo (to be supplied) and Poort8 primary colours (light theme only). |
-| **Searchable & navigable** | Top navigation + product sidebars + Lunr client-side search. |
-| **Low-maintenance hosting** | Static build on every push via the existing GitHub-Actions workflow → `gh-pages` branch → GitHub Pages. |
+| **Single docs portal** | Host all Poort8 dataspace docs at `https://docs2.poort8.nl/`. |
+| **Dataspace-oriented structure** | Dataspaces: **HeyWim · DVU · GIR · CDA**<br>Each dataspace contains documentation pushed from respective source repos. |
+| **Extensible** | New dataspaces / implementations / versions must drop-in without code changes. |
+| **Corporate branding** | Use Poort8 logo and Poort8 primary colours (light theme only). |
+| **Searchable & navigable** | Per-dataspace sidebars + Docsify built-in search. |
+| **Zero-build hosting** | Static file serving via GitHub Pages — no build pipeline required. |
 
 ---
 
 ## 2 · High-Level Architecture
 
+```
 repo (main)
-├─ _config.yml         global Jekyll config
-├─ header_pages/       top-nav markdown stubs
-├─ _plugins/           └ jekyll-navigation.rb
-├─ _layouts/           extended Minima templates
-├─ assets/             SCSS overrides + logo
-└─       heywim/, keyper/, noodlebar/, …
-↓  (GitHub Action build)
-gh-pages branch  →  GitHub Pages
+├─ index.html           Docsify entry point + config
+├─ _sidebar.md          Global navigation
+├─ README.md            Homepage content
+├─ assets/              Images, custom CSS
+└─ dataspaces/
+    ├─ heywim/
+    │   ├─ _sidebar.md   Dataspace-specific navigation
+    │   └─ *.md          Documentation files (supplied by HeyWim repo)
+    ├─ dvu/
+    │   ├─ _sidebar.md
+    │   └─ *.md          Documentation files (supplied by DVU repo)
+    ├─ gir/
+    │   ├─ _sidebar.md
+    │   └─ *.md          Documentation files (supplied by GIR repo)
+    └─ cda/
+        ├─ _sidebar.md
+        └─ *.md          Documentation files (supplied by CDA repo)
+↓  (Direct serve)
+GitHub Pages  →  docs2.poort8.nl
+```
 
 | Decision | Rationale |
 |----------|-----------|
-| **Jekyll 4 + Minima** | Current live stack; minimal migration. |
-| **`jekyll-navigation`** | Auto-generates Markdown-driven sidebars. |
-| **`jekyll-lunr-js-search`** | Pure client-side search, no external service. |
-| **External Scalar links** | Avoids iframe styling hassles. |
-| **GitHub Actions ⇢ `gh-pages`** | Workflow already in place. |
+| **Docsify 4.x** | Zero-build static site generator with runtime rendering. |
+| **Per-dataspace _sidebar.md** | Each dataspace controls its own navigation structure. |
+| **Docsify search** | Built-in full-text search, no external dependencies. |
+| **Direct file serving** | No Ruby/Jekyll build process — just serve static files. |
+| **GitHub Pages direct** | Serve main branch directly, no gh-pages workflow needed. |
 
 ---
 
 ## 3 · Information Architecture & File Layout
 
-### 3.1 Top Navigation (`_config.yml`)
+### 3.1 Docsify Entry Point (`index.html`)
 
-```yaml
-header_pages:
-  - index.md            # Home – “Poort8 Docs”
-  - guide.md            # Product Guide
-  - heywim/index.md
-  - keyper/index.md
-  - noodlebar/index.md
-  - status.md           # optional API status
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Poort8 Documentation</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="assets/css/custom.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: 'Poort8 Documentation',
+      repo: 'https://github.com/Poort8/Poort8.Docs',
+      loadSidebar: true,
+      subMaxLevel: 3,
+      search: 'auto',
+      logo: 'assets/images/poort8-logo.svg'
+    }
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+</body>
+</html>
+```
 
-3.2 Per-Product Skeletons
+### 3.2 Global Navigation (`_sidebar.md`)
 
-heywim/
-  index.md
-  quick-start.md
-  sources.md
-  datamodel.md
-  webhooks.md
-  api-link.md          # external Scalar URL
-  examples.md
-  faq.md
+```markdown
+* [Home](/)
+* [Dataspace Guide](/guide.md)
 
-keyper/
-  index.md
-  quick-start.md
-  user-flows.md
-  use-cases.md
-  api-link.md
-  faq.md
+**Dataspaces**
+* [HeyWim](/dataspaces/heywim/)
+* [DVU](/dataspaces/dvu/)
+* [GIR](/dataspaces/gir/)
+* [CDA](/dataspaces/cda/)
+```
 
-noodlebar/
-  index.md
-  quick-start.md
-  implementations/
-    gir/
-      context.md       # nav_order:1
-      auth.md
-      endpoints.md
-      examples.md
-      api-link.md
-      faq.md
-    cda/
-      context.md
-      …
-    gds/
-      context.md
-      …
+### 3.3 Per-Dataspace Structure
 
-Versioned docs live inside each implementation:
-noodlebar/gir/v1/…, …/v2/…, etc.
+**Example: DVU Dataspace**
+```
+dataspaces/dvu/
+├─ _sidebar.md          # DVU-specific navigation
+├─ README.md            # DVU overview 
+└─ *.md                 # Additional docs (supplied by DVU repo)
+```
 
-3.3 Sidebar Ordering
+**DVU `_sidebar.md` example:**
+```markdown
+* [DVU Overview](dataspaces/dvu/)
+* [Quick Start](dataspaces/dvu/quick-start.md)
+* [API Reference](dataspaces/dvu/api.md)
+* [FAQ](dataspaces/dvu/faq.md)
+```
 
-Each Markdown file contains:
+*Note: Each dataspace (HeyWim, DVU, GIR, CDA) will have its own structure and content supplied by the respective source repositories. The exact navigation and content structure is determined by each dataspace team.*
+
+### 3.4 Versioned Documentation
+
+*Versioned docs and internal structure will be managed by each dataspace's source repository. This documentation site hosts the content but does not dictate the internal organization.*
 
 ---
-title: "Context & Rollen"
-nav_order: 1
+
+## 4 · Styling & Theming
+
+| Item | Implementation |
+|------|----------------|
+| **Logo** | `assets/images/poort8-logo.svg` (placeholder until supplied). |
+| **Colors** | Override Docsify CSS vars in `assets/css/custom.css` (`--theme-color`, etc.). |
+| **Layout tweaks** | CSS: responsive sidebar, max-width constraints, search styling. |
+| **Dark-mode** | Not in scope (light-theme only). |
+
+**Custom CSS example (`assets/css/custom.css`):**
+```css
+:root {
+  --theme-color: #0066cc;           /* Poort8 primary */
+  --theme-color-secondary: #004499;  /* Poort8 secondary */
+}
+
+.sidebar {
+  border-right: 1px solid #eee;
+}
+
+.content {
+  max-width: 1040px;
+}
+```
+
 ---
 
-jekyll-navigation uses nav_order to build sidebars.
+## 5 · Content Conventions
 
-⸻
+- **Markdown** with no front-matter required (unlike Jekyll).
+- **Optimized images** ≤ 150 kB (SVG preferred).
+- **External API docs** open in new tab (`target="_blank" rel="noopener"`).
+- **Cross-references** use relative paths from dataspace root.
 
-4 · Styling & Theming
+---
 
-Item	Implementation
-Logo	assets/images/poort8-logo.svg (placeholder until supplied).
-Colours	Override Minima CSS vars in assets/css/custom.scss (--brand-primary, etc.).
-Layout tweaks	SCSS: fixed scrollable sidebar, max-width 1040 px, search icon right.
-Dark-mode	Not in scope (light-theme only).
+## 6 · Error Handling & Build Safeguards
 
+| Layer | Strategy |
+|-------|----------|
+| **404** | Docsify handles 404s automatically with search field. |
+| **Broken links** | Manual testing or future CI link checking. |
+| **Search index** | Built automatically by Docsify at runtime. |
 
-⸻
+---
 
-5 · Content Conventions
-	•	Markdown with YAML front-matter.
-	•	Optimised images ≤ 150 kB (SVG preferred).
-	•	External API docs open in a new tab (target="_blank" rel="noopener").
-	•	Front-matter keys: title, nav_order, has_children.
+## 7 · GitHub Pages Deployment
 
-⸻
+**New Docsify Pipeline:**
+1. **Direct serving** — GitHub Pages serves `main` branch root `/` directly.
+2. **CNAME** → `docs2.poort8.nl` (during transition).
+3. **No build step** — Docsify renders at browser runtime.
 
-6 · Error Handling & Build Safeguards
+**Domain transition:**
+- Phase 1: `docs2.poort8.nl` (new Docsify site)
+- Phase 2: `docs.poort8.nl` (migrate from Jekyll to Docsify)
 
-Layer	Strategy
-404	Custom 404.html with search field + link back to Guide.
-Broken links	htmlproofer in CI – build fails on 4xx internal links.
-Search index	Build fails if Lunr index generation errors.
+---
 
+## 8 · Testing Plan
 
-⸻
+| Phase | Verify | How |
+|-------|--------|-----|
+| **Build** | No broken links & search works | Manual browser testing. |
+| **Manual** | Sidebar, navigation, search | Chrome, Firefox, Safari, Edge (desktop & mobile). |
+| **Performance** | FCP < 1.5s | Lighthouse (manual or CI). |
+| **Accessibility** | Contrast & keyboard nav | Axe extension. |
 
-7 · GitHub Actions Workflow (existing)
-	1.	setup-ruby → bundle install
-	2.	jekyll build --trace
-	3.	htmlproofer _site
-	4.	Force-push _site → gh-pages
+---
 
-	•	GitHub Pages sources gh-pages root /.
-	•	CNAME : docs.domain-box.portacht.ml.
+## 9 · Implementation Checklist
 
-⸻
+- [ ] Create `index.html` with Docsify configuration.
+- [ ] Add global `_sidebar.md` with dataspace navigation.
+- [ ] Create `dataspaces/` directory structure.
+- [ ] Add per-dataspace `_sidebar.md` files.
+- [ ] Place logo SVG & define brand colors in `assets/css/custom.css`.
+- [ ] Configure GitHub Pages to serve from `main` branch root.
+- [ ] Set CNAME to `docs2.poort8.nl`.
+- [ ] Test navigation, search, and responsive design.
+- [ ] Verify backward compatibility links work.
 
-8 · Testing Plan
+---
 
-Phase	Verify	How
-Build	No link errors & Lunr index present	CI workflow.
-Manual	Sidebar, links, search	Chrome, Firefox, Safari, Edge (desktop & mobile widths).
-Performance	FCP < 1.5 s	Lighthouse (manual or CI).
-Accessibility	Contrast & keyboard nav	Axe extension.
+## 10 · Backward Compatibility
 
+*Specific legacy links will be preserved where needed. The exact backward compatibility requirements will be determined by each dataspace team during migration.*
 
-⸻
+**Implementation:** 
+- Maintain file paths where possible to preserve existing URLs.
+- Consider redirect rules if path structure changes significantly.
 
-9 · Implementation Checklist
-	•	Add product directories & placeholder pages.
-	•	Add jekyll-navigation & jekyll-lunr-js-search to Gemfile.
-	•	Place logo SVG & define brand colours in custom.scss.
-	•	Update _config.yml header_pages.
-	•	Ensure every page has nav_order.
-	•	Verify workflow passes; check CNAME.
-	•	Replace logo / colours when final assets arrive.
+---
 
-⸻
+## 11 · Future Enhancements (out of scope)
 
-10 · Future Enhancements (out of scope)
-	•	Dark-mode toggle.
-	•	Algolia DocSearch.
-	•	Screenshot regression tests (Percy).
-	•	Interactive MDX-style samples (would require Docusaurus).
+- **Dark-mode toggle**.
+- **Advanced search** with Algolia DocSearch.
+- **Analytics** integration.
+- **Interactive code samples**.
 
-⸻
+---
 
-Ready for development.
-Clone → bundle install → follow checklist → push to main → CI publishes.
+## 12 · Migration from Jekyll
 
+*Note: The current Jekyll-based system at `docs.poort8.nl` remains active during transition. This Docsify specification replaces the Jekyll system once complete and reviewed.*
+
+**Jekyll legacy features:**
+- Built with Ruby/Jekyll + Minima theme
+- Used `jekyll-navigation` for sidebars
+- Required GitHub Actions build pipeline
+
+**Docsify advantages:**
+- Zero build process — pure static files
+- Runtime rendering with client-side search
+- Simpler maintenance and deployment
+- Better developer experience
+
+---
+
+**Ready for development.**
+Clone → create `index.html` → follow checklist → push to `main` → GitHub Pages serves directly.

@@ -52,3 +52,4 @@ tmp/
 
 # GitHub Copilot
 .github/copilot-instructions.md
+docs-agents/**/
