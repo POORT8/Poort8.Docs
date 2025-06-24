@@ -1,6 +1,26 @@
-# Poort8.Docs
+# Poort8 Documentation
 
-This repository contains the documentation portal for all Poort8 products, built with Jekyll and hosted on GitHub Pages.
+Welcome to the Poort8 documentation portal. This site hosts documentation for all Poort8 dataspaces.
+
+## Getting Started
+
+This documentation site is built with Docsify and provides information about:
+
+- **HeyWim** - [Coming in next steps]
+- **DVU** - [Coming in next steps] 
+- **GIR** - [Coming in next steps]
+- **CDA** - [Coming in next steps]
+
+## About This Site
+
+This is the new Docsify-based documentation site that replaces the previous Jekyll-based system. It provides:
+
+- Zero-build hosting via GitHub Pages
+- Runtime rendering for fast updates
+- Full-text search across all content
+- Dataspace-oriented navigation
+
+More content and navigation will be added in subsequent implementation steps.
 
 ## Project Structure
 
