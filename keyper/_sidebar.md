@@ -1,2 +1,0 @@
-* [Home](/)
-* [FAQ](faq.md)
