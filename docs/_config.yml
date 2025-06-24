@@ -1,0 +1,42 @@
+markdown: kramdown
+theme: minima
+baseurl: ""
+url: "https://docs.poort8.nl"
+
+title: "Poort8 Docs"
+description: "Documentation portal for Poort8 products"
+
+# # Navigation structure
+# navigation:
+#   - title: "Poort8 Docs"
+#     url: "/"
+#   - title: "Product Guide"
+#     url: "/guide"
+#   - title: "HeyWim"
+#     url: "/heywim"
+#   - title: "NoodleBar"
+#     url: "/noodlebar"
+#   - title: "Keyper"
+#     url: "/keyper"
+#   - title: "DVU"
+#     url: "/dvu"
+
+plugins:
+  - jekyll-github-metadata
+  - jekyll-redirect-from
+  - jekyll-navigation
+  - jekyll-last-modified-at
+
+minima:
+  sidebar:
+    - navigation
+
+sass:
+  style: compressed
+
+# Pages to include in header navigation
+header_pages:
+  - index.md
+  - heywim/index.md
+  - keyper/index.md
+  - noodlebar/index.md
