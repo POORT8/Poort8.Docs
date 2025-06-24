@@ -4,12 +4,15 @@
 # documentation.
 
 # Sample workflow for building and deploying a Jekyll site to GitHub Pages
+# NOTE: This runs for Jekyll docs changes, but Docsify deployment takes precedence
 name: Deploy Jekyll site to Pages
 
 on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+    paths:
+      - 'docs/**'  # Only run for Jekyll docs changes
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
