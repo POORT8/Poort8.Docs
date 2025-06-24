@@ -2,7 +2,9 @@
 * [Dataspace Guide](/guide.md)
 
 **Dataspaces**
-* [HeyWim](/dataspaces/heywim/)
-* [DVU](/dataspaces/dvu/)
-* [GIR](/dataspaces/gir/)
-* [CDA](/dataspaces/cda/)
+* [📊 HeyWim](/heywim/)
+* [🏛️ DVU](/dvu/)
+* [🔍 GIR](/gir/)
+* [🔐 Keyper](/keyper/)
+* [🍜 NoodleBar](/noodlebar/)
+* [🔧 TSL](/tsl/)
