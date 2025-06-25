@@ -5,6 +5,11 @@
   <title>Poort8 Documentation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <style>
+.sidebar {
+  padding-left: 20px !important;
+}
+</style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
 </head>
 <body>
@@ -37,8 +42,9 @@
       name: 'Poort8 Documentation',
       repo: '',
       loadSidebar: true,
-      subMaxLevel: 2,
+      subMaxLevel: 1,
       auto2top: true,
+      relativePath: true,
       alias: {
         // Backward compatibility for DVU implementation docs
         '/keyper/implementations/dvu/index.md': '/dvu/index.md',

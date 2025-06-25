@@ -1,4 +1,4 @@
-- [← Back to Poort8 Overview](/)
+- **[← To Poort8 Overview](/)**
 
 - **DVU**
   - [Introduction](README.md)
@@ -8,6 +8,6 @@
   - [Single Building Access](single-building.md)
   - [Bulk Building Access](bulk-buildings.md)
 
-- **External Links**
+- **Additional Resources**
   - [Keyper Docs](../keyper/)
   - [NoodleBar Docs](../noodlebar/)
