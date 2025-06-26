@@ -13,25 +13,6 @@
   <div id="app"></div>
   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <script>
-    // Handle backward compatibility redirects for non-hash URLs
-    (function() {
-      const redirectMap = {
-        '/keyper/implementations/dvu/index': '/#/dvu/index',
-        '/keyper/implementations/dvu/context': '/#/dvu/single-building',
-        '/keyper/implementations/dvu/gebouwen-in-bulk': '/#/dvu/bulk-buildings',
-        '/keyper/implementations/dvu/': '/#/dvu/',
-        '/keyper/implementations/dvu': '/#/dvu/'
-      };
-      
-      const currentPath = window.location.pathname;
-      const redirectUrl = redirectMap[currentPath];
-      
-      if (redirectUrl) {
-        window.location.replace(redirectUrl);
-        return;
-      }
-    })();
-
     var num = 0;
     mermaid.initialize({ startOnLoad: false });
 
@@ -43,21 +24,11 @@
       auto2top: true,
       relativePath: true,
       alias: {
-        // Backward compatibility for DVU implementation docs
-        '/keyper/implementations/dvu/index.md': '/dvu/index.md',
-        '/keyper/implementations/dvu/context.md': '/dvu/single-building.md',
-        '/keyper/implementations/dvu/gebouwen-in-bulk.md': '/dvu/bulk-buildings.md',
-        // Support with and without .md extension
-        '/keyper/implementations/dvu/index': '/dvu/index.md',
-        '/keyper/implementations/dvu/context': '/dvu/single-building.md',
-        '/keyper/implementations/dvu/gebouwen-in-bulk': '/dvu/bulk-buildings.md',
-        // Support HTML routes
-        '/keyper/implementations/dvu/index.html': '/dvu/index.md',
-        '/keyper/implementations/dvu/context.html': '/dvu/single-building.md',
-        '/keyper/implementations/dvu/gebouwen-in-bulk.html': '/dvu/bulk-buildings.md',
-        // Support route-based access
+        // Minimal aliases for SPA navigation within Docsify
         '/keyper/implementations/dvu/': '/dvu/',
-        '/keyper/implementations/dvu': '/dvu/'
+        '/keyper/implementations/dvu/index': '/dvu/',
+        '/keyper/implementations/dvu/context': '/dvu/single-building',
+        '/keyper/implementations/dvu/gebouwen-in-bulk': '/dvu/bulk-buildings'
       },
       markdown: {
         renderer: {
