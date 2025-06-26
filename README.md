@@ -1,29 +1,25 @@
-# Poort8 Documentation
+# Welcome
 
-Welcome to the Poort8 documentation portal. This site hosts documentation for all Poort8 dataspaces.
+Welcome to the Poort8 docs. This site hosts documentation for all Poort8 products and dataspaces.
 
-## Getting Started
-
-This documentation site is built with Docsify and provides information about:
-
-**Dataspaces**
+## Dataspaces
 - [HeyWim](/heywim/)
+- [NoodleBar](/noodlebar/)
 - [DVU](/DVU/)
 - [GIR](/GIR/)
 - [TSL](/TSL/)
 - [CDA](/CDA/) *(Coming soon)*
 
-**Products**
-- [Noodlebar](/noodlebar/)
+## Products
+- [HeyWim ➚](https://www.heywim.nl/)
 - [Keyper](/keyper/)
 
-## About This Site
+### NoodleBar Demo
 
-This is the new Docsify-based documentation site that replaces the previous Jekyll-based system. It provides:
+Our NoodleBar demo dataspace is used in the "dataspace in a day" concept and for proof of concepts (POCs) and minimum viable products (MVPs). This demo environment provides a practical way to explore dataspace capabilities and test integrations.
 
-- Zero-build hosting via GitHub Pages
-- Runtime rendering for fast updates
-- Full-text search across all content
-- Dataspace-oriented navigation
+- **Demo Environment**: [https://noodlebar.poort8.nl/](https://noodlebar.poort8.nl/)
+- **API Reference**: [https://noodlebar.poort8.nl/scalar](https://noodlebar.poort8.nl/scalar)
 
-More content and navigation will be added in subsequent implementation steps.
+Contact [hello@poort8.nl](mailto:hello@poort8.nl) to get access to the demo environment.
+

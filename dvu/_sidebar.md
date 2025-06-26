@@ -1,8 +1,7 @@
-- **[← To Poort8 Overview](/)**
+- [← Back to Poort8 Overview](/)
 
-- **DVU**
+- **Getting Started**
   - [Introduction](README.md)
-  - [Implementation Overview](index.md)
 
 - **Implementation Guides**
   - [Single Building Access](single-building.md)

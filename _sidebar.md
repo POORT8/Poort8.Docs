@@ -1,11 +1,14 @@
-- **Poort8**
-    - [Home](/)
-    - [Dataspace Guide](/guide.md)
+- **Getting Started**
+  - [Introduction](/)
+  - [Dataspace Guide](/guide.md)
 
 - **Dataspaces**
-    - [📊 HeyWim](/heywim/)
-    - [🏛️ DVU](/dvu/)
-    - [🔍 GIR](/gir/)
-    - [🔐 Keyper](/keyper/)
-    - [🍜 NoodleBar](/noodlebar/)
-    - [🔧 TSL](/tsl/)
+  - [HeyWim](/heywim/)
+  - [NoodleBar](/noodlebar/)
+  - [DVU](/dvu/)
+  - [GIR](/gir/)
+  - [TSL](/tsl/)
+
+- **Products**
+  - [HeyWim ➚](https://www.heywim.nl/)
+  - [Keyper](/keyper/)
