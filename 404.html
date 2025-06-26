@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Page Not Found - Poort8 Docs</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="Page not found - redirecting if applicable">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      text-align: center;
+      max-width: 500px;
+      padding: 2rem;
+    }
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #007acc;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="spinner"></div>
+    <h2>Checking for redirects...</h2>
+    <p id="status">Please wait while we redirect you to the correct page.</p>
+  </div>
+
+  <script>
+    (function() {
+      const currentPath = window.location.pathname;
+      const statusEl = document.getElementById('status');
+      
+      console.log('P8.inf - 404 page checking path:', currentPath);
+      
+      // Define redirect mappings for keyper/implementations/dvu paths
+      const redirectMap = {
+        '/keyper/implementations/dvu/': '/#/dvu/',
+        '/keyper/implementations/dvu/index': '/#/dvu/',
+        '/keyper/implementations/dvu/index.html': '/#/dvu/',
+        '/keyper/implementations/dvu/index.md': '/#/dvu/',
+        '/keyper/implementations/dvu/context': '/#/dvu/single-building',
+        '/keyper/implementations/dvu/context.html': '/#/dvu/single-building',
+        '/keyper/implementations/dvu/context.md': '/#/dvu/single-building',
+        '/keyper/implementations/dvu/gebouwen-in-bulk': '/#/dvu/bulk-buildings',
+        '/keyper/implementations/dvu/gebouwen-in-bulk.html': '/#/dvu/bulk-buildings',
+        '/keyper/implementations/dvu/gebouwen-in-bulk.md': '/#/dvu/bulk-buildings'
+      };
+      
+      // Check for exact match
+      const redirectUrl = redirectMap[currentPath];
+      if (redirectUrl) {
+        console.log('P8.inf - Redirecting from', currentPath, 'to', redirectUrl);
+        statusEl.textContent = `Redirecting to ${redirectUrl}`;
+        window.location.href = redirectUrl;
+        return;
+      }
+      
+      // Check for keyper/implementations/dvu pattern (catch-all for any missed variations)
+      if (currentPath.startsWith('/keyper/implementations/dvu')) {
+        console.log('P8.inf - Catch-all redirect for DVU path:', currentPath);
+        statusEl.textContent = 'Redirecting to DVU documentation...';
+        window.location.href = '/#/dvu/';
+        return;
+      }
+      
+      // No redirect found - show 404 message
+      console.log('P8.inf - No redirect found for path:', currentPath);
+      statusEl.textContent = 'Page not found. Redirecting to home page...';
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 3000);
+    })();
+  </script>
+</body>
+</html>
