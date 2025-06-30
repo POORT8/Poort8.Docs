@@ -4,6 +4,9 @@
 - **POST /api/organization-registry** - Protected by scope `write:or` or `write:or:delegated`
   - With `write:or` scope: User must be the owner of the requested organization Identifier
   - With `write:or:delegated` scope: No ownership check required
+- **GET /api/organization-registry** - Protected by scope `read:or` or `read:or:delegated`
+  - With `read:or` scope: User can only view organizations they own
+  - With `read:or:delegated` scope: All organizations are accessible
 - **GET /api/organization-registry/{id}** - Protected by scope `read:or` or `read:or:delegated`
   - With `read:or` scope: User must be the owner of the organization's Identifier
   - With `read:or:delegated` scope: No ownership check required
