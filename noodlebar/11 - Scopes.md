@@ -10,6 +10,9 @@
 - **GET /api/organization-registry/{id}** - Protected by scope `read:or` or `read:or:delegated`
   - With `read:or` scope: User must be the owner of the organization's Identifier
   - With `read:or:delegated` scope: No ownership check required
+- **GET /api/authorization-registry-organizations** - Protected by scope `read:ar` or `read:ar:delegated`
+  - With `read:ar` scope: User can only view organizations they own
+  - With `read:ar:delegated` scope: All organizations are accessible
 - **GET /api/authorization-registry-organizations/{id}** - Protected by scope `read:ar` or `read:ar:delegated`
   - With `read:ar` scope: User must be the owner of the organization's Identifier
   - With `read:ar:delegated` scope: No ownership check required
