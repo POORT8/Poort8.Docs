@@ -36,7 +36,7 @@ jobs:
             echo "✅ Docsify detected - proceeding with deployment"
             echo "should-deploy=true" >> $GITHUB_OUTPUT
           else
-            echo "�� No Docsify detected - skipping deployment"
+            echo "❌ No Docsify detected - skipping deployment"
             echo "should-deploy=false" >> $GITHUB_OUTPUT
           fi
 
