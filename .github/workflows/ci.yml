@@ -1,5 +1,5 @@
 name: CI
-on: [pull_request, push]
+on: [pull_request]
 
 jobs:
   # Jekyll build (existing)
@@ -27,6 +27,7 @@ jobs:
           use-verbose-mode: 'yes'
           folder-path: ''
           file-extension: '.md'
+          config-file: .github/mlc_config.json
 
       # Test 2: HTML Validation
       - name: Validate HTML Files ✅
