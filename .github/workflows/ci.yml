@@ -28,12 +28,13 @@ jobs:
           
           echo "Checking Docsify markdown files only..."
           # Find markdown files excluding docs/ and docs-agents/ folders
+          # Use -exec to handle filenames with spaces properly
           find . -name "*.md" \
             -not -path "./docs/*" \
             -not -path "./docs-agents/*" \
             -not -path "./node_modules/*" \
             -not -path "./.git/*" \
-            | xargs markdown-link-check
+            -exec markdown-link-check {} \;
 
       # Test 2: HTML Validation
       - name: Validate HTML Files ✅
