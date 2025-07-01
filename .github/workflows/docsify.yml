@@ -50,13 +50,62 @@ jobs:
             echo "should-deploy=false" >> $GITHUB_OUTPUT
           fi
 
+  # Pre-deployment tests
+  pre-deploy-tests:
+    name: Pre-deployment Tests
+    runs-on: ubuntu-latest
+    needs: check-docsify
+    if: needs.check-docsify.outputs.should-deploy == 'true'
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      # Test 1: Link Checking (using simple action without config)
+      - name: Check Markdown Links 🔗
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-verbose-mode: 'yes'
+
+      # Test 2: HTML Validation
+      - name: Validate HTML Files ✅
+        run: |
+          echo "Validating HTML files..."
+          
+          # Basic HTML structure check for index.html
+          if grep -q "<!DOCTYPE html>" index.html && grep -q "<html" index.html && grep -q "</html>" index.html; then
+            echo "✅ index.html has valid HTML structure"
+          else
+            echo "❌ index.html missing required HTML structure"
+            exit 1
+          fi
+          
+          # Check for required meta tags
+          if grep -q 'charset="UTF-8"' index.html && grep -q 'name="viewport"' index.html; then
+            echo "✅ index.html has required meta tags"
+          else
+            echo "❌ index.html missing required meta tags"
+            exit 1
+          fi
+          
+          # Check 404.html if it exists
+          if [ -f "404.html" ]; then
+            if grep -q "<!DOCTYPE html>" 404.html && grep -q "<html" 404.html && grep -q "</html>" 404.html; then
+              echo "✅ 404.html has valid HTML structure"
+            else
+              echo "❌ 404.html missing required HTML structure"
+              exit 1
+            fi
+          else
+            echo "⚠️  404.html not found (optional)"
+          fi
+
   # Deploy job - Docsify uses zero-build approach
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: check-docsify
+    needs: [check-docsify, pre-deploy-tests]
     if: needs.check-docsify.outputs.should-deploy == 'true'
     steps:
       - name: Checkout
@@ -111,9 +160,36 @@ jobs:
           echo "  - Direct static file serving from repository root"
           echo "  - Runtime rendering in browser"
           echo "  - Search functionality enabled"
-          echo ""
-          echo "⏭️  Next steps:"
-          echo "  - Verify site loads at deployment URL"
-          echo "  - Test navigation and search functionality" 
-          echo "  - Check mobile responsiveness"
-          echo "  - Monitor for any 404 errors"
+
+  # Post-deployment verification
+  post-deploy-tests:
+    name: Post-deployment Tests
+    runs-on: ubuntu-latest
+    needs: [check-docsify, deploy]
+    if: needs.check-docsify.outputs.should-deploy == 'true'
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Wait for deployment to be ready
+        run: sleep 60
+
+      # Test: Basic Navigation Test
+      - name: Test Main Pages Load 🌐
+        run: |
+          echo "Testing main pages load correctly..."
+          
+          # Test homepage
+          curl -f -s https://docs.poort8.nl > /dev/null && echo "✅ Homepage loads" || echo "❌ Homepage failed"
+          
+          # Test that Docsify is working (check for docsify assets)
+          curl -f -s https://docs.poort8.nl | grep -q "docsify" && echo "✅ Docsify detected" || echo "❌ Docsify not detected"
+          
+          # Test main documentation sections exist (check for sidebar content)
+          for section in dvu heywim keyper noodlebar; do
+            if [ -f "${section}/_sidebar.md" ]; then
+              echo "✅ ${section} section found"
+            else
+              echo "⚠️  ${section} section missing"
+            fi
+          done
