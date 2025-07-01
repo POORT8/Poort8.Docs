@@ -20,11 +20,13 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
 
-      # Test 1: Link Checking (using simple action without config)
+      # Test 1: Link Checking (ignores internal Docsify routes)
       - name: Check Markdown Links 🔗
-        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        uses: tcort/github-action-markdown-link-check@v1
         with:
           use-verbose-mode: 'yes'
+          folder-path: ''
+          file-extension: '.md'
 
       # Test 2: HTML Validation
       - name: Validate HTML Files ✅
