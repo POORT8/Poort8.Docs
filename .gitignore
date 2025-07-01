@@ -17,21 +17,6 @@ $RECYCLE.BIN/
 .Trash-*
 .nfs*
 
-# Ruby
-/vendor/bundle
-.bundle/
-.ruby-version
-.ruby-gemset
-*.gem
-.rvmrc
-
-# Jekyll
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-.jekyll-version
-
 # VS Code
 .vscode/*
 !.vscode/tasks.json
