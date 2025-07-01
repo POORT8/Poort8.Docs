@@ -3,16 +3,16 @@
 Welcome to the Poort8 docs. This site hosts documentation for all Poort8 products and dataspaces.
 
 ## Dataspaces
-- [HeyWim](/heywim/)
-- [NoodleBar](/noodlebar/)
-- [DVU](/DVU/)
-- [GIR](/GIR/)
-- [TSL](/TSL/)
-- [CDA](/CDA/) *(Coming soon)*
+- [HeyWim](heywim/)
+- [NoodleBar](noodlebar/)
+- [DVU](dvu/)
+- [GIR](gir/)
+- [TSL](tsl/)
+- [DCL](javascript:void(0)) *(Coming soon)*
 
 ## Products
 - [HeyWim ➚](https://www.heywim.nl/)
-- [Keyper](/keyper/)
+- [Keyper](keyper/)
 
 ### NoodleBar Demo
 
