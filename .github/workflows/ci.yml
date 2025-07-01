@@ -2,17 +2,6 @@ name: CI
 on: [pull_request]
 
 jobs:
-  # Jekyll build (existing)
-  jekyll-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with: { ruby-version: '3.3.8' }
-      - run: bundle install --jobs 4 --retry 3
-      - run: bundle exec jekyll build --source docs --trace
-      - run: bundle exec htmlproofer ./_site --disable-external
-
   # Pre-deployment quality checks
   quality-checks:
     runs-on: ubuntu-latest
@@ -27,10 +16,9 @@ jobs:
           npm install -g markdown-link-check
           
           echo "Checking Docsify markdown files only..."
-          # Find markdown files excluding docs/ and docs-agents/ folders
+          # Find markdown files excluding docs-agents/ folder
           # Use -exec to handle filenames with spaces properly
           find . -name "*.md" \
-            -not -path "./docs/*" \
             -not -path "./docs-agents/*" \
             -not -path "./node_modules/*" \
             -not -path "./.git/*" \

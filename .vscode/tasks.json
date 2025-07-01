@@ -2,68 +2,24 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Jekyll: Build",
+      "label": "Docsify: Serve",
       "type": "shell",
-      "command": "bundle exec jekyll build --source docs --trace",
+      "command": "npx docsify-cli serve .",
       "group": {
-        "kind": "build",
+        "kind": "serve",
         "isDefault": true
       },
-      "problemMatcher": {
-        "owner": "jekyll",
-        "pattern": {
-          "regexp": "^Error:\\s+(.*)$",
-          "message": 1
-        }
-      },
-      "presentation": {
-        "reveal": "silent"
-      }
-    },
-    {
-      "label": "Jekyll: Test",
-      "type": "shell",
-      "command": "bundle exec htmlproofer ./_site --disable-external",
-      "group": "test",
-      "dependsOn": "Jekyll: Build",
-      "problemMatcher": {
-        "owner": "htmlproofer",
-        "pattern": {
-          "regexp": "^(.+):\\s+(.*)$",
-          "file": 1,
-          "message": 2
-        }
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "Jekyll: Clean",
-      "type": "shell",
-      "command": "bundle exec jekyll clean",
-      "problemMatcher": [],
-      "presentation": {
-        "reveal": "always"
-      }
-    },
-    {
-      "label": "Jekyll: Serve (Production)",
-      "type": "shell",
-      "command": "bundle exec jekyll serve --source docs --livereload",
-      "group": "none",
       "isBackground": true,
       "problemMatcher": {
-        "owner": "jekyll",
+        "owner": "docsify",
         "pattern": {
           "regexp": "^Error:\\s+(.*)$",
           "message": 1
         },
         "background": {
           "activeOnStart": true,
-          "beginsPattern": "^Configuration file:",
-          "endsPattern": "Server running... press ctrl-c to stop."
+          "beginsPattern": "^Serving ",
+          "endsPattern": "Listening at http://localhost:3000"
         }
       },
       "presentation": {

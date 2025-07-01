@@ -1,20 +1,10 @@
-# Deploy Docsify site to GitHub Pages (Primary deployment when Docsify present)
-# This takes precedence over Jekyll when both are present
+# Deploy Docsify site to GitHub Pages
 name: Deploy Docsify to Pages
 
 on:
-  # # Runs on pushes targeting the default branch with Docsify-related changes
-  # push:
-  #   branches: ["main"]
-  #   paths:
-  #     - 'index.html'         # Docsify entry point
-  #     - '_sidebar.md'        # Global navigation
-  #     - 'guide.md'          # Dataspace guide
-  #     - 'README.md'         # Homepage
-  #     - 'assets/**'         # CSS, images, etc.
-  #     - 'dataspaces/**'     # Dataspace content
-  #     - '.nojekyll'         # GitHub Pages config
-  #     - 'CNAME'             # Domain config
+  # Runs on pushes targeting the default branch with Docsify-related changes
+  push:
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,10 +15,10 @@ permissions:
   pages: write
   id-token: write
 
-# Use the same concurrency group to ensure this takes precedence over Jekyll
+# Allow one concurrent deployment
 concurrency:
   group: "pages"
-  cancel-in-progress: true  # Cancel Jekyll if running
+  cancel-in-progress: true
 
 jobs:
   # Check if this should run
@@ -46,7 +36,7 @@ jobs:
             echo "✅ Docsify detected - proceeding with deployment"
             echo "should-deploy=true" >> $GITHUB_OUTPUT
           else
-            echo "🚫 No Docsify detected - skipping deployment"
+            echo "�� No Docsify detected - skipping deployment"
             echo "should-deploy=false" >> $GITHUB_OUTPUT
           fi
 
@@ -99,48 +89,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Post-deployment verification
-        run: |
-          echo "🚀 Docsify deployment completed successfully!"
-          echo "📍 Deployment URL: ${{ steps.deployment.outputs.page_url }}"
-          echo "🌐 Custom domain: $(test -f CNAME && cat CNAME || echo 'Not configured')"
-          echo ""
-          echo "🔍 Deployment summary:"
-          echo "  - Zero-build Docsify deployment"
-          echo "  - Direct static file serving from repository root"
-          echo "  - Runtime rendering in browser"
-          echo "  - Search functionality enabled"
-
-  # Post-deployment verification
-  post-deploy-tests:
-    name: Post-deployment Tests
-    runs-on: ubuntu-latest
-    needs: [check-docsify, deploy]
-    if: needs.check-docsify.outputs.should-deploy == 'true'
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v4
-
-      - name: Wait for deployment to be ready
-        run: sleep 60
-
-      # Test: Basic Navigation Test
-      - name: Test Main Pages Load 🌐
-        run: |
-          echo "Testing main pages load correctly..."
-          
-          # Test homepage
-          curl -f -s https://docs.poort8.nl > /dev/null && echo "✅ Homepage loads" || echo "❌ Homepage failed"
-          
-          # Test that Docsify is working (check for docsify assets)
-          curl -f -s https://docs.poort8.nl | grep -q "docsify" && echo "✅ Docsify detected" || echo "❌ Docsify not detected"
-          
-          # Test main documentation sections exist (check for sidebar content)
-          for section in dvu heywim keyper noodlebar; do
-            if [ -f "${section}/_sidebar.md" ]; then
-              echo "✅ ${section} section found"
-            else
-              echo "⚠️  ${section} section missing"
-            fi
-          done
