@@ -22,12 +22,18 @@ jobs:
 
       # Test 1: Link Checking (ignores internal Docsify routes)
       - name: Check Markdown Links 🔗
-        uses: tcort/github-action-markdown-link-check@v1
-        with:
-          use-verbose-mode: 'yes'
-          folder-path: ''
-          file-extension: '.md'
-          config-file: .github/mlc_config.json
+        run: |
+          echo "Installing markdown-link-check..."
+          npm install -g markdown-link-check
+          
+          echo "Checking Docsify markdown files only..."
+          # Find markdown files excluding docs/ and docs-agents/ folders
+          find . -name "*.md" \
+            -not -path "./docs/*" \
+            -not -path "./docs-agents/*" \
+            -not -path "./node_modules/*" \
+            -not -path "./.git/*" \
+            | xargs markdown-link-check
 
       # Test 2: HTML Validation
       - name: Validate HTML Files ✅

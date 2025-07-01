@@ -8,7 +8,8 @@ Welcome to the Poort8 docs. This site hosts documentation for all Poort8 product
 - [DVU](dvu/)
 - [GIR](gir/)
 - [TSL](tsl/)
-- [DCL](javascript:void(0)) *(Coming soon)*
+- [DCL](#) *(Coming soon)*
+
 
 ## Products
 - [HeyWim ➚](https://www.heywim.nl/)
