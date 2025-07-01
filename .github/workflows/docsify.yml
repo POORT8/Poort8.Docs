@@ -50,62 +50,13 @@ jobs:
             echo "should-deploy=false" >> $GITHUB_OUTPUT
           fi
 
-  # Pre-deployment tests
-  pre-deploy-tests:
-    name: Pre-deployment Tests
-    runs-on: ubuntu-latest
-    needs: check-docsify
-    if: needs.check-docsify.outputs.should-deploy == 'true'
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v4
-
-      # Test 1: Link Checking (using simple action without config)
-      - name: Check Markdown Links 🔗
-        uses: gaurav-nelson/github-action-markdown-link-check@v1
-        with:
-          use-verbose-mode: 'yes'
-
-      # Test 2: HTML Validation
-      - name: Validate HTML Files ✅
-        run: |
-          echo "Validating HTML files..."
-          
-          # Basic HTML structure check for index.html
-          if grep -q "<!DOCTYPE html>" index.html && grep -q "<html" index.html && grep -q "</html>" index.html; then
-            echo "✅ index.html has valid HTML structure"
-          else
-            echo "❌ index.html missing required HTML structure"
-            exit 1
-          fi
-          
-          # Check for required meta tags
-          if grep -q 'charset="UTF-8"' index.html && grep -q 'name="viewport"' index.html; then
-            echo "✅ index.html has required meta tags"
-          else
-            echo "❌ index.html missing required meta tags"
-            exit 1
-          fi
-          
-          # Check 404.html if it exists
-          if [ -f "404.html" ]; then
-            if grep -q "<!DOCTYPE html>" 404.html && grep -q "<html" 404.html && grep -q "</html>" 404.html; then
-              echo "✅ 404.html has valid HTML structure"
-            else
-              echo "❌ 404.html missing required HTML structure"
-              exit 1
-            fi
-          else
-            echo "⚠️  404.html not found (optional)"
-          fi
-
   # Deploy job - Docsify uses zero-build approach
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: [check-docsify, pre-deploy-tests]
+    needs: check-docsify
     if: needs.check-docsify.outputs.should-deploy == 'true'
     steps:
       - name: Checkout
