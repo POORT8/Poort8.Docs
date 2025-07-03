@@ -78,7 +78,7 @@ Content-Type: application/json
 }
 ```
 
-### Step 3: Orchestration Configuration
+#### Orchestration Configuration
 
 **Important orchestration settings:**
 - **`flow`**: `"dvu.voeg-gebouwen-toe@1"` activates the bulk building metadata flow
@@ -99,7 +99,7 @@ After approval via Keyper Approve, developers can retrieve VBO identifiers and a
 
 All DVU API calls require a valid iSHARE access token. This is obtained in two steps:
 
-#### Step 1: Generate Client Assertion JWT
+#### Generate Client Assertion JWT
 
 For iSHARE authentication, you need a client assertion JWT containing your organization data, signed with your private key and including an x5c header with your certificate chain.
 
@@ -129,7 +129,7 @@ For iSHARE authentication, you need a client assertion JWT containing your organ
 - **For Python developers**: See [iSHARE Python code snippets](https://github.com/iSHAREScheme/code-snippets/blob/master/Python/access_token.py) for complete implementation
 - **For other platforms**: Follow the [iSHARE Client Assertion specification](https://dev.ishare.eu/reference/ishare-jwt/client-assertion) for JWT creation
 
-#### Step 2: Obtain Access Token
+#### Obtain Access Token
 
 ```http
 POST https://dvu-test.azurewebsites.net/iSHARE/connect/token
@@ -147,7 +147,7 @@ grant_type=client_credentials&scope=iSHARE&client_assertion_type=urn:ietf:params
 }
 ```
 
-### Retrieving VBO and EAN Data
+### Step 4: Retrieving VBO and EAN Data
 
 With your access token, you can now retrieve VBO and EAN data via the Resource Groups API:
 
@@ -190,7 +190,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci...
 
 After obtaining VBO identifiers and EAN codes via the DVU API, you can retrieve the actual energy data from Smart Data Solutions using the same iSHARE authentication pattern.
 
-### SDS Authentication
+### Step 5: SDS Authentication
 
 The authentication process for SDS follows the same steps as for DVU, with SDS-specific endpoints and EORI:
 
@@ -203,7 +203,7 @@ Content-Type: application/x-www-form-urlencoded
 grant_type=client_credentials&scope=iSHARE&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_id=EU.EORI.NL123456789&client_assertion=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
 ```
 
-### SDS Data Endpoints
+### Step 6: SDS Data Endpoints
 
 **⚠️ Note**: Complete documentation for SDS data endpoints will be updated once SDS implements query parameter support.
 
