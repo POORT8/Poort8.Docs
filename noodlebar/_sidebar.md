@@ -17,6 +17,8 @@
   - [iSHARE Deployment](08%20-%20Deployment%20Using%20iSHARE.md)
   - [Database Migrations](09%20-%20Database%20Migrations.md)
 
-- **External Links**
+- **NoodleBar Instances**
+  - [Binnenvaart NoodleBar](../binnenvaart/)
+  - [Dataspace Container Logistics (DCL)](../dcl/)
   - [GIR Instance](../gir/)
   - [TSL Instance](../tsl/)
