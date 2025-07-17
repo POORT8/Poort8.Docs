@@ -8,6 +8,8 @@
   - [DVU](dvu/)
   - [GIR](gir/)
   - [TSL](tsl/)
+  - [DCL](dcl/)
+  - [Binnenvaart](binnenvaart/)
 
 - **Products**
   - [HeyWim ➚](https://www.heywim.nl/)
