@@ -6,6 +6,16 @@ HeyWim connects to multiple data sources to provide comprehensive container and 
 
 HeyWim follows the **Track & Trace (T&T) standards** developed by DCSA (Digital Container Shipping Association). This means data is displayed as standardized events, such as vessel departures, container discharges, or gate movements.
 
+### DCSA Event Types
+
+HeyWim provides several types of DCSA T&T-compliant events:
+
+- **Transport Events**: Vessel and vehicle movements (f.e. arrivals, departures)
+- **Equipment Events**: Container-specific activities (f.e. discharge, loading, gate operations)
+- **Shipment Events**: Shipment-level activities (f.e. booking confirmations)
+
+**Additional Features**: HeyWim also provides cargo opening and closing times through Shipment events, though this specific usage is not DCSA compliant.
+
 Learn more about DCSA T&T standards:
 - [DCSA Website](https://dcsa.org/standards/track-and-trace)
 - [Official Documentation](https://dcsa.org/standards/track-and-trace/standard-documentation-track-and-trace)
@@ -16,20 +26,20 @@ We connect to the following major shipping lines to provide container tracking i
 
 ### Global Carriers
 
-| Shipping Line | API Integration | Information Required |
-|---------------|----------------|---------------------|
-| **Arkas** | ✅ | Container number |
-| **CMA CGM** | ✅ | Container number |
-| **COSCO** | ✅ | Container number |
-| **Evergreen** | ✅ | Container number, Bill of lading* |
-| **Hapag-Lloyd** | ✅ | Container number |
-| **HMM** | ✅ | Container number, Bill of lading* |
-| **Maersk** | ✅ | Container number, Bill of lading* |
-| **MSC** | ✅ | Container number, Bill of lading* |
-| **ONE** | ✅ | Container number |
-| **OOCL** | ✅ | Container number |
-| **Yang Ming** | ✅ | Container number |
-| **ZIM** | ✅ | Container number |
+| Shipping Line | Carrier Code | API Integration | Information Required |
+|---------------|--------------|-----------------|----------------------|
+| **Arkas** | AKS | ✅ | Container number |
+| **CMA CGM** | CMA | ✅ | Container number |
+| **COSCO** | COS | ✅ | Container number |
+| **Evergreen** | EVG | ✅ | Container number, Bill of lading* |
+| **Hapag-Lloyd** | HLC | ✅ | Container number |
+| **HMM** | HMM | ✅ | Container number, Bill of lading* |
+| **Maersk** | MSK | ✅ | Container number, Bill of lading* |
+| **MSC** | MSC | ✅ | Container number, Bill of lading* |
+| **ONE** | ONE | ✅ | Container number |
+| **OOCL** | OOL | ✅ | Container number |
+| **Yang Ming** | YML | ✅ | Container number |
+| **ZIM** | ZIM | ✅ | Container number |
 
 *Bill of lading is optional but recommended for more comprehensive data
 
@@ -49,11 +59,11 @@ We provide terminal information from major European ports:
 - **DP World** (Antwerp) - Vessel information via NxtPort
 - **PSA** (Antwerp) - Vessel information via NxtPort
 
-### Germany (coming soon)
-- **HHLA** (Hamburg) – Container movements and vessel schedules
-- **Eurogate** (Hamburg, Bremerhaven, Wilhelmshaven) – Container movements and vessel schedules
-- **NTB** (Bremerhaven) – Container movements and vessel schedules
-- **MSC Gate** (Bremerhaven) – Container movements and vessel schedules
+### Germany
+- **HHLA** (Hamburg) – Vessel schedules and container movements
+- **Eurogate** (Hamburg, Bremerhaven, Wilhelmshaven) – Vessel schedules and container movements
+- **NTB** (Bremerhaven) – Vessel schedules (coming soon)
+- **MSC Gate** (Bremerhaven) – Vessel schedules and container movements
 
 ## Inland Terminals
 
