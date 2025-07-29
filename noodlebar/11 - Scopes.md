@@ -21,19 +21,19 @@
   - With `write:ar:delegated` scope: No ownership check required
 
 ## Policies
-- **POST /api/policies** - Protected by scope `write:ar` or `write:ar:delegated`
+- **POST /api/policies** - Protected by scope `write:ar` or `write:ar:delegated` (supports both OAuth and iShare tokens)
   - With `write:ar` scope: If specifying an IssuerId, user must be the owner of that IssuerId
   - With `write:ar:delegated` scope: No ownership check required
-- **GET /api/policies** - Protected by scope `read:ar` or `read:ar:delegated`
+- **GET /api/policies** - Protected by scope `read:ar` or `read:ar:delegated` (supports both OAuth and iShare tokens)
   - With `read:ar` scope: User can only view policies where they own the IssuerId, SubjectId, or ServiceProvider
   - With `read:ar:delegated` scope: All policies are accessible
-- **GET /api/policies/{id}** - Protected by scope `read:ar` or `read:ar:delegated`
+- **GET /api/policies/{id}** - Protected by scope `read:ar` or `read:ar:delegated` (supports both OAuth and iShare tokens)
   - With `read:ar` scope: User must own the policy's IssuerId, SubjectId, and ServiceProvider
   - With `read:ar:delegated` scope: No ownership check required
-- **PUT /api/policies** - Protected by scope `write:ar` or `write:ar:delegated`
+- **PUT /api/policies** - Protected by scope `write:ar` or `write:ar:delegated` (supports both OAuth and iShare tokens)
   - With `write:ar` scope: User must be the owner of the policy's IssuerId
   - With `write:ar:delegated` scope: No ownership check required
-- **DELETE /api/policies/{id}** - Protected by scope `write:ar` or `write:ar:delegated`
+- **DELETE /api/policies/{id}** - Protected by scope `write:ar` or `write:ar:delegated` (supports both OAuth and iShare tokens)
   - With `write:ar` scope: User must be the owner of the policy's IssuerId
   - With `write:ar:delegated` scope: No ownership check required
 
