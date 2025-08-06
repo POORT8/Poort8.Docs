@@ -111,7 +111,7 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
   -d '{
         "client_id": "<CONSUMER_CLIENT_ID>",
         "client_secret": "<CONSUMER_CLIENT_SECRET>",
-        "audience": "GIR-Dataspace-CoreManager",
+        "audience": "Poort8-Dataspace-Keyper",
         "grant_type": "client_credentials"
       }'
 ```

@@ -34,30 +34,28 @@ It combines NoodleBar modules (Organization Register, Authorization Register, Ke
 
 ---
 
-## 2 Overview
+## 2 Integration Path & Quick Reference
 
-| Area | Highlight |
-|------|-----------|
-| **Purpose** | Secure, auditable registration and controlled data sharing. |
-| **Core modules** | Keyper Approve · Org Register · Auth Register · API Gateway |
-| **Auth** | Auth0 Client-Credentials (`audience = GIR-Dataspace-CoreManager`) ⚠️ *Production: iSHARE tokens* |
-| **Statuses** | **Pending** – draft · **Active** – approved · **Archived** – soft delete |
-| **Preview ↔ Production** | ⚠️ Host & service-provider KVK change; eHerkenning becomes mandatory; iSHARE replaces Auth0 for the data API |
-
----
-
-## 3 Integration Path
+### **Step-by-Step Implementation**
 
 | Step | What you build | Guide |
 |------|----------------|-------|
 | **1. Register installation** | `POST /GIRBasisdataMessage` (create / update) | **[Register Installations](register-installations.md)** |
 | **2. Ask for *write* access** | `POST /approval-links` (write policy) | **[Registrar Flow](registrar-flow.md)** |
 | **3. Ask for *read* access** | `POST /approval-links` (read policy) | **[Data-Consumer Flow](data-consumer-flow.md)** |
-| **4. Retrieve data** | `GET /GIRBasisdataMessage` (filter by VBO, KVK, etc.) | Section 5 below |
+| **4. Retrieve data** | `GET /GIRBasisdataMessage` (filter by VBO, KVK, etc.) | [Section 4](#4-querying-installations) below |
+
+### **Quick Reference**
+
+| What you need | Where to find it |
+|---------------|------------------|
+| **Auth tokens** | Auth0 `audience = GIR-Dataspace-CoreManager` → [Authentication examples](registrar-flow.md#authentication-example) |
+| **Installation statuses** | [Section 3](#3-status--lifecycle) – Pending/Active/Archived explained |
+| **Production changes** | [Section 5](#5-heads-up-for-changes-towards-production) – iSHARE, eHerkenning, KVK changes |
 
 ---
 
-## 4 Status & Lifecycle
+## 3 Status & Lifecycle
 
 | Status | Set by | Can transition to | Visibility |
 |--------|--------|------------------|------------|
@@ -69,9 +67,9 @@ If the owner clicks **Reject**, the approval link expires and the installation r
 
 ---
 
-## 5 Querying Installations
+## 4 Querying Installations
 
-### 5.1 Endpoint  
+### 4.1 Endpoint  
 
 ```text
 GET https://gir-preview.poort8.nl/api/GIRBasisdataMessage
@@ -79,7 +77,7 @@ GET https://gir-preview.poort8.nl/api/GIRBasisdataMessage
 
 🔗 **[Live API Documentation](https://gir-preview.poort8.nl/scalar/#tag/girbasisdatamessage/GET/api/GIRBasisdataMessage)** – Interactive endpoint testing
 
-### 5.2 Filters (omit the NL.KVK. prefix)
+### 4.2 Filters (omit the NL.KVK. prefix)
 
 | **Parameter** | **Format** | **Notes** |
 | -- | -- | -- |
@@ -90,14 +88,14 @@ GET https://gir-preview.poort8.nl/api/GIRBasisdataMessage
 
 **At least one filter is required.**
 
-### 5.3 Minimal Example
+### 4.3 Minimal Example
 
 ```bash
 curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
   "https://gir-preview.poort8.nl/api/GIRBasisdataMessage?vboID=0344010000126888"
 ```
 
-### 5.4 Response (trimmed)
+### 4.4 Response (trimmed)
 
 ```json
 {
@@ -109,7 +107,7 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
 
 ---
 
-## 6 Heads-up for changes towards Production
+## 5 Heads-up for changes towards Production
 
 ⚠️ **Key Production Changes:**
 - **Service-provider KVK** → will switch from Techniek Nederland to Stichting Ketenstandaarden: `NL.KVK.41084554`. This impact policy registration in approval links.
@@ -119,7 +117,7 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
 
 ---
 
-## 7 All Guides & References
+## 6 All Guides & References
 
 ### **Integration Guides**
 
