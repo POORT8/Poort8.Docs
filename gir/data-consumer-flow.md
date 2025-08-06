@@ -116,7 +116,7 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
       }'
 ```
 
-*Scope required*: `write:al`
+*No scope required*
 
 ## **Complete Example Request**
 

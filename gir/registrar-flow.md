@@ -18,7 +18,7 @@ sequenceDiagram
     GIR-->>RegistrarApp: 201 Created, status Pending
 
         RegistrarApp->>RegistrarApp:When Status = pending, start approval request
-            rect rgb(221, 242, 255)
+    rect rgb(221, 242, 255)
         note right of RegistrarApp: Create Approval link
         RegistrarApp->>Keyper: POST /approval-links\n(request write policy)
         Keyper-->>RegistrarApp: Approval link status = Active
@@ -29,10 +29,13 @@ sequenceDiagram
         GIR-->Keyper:Confirm
         Keyper-->Owner:To redirect URL
     end
-
     RegistrarApp->>GIR: GET /GIRBasisdataMessage\n(Own registrations Pending + Active)
-        RegistrarApp->>GIR: POST same installation\n (installationID)
-    GIR-->>RegistrarApp: 200 OK
+    
+    rect rgb(221, 242, 255)
+        note right of RegistrarApp: Updating installation
+        RegistrarApp->>GIR: POST same installation<br>(installationID)
+        GIR-->>RegistrarApp: 200 OK
+    end
 ````
 
 ## **Minimum Payload for POST /approval-links**
@@ -98,28 +101,28 @@ sequenceDiagram
       "license": "0005"
     },
     {
-      "useCase": "GIR",
-      "issuedAt": "<NOW>", // Unix timestamp - Keyper may override if in past
-      "notBefore": "<NOW>", // Keyper may override if in past
-      "expiration": "<NOW_PLUS_3Y>", 
-      "issuerId": "NL.KVK.<OWNER_KVK>",
-      "subjectId": "NL.KVK.<CONSUMER_KVK>",
-      "serviceProvider": "NL.KVK.27248698",
-      "action": "read",
-      "resourceId": "<VBO_ID>",
-      "type": "vboID",
-      "attribute": "*",
-      "license": "0005",
-      "rules": "Classificaties(...)" // Optional - remove to expose all installations
-    }
+        "useCase": "GIR",
+        "issuedAt": "<NOW>", // Unix timestamp - Keyper may override if in past
+        "notBefore": "<NOW>", // Keyper may override if in past
+        "expiration": "<NOW_PLUS_3Y>",
+        "issuerId": "NL.KVK.<OWNER_KVK>",
+        "subjectId": "NL.KVK.39098825", // Policy request on behalf of Data Consumer EDSN
+        "serviceProvider": "NL.KVK.27248698",
+        "action": "read",
+        "resourceId": "<VBO_ID>",
+        "type": "vboID",
+        "attribute": "*",
+        "license": "0005",
+        "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.18)" //Fixed subset of NL/SfB codes for EDSN
+      }
   ],
   "orchestration": { "flow": "dsgo.gir@1" }
 }
 ```
 
-**Note**: ⚠️ In production, `serviceProvider` changes to **NL.KVK.41084554** (Stichting Ketenstandaard).
-
-
+**⚠️ Notea**: 
+ - In preview, the RegistrarApp (FormulierenApp) already adds the DataConsumer's read policy to the approval link, on behalf of EDSN. See the full example below
+ - In production, `serviceProvider` changes to **NL.KVK.41084554** (Stichting Ketenstandaard).
 
 ## **Authentication Example**
 
@@ -136,7 +139,7 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
       }'
 ```
 
-*Scopes required*: `write:al`
+*No scope required*
 
 ## **Complete Example Request**
 
@@ -180,21 +183,6 @@ curl -X POST https://keyper-preview.poort8.nl/api/approval-links \
         "type": "vboID",
         "attribute": "*",
         "license": "0005"
-      },
-      {
-        "useCase": "GIR",
-        "issuedAt": 1739881378,
-        "notBefore": 1739881378,
-        "expiration": 1839881378,
-        "issuerId": "NL.KVK.87654321",
-        "subjectId": "NL.KVK.39098825",
-        "serviceProvider": "NL.KVK.27248698",
-        "action": "read",
-        "resourceId": "0344010000126888",
-        "type": "vboID",
-        "attribute": "*",
-        "license": "0005",
-        "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.18)"
       }
     ],
     "orchestration": { "flow": "dsgo.gir@1" }
