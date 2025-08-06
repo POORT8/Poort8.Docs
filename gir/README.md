@@ -1,133 +1,136 @@
-# GIR: Gebouw Installatie Registratie
+# GIR – Gebouw Installatie Registratie
 
-## Introduction
+This guide describes the **GIR**-*preview* dataspace for registering and exchanging building-installation metadata.  
+It combines NoodleBar modules (Organization Register, Authorization Register, Keyper Approve) with data(space) standards for API interfaces:
 
-GIR (Gebouw Installatie Registratie) is a specialized implementation of NoodleBar for managing building installation registrations. This dataspace enables secure, auditable registration and sharing of building installation metadata between installers, approvers, and authorized third parties like EDSN (Energie Data Services Nederland).
+* **DICO** — data-model for installation messages ([Ketenstandaard GIR Spec](https://ketenstandaard.semantic-treehouse.nl/docs/api/GIR/))
+* **DSGO** — approval & access rules
 
-## Live API Documentation
+---
 
-🔗 **[GIR API Documentation](https://gir-preview.poort8.nl/scalar/v1)** - Interactive API reference with live testing capabilities
+## 1 End-to-End Flow in Four Steps
 
-## Key Features
+1. **Register installation**  
+   *Registrar →* `POST /GIRBasisdataMessage`  
+   - If no write-policy is in place, the record is stored as **Pending** (only the registrar can see it).
 
-### 1. **DSGO Authorization Register**
-Enables users to set permissions for installation companies or other registrants and for data consumers to view and manage building installation data.
+2. **Request write access**  
+  *Registrar →* `POST /approval-links` (write policy)  
+    - Owner receives an e-mail, logs in with eHerkenning, clicks **Approve**.
+    - Policy is registered in the GIR Authorization Register.
+    - GIR automatically promotes any matching **Pending** records to **Active**.
+    - ⚠️ *Only in **GIR**-preview, the RegistrarApp (FormulierenApp), includes the request for read access for EDSN in this approval-link.*
+    
 
-### 2. **Installation Registration & Metadata Processing** 
-Supports installation companies in registering and updating installation details, allowing data consumers to retrieve and analyze this data.
+3. **Request read access**  
+   *Data-consumer (e.g. EDSN) →* `POST /approval-links` (read policy, optional NL/SfB filter)  
+   - As above, Owner receives an e-mail, logs in with eHerkenning, clicks Approve.
+   - Policy is registered in the GIR Authorization Register.
 
-### 3. **GIRBasisdataMessage API**
-Comprehensive endpoints following the DICO standard for:
-- **Registration**: Creating new installation records via `POST /api/GIRBasisdataMessage`
-- **Retrieval**: Querying installation data via `GET /api/GIRBasisdataMessage` with filters for:
-  - `vboID` (Building Object ID)
-  - `installationID` 
-  - `registrarChamberOfCommerceNumber`
-  - `installationOwnerChamberOfCommerceNumber`
-- **Individual Access**: Getting specific installations via `GET /api/GIRBasisdataMessage/{guid}`
+4. **Retrieve data**  
+   *Any party* calls `GET /GIRBasisdataMessage`  
+   - Registrar sees its own **Pending** + **Active** installations.  
+   - Other parties see only **Active** installations they are the owner of OR they have a read-policy for.
 
-## Process Flow
+---
 
-### 1. **Installation Registration**
-Installers submit installation data through their applications (e.g., Formulierenapp) using the standardized `GIRBasisdataMessage` format. Installations initially receive 'pending' status if proper permissions aren't yet in place.
+## 2 Overview
 
-### 2. **Approval Workflow** 
-- Installer applications create approval links via [Keyper Approve](https://keyper-preview.poort8.nl/scalar/#tag/approval-links/POST/api/approval-links)
-- Keyper validates all required dataspace transactions (organization enrollment, permissions)
-- Valid approval links trigger email notifications to installation owners
+| Area | Highlight |
+|------|-----------|
+| **Purpose** | Secure, auditable registration and controlled data sharing. |
+| **Core modules** | Keyper Approve · Org Register · Auth Register · API Gateway |
+| **Auth** | Auth0 Client-Credentials (`audience = GIR-Dataspace-CoreManager`) ⚠️ *Production: iSHARE tokens* |
+| **Statuses** | **Pending** – draft · **Active** – approved · **Archived** – soft delete |
+| **Preview ↔ Production** | ⚠️ Host & service-provider KVK change; eHerkenning becomes mandatory; iSHARE replaces Auth0 for the data API |
 
-### 3. **Authentication & Authorization**
-- Installation owners authenticate via **eHerkenning** for secure identity verification
-- Upon approval, data becomes available to authorized data consumers
-- All transactions follow DSGO standards for integrity and validity
+---
 
-### 4. **Data Access**
-Authorized data consumers can query and retrieve installation metadata, with access rights managed by the data owner.
+## 3 Integration Path
 
-## Alternative Flows
+| Step | What you build | Guide |
+|------|----------------|-------|
+| **1. Register installation** | `POST /GIRBasisdataMessage` (create / update) | **[Register Installations](register-installations.md)** |
+| **2. Ask for *write* access** | `POST /approval-links` (write policy) | **[Registrar Flow](registrar-flow.md)** |
+| **3. Ask for *read* access** | `POST /approval-links` (read policy) | **[Data-Consumer Flow](data-consumer-flow.md)** |
+| **4. Retrieve data** | `GET /GIRBasisdataMessage` (filter by VBO, KVK, etc.) | Section 5 below |
 
-### **Verification & Access Control**
-- Data owners can verify installations are correctly registered using [Keyper (preview)](https://keyper-preview.poort8.nl/)
-- Building managers can directly set access rights for installers and data consumers
-- Self-service authorization registration via eHerkenning authentication
+---
 
-## Technical Specifications
+## 4 Status & Lifecycle
 
-### **Authentication**
-- **OAuth 2.0 Client Credentials Flow** via `https://poort8.eu.auth0.com/oauth/token`
-- **Audience**: `GIR-Dataspace-CoreManager`
-- **Available Scopes**:
-  - `read:or` / `write:or` - Organization Register permissions
-  - `read:ar` / `write:ar` - Authorization Register permissions  
-  - `read:or:delegated` / `write:ar:delegated` - Delegated permissions for trusted apps
+| Status | Set by | Can transition to | Visibility |
+|--------|--------|------------------|------------|
+| **Pending** | Registrar API | **Active** once owner approves · **Archived** | Registrar only |
+| **Active** | Keyper after approval | **Archived** | All parties with policy |
+| **Archived** | Owner (Keyper) or registrar API *(t.b.d.)* | — | None |
 
-### **Data Standards**
-- **DICO Standard**: Compliance for building installation data exchange
-- **DSGO Standards**: Authorization and permission management
-- **NLSfB Classification**: Currently using first classification field only
-- **eTIM Classification**: Product information standards
+If the owner clicks **Reject**, the approval link expires and the installation remains **Pending**; the registrar may send a new link.
 
-### **Key Endpoints**
+---
+
+## 5 Querying Installations
+
+### 5.1 Endpoint  
+
+```text
+GET https://gir-preview.poort8.nl/api/GIRBasisdataMessage
 ```
-GET  /api/GIRBasisdataMessage           # Query installations
-POST /api/GIRBasisdataMessage           # Register new installation  
-GET  /api/GIRBasisdataMessage/{guid}    # Get specific installation
-POST /api/authorization/unsigned-delegation  # Test delegated access
+
+🔗 **[Live API Documentation](https://gir-preview.poort8.nl/scalar/#tag/girbasisdatamessage/GET/api/GIRBasisdataMessage)** – Interactive endpoint testing
+
+### 5.2 Filters (omit the NL.KVK. prefix)
+
+| **Parameter** | **Format** | **Notes** |
+| -- | -- | -- |
+| vboID | 16-digit BAG | BAG validation |
+| installationIDValue | string | Matches installationID.value |
+| registrarChamberOfCommerceNumber | 8-digit |  |
+| installationOwnerChamberOfCommerceNumber | 8-digit |  |
+
+**At least one filter is required.**
+
+### 5.3 Minimal Example
+
+```bash
+curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
+  "https://gir-preview.poort8.nl/api/GIRBasisdataMessage?vboID=0344010000126888"
 ```
 
-## Architecture
+### 5.4 Response (trimmed)
 
-GIR is built on NoodleBar's proven modular components:
+```json
+{
+  "guid": "b4d1…",
+  "installation": { /* … */ },
+  "metadata": { "status": "Active", "createdAt": "2025-07-29T13:45:46Z" }
+}
+```
 
-- **Organization Register**: Managing participant identities in the building sector
-- **Authorization Register**: Controlling access to sensitive installation data
-- **Keyper Approve**: Handling multi-party approval workflows
-- **API Gateway**: Secure data exchange following DICO standards
+---
 
-## Stakeholders
+## 6 Heads-up for changes towards Production
 
-- **Installers**: Submit building installation data via standardized APIs
-- **Installation Owners**: Approve data sharing via eHerkenning authentication  
-- **Data Consumers**: Access authorized installation data (e.g., EDSN)
-- **Approvers**: Validate installation registrations and authorize data sharing
-- **GIR System**: Manages the complete registration and authorization ecosystem
+⚠️ **Key Production Changes:**
+- **Service-provider KVK** → will switch from Techniek Nederland to Stichting Ketenstandaarden: `NL.KVK.41084554`. This impact policy registration in approval links.
+- **eHerkenning L3 required** for approvals (email disabled)
+- **Keyper API authentication** will soon require OAuth credentials issued by Poort8 (also on Preview). Integration details and onboarding instructions will be provided in upcoming updates.
+- **iSHARE tokens replace Auth0** for the GIR data API 
 
-## Data Model Highlights
+---
 
-The GIRBasisdataMessage supports comprehensive installation data including:
-- **Installation Details**: ID, name, location (VBO), geographical coordinates
-- **Classifications**: Electricity transformers, installation types per DICO standard
-- **Component Information**: Detailed component data with eTIM classification
-- **Product Information**: GTIN, manufacturer details, technical specifications
-- **Metadata**: Registration status, creation/update timestamps, issuer information
+## 7 All Guides & References
 
-For detailed process information, see the [GIR Process](GIR-process.md) documentation.
+### **Integration Guides**
 
-### 1.7 Context and Objective
+- **[Register Installations](register-installations.md)** – create / update installs
+- **[Registrar Flow](registrar-flow.md)** – request write access  
+- **[Data-Consumer Flow](data-consumer-flow.md)** – request read access
 
-The project is under the Basis Data Infrastructuur (BDI) umbrella, pending its ongoing development. The objective is to facilitate setting up dataspaces that follow certain principles, serving as an initial platform for data providers, apps, and data consumers.
+### **Technical Reference**
 
-### 1.8 Roles
-
-- **Data Providers**: Organizations that either offer a data source with raw data or an app with processed data. In all cases, access conditions are set by the data owner.
-- **App Providers**: Organizations that act as intermediaries, adding value to raw data. They act as a Data Consumer on behalf of their end users, and as a Data Provider for their end users.
-- **Data Consumers**: Organizations that use data via Service Providers or directly.
-- **Dataspace Initiators**: Organizations that setup and manage the dataspace.
-
-### 1.9 Principles
-
-- **Data Sovereignty**: Data owners (issuers) can issue access to their data, even if through federated apps.
-- **Data Localization**: Data stays at its source unless caching or staging is essential.
-- **Identity Flexibility**: Data consumers choose their identity providers.
-
-### 1.10 Customer Journeys
-
-The wiki describes the following Customer Journeys in more detail:
-
-- **Initiating Dataspace Core**
-- **Onboarding Data Sources**
-- **Onboarding Data Owners and Consumers**
-- **Data Sources Becoming Independent**
-- **Adding Providers and Apps**
-
-The first three journeys comprise the launch of a first (prototype) of a dataspace. Journeys 4 and 5 allow data sources and Service Providers to become independent contributors to the dataspace.
+- **[Ketenstandaard GIR API](https://ketenstandaard.semantic-treehouse.nl/docs/api/GIR/)** – Complete DICO schema specification
+- **[Ketenstandaarden Documentation about GIR](https://ketenstandaard.semantic-treehouse.nl/docs/TNL/GIR/)** – GIR framework background
+- **[DSGO Standards](https://www.digigo.nu/wat-is-dsgo/)** – Authorization and data governance framework
+- **[GIR Live API Docs](https://gir-preview.poort8.nl/scalar/v1)** – Interactive Scalar UI
+- **[Keyper Live API Docs](https://keyper-preview.poort8.nl/scalar)** – Interactive Scalar UI
