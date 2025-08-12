@@ -77,6 +77,22 @@ Content-Type: application/json
   }
 }
 ```
+#### **Authentication**
+
+**⚠️ Approval link Token** - required soon
+
+```bash
+curl -X POST https://poort8.eu.auth0.com/oauth/token \
+  -H "Content-Type: application/json" \
+  -d '{
+        "client_id": "<REQUESTER_CLIENT_ID>",
+        "client_secret": "<REQUESTER_CLIENT_SECRET>",
+        "audience": "Poort8-Dataspace-Keyper-Preview",
+        "grant_type": "client_credentials"
+      }'
+```
+
+*No scope required*
 
 #### Orchestration Configuration
 
