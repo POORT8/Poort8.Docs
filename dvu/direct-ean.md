@@ -113,11 +113,6 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
 
 *No scope required*
 
-#### Orchestration Configuration
-
-**Important orchestration settings:**
-- **`flow`**: `"dvu.basic@1"` activates the flow without metadata services.
-
 **Expected Behavior:**
 1. After creation, the application receives an approval link with "Active" status
 2. When the approver opens the link, they are automatically redirected to Keyper Approve for final approval
