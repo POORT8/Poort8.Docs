@@ -53,10 +53,10 @@ The request body must include an `addPolicyTransactions` array containing the po
       "notBefore": "<NOW>", // Not active in the DVU dataspace as it will always default to NOW
       "expiration": "<NOW_PLUS_10Y>", // Expiry date as required
       "issuerId": "<ENERGY_CONTRACTOR_EORI>",
-      "subjectId": "<DATASERVICE_CONSUMER>",
+      "subjectId": "<DATA_SERVICE_CONSUMER_EORI>",
       "serviceProvider": "EU.EORI.NL851872426", // Organisation ID of SDS
       "action": "Read",
-      "resourceId": "dvu:resource:groepjevaneans1",
+      "resourceId": "dvu:resource:<EAN_GROUP_NAME>",
       "type": "P4",
       "attribute": "*",
       "license": "iSHARE.0002" //Not active in the DVU dataspace as it will always default to iSHARE.0002
@@ -64,10 +64,10 @@ The request body must include an `addPolicyTransactions` array containing the po
   ],
   "addResourceGroupTransactions": [
     {
-      "resourceGroupId": "dvu:resource:groepjevaneans1",
+      "resourceGroupId": "dvu:resource:<EAN_GROUP_NAME>",
       "useCase": "dvu",
-      "name": "groepjevaneans1",
-      "description": "Alle eans van de lantarenpalen op de hoek",
+      "name": "<EAN_GROUP_NAME>",
+      "description": "<EAN_GROUP_DESCRIPTION>",
       "provider": "DVU",
       "resources": [
         {
@@ -75,146 +75,14 @@ The request body must include an `addPolicyTransactions` array containing the po
           "useCase": "dvu",
           "name": "<EAN>",
           "description": "ean: <EAN>",
-          "properties": [
-            {
-              "key": "Grootverbruik",
-              "value": "true",
-              "isIdentifier": false
-            },
-            {
-              "key": "SpecialMeteringPoint", //NOT NEEDED
-              "value": "false",
-              "isIdentifier": false
-            },
-            {
-              "key": "Product", //Elektra or Gas, not needed for SDS, only on PDF
-              "value": "Elektra",
-              "isIdentifier": false
-            },
-            {
-              "key": "GridOperatorEan", //NOT NEEDED
-              "value": "<GRID-OPERATOR-EAN>",
-              "isIdentifier": false
-            },
-            {
-              "key": "MeasuringCompanyId", //ONLY NEEDED WHEN Grootverbruik = true
-              "value": "IDMB002",
-              "isIdentifier": false
-            },
-            {
-              "key": "MeasuringCompanyName", //ONLY NEEDED WHEN Grootverbruik = true
-              "value": "Joulz",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyId",
-              "value": "<ENERGY_CONTRACTOR_EORI>",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyKvk",
-              "value": "<ENERGY_CONTRACTOR_KVK>",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyName",
-              "value": "<ENERGY_CONTRACTOR_ORGANIZATION>",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyContactFirstName", //ONLY NEEDED WHEN Grootverbruik = true
-              "value": "<ENERGY_CONTRACTOR_FIRST_NAME>",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyContactLastName", //ONLY NEEDED WHEN Grootverbruik = true
-              "value": "<ENERGY_CONTRACTOR_LAST_NAME>",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyContactEmail", //ONLY NEEDED WHEN Grootverbruik = true
-              "value": "<ENERGY_CONTRACTOR_EMAIL>",
-              "isIdentifier": false
-            },
-            {
-              "key": "DataAvailableEmail", //Optional email adrress to receive a notification that the energy data at the service provider (SDS) is present
-              "value": "<REQUESTER_EMAIL>",
-              "isIdentifier": false
-            }
-          ]
+          "properties": [...] //additional properties required. Should be supplied by CAR-connection when available
         },
         {
           "resourceId": "dvu:resource:<EAN>",
           "useCase": "dvu",
           "name": "<EAN>",
           "description": "ean: <EAN>",
-          "properties": [
-            {
-              "key": "Grootverbruik",
-              "value": "true",
-              "isIdentifier": false
-            },
-            {
-              "key": "SpecialMeteringPoint", //NOT NEEDED
-              "value": "false",
-              "isIdentifier": false
-            },
-            {
-              "key": "Product", //Elektra or Gas, not needed for SDS, only on PDF
-              "value": "Gas",
-              "isIdentifier": false
-            },
-            {
-              "key": "GridOperatorEan", //NOT NEEDED
-              "value": "<GRID-OPERATOR-EAN>",
-              "isIdentifier": false
-            },
-            {
-              "key": "MeasuringCompanyId", //ONLY NEEDED WHEN Grootverbruik = true
-              "value": "IDMB003",
-              "isIdentifier": false
-            },
-            {
-              "key": "MeasuringCompanyName", //ONLY NEEDED WHEN Grootverbruik = true
-              "value": "Fudura",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyId",
-              "value": "<ENERGY_CONTRACTOR_EORI>",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyKvk",
-              "value": "<ENERGY_CONTRACTOR_KVK>",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyName",
-              "value": "<ENERGY_CONTRACTOR_ORGANIZATION>",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyContactFirstName", //ONLY NEEDED WHEN Grootverbruik = true
-              "value": "<ENERGY_CONTRACTOR_FIRST_NAME>",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyContactLastName", //ONLY NEEDED WHEN Grootverbruik = true
-              "value": "<ENERGY_CONTRACTOR_LAST_NAME>",
-              "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyContactEmail", //ONLY NEEDED WHEN Grootverbruik = true
-              "value": "<ENERGY_CONTRACTOR_EMAIL>",
-              "isIdentifier": false
-            },
-            {
-              "key": "DataAvailableEmail", //Optional email adrress to receive a notification that the energy data at the service provider (SDS) is present
-              "value": "<REQUESTER_EMAIL>",
-              "isIdentifier": false
-            }
-          ]
+          "properties": [...] //additional properties required. Should be supplied by CAR-connection when available
         }
       ]
     }
@@ -222,7 +90,11 @@ The request body must include an `addPolicyTransactions` array containing the po
 }
 ```
 
-Note: The orchestration object is not needed for the direct EAN access flow
+Note:
+- DVU needs additional info on EANs to be able to get the data. It is not expected that useers will supply these properties. Therefore, the availability of this flow is contingent on the implementation of info from CAR (Centraal Aansluitingen Register).
+- DVU requires EANs to be grouped. For this direct EAN flow, choose a user friendly group name as it will be shown to the approver.
+- When requesting access to a single EAN, use a resourceGroup with the single EAN as resource.
+- The orchestration object is not needed for the direct EAN access flow.
 
 #### **Authentication**
 

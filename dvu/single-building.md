@@ -73,7 +73,7 @@ Content-Type: application/json
     "flow": "dvu.voeg-gebouw-toe@1",
     "payload": {
       "address": "<COMPLETE_ADDRESS>",
-      "policySubject": "EU.EORI.NL807234916" //Bespaargarant EORI
+      "dataServiceConsumer": "<DATA_SERVICE_CONSUMER_EORI>" //For example Bespaargarant EU.EORI.NL807234916
     }
   }
 }

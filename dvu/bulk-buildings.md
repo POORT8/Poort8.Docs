@@ -73,7 +73,7 @@ Content-Type: application/json
     "flow": "dvu.voeg-gebouwen-toe@1",
     "payload": {
       "addresses": ["3013 AK 45", "3161 GD 7a", "3161 GD 7b"],
-      "policySubject": "<DATASERVICE_CONSUMER>" //EED EORI
+      "dataServiceConsumer": "<DATA_SERVICE_CONSUMER_EORI>" //For example RVO EU.EORI.NL822555025 for eLoket
     }
   }
 }
