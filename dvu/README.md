@@ -10,6 +10,7 @@ This section documents the DVU implementation patterns using Keyper Approve for 
 
 - [Single Building Access](single-building.md) - Request energy data access for individual buildings
 - [Bulk Building Access](bulk-buildings.md) - Request energy data access for multiple buildings simultaneously
+- [Direct EAN Access](direct-ean.md) - Request energy data access for one or more EAN(s) instead of buildings
 
 ## Process Flow
 
