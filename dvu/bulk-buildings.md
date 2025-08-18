@@ -67,7 +67,7 @@ Content-Type: application/json
   },
   "description": "DVU bulk building access request",
   "reference": "<YOUR_REFERENCE>",
-  "expiresInSeconds": "<VALIDITY_PERIOD>",
+  "expiresInSeconds": <VALIDITY_PERIOD>,
   "redirectUrl": "<COMPLETION_REDIRECT_URL>",
   "orchestration": {
     "flow": "dvu.voeg-gebouwen-toe@1",

@@ -44,7 +44,7 @@ The request body must include an `addPolicyTransactions` array containing the po
   },
   "description": "Request for access to EAN via DVU",
   "reference": "<YOUR_REFERENCE>",
-  "expiresInSeconds": "<VALIDITY_PERIOD>",
+  "expiresInSeconds": <VALIDITY_PERIOD>,
   "redirectUrl": "<COMPLETION_REDIRECT_URL>",
   "addPolicyTransactions": [
     {
