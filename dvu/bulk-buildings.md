@@ -72,7 +72,8 @@ Content-Type: application/json
   "orchestration": {
     "flow": "dvu.voeg-gebouwen-toe@1",
     "payload": {
-      "addresses": ["3013 AK 45", "3161 GD 7a", "3161 GD 7b"]
+      "addresses": ["3013 AK 45", "3161 GD 7a", "3161 GD 7b"],
+      "policySubject": "<DATASERVICE_CONSUMER>" //EED EORI
     }
   }
 }

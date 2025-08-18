@@ -72,7 +72,8 @@ Content-Type: application/json
   "orchestration": {
     "flow": "dvu.voeg-gebouw-toe@1",
     "payload": {
-      "address": "<COMPLETE_ADDRESS>"
+      "address": "<COMPLETE_ADDRESS>",
+      "policySubject": "EU.EORI.NL807234916" //Bespaargarant EORI
     }
   }
 }
