@@ -72,11 +72,28 @@ Content-Type: application/json
   "orchestration": {
     "flow": "dvu.voeg-gebouwen-toe@1",
     "payload": {
-      "addresses": ["3013 AK 45", "3161 GD 7a", "3161 GD 7b"]
+      "addresses": ["3013 AK 45", "3161 GD 7a", "3161 GD 7b"],
+      "dataServiceConsumer": "<DATA_SERVICE_CONSUMER_EORI>" //For example RVO EU.EORI.NL822555025 for eLoket
     }
   }
 }
 ```
+#### **Authentication**
+
+**⚠️ Approval link Token** - required soon
+
+```bash
+curl -X POST https://poort8.eu.auth0.com/oauth/token \
+  -H "Content-Type: application/json" \
+  -d '{
+        "client_id": "<REQUESTER_CLIENT_ID>",
+        "client_secret": "<REQUESTER_CLIENT_SECRET>",
+        "audience": "Poort8-Dataspace-Keyper-Preview",
+        "grant_type": "client_credentials"
+      }'
+```
+
+*No scope required*
 
 #### Orchestration Configuration
 

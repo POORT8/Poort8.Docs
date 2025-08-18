@@ -72,11 +72,29 @@ Content-Type: application/json
   "orchestration": {
     "flow": "dvu.voeg-gebouw-toe@1",
     "payload": {
-      "address": "<COMPLETE_ADDRESS>"
+      "address": "<COMPLETE_ADDRESS>",
+      "dataServiceConsumer": "<DATA_SERVICE_CONSUMER_EORI>" //For example Bespaargarant EU.EORI.NL807234916
     }
   }
 }
 ```
+
+#### **Authentication**
+
+**⚠️ Approval link Token** - required soon
+
+```bash
+curl -X POST https://poort8.eu.auth0.com/oauth/token \
+  -H "Content-Type: application/json" \
+  -d '{
+        "client_id": "<REQUESTER_CLIENT_ID>",
+        "client_secret": "<REQUESTER_CLIENT_SECRET>",
+        "audience": "Poort8-Dataspace-Keyper-Preview",
+        "grant_type": "client_credentials"
+      }'
+```
+
+*No scope required*
 
 ### Step 3: User Flow
 
