@@ -109,7 +109,6 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
 
 - **`flow`**: `"dvu.voeg-gebouw-toe@1"` activates the single building metadata flow
 - **`payload.address`**: Complete building address (e.g., "Stationsplein 45 3013 AK Rotterdam")
-- **`redirectUrl`**: URL where user is directed after completing the approval
 
 ### Additional Parameters
 
