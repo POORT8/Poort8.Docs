@@ -86,7 +86,10 @@ The request body must include an `addPolicyTransactions` array containing the po
         }
       ]
     }
-  ]
+  ],
+  "orchestration": {
+    "flow": "dvu.basic@1"
+  }
 }
 ```
 
@@ -94,7 +97,6 @@ Note:
 - DVU needs additional info on EANs to be able to get the data. It is not expected that useers will supply these properties. Therefore, the availability of this flow is contingent on the implementation of info from CAR (Centraal Aansluitingen Register).
 - DVU requires EANs to be grouped. For this direct EAN flow, choose a user friendly group name as it will be shown to the approver.
 - When requesting access to a single EAN, use a resourceGroup with the single EAN as resource.
-- The orchestration object is not needed for the direct EAN access flow.
 
 #### **Authentication**
 
@@ -112,6 +114,11 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
 ```
 
 *No scope required*
+
+#### Orchestration Configuration
+
+**Important orchestration settings:**
+- **`flow`**: `"dvu.basic@1"` activates the CAR metadata flow
 
 **Expected Behavior:**
 1. After creation, the application receives an approval link with "Active" status
