@@ -127,3 +127,35 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
 ## Data Retrieval After Approval
 
 After the request is approved via Keyper Approve, developers can retrieve the energy data by querying the SDS APIs, following Step 5 and further from the [Bulk Building Access](bulk-buildings.md) guide.
+
+## Sequence Diagram (Direct EAN Flow)
+
+```mermaid
+sequenceDiagram
+  participant DG as dataservice-gebruiker
+  participant KA as Keyper Approve
+  participant AR as Autorisatieregister
+  participant SDS as Smart Data Solutions
+
+  rect rgb(221, 242, 255)
+    note right of DG: Aanvraag met directe policy transacties
+    DG->>+KA: POST /approval-links (addPolicyTransactions[])
+    KA->>KA: valideren + registreren
+    KA->>-DG: approval link (Active)
+  end
+
+  rect rgb(221, 242, 255)
+    note right of DG: Goedkeuring
+    DG->>+KA: openen link (approver)
+    KA->>KA: tonen policy details
+    KA->>-DG: bevestiging gereed
+  end
+
+  rect rgb(221, 242, 255)
+    note right of DG: Data ophalen
+    DG->>+AR: optionele metadata lookup (indien nodig)
+    AR-->>-DG: identifiers
+    DG->>+SDS: ophalen meterdata (P4 / jaar / volledig)
+    SDS-->>-DG: data payload
+  end
+```

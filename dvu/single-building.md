@@ -137,6 +137,48 @@ Use the test environment only for functional testing.
 
 The **orchestration** object is still under development. Breaking changes are expected in this area.
 
+## Sequence Diagram (Single Building Flow)
+
+```mermaid
+sequenceDiagram
+  participant GE as Gebouwbeheerder<br/>en energiecontractant
+  participant DG as dataservice-gebruiker
+  participant KA as Keyper Approve
+  participant MetadataApp as DVU App
+  participant DVUSat as DVU Satelliet
+  participant AR as Autorisatieregister
+  participant Eherkenning as eHerkenning
+
+  rect rgb(221, 242, 255)
+    note right of GE: Gebouw toevoegen via DG
+    GE->>+DG: start sessie
+    DG->>+KA: aanmaken transactielink (single)
+    KA->>KA: valideren input
+    KA->>-DG: status: Active + redirect URL
+    DG->>-GE: redirect naar Keyper Approve
+  end
+
+  rect rgb(221, 242, 255)
+    note right of GE: Gebouwgegevens aanvullen
+    GE->>+KA: openen redirect URL
+    KA->>-GE: redirect naar MetadataApp (gebouw toevoegen)
+    GE->>+MetadataApp: invullen gegevens
+    MetadataApp->>-GE: terug naar Keyper Approve
+  end
+
+  rect rgb(221, 242, 255)
+    note right of GE: Transactie bevestigen
+    GE->>+KA: controleer transactie
+    GE->>+Eherkenning: inloggen niveau 3
+    Eherkenning->>-KA: identity token
+    KA->>+DVUSat: registreer inschrijving
+    DVUSat-->>-KA: bevestiging
+    KA->>+AR: registreer metadata & toestemming
+    AR-->>-KA: bevestiging
+    KA->>GE: redirect naar DG
+  end
+```
+
 ## Next Steps
 
 - Implement error handling for API responses

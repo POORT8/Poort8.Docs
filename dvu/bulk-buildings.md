@@ -112,6 +112,66 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
 
 After approval via Keyper Approve, developers can retrieve VBO identifiers and associated EAN codes via the DVU API.
 
+## Sequence Diagram (Bulk Building Flow)
+
+```mermaid
+sequenceDiagram
+  participant GE as Gebouwbeheerder<br/>en energiecontractant
+  participant DG as dataservice-gebruiker
+  participant KA as Keyper Approve
+  participant MetadataApp as DVU App
+  participant DVUSat as DVU Satelliet
+  participant AR as Autorisatieregister
+  participant Eherkenning as eHerkenning
+  participant DA as dataservice-aanbieder
+  participant RNB as RNB
+
+  rect rgb(221, 242, 255)
+    note right of GE: Gebouwen toevoegen via DG
+    GE->>+DG: start sessie
+    GE->>DG: invoeren gebouwen (adres/vboId)
+    DG->>DG: verzamelen gebouwdata
+    DG->>+KA: aanmaken transactielink
+    KA->>KA: valideren input
+    KA->>-DG: status: Active + redirect URL
+    DG->>-GE: redirect naar Keyper Approve
+  end
+
+  rect rgb(221, 242, 255)
+    note right of GE: Bulk-gebouwgegevens aanvullen
+    GE->>+KA: openen redirect URL
+    KA->>-GE: redirect naar MetadataApp (gebouw toevoegen in bulk)
+    GE->>+MetadataApp: invullen aanvullende gegevens
+    GE->>MetadataApp: doorlopen flow
+    MetadataApp->>-GE: terug naar Keyper Approve
+  end
+
+  rect rgb(221, 242, 255)
+    note right of GE: Transacties bevestigen
+    GE->>+KA: controleer transacties
+    note over KA: (optioneel) registratie<br/>overheidsorganisatie<br/>als DVU-deelnemer
+    note over KA: toestemming ophalen<br/>energiedata voor DG:<br/>per gebouw geregistreerd<br/>(later: bulktoestemming)
+    KA->>GE: overzicht transacties
+    GE->>+Eherkenning: inloggen eHerkenning niveau 3
+    Eherkenning->>-KA: identity token
+    KA->>+DVUSat: registreer inschrijving
+    DVUSat-->>-KA: bevestiging
+    KA->>+AR: registreer metadata & toestemmingen
+    AR-->>KA: bevestiging
+    KA-->>RNB: afgeven/hergebruiken toestemmingen onder GUE
+    AR-->>-KA:
+    KA->>GE: redirect naar DG
+    KA->>-DG: notificatie: autorisaties verwerkt
+  end
+
+  rect rgb(221, 242, 255)
+    note right of DG: Data ophalen via DVU koppelingen
+    DG->>+AR: ophalen vboIds + EANs (digikoppeling)
+    AR-->>-DG: identifiers
+    DG->>DA: ophalen energiedata
+  end
+```
+
 ### Step 3: Authentication - Obtaining iSHARE Access Token
 
 All DVU API calls require a valid iSHARE access token. This is obtained in two steps:
