@@ -70,7 +70,7 @@ Content-Type: application/json
   "expiresInSeconds": <VALIDITY_PERIOD>,
   "redirectUrl": "<COMPLETION_REDIRECT_URL>",
   "orchestration": {
-    "flow": "dvu.voeg-gebouw-toe@1",
+    "flow": "dvu.voeg-gebouw-toe@v1",
     "payload": {
       "address": "<COMPLETE_ADDRESS>",
       "dataServiceConsumer": "<DATA_SERVICE_CONSUMER_EORI>" //For example Bespaargarant EU.EORI.NL807234916
@@ -107,7 +107,7 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
 
 ### Orchestration Object
 
-- **`flow`**: `"dvu.voeg-gebouw-toe@1"` activates the single building metadata flow
+- **`flow`**: `"dvu.voeg-gebouw-toe@v1"` activates the single building metadata flow
 - **`payload.address`**: Complete building address (e.g., "Stationsplein 45 3013 AK Rotterdam")
 
 ### Additional Parameters

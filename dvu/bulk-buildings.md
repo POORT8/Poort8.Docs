@@ -70,7 +70,7 @@ Content-Type: application/json
   "expiresInSeconds": <VALIDITY_PERIOD>,
   "redirectUrl": "<COMPLETION_REDIRECT_URL>",
   "orchestration": {
-    "flow": "dvu.voeg-gebouwen-toe@1",
+    "flow": "dvu.voeg-gebouwen-toe@v1",
     "payload": {
       "addresses": ["3013 AK 45", "3161 GD 7a", "3161 GD 7b"],
       "dataServiceConsumer": "<DATA_SERVICE_CONSUMER_EORI>" //For example RVO EU.EORI.NL822555025 for eLoket
@@ -98,7 +98,7 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
 #### Orchestration Configuration
 
 **Important orchestration settings:**
-- **`flow`**: `"dvu.voeg-gebouwen-toe@1"` activates the bulk building metadata flow
+- **`flow`**: `"dvu.voeg-gebouwen-toe@v1"` activates the bulk building metadata flow
 - **`payload.addresses`**: Array of addresses in "postal code house number" format
 - **Automatic redirect**: Keyper detects the flow and automatically directs users to DVU metadata app
 
