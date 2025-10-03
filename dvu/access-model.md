@@ -1,14 +1,11 @@
 # DVU Access Model
-
 Deze pagina beschrijft hoe toegang logisch wordt toegekend zonder in onderliggende implementatie-details te duiken.
-
-
 
 ## Roltypen (functioneel)
 | Rol | Doel | Interactie |
 |-----|------|------------|
 | Rechthebbende | Beheert rechten | Start zelf of keurt extern verzoek goed |
-| Dataservice-consumer | Vraagt toegang aan | Initieert Variant 2 |
+| Dataservice-consumer | Vraagt toegang aan | Initieert Variant 2 (externe aanvraag) |
 | DVU Platform | Orkestreert | Segmentatie + entitlement |
 | SDS | Levert data | Afhankelijk van productrechten |
 

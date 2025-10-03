@@ -1,6 +1,6 @@
 # DVU – Overzicht & Kernconcepten
 
-DVU (Datastelsel Verduurzaming Utiliteit) biedt gecontroleerde, transparante en herleidbare toegang tot energie-data van gebouwen. Deze pagina geeft je een snel, functioneel begrip voordat je de implementatie handleidingen volgt.
+Via DVU (Datastelsel Verduurzaming Utiliteit) kunnen gebouweigenaren toegang tot energiedata van hun gebouwen beheren op een gecontroleerde, transparante en herleidbare manier. Deze pagina geeft je een snel, functioneel begrip voordat je de implementatie handleidingen volgt.
 
 ## Wat lost DVU op?
 Organisaties hebben vaak versnipperde, traag verkrijgbare of juridisch onduidelijke toegang tot energiedata voor verduurzamingsdoeleinden. DVU standaardiseert:
@@ -9,34 +9,26 @@ Organisaties hebben vaak versnipperde, traag verkrijgbare of juridisch onduideli
 - Uniforme data voor verschillende marktsegmenten (kleinverbruik vs grootverbruik)
 - Data-aflevering via Smart Data Solutions (SDS)
 
-## Hoe start een toegangstraject?
-Er zijn twee startpunten (varianten) die leiden naar één geconvergeerd proces. Dit voorkomt dubbele logica en maakt governance uniform. Zie het [toestemmingsmodel](access-model.md) voor een diepgaande uitleg van beide varianten.
+## Hoe start een toegangsaanvraag?
+Er zijn twee manieren (varianten) om een toegangsaanvraag te starten, beiden leiden vroegtijdig naar één standaard proces. Dit voorkomt dubbele logica, en hierdoor blijft het beheer overzichtelijk. Zie het [toestemmingsmodel](access-model.md) voor een diepgaande uitleg van beide varianten.
 
-| Route | Initiator | Wanneer gebruiken |
-|-------|-----------|-------------------|
-| Variant 1 (Self-service) | Rechthebbende (contractant / eigenaar) | Interne verduurzaming / eigen dashboards |
-| Variant 2 (Externe aanvraag) | Dataservice-consumer (derde applicatie) | Externe tooling / adviesdienst |
-
-### Waarom twee varianten?
-Variant 1 (self-service): directe controle door rechthebbende  
-Variant 2 (externe aanvraag): maakt integratie door derde applicaties mogelijk zonder voorafgaande directe relatie  
-Beide varianten komen vroeg samen zodat downstream logica niet dubbel hoeft te bestaan.
+| Route | Initiator | Toelichting | Wanneer gebruiken |
+|-------|-----------|-------------|-------------------|
+| Variant 1 (Self-service) | Rechthebbende (contractant / eigenaar) | De gebruiker is de rechthebbende van de data en kan de aanvraag direct controleren | Interne verduurzaming / eigen dashboards |
+| Variant 2 (Externe aanvraag) | Dataservice consumer (derde applicatie) | Een derde applicatie wil toegang tot de data van de rechthebbende en start te aanvraag | Externe tooling / adviesdienst |
 
 ## Procesoverzicht
+Deze pagina biedt een beknopt overzicht van het proces van een toegangsaanvraag. Het volledige proces, inclusief segmentatie en automatisering, wordt functioneel uitgewerkt in het [toestemmingsmodel](access-model.md). Voor business context en achtergrondinformatie over beide varianten, raadpleeg [Access Energy Data](access-energydata.md) – deze pagina is vooral relevant voor dataservice consumers, maar bevat ook algemene procesinformatie.
 
-Het volledige proces, inclusief segmentatie en automatisering, wordt functioneel uitgewerkt in het [toestemmingsmodel](access-model.md). Voor business context en achtergrondinformatie over beide varianten, raadpleeg [Access Energy Data](access-energydata.md) – deze pagina is vooral relevant voor dataserviceconsumers, maar bevat ook algemene procesinformatie.
-
-Let op: de technische [implementatiegidsen](single-building.md), [bulk-buildings.md], en [direct-ean.md] zijn uitsluitend van toepassing op **variant 2** (externe aanvraag via dataserviceconsumer). Voor **variant 1** (self-service door rechthebbende) is er géén aparte technische implementatiegids; dit proces verloopt via de DVU-applicatie zelf.
-
-Deze pagina biedt een beknopt overzicht; gedetailleerde sequence diagrammen vind je per relevante implementatiegids.
+Hieronder wordt de basis van het proces weergeven in een flowchart, in de technische implementatiegidsen ([Single Building Access](single-building.md), [Bulk Building Access](bulk-buildings.md), en [Direct EAN Access](direct-ean.md)) zijn gedetailleerde sequence diagrammen te vinden. Let op: deze implementatiegidsen zijn uitsluitend van toepassing op **variant 2** (externe aanvraag via dataservice consumer). Voor **variant 1** (self-service door rechthebbende) is er géén aparte technische implementatiegids, omdat dit proces via de DVU-applicatie zelf verloopt.
 
 ```mermaid
 flowchart LR
     Start([Start Toegang]) --> R1[Variant 1]
     Start --> R2[Variant 2]
     R2 --> Approve[Toestemmingsaanvraag]
-    Approve -->|Nee| Stop[Gestopt]
-    Approve -->|Ja| Seg[Segmentatie]
+    Approve -->|Afgewezen| Stop[Gestopt]
+    Approve -->|Goedgekeurd| Seg[Segmentatie]
     R1 --> Seg
     Seg --> KG[Kleinverbruik]
     Seg --> GG[Grootverbruik]
@@ -45,7 +37,7 @@ flowchart LR
     Prod --> Done([Gebruik])
 ```
 
-## Beschikbare Dataproducten (Functioneel)
+## Beschikbare dataproducten
 **Operationeel:**
 
 - Meterdata volgens P4 format (alleen jaarverbruik of alle data)
@@ -56,17 +48,18 @@ flowchart LR
 - 24 maanden dagstanden
 - Standaard jaarverbruik (uitbreiding op P4 context)
 
-Uitbreiding wordt gefaseerd geactiveerd na governance + technische integratie.
+Uitbreiding wordt gefaseerd geactiveerd na governance en technische integratie.
 
-## Wat heb je nodig als integrator?
-- Keyper approval integratie (transactielink + redirect flow)
-- Bekend zijn met entitlements / policies
+## Wat heb je nodig voor integratie?
+Als je DVU wilt integreren binnen je eigen applicatie, dan is het volgende nodig:
+- Keyper Approve integratie (transactielink + redirect flow)
+- Bekendheid met policies
 - Endpoint toegang tot SDS levering (afhankelijk van product)
 
 ## Volgende stappen
-Ga naar de implementatie handleidingen wanneer je de basis begrijpt:
+Als de basis duidelijk is kunnen de implementatiegidsen worden geraadpleegd:
 
-- [Single Building Access](single-building.md) - Request energy data access for individual buildings
-- [Bulk Building Access](bulk-buildings.md) - Request energy data access for multiple buildings simultaneously
-- [Direct EAN Access](direct-ean.md) - Direct entitlement via EAN referenties
+- [Single Building Access](single-building.md) - Toegangsaanvraag voor energiedata van een enkel gebouw
+- [Bulk Building Access](bulk-buildings.md) - Toegangsaanvraag voor energiedata van meerdere gebouwen
+- [Direct EAN Access](direct-ean.md) - Toegangsaanvraag voor energiedata van gebouwen via EAN referenties
 

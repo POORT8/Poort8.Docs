@@ -1,124 +1,128 @@
 # DVU Implementation: Bulk Building Access
-
-This guide explains how to implement the Keyper Approve workflow for requesting energy data access for multiple buildings simultaneously through DVU.
+This guide explains how to implement the Keyper Approve workflow for requesting access to energy data for multiple buildings simultaneously through DVU in your own application.
 
 ## Overview
+If you want your application to have access to energy data for multiple buildings through DVU, you need approval from the energy contractor. This request for approval will be facilitated by Keyper.
 
-Users of DVU applications need to request permission from energy contractors to access energy data for multiple buildings. This process uses an extended form for collecting multiple building addresses and follows a specialized bulk approval workflow.
+This is how that works, step by step:
+1. **Your application** prepares the data that is required in order to create an approval link. This is data about: 
+   - The requesting party (you/your application)
+   - The approving party (the energy contractor)
+   - Each building for which you want to access energy data
+2. **Your application** sends the approval request to the Keyper API, containing the data from the previous step.
+3. **Keyper** uses the data your application provided to create an approval link. This link will then get sent to the approving party - the energy contractor.
+4. **The energy contractor** opens the approval link, and gets redirected to the DVU metadata app. There, they will retrieve the data for the buildings you provided. After this, they will automatically be sent to Keyper Approve.
+5. In the Keyper Approve webapp, **the energy contractor** reviews your approval request.
+6. If your request is approved, **Keyper** registers a policy per building in DVU. Each policy lets DVU know that you have access to the energy data of the respective building. 
+7. **You** can now access the energy data of the respective buildings.
+   - You can now also retrieve each buildings VBO identifier and associated EAN codes via the DVU API. More on this can be found in the [documentation on how to retrieve VBO and EAN data](vbo-ean-data-retrieval.md).
 
 ## Implementation Steps
+In order to implement the Keyper Approve workflow within your application, follow the steps below.
 
-### Step 1: Bulk Building Form
+### Step 1: Prepare the required data
+Your application needs to prepare the data required for the approval request. How you gather this data (e.g., through a form, API call, configuration file, or database query) is up to your implementation.
 
-For bulk building access, create an extended form with the following fields:
-
-#### Requester Information (Form User)
-
+#### Requester information
+- Name
 - Email address
 - Organization name
 - Organization ID (EORI format, example: EU.EORI.NL123456789)
 
-#### Energy Contractor Information (Approver)
-
+#### Energy contractor information
 - Email address
 - Organization name
 - Organization ID (EORI format, example: EU.EORI.NL123456789)
 
-#### Building List (Bulk Input)
+#### Building list
+- List of address, per address:
+  - Postal code + house number (e.g., "3013 AK 45")
 
-- **Address List**: Multiple addresses can be added
-  - Per address: Postal code + House number (e.g., "3013 AK 45")
+#### Your application's identifiers
+- Application reference - A unique identifier from your system for tracking this specific approval request. This could be:
+  - An internal transaction ID
+  - A case number
+  - A database record ID
+  - Any string that helps you correlate this approval request with your business process
+- Your organization ID (EORI format, example: EU.EORI.NL860730499)
 
-**Validation Requirements:**
-- Email, EORI number, and at least one valid address
-- Client-side validation strongly recommended for user experience
+**Validation requirements**
+- All fields are required and cannot be empty.
+- At least one valid address is required.
+- All email addresses and EORI numbers must be properly formatted.
 
-### Step 2: Keyper API Integration
-
-When the form is submitted, send a POST request to the Keyper Approve API:
-
-**Endpoint:** [https://keyper-preview.poort8.nl/api/approval-links](https://keyper-preview.poort8.nl/scalar/#tag/approval-links/POST/api/approval-links)
-
+### Step 2: Keyper API authentication
+Every call your application sends to the Keyper API needs to be authenticated using a token. A token can be retrieved through the following request:
 ```http
-POST https://keyper-preview.poort8.nl/api/approval-links
+POST https://poort8.eu.auth0.com/oauth/token
 Content-Type: application/json
 ```
 
-#### JSON Request Body Example for Bulk Buildings
-
+With the following JSON body:
 ```json
 {
-  "authenticationMethods": ["eherkenning"],
+  "client_id": "<REQUESTER_CLIENT_ID>",
+  "client_secret": "<REQUESTER_CLIENT_SECRET>",
+  "audience": "Poort8-Dataspace-Keyper-Preview",
+  "grant_type": "client_credentials"
+}
+```
+
+### Step 3: Keyper API Integration
+When the required data is ready, and an access token for the Keyper API has been fetched, send a request to the Keyper API to create an approval link.
+
+The following request needs to be made, using the access token from the previous step:
+```http
+POST https://keyper-preview.poort8.nl/v1/api/approval-links
+Accept: application/json
+Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: application/json
+```
+
+The provided JSON body should look like this, the placeholders are to be replaced with the data from step 1.
+```json
+{
   "requester": {
+    "name": "<REQUESTER_NAME>",
     "email": "<REQUESTER_EMAIL>",
-    "organization": "<REQUESTER_ORGANIZATION>",
-    "organizationId": "<REQUESTER_EORI>"
+    "organization": "<REQUESTER_ORGANIZATION_NAME>",
+    "organizationId": "<REQUESTER_ORGANIZATION_ID>"
   },
   "approver": {
     "email": "<ENERGY_CONTRACTOR_EMAIL>",
-    "organization": "<ENERGY_CONTRACTOR_ORGANIZATION>",
-    "organizationId": "<ENERGY_CONTRACTOR_EORI>"
+    "organization": "<ENERGY_CONTRACTOR_ORGANIZATION_NAME>",
+    "organizationId": "<ENERGY_CONTRACTOR_ORGANIZATION_ID>"
   },
   "dataspace": {
-    "name": "dvu",
-    "policyUrl": "https://dvu-test.azurewebsites.net/api/policies/",
-    "organizationUrl": "https://dvu-test.azurewebsites.net/api/organization-registry/__ORGANIZATIONID__",
-    "resourceGroupUrl": "https://dvu-test.azurewebsites.net/api/resourcegroups/"
+    "baseUrl": "https://dvu-test.azurewebsites.net"
   },
   "description": "DVU bulk building access request",
-  "reference": "<YOUR_REFERENCE>",
-  "expiresInSeconds": <VALIDITY_PERIOD>,
-  "redirectUrl": "<COMPLETION_REDIRECT_URL>",
+  "reference": "<YOUR_APPLICATION_REFERENCE>",
   "orchestration": {
     "flow": "dvu.voeg-gebouwen-toe@v1",
     "payload": {
-      "addresses": ["3013 AK 45", "3161 GD 7a", "3161 GD 7b"],
-      "dataServiceConsumer": "<DATA_SERVICE_CONSUMER_EORI>" //For example RVO EU.EORI.NL822555025 for eLoket
+      "addresses": ["<BUILDING_1_ADDRESS>", "<BUILDING_2_ADDRESS>"], // See "Building address formatting" for the formatting of an address
+      "dataServiceConsumer": "<YOUR_ORGANIZATION_ID>"
     }
   }
 }
 ```
-#### **Authentication**
 
-**⚠️ Approval link Token** - required soon
+**Building address formatting**
+Format the address of each building as `"<postal code> <house number>"` (example: `"3013 AK 45"`).
 
-```bash
-curl -X POST https://poort8.eu.auth0.com/oauth/token \
-  -H "Content-Type: application/json" \
-  -d '{
-        "client_id": "<REQUESTER_CLIENT_ID>",
-        "client_secret": "<REQUESTER_CLIENT_SECRET>",
-        "audience": "Poort8-Dataspace-Keyper-Preview",
-        "grant_type": "client_credentials"
-      }'
-```
+#### Test environment
+As Keyper is still in development, it is only available in a test environment. This environment does **not perform complete verifications** such as organization data validation.
 
-*No scope required*
+Use the test environment only for functional testing.
 
-#### Orchestration Configuration
-
-**Important orchestration settings:**
-- **`flow`**: `"dvu.voeg-gebouwen-toe@v1"` activates the bulk building metadata flow
-- **`payload.addresses`**: Array of addresses in "postal code house number" format
-- **Automatic redirect**: Keyper detects the flow and automatically directs users to DVU metadata app
-
-**Expected Behavior:**
-1. After creation, the application receives an approval link with "Active" status
-2. When the approver opens the link, they are automatically redirected to DVU metadata app
-3. In the DVU app, the approver can add bulk buildings with additional data
-4. After completion, the user returns to Keyper Approve for final approval
-
-## Data Retrieval After Approval
-
-After approval via Keyper Approve, developers can retrieve VBO identifiers and associated EAN codes via the DVU API.
-
-## Sequence Diagram (Bulk Building Flow)
+## Sequence diagram
 
 ```mermaid
 sequenceDiagram
   participant GE as Gebouwbeheerder<br/>en energiecontractant
   participant DG as dataservice-gebruiker
-  participant KA as Keyper Approve
+  participant KP as Keyper
   participant MetadataApp as DVU App
   participant DVUSat as DVU Satelliet
   participant AR as Autorisatieregister
@@ -131,37 +135,37 @@ sequenceDiagram
     GE->>+DG: start sessie
     GE->>DG: invoeren gebouwen (adres/vboId)
     DG->>DG: verzamelen gebouwdata
-    DG->>+KA: aanmaken transactielink
-    KA->>KA: valideren input
-    KA->>-DG: status: Active + redirect URL
+    DG->>+KP: aanmaken Keyper Approve link
+    KP->>KP: valideren input
+    KP->>-DG: status: Active + redirect URL
     DG->>-GE: redirect naar Keyper Approve
   end
 
   rect rgb(221, 242, 255)
     note right of GE: Bulk-gebouwgegevens aanvullen
-    GE->>+KA: openen redirect URL
-    KA->>-GE: redirect naar MetadataApp (gebouw toevoegen in bulk)
+    GE->>+KP: openen redirect URL
+    KP->>-GE: redirect naar MetadataApp (gebouw toevoegen in bulk)
     GE->>+MetadataApp: invullen aanvullende gegevens
     GE->>MetadataApp: doorlopen flow
-    MetadataApp->>-GE: terug naar Keyper Approve
+    MetadataApp->>-GE: redirect naar Keyper Approve
   end
 
   rect rgb(221, 242, 255)
     note right of GE: Transacties bevestigen
-    GE->>+KA: controleer transacties
-    note over KA: (optioneel) registratie<br/>overheidsorganisatie<br/>als DVU-deelnemer
-    note over KA: toestemming ophalen<br/>energiedata voor DG:<br/>per gebouw geregistreerd<br/>(later: bulktoestemming)
-    KA->>GE: overzicht transacties
+    GE->>+KP: controleer transacties
+    note over KP: (optioneel) registratie<br/>overheidsorganisatie<br/>als DVU-deelnemer
+    note over KP: toestemming ophalen<br/>energiedata voor DG:<br/>per gebouw geregistreerd<br/>(later: bulktoestemming)
+    KP->>GE: overzicht transacties
     GE->>+Eherkenning: inloggen eHerkenning niveau 3
-    Eherkenning->>-KA: identity token
-    KA->>+DVUSat: registreer inschrijving
-    DVUSat-->>-KA: bevestiging
-    KA->>+AR: registreer metadata & toestemmingen
-    AR-->>KA: bevestiging
-    KA-->>RNB: afgeven/hergebruiken toestemmingen onder GUE
-    AR-->>-KA:
-    KA->>GE: redirect naar DG
-    KA->>-DG: notificatie: autorisaties verwerkt
+    Eherkenning->>-KP: identity token
+    KP->>+DVUSat: registreer inschrijving
+    DVUSat-->>-KP: bevestiging
+    KP->>+AR: registreer metadata & toestemmingen
+    AR-->>KP: bevestiging
+    KP-->>RNB: afgeven/hergebruiken toestemmingen onder GUE
+    AR-->>-KP:
+    KP->>GE: redirect naar DG
+    KP->>-DG: notificatie: autorisaties verwerkt
   end
 
   rect rgb(221, 242, 255)
@@ -172,159 +176,12 @@ sequenceDiagram
   end
 ```
 
-### Step 3: Authentication - Obtaining iSHARE Access Token
-
-All DVU API calls require a valid iSHARE access token. This is obtained in two steps:
-
-#### Generate Client Assertion JWT
-
-For iSHARE authentication, you need a client assertion JWT containing your organization data, signed with your private key and including an x5c header with your certificate chain.
-
-**Required JWT Header:**
-```json
-{
-  "alg": "RS256",
-  "typ": "JWT", 
-  "x5c": ["MIIEfzCCAmegAwIBAgII..."]  // Your certificate chain (base64)
-}
-```
-
-**Required JWT Claims:**
-```json
-{
-  "iss": "EU.EORI.NL123456789",           // Your EORI number (Party Identifier)
-  "sub": "EU.EORI.NL123456789",           // Same as iss  
-  "aud": "EU.EORI.NL822555025",           // DVU EORI
-  "iat": 1750665132,                      // Unix timestamp (now)
-  "exp": 1750665162,                      // Unix timestamp (30 seconds later)
-  "jti": "378a47c4-2822-4ca5-a49a-7e5a1cc7ea59"  // Unique UUID for this JWT
-}
-```
-
-**Implementation Tools:**
-- **For .NET developers**: Use the [Poort8.iSHARE.Core NuGet package](https://github.com/POORT8/Poort8.Ishare.Core/blob/master/README.md) for easy JWT generation
-- **For Python developers**: See [iSHARE Python code snippets](https://github.com/iSHAREScheme/code-snippets/blob/master/Python/access_token.py) for complete implementation
-- **For other platforms**: Follow the [iSHARE Client Assertion specification](https://dev.ishare.eu/reference/ishare-jwt/client-assertion) for JWT creation
-
-#### Obtain Access Token
-
-```http
-POST https://dvu-test.azurewebsites.net/iSHARE/connect/token
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=client_credentials&scope=iSHARE&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_id=EU.EORI.NL123456789&client_assertion=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
-```
-
-**Response:**
-```json
-{
-  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGci...",
-  "token_type": "Bearer",
-  "expires_in": 3600
-}
-```
-
-### Step 4: Retrieving VBO and EAN Data
-
-With your access token, you can now retrieve VBO and EAN data via the Resource Groups API:
-
-```http
-GET https://dvu-test.azurewebsites.net/api/resourcegroups?issuer=EU.EORI.NL123456789
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci...
-```
-
-#### Query Parameters
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `issuer` | string | Yes | Your EORI number (same as in client assertion) |
-| `vbo` | string | No* | Filter on specific VBO ID |
-| `ean` | string | No* | Filter on specific EAN ID |
-
-*At least one of `vbo` or `ean` must be provided for filtering
-
-#### Response Format
-
-**Success Response (200 OK):**
-```json
-{
-  "resourceGroupId": "dvu:resource:871689260010498601",
-  "useCase": "DVU",
-  "name": "871689260010498601",
-  "description": "Verblijfsobject",
-  "resources": [
-    {
-      "resourceId": "dvu:resource:0613010000206776",
-      "useCase": "DVU",
-      "name": "0613010000206776",
-      "description": "EAN"
-    }
-  ]
-}
-```
-
-## Energy Data Retrieval from Smart Data Solutions (SDS)
-
-After obtaining VBO identifiers and EAN codes via the DVU API, you can retrieve the actual energy data from Smart Data Solutions using the same iSHARE authentication pattern.
-
-### Step 5: SDS Authentication
-
-The authentication process for SDS follows the same steps as for DVU, with SDS-specific endpoints and EORI:
-
-**SDS EORI for JWT audience**: `"aud": "EU.EORI.NL851872426"`
-
-```http
-POST https://dvu-test.smartdatasolutions.nl/Token
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=client_credentials&scope=iSHARE&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_id=EU.EORI.NL123456789&client_assertion=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
-```
-
-### Step 6: SDS Data Endpoints
-
-**⚠️ Note**: Complete documentation for SDS data endpoints will be updated once SDS implements query parameter support.
-
-```http
-GET https://dvu-test.smartdatasolutions.nl/service
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci...
-```
-
-## Important Notes
-
-- **Token validity**: Access tokens are valid for 1 hour (`expires_in: 3600`)
-- **Rate limiting**: Respect any API rate limits
-- **EORI validation**: The `issuer` parameter must exactly match the `clientId` in your access token
-- **Client assertion**: Use a new `jti` (JWT ID) for each client assertion to prevent replay attacks
-
-## API Examples
-
-### Example 1: Get all VBOs and EANs for an organization
-
-```bash
-# Get access token
-curl -X POST "https://dvu-test.azurewebsites.net/iSHARE/connect/token" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=client_credentials&scope=iSHARE&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_id=EU.EORI.NL123456789&client_assertion=eyJ0eXAiOiJKV1QiLCJhbGci..."
-
-# Get all resources for organization
-curl -X GET "https://dvu-test.azurewebsites.net/api/resourcegroups?issuer=EU.EORI.NL123456789" \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci..."
-```
-
-### Example 2: Get specific VBO with all associated EANs
-
-```bash
-curl -X GET "https://dvu-test.azurewebsites.net/api/resourcegroups?vbo=0613010000206776&issuer=EU.EORI.NL123456789" \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci..."
-```
-
-## Next Steps
-
+## Next steps
+- Read the [documentation on how to retrieve VBO and EAN data](vbo-ean-data-retrieval.md)
 - Implement error handling for API responses
-- Set up monitoring for bulk approval workflows
+- Set up monitoring for approval link usage
 - Test the complete flow in the test environment
 - Plan migration to production environment
 
 ---
-
 For single building access, see the [Single Building Access](single-building.md) guide.
