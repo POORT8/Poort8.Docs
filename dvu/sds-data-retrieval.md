@@ -42,7 +42,7 @@ POST https://dvu-test.smartdatasolutions.nl/token
 Content-Type: application/x-www-form-urlencoded
 ```
 
-With the following x-www-form-urlencoded body, including the client assertion from the pervious step:
+With the following x-www-form-urlencoded body, including the client assertion from the previous step:
 | Key                     | Value                                                    |
 | ----------------------- | -------------------------------------------------------- |
 | `grant_type`            | `client_credentials`                                     |

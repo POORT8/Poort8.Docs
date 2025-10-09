@@ -1,5 +1,5 @@
-# DVU Access Model
-Deze pagina beschrijft hoe toegang logisch wordt toegekend zonder in onderliggende implementatie-details te duiken.
+# DVU Toegangsmodel
+Deze pagina beschrijft hoe toegang logisch wordt toegekend zonder in onderliggende implementatiedetails te duiken.
 
 ## Roltypen (functioneel)
 | Rol | Doel | Interactie |
@@ -11,7 +11,7 @@ Deze pagina beschrijft hoe toegang logisch wordt toegekend zonder in onderliggen
 
 ## Volledige Entitlement & Flow Context
 De mogelijkheid om toegang tot verschillende energiedata te krijgen hangt af van een aantal aspecten: 
-- Gaat het om een energiemeter met kleingebruik of grootgebruik? 
+- Gaat het om een energiemeter met kleinverbruik of grootverbruik? 
 - Start de data-eigenaar zelf het proces, of wordt het door een derde aangevraagd? 
 - Is er een tekenbevoegd persoon met eHerkenning betrokken?
 - Kan de metadata van de meter met toestemming bij EDSN worden verkregen?
@@ -19,7 +19,7 @@ De mogelijkheid om toegang tot verschillende energiedata te krijgen hangt af van
 Onderstaande diagram toont de verschillende varianten en de flows in deze scenarios voor:
 1. De **huidige DVU flow**
 2. (work in progress) flow gestart vanuit **toestemmingsaanvraag**
-3. (work in progress) flow voor **automatisering van CAR gegevens** voor eenvoudigere registratie van gebouwen en meters
+3. (work in progress) flow voor **automatisering van CAR-gegevens** voor eenvoudigere registratie van gebouwen en meters
 4. (work in progress) toevoeging voor uitbreiding naar **alle meetbedrijven**
 
 ```mermaid
@@ -60,8 +60,8 @@ flowchart TD
     ManualFallback --> KGFlowManual{Kleinverbruik<br/>of<br/>Grootverbruik?<br/>Manual bepaling}
     
     %% Kleinverbruik flows
-    KGFlow -->|Kleinverbruik| KGWithCAR[KG + CAR Automatisering<br/>Toegang tot 3 dataproducten via SDS:<br/>• ODA proces<br/>• 24 maanden dagstanden<br/>• Standaard jaarverbruik]
-    KGFlowManual -->|Kleinverbruik| KGManual[KG Manual<br/>Alleen ODA product]
+    KGFlow -->|Kleinverbruik| KGWithCAR[KG + CAR Automatisering<br/>Toegang tot 3 dataproducten via SDS:<br/>• Meterdata volgens P4-formaat<br/>• 24 maanden dagstanden<br/>• Standaard jaarverbruik]
+    KGFlowManual -->|Kleinverbruik| KGManual[KG Manual<br/>Alleen meterdata volgens P4-formaat]
     
     %% Grootverbruik flows  
     KGFlow -->|Grootverbruik| GGContractInfo[Contractant info<br/>manueel invullen<br/>naam + email]
@@ -69,9 +69,9 @@ flowchart TD
     KGFlowManual -->|Grootverbruik| GGManual[GG Manual<br/>Meetbedrijf handmatig invoeren]
     
     %% Kleinverbruik naar SDS
-    KGManual --> KGManualToSDS[Naar SDS voor toegang tot<br/>alleen ODA proces]
+    KGManual --> KGManualToSDS[Naar SDS voor toegang tot<br/>alleen meterdata volgens P4-formaat]
     
-    KGManualToSDS --> KGManualResult[Toegang tot alleen:<br/>• ODA proces via SDS<br/><br/>Geen nieuwe dataproducten]
+    KGManualToSDS --> KGManualResult[Toegang tot alleen:<br/>• Meterdata volgens P4-formaat via SDS<br/><br/>Geen nieuwe dataproducten]
     
     
     

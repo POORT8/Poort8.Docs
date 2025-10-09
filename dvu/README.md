@@ -1,65 +1,141 @@
-# DVU – Overzicht & Kernconcepten
+# DVU - Intro
 
-Via DVU (Datastelsel Verduurzaming Utiliteit) kunnen gebouweigenaren toegang tot energiedata van hun gebouwen beheren op een gecontroleerde, transparante en herleidbare manier. Deze pagina geeft je een snel, functioneel begrip voordat je de implementatie handleidingen volgt.
+Welkom bij de DVU (Datastelsel Verduurzaming Utiliteit) documentatie. Deze documentatie helpt je bij het integreren met DVU om gecontroleerde toegang te krijgen tot energiedata voor verduurzamingsdoeleinden.
 
-## Wat lost DVU op?
-Organisaties hebben vaak versnipperde, traag verkrijgbare of juridisch onduidelijke toegang tot energiedata voor verduurzamingsdoeleinden. DVU standaardiseert:
+## Voor wie is deze documentatie?
 
-- Toestemmingen (via 2 varianten) – zie [Toestemmingsmodel](access-model.md) voor details
-- Uniforme data voor verschillende marktsegmenten (kleinverbruik vs grootverbruik)
-- Data-aflevering via Smart Data Solutions (SDS)
+Deze documentatie is bedoeld voor:
+- **Developers** die DVU integreren in hun applicatie → Start met [Getting Started](getting-started.md)
+- **Architecten** die de technische werking willen begrijpen → Lees [Overzicht & Kernconcepten](overview.md)
+- **Product owners** die de mogelijkheden willen verkennen → Lees [Dataproducten](data-products.md)
+- **Gebouweigenaren** die willen weten hoe toegangsbeheer werkt → Lees [Toegangsmodel](access-model.md)
 
-## Hoe start een toegangsaanvraag?
-Er zijn twee manieren (varianten) om een toegangsaanvraag te starten, beiden leiden vroegtijdig naar één standaard proces. Dit voorkomt dubbele logica, en hierdoor blijft het beheer overzichtelijk. Zie het [toestemmingsmodel](access-model.md) voor een diepgaande uitleg van beide varianten.
+## Documentatie-overzicht
 
-| Route | Initiator | Toelichting | Wanneer gebruiken |
-|-------|-----------|-------------|-------------------|
-| Variant 1 (Self-service) | Rechthebbende (contractant / eigenaar) | De gebruiker is de rechthebbende van de data en kan de aanvraag direct controleren | Interne verduurzaming / eigen dashboards |
-| Variant 2 (Externe aanvraag) | Dataservice consumer (derde applicatie) | Een derde applicatie wil toegang tot de data van de rechthebbende en start te aanvraag | Externe tooling / adviesdienst |
+### Beginnen
 
-## Procesoverzicht
-Deze pagina biedt een beknopt overzicht van het proces van een toegangsaanvraag. Het volledige proces, inclusief segmentatie en automatisering, wordt functioneel uitgewerkt in het [toestemmingsmodel](access-model.md). Voor business context en achtergrondinformatie over beide varianten, raadpleeg [Access Energy Data](access-energydata.md) – deze pagina is vooral relevant voor dataservice consumers, maar bevat ook algemene procesinformatie.
+**[Getting Started](getting-started.md)** - *DVU integratie*
+- Van nul naar je eerste API call
+- Credentials aanvragen en configureren
+- Je eerste approval link maken
+- Volledige flow begrijpen
+- **→ Nieuw bij DVU? Start hier!**
 
-Hieronder wordt de basis van het proces weergeven in een flowchart, in de technische implementatiegidsen ([Single Building Access](single-building.md), [Bulk Building Access](bulk-buildings.md), en [Direct EAN Access](direct-ean.md)) zijn gedetailleerde sequence diagrammen te vinden. Let op: deze implementatiegidsen zijn uitsluitend van toepassing op **variant 2** (externe aanvraag via dataservice consumer). Voor **variant 1** (self-service door rechthebbende) is er géén aparte technische implementatiegids, omdat dit proces via de DVU-applicatie zelf verloopt.
+**[Overzicht & Kernconcepten](overview.md)** - *Achtergrond & context*
+- Wat lost DVU op?
+- Hoe werkt het toegangsproces?
+- Welke dataproducten zijn beschikbaar?
+- Wat heb je nodig voor integratie?
 
-```mermaid
-flowchart LR
-    Start([Start Toegang]) --> R1[Variant 1]
-    Start --> R2[Variant 2]
-    R2 --> Approve[Toestemmingsaanvraag]
-    Approve -->|Afgewezen| Stop[Gestopt]
-    Approve -->|Goedgekeurd| Seg[Segmentatie]
-    R1 --> Seg
-    Seg --> KG[Kleinverbruik]
-    Seg --> GG[Grootverbruik]
-    KG --> Prod[Dataproducten]
-    GG --> Prod
-    Prod --> Done([Gebruik])
-```
+**[Woordenlijst](glossary.md)** - *Begrippen opzoeken*
+- Definities van 40+ termen (VBO, EAN, P4, CAR, etc.)
+- Uitleg van authenticatie (iSHARE, EORI, eHerkenning)
+- Snelle referentietabel met afkortingen
 
-## Beschikbare dataproducten
-**Operationeel:**
+**[Veelgestelde Vragen (FAQ)](faq.md)** - *Snelle antwoorden*
+- 30+ veelgestelde vragen en antwoorden
+- Onderwerpen: authenticatie, implementatie, data-toegang, troubleshooting
+- Praktische voorbeelden
 
-- Meterdata volgens P4 format (alleen jaarverbruik of alle data)
-- RVO benchmark
+### Kernconcepten
 
-**In voorbereiding (onder voorbehoud):**
+**[Toegangsmodel](access-model.md)**
+- Uitleg van Variant 1 (Self-service) vs Variant 2 (Externe aanvraag)
+- Segmentatie: kleinverbruik vs grootverbruik
+- Automatische vs handmatige toestemming
+- Procesflow met visuele diagrammen
 
-- 24 maanden dagstanden
-- Standaard jaarverbruik (uitbreiding op P4 context)
+**[Dataproducten](data-products.md)**
+- Overzicht van beschikbare dataproducten
+- P4-meterdata, RVO-benchmark, dagstanden
+- Keuze tussen producten voor jouw use case
 
-Uitbreiding wordt gefaseerd geactiveerd na governance en technische integratie.
+### Implementatiegidsen
 
-## Wat heb je nodig voor integratie?
-Als je DVU wilt integreren binnen je eigen applicatie, dan is het volgende nodig:
-- Keyper Approve integratie (transactielink + redirect flow)
-- Bekendheid met policies
-- Endpoint toegang tot SDS levering (afhankelijk van product)
+> **Let op:** Deze gidsen zijn voor **Variant 2** (externe aanvraag via dataservice consumer).
+> Voor **Variant 1** (self-service) verloopt het proces via de DVU-applicatie zelf.
 
-## Volgende stappen
-Als de basis duidelijk is kunnen de implementatiegidsen worden geraadpleegd:
+**[Single Building Access](single-building.md)**
+- Toegang aanvragen voor één gebouw via VBO-ID
+- Stap-voor-stap technische implementatie
+- Sequence-diagrammen en API-voorbeelden
 
-- [Single Building Access](single-building.md) - Toegangsaanvraag voor energiedata van een enkel gebouw
-- [Bulk Building Access](bulk-buildings.md) - Toegangsaanvraag voor energiedata van meerdere gebouwen
-- [Direct EAN Access](direct-ean.md) - Toegangsaanvraag voor energiedata van gebouwen via EAN referenties
+**[Bulk Building Access](bulk-buildings.md)**
+- Toegang aanvragen voor meerdere gebouwen tegelijk
+- Batch-verwerking van VBO-ID's
+- Efficiënte implementatie voor portfolios
 
+**[Direct EAN Access](direct-ean.md)**
+- Directe toegang via EAN-codes
+- Wanneer te gebruiken vs VBO-based access
+- Technische flow en API-calls
+
+**[VBO/EAN Data Retrieval](vbo-ean-data-retrieval.md)**
+- Data ophalen na verkregen toestemming
+- API-endpoints en parameters
+- Response-formaten
+
+**[SDS Data Retrieval](sds-data-retrieval.md)**
+- Data ophalen via Smart Data Solutions
+- Endpoints voor verschillende dataproducten
+- Authenticatie en error handling
+
+### Business Context
+
+**[Access Energy Data](access-energydata.md)**
+- Business context van beide varianten
+- Marktperspectief voor dataservice consumers
+- Strategische overwegingen
+
+## Aanbevolen leesroute
+
+### Voor developers
+1. **[Getting Started](getting-started.md)** - Maak je eerste API call (30 min)
+2. **[Overzicht & Kernconcepten](overview.md)** - Begrijp de basis (10 min)
+3. **[Woordenlijst](glossary.md)** - Leer de terminologie
+4. **Kies je implementatiegids** - Afhankelijk van je use case:
+   - [Single Building Access](single-building.md) - Een gebouw per keer
+   - [Bulk Building Access](bulk-buildings.md) - Meerdere gebouwen tegelijk
+   - [Direct EAN Access](direct-ean.md) - Direct via EAN-codes (geavanceerd)
+5. **[FAQ](faq.md)** - Bij vragen tijdens implementatie
+
+### Voor architecten
+1. **[Overzicht & Kernconcepten](overview.md)** - High-level begrip
+2. **[Toegangsmodel](access-model.md)** - Procesarchitectuur
+3. **[Dataproducten](data-products.md)** - Mogelijkheden verkennen
+4. **[Access Energy Data](access-energydata.md)** - Business context
+
+### Voor troubleshooting
+1. **[FAQ](faq.md)** - Controleer of je vraag al beantwoord is
+2. **[Woordenlijst](glossary.md)** - Verifieer begrippen
+3. **Relevante implementatiegids** - Controleer technische details
+4. **Contact support** - Als het probleem blijft bestaan
+
+## Extra informatie
+**Intern**
+- **[Keyper](../keyper/)** - Goedkeurings- en autorisatiesysteem
+- **[NoodleBar](../noodlebar/)** - Aanvullende dataproducten
+
+**Extern**
+- **[DVU](https://www.rvo.nl/onderwerpen/verduurzaming-utiliteitsbouw/dvu)**
+- **[iSHARE](https://ishare.eu/)**
+
+## Tips voor effectief gebruik
+
+- **Gebruik de woordenlijst** regelmatig tijdens het lezen van technische documentatie
+- **Bookmark de FAQ** voor snelle antwoorden op veelvoorkomende vragen
+- **Volg de sequence-diagrammen** stap voor stap tijdens implementatie
+- **Test eerst met één gebouw** voordat je bulk-operaties uitvoert
+- **Lees error messages zorgvuldig** - ze bevatten vaak bruikbare informatie
+
+## Hulp nodig?
+
+- **Technische vragen**: Raadpleeg eerst de [FAQ](faq.md)
+- **Begrippen onduidelijk**: Zie de [Woordenlijst](glossary.md)
+- **Implementatieproblemen**: Controleer de relevante implementatiegids
+- **API-credentials**: Neem contact op met het Poort8-team via hello@poort8.nl
+- **DVU-deelnemersregistratie**: E-mail naar BeheerDVU@rvo.nl
+
+---
+
+**Klaar om te beginnen?** Start met het [Overzicht & Kernconcepten](overview.md)
