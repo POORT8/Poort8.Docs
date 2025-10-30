@@ -41,6 +41,7 @@ Content-Type: application/x-www-form-urlencoded
 ```
 
 With the following x-www-form-urlencoded body, including the client assertion from the previous step:
+
 | Key                     | Value                                                    |
 | ----------------------- | -------------------------------------------------------- |
 | `grant_type`            | `client_credentials`                                     |
@@ -66,6 +67,7 @@ Authorization: Bearer <ACCESS_TOKEN>
 ```
 
 With these query parameters:
+
 | Parameter | Type   | Required | Description                                    |
 |-----------|--------|----------|------------------------------------------------|
 | `issuer`  | string | Yes      | Your EORI number (same as in client assertion) |
