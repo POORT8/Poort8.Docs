@@ -113,7 +113,7 @@ sequenceDiagram
         "type": "vboID",
         "attribute": "*",
         "license": "0005",
-        "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.18)" //Fixed subset of NL/SfB codes for EDSN
+        "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.10)" //Fixed subset of NL/SfB codes for EDSN
       }
   ],
   "orchestration": { "flow": "dsgo.gir@1" }
