@@ -2,13 +2,15 @@
 
 - **Getting Started**
   - [Introduction](README.md)
+  - [Overview](overview.md)
+  - [Architecture](architecture.md)
 
-- **Integration Guides**
-  - [Setup Flow](setup-flow.md)
-  - [Data Exchange Flow](data-exchange-flow.md)
+- **Implementation**
+  - [Requesting Building Data Access](consumer-approval-guide.md)
 
-- **Technical Reference**
-  - [Live API Documentation](https://gds-preview.poort8.nl/scalar/v1)
+- **Technical reference**
+  - [GDS API documentation](https://gds-preview.poort8.nl/scalar/v1)
+  - [Keyper API documentation](https://keyper-preview.poort8.nl/scalar/?api=v1)
 
 - **External Links**
   - [NoodleBar Docs](../noodlebar/)
