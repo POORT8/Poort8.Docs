@@ -30,13 +30,13 @@ Een datadienstgebruiker (M2M client) vraagt namens een gebouweigenaar toestemmin
 | Alice | Data-eigenaar (energiecontractant) | Autoriseert datatoegang |
 | Bob | Eindgebruiker (gebouwbeheerder) | Ontvangt optimalisatie-inzichten |
 | Charlie | Datadienstaanbieder (SDS) | Levert platform / distributie |
-| Mallory | Datadienstgebruiker | Bouwt optimalisatie- of analyse‑dienst |
+| David | Datadienstgebruiker | Bouwt optimalisatie- of analyse‑dienst |
 
 ### Voorbeeld gebruikersreis
-Situatie: Bob wil een optimalisatiedienst inzetten; Mallory faciliteert dit namens Charlie; Alice moet toestemming geven.
+Situatie: Bob wil een optimalisatiedienst inzetten; David faciliteert dit namens Charlie; Alice moet toestemming geven.
 
 1. Service discovery – Bob kiest een optimalisatiedienst.
-2. Toestemmingsaanvraag – Mallory initieert via Keyper een approval‑link richting Alice.
+2. Toestemmingsaanvraag – David initieert via Keyper een approval‑link richting Alice.
 3. Toestemmingsflow – Alice doorloopt de DVU/Keyper autorisatie (dagelijkse verbruiksdata).
 4. Activatie – M2M connector valideert tokens en zet datastromen op.
 5. Levering – Bob ontvangt inzichten / rapportage.
