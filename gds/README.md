@@ -21,7 +21,7 @@ Understand what GDS is, what problems it solves, and how different participants 
 **You'll learn:**
 - What problem GDS solves
 - How the approval process works from a user perspective
-- Real-world use case examples with personas (Alice, Bob, Charlie, Mallory)
+- Real-world use case examples with personas (Alice, Bob, Charlie, David)
 - The two core data transactions
 - Benefits for each participant type
 
@@ -102,7 +102,7 @@ Throughout the documentation, we use personas to clarify roles:
 - **Alice** – Building owner (data owner) who approves access requests
 - **Bob** – Building manager (data end-user) who uses optimization platforms
 - **Charlie** – IoT sensor platform (data service provider) providing sensor data
-- **Mallory** – Building management platform (data service consumer) requesting sensor access
+- **David** – Building management platform (data service consumer) requesting sensor access
 
 These personas help illustrate real-world workflows and use cases.
 

@@ -31,7 +31,7 @@ The IoT sensor platform (Charlie) implements a connector that:
 This connector enables existing IoT platforms to participate in the dataspace without major system redesign.
 
 ### Data service consumer application (building management side)
-The building management platform (Mallory) implements:
+The building management platform (David) implements:
 - Integration with Keyper to request approvals
 - API calls to Data Service Provider connectors to retrieve/send data
 - User interface for building managers (Bob) to work with sensor data
@@ -54,7 +54,7 @@ A **policy** is a formal statement granting permission. Each policy specifies:
 
 These are some basic fundamental properties that each policy will contain:
 - **`issuer`**: The party who grants the permission, in this case the building owner organization (Alice's company).
-- **`subject`**: The party to whom the policy is granted to, in this case the building management platform (Mallory's company).
+- **`subject`**: The party to whom the policy is granted to, in this case the building management platform (David's company).
 - **`serviceProvider`**: The party provides the data, in this case the IoT sensor platform (Charlie's company).
 - **`action`**: The action that the subject can perform, in this case `GET` or `POST`.
 - **`resource`**: The resource for which the subject can perform the action, in this case a specific building identified by its BAG number.
@@ -79,11 +79,11 @@ Let's trace what happens when a building management platform requests access to 
 
 #### 1. Request initiation
 - Building manager (Bob) identifies a building needing sensor data
-- The building management platform (Mallory) that Bob uses sends approval request to Keyper API
+- The building management platform (David) that Bob uses sends approval request to Keyper API
 - Request includes:
   - What data is needed (sensor metadata, measurements, control)
   - Which building (BAG number)
-  - Who is requesting (Mallory's organization ID)
+  - Who is requesting (David's organization ID)
   - Who should approve (Alice's organization ID)
   - On whose behalf (Bob's name/email)
 
@@ -103,7 +103,7 @@ Let's trace what happens when a building management platform requests access to 
 #### 4. Review & decision
 - Keyper displays request details in human-readable format
 - Alice sees:
-  - Which platform wants access (Mallory)
+  - Which platform wants access (David)
   - Who will use it (building manager Bob)
   - What data is requested (measurements, control, etc.)
   - Which building (BAG number)
@@ -197,17 +197,17 @@ Once authorization is in place (policies exist), data can flow. Here's how the t
 **Purpose**: Retrieve current sensor readings.
 
 #### Flow
-1. Mallory sends `GET` request to measurements endpoint
+1. David sends `GET` request to measurements endpoint
 2. Request specifies building and optionally sensor group or specific sensors
 3. Authorization check validates `GET` permission for measurements
 4. If authorized, returns current values
-5. Mallory's platform processes data for analytics, dashboards, optimization
+5. David's platform processes data for analytics, dashboards, optimization
 
 ### Control commands
 **Purpose**: Send setpoint adjustments to building systems.
 
 #### Flow
-1. Based on optimization algorithms, Mallory determines desired setpoint changes
+1. Based on optimization algorithms, David determines desired setpoint changes
 2. Sends `POST` request to control endpoint
 3. Authorization check validates `POST` permission
 4. If authorized, Charlie's platform applies change to building systems
@@ -322,7 +322,7 @@ The GDS PoC is deployed with the following structure:
 - Connects to internal sensor data systems
 
 **Data service consumer application**:
-- Deployed by building management platform (Mallory)
+- Deployed by building management platform (David)
 - Or: Demo prototype hosted by Poort8 for PoC demonstration
 - Implements approval request flows
 - Calls data service provider APIs for data retrieval

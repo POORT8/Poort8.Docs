@@ -51,8 +51,8 @@ Charlie represents the organization that installs and operates building IoT sens
 
 **Their value**: Reduced integration costs, expanded market reach, and increased trust from building owners.
 
-### Mallory – Building management platform (data service consumer)
-Mallory represents platforms that provide building optimization services. Through GDS, Mallory can request access to sensor data from various IoT providers using standardized protocols, rather than building custom integrations for each provider.
+### David – Building management platform (data service consumer)
+David represents platforms that provide building optimization services. Through GDS, David can request access to sensor data from various IoT providers using standardized protocols, rather than building custom integrations for each provider.
 
 **Their value**: Faster time-to-market, lower integration costs, and access to more buildings through trusted approval processes.
 
@@ -62,13 +62,13 @@ Mallory represents platforms that provide building optimization services. Throug
 Building owners (Alice) maintain complete control. Every data access requires explicit approval through secure email verification. Permissions are granular – approval is required per building, per service, per purpose.
 
 ### 2. Standardized integration
-IoT providers (Charlie) and building management platforms (Mallory) use the same integration pattern. This means:
+IoT providers (Charlie) and building management platforms (David) use the same integration pattern. This means:
 - IoT providers integrate once, work with all compliant platforms
 - Building platforms integrate once, work with all compliant IoT providers
 - New participants join easily without custom development
 
 ### 3. Transparent approval process
-When a building management platform (Mallory) wants sensor data, the building owner (Alice) receives a clear request showing:
+When a building management platform (David) wants sensor data, the building owner (Alice) receives a clear request showing:
 - Who wants access (which organization)
 - On behalf of whom (which building manager)
 - What data they need (which building, which sensors)
@@ -76,18 +76,18 @@ When a building management platform (Mallory) wants sensor data, the building ow
 - How long access will last
 
 ## Real-world use case example
-Let's walk through how Alice, Bob, Charlie, and Mallory interact in a typical scenario:
+Let's walk through how Alice, Bob, Charlie, and David interact in a typical scenario:
 
 ### Initial situation
 - **Alice** owns an office building in Rotterdam with environmental sensors installed by Charlie's IoT platform
-- **Bob** manages Alice's building and wants to use Mallory's optimization platform to reduce energy costs
+- **Bob** manages Alice's building and wants to use David's optimization platform to reduce energy costs
 - **Charlie** (IoT platform) has real-time temperature, humidity, and energy consumption data
-- **Mallory** (building management platform) can provide optimization recommendations if given access to sensor data
+- **David** (building management platform) can provide optimization recommendations if given access to sensor data
 
 ### The GDS Flow
 
 **Step 1: Bob initiates request**
-- Bob logs into Mallory's building management platform
+- Bob logs into David's building management platform
 - Searches for Alice's building
 - Sees that sensor data is "Not Requested" and clicks "Request Access"
 
@@ -95,14 +95,14 @@ Let's walk through how Alice, Bob, Charlie, and Mallory interact in a typical sc
 - Alice receives an email: "Building management platform requests access to sensor data"
 - Opens the secure approval link
 - Reviews exactly what's being requested: real-time environmental sensor data for her Rotterdam building
-- Sees who's requesting: Mallory's platform, on behalf of building manager Bob
+- Sees who's requesting: David's platform, on behalf of building manager Bob
 
 **Step 3: Alice approves**
 - Alice approves the request
 - GDS registers the policy in the Authorization Registry
 
 **Step 4: Data flows securely**
-- Mallory's platform can now retrieve sensor data from Charlie's IoT platform
+- David's platform can now retrieve sensor data from Charlie's IoT platform
 - Charlie's system verifies each request against the GDS Authorization Registry
 - Only approved data for the approved building is shared
 - Bob sees real-time insights in his dashboard
@@ -116,7 +116,7 @@ Let's walk through how Alice, Bob, Charlie, and Mallory interact in a typical sc
 - **Alice** maintains control while enabling valuable services
 - **Bob** gets the insights he needs to optimize building performance
 - **Charlie** serves multiple building management platforms with one integration
-- **Mallory** accesses sensor data from multiple IoT providers using standardized protocols
+- **David** accesses sensor data from multiple IoT providers using standardized protocols
 
 ## Core data transactions
 GDS enables two types of data exchange, progressing from initial setup to ongoing operations:
@@ -156,7 +156,7 @@ Each transaction requires explicit building owner approval. Requests for certain
 - **Increased trust** from building owners through sovereignty model
 - **Future-proof** through standards-based approach
 
-### For building management platforms (Mallory)
+### For building management platforms (David)
 - **Integrate once**, access sensor data from multiple IoT providers
 - **Faster time-to-market** for new building integrations
 - **Lower development costs** compared to custom integrations
