@@ -1,14 +1,14 @@
 # Data-Consumer Flow – "May I read installation data?"
 
->**Note**: This guide covers version 1 (v1) of the Keyper API, of which the POST endpoint has been updated. If you're looking for coverage of the previous version (v0) of the Keyper API, please refer to the [legacy version of this guide](legacy/data-consumer-flow.md) instead.
+>**Note**: This guide covers version 0 (v0) of the Keyper API, which uses the previous version of the POST endpoint. For the updated version (v1) of the Keyper API, please refer to the [new guide](data-consumer-flow.md).
 
 This guide walks through the approval workflow for data consumers (like EDSN) who need read access to building installation data.
 
-🔗 **[Live API Documentation](https://keyper-preview.poort8.nl/scalar/v1#tag/approval-links/post/v1/api/approval-links)** – Interactive endpoint testing
+🔗 **[Live API Documentation](https://keyper-preview.poort8.nl/scalar/#tag/approval-links/POST/api/approval-links)** – Interactive endpoint testing
 
 ## **Overview**
 
-The data-consumer flow uses exactly the same approval-link structure as the [registrar flow](registrar-flow.md) but with a read-policy instead of a write-policy.
+The data-consumer flow uses exactly the same approval-link structure as the [registrar flow](legacy/registrar-flow.md) but with a read-policy instead of a write-policy.
 
 ## **Sequence Diagram – Data-Consumer Flow**
 
@@ -37,41 +37,49 @@ sequenceDiagram
 
 | **JSON path** | **Filled by** | **Value / validation** |
 | -- | -- | -- |
+| authenticationMethods | **Fixed** | \["email","eHerkenning"\] (⚠️ email only allowed in preview) |
 | requester.\* | **App** | Consumer e-mail, name, organizationId="NL.KVK.<CONSUMER_KVK>" |
 | approver.\* | **App** | Owner e-mail, name, organizationId="NL.KVK.<OWNER_KVK>" |
-| dataspace.\* | **Fixed** | baseUrl:"https://gir-preview.poort8.nl" |
+| dataspace.\* | **Fixed** | name:"DSGO" · policyUrl:"https://gir-preview.poort8.nl/api/policies/" · organizationUrl:".../organization-registry/\_\_ORGANIZATIONID\_\_" · resourceGroupUrl:".../resourcegroups/" |
 | description | **App** | Shown to owner |
 | reference | **App** | Internal ID (not used by Keyper) |
+| expiresInSeconds | **App** | *Guideline*: 604800 (1 week) |
+| redirectUrl | **App** | Landing page after approval |
 | addPolicyTransactions\[0\] | **App** | Single **read** policy (data-consumer) – see example |
-| orchestration.flow | **Fixed** | "dsgo.gir@v1" |
+| orchestration.flow | **Fixed** | "dsgo.gir@1" |
 | addOROrganizationTransaction | **Optional** | Include if owner not in OR – see section on [Missing Owner](#missing-owner-in-the-organization-register) below |
 
 **Notes:**
 - **One policy per VBO-ID** – use separate policy transactions in a single approval-link for different buildings
 - **BAG validation**: `resourceId` must be a valid 16-digit BAG VBO-ID; Keyper returns 400 if not found
+- **Authentication methods**: ⚠️ In production, must include `"eHerkenning"` only, preview allows `"email"` as well
 - **Rules filtering**: Optional `rules` field can specify NL/SfB classifications; omit for full building access
 
 ## **JSON Skeleton**
 
 ```json
 {
+  "authenticationMethods": ["email","eHerkenning"],
   "requester": {
-    "name": "<CONSUMER_NAME>",
     "email": "<CONSUMER_EMAIL>",
-    "organization": "<CONSUMER_ORGANIZATION_NAME>",
+    "organization": "<CONSUMER_NAME>",
     "organizationId": "NL.KVK.<CONSUMER_KVK>"
   },
   "approver": {
-    "name": "<OWNER_NAME>",
     "email": "<OWNER_EMAIL>",
-    "organization": "<OWNER_ORGANIZATION_NAME>",
+    "organization": "<OWNER_NAME>",
     "organizationId": "NL.KVK.<OWNER_KVK>"
   },
   "dataspace": {
-    "baseUrl": "https://gir-preview.poort8.nl"
+    "name": "DSGO",
+    "policyUrl": "https://gir-preview.poort8.nl/api/policies/",
+    "organizationUrl": "https://gir-preview.poort8.nl/api/organization-registry/__ORGANIZATIONID__",
+    "resourceGroupUrl": "https://gir-preview.poort8.nl/api/resourcegroups/"
   },
   "description": "Data access approval for GIR installation data",
   "reference": "<APP_REFERENCE>",
+  "expiresInSeconds": 604800,
+  "redirectUrl": "<APP_REDIRECT>",
   "addPolicyTransactions": [
     {
       "useCase": "GIR",
@@ -89,7 +97,7 @@ sequenceDiagram
       "rules": "Classificaties(...)" // Optional - remove to expose all installations
     }
   ],
-  "orchestration": { "flow": "dsgo.gir@v1" }
+  "orchestration": { "flow": "dsgo.gir@1" }
 }
 ```
 
@@ -97,7 +105,7 @@ sequenceDiagram
 
 ## **Authentication Example**
 
-### **Data-Consumer Token**
+### **⚠️ Data-Consumer Token** - required soon
 
 ```bash
 curl -X POST https://poort8.eu.auth0.com/oauth/token \
@@ -105,7 +113,7 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
   -d '{
         "client_id": "<CONSUMER_CLIENT_ID>",
         "client_secret": "<CONSUMER_CLIENT_SECRET>",
-        "audience": "Poort8-Dataspace-Keyper-Preview",
+        "audience": "Poort8-Dataspace-Keyper",
         "grant_type": "client_credentials"
       }'
 ```
@@ -117,27 +125,31 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
 ### **Example 1: Access with NL/SfB Classification Filter**
 
 ```bash
-curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
+curl -X POST https://keyper-preview.poort8.nl/api/approval-links \
   -H "Authorization: Bearer <CONSUMER_ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
+    "authenticationMethods": ["email","eHerkenning"],
     "requester": {
-      "name": "EDSN representative",
       "email": "data@edsn.nl",
       "organization": "EDSN",
       "organizationId": "NL.KVK.39098825"
     },
     "approver": {
-      "name": "Building owner",
       "email": "owner@building.com",
       "organization": "Building Owner BV",
       "organizationId": "NL.KVK.87654321"
     },
     "dataspace": {
-      "baseUrl": "https://gir-preview.poort8.nl"
+      "name": "DSGO",
+      "policyUrl": "https://gir-preview.poort8.nl/api/policies/",
+      "organizationUrl": "https://gir-preview.poort8.nl/api/organization-registry/__ORGANIZATIONID__",
+      "resourceGroupUrl": "https://gir-preview.poort8.nl/api/resourcegroups/"
     },
     "description": "EDSN access to building installation data for energy monitoring",
     "reference": "EDSN-ACCESS-2025-001",
+    "expiresInSeconds": 604800,
+    "redirectUrl": "https://edsn.nl/approval-complete",
     "addPolicyTransactions": [
       {
         "useCase": "GIR",
@@ -155,34 +167,38 @@ curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
         "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.18)"
       }
     ],
-    "orchestration": { "flow": "dsgo.gir@v1" }
+    "orchestration": { "flow": "dsgo.gir@1" }
   }'
 ```
 
 ### **Example 2: Full Building Access (No NL/SfB Classification Filter)**
 
 ```bash
-curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
+curl -X POST https://keyper-preview.poort8.nl/api/approval-links \
   -H "Authorization: Bearer <CONSUMER_ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
+    "authenticationMethods": ["email","eHerkenning"],
     "requester": {
-      "name": "Research Institute representative",
       "email": "research@university.nl",
       "organization": "Research Institute",
       "organizationId": "NL.KVK.12345678"
     },
     "approver": {
-      "name": "Building owner",
       "email": "owner@building.com",
       "organization": "Building Owner BV",
       "organizationId": "NL.KVK.87654321"
     },
     "dataspace": {
-      "baseUrl": "https://gir-preview.poort8.nl"
+      "name": "DSGO",
+      "policyUrl": "https://gir-preview.poort8.nl/api/policies/",
+      "organizationUrl": "https://gir-preview.poort8.nl/api/organization-registry/__ORGANIZATIONID__",
+      "resourceGroupUrl": "https://gir-preview.poort8.nl/api/resourcegroups/"
     },
     "description": "Research access to all building installation data",
     "reference": "RESEARCH-ACCESS-2025-001",
+    "expiresInSeconds": 604800,
+    "redirectUrl": "https://research.university.nl/approval-complete",
     "addPolicyTransactions": [
       {
         "useCase": "GIR",
@@ -199,7 +215,7 @@ curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
         "license": "0005"
       }
     ],
-    "orchestration": { "flow": "dsgo.gir@v1" }
+    "orchestration": { "flow": "dsgo.gir@1" }
   }'
 ```
 

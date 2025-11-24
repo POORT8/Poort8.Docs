@@ -17,3 +17,7 @@
 - **External Links**
   - [NoodleBar Docs](../noodlebar/)
   - [Keyper Preview](https://keyper-preview.poort8.nl/)
+
+- **Legacy Documentation**
+  - [Registrar Flow](legacy/registrar-flow.md)
+  - [Data-Consumer Flow](legacy/data-consumer-flow.md)

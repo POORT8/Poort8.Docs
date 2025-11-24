@@ -1,10 +1,10 @@
 # Registrar Flow – "May I register installations in this building?"
 
->**Note**: This guide covers version 1 (v1) of the Keyper API, of which the POST endpoint has been updated. If you're looking for coverage of the previous version (v0) of the Keyper API, please refer to the [legacy version of this guide](legacy/registrar-flow.md) instead.
+>**Note**: This guide covers version 0 (v0) of the Keyper API, which uses the previous version of the POST endpoint. For the updated version (v1) of the Keyper API, please refer to the [new guide](registrar-flow.md).
 
 This guide walks through the approval workflow for installers/registrars who need permission to register building installations on behalf of property owners.
 
-🔗 **[Live API Documentation](https://keyper-preview.poort8.nl/scalar/v1#tag/approval-links/post/v1/api/approval-links)** – Interactive endpoint testing
+🔗 **[Live API Documentation](https://keyper-preview.poort8.nl/scalar/#tag/approval-links/POST/api/approval-links)** – Interactive endpoint testing
 
 ## **Sequence Diagram – Registrar Flow**
 
@@ -44,41 +44,49 @@ sequenceDiagram
 
 | **JSON path** | **Filled by** | **Value / validation** |
 | -- | -- | -- |
+| authenticationMethods | **Fixed** | \["email","eHerkenning"\] (⚠️ email only allowed in preview) |
 | requester.\* | **App** | Registrar e-mail, name, organizationId="NL.KVK.<REG_KVK>" |
 | approver.\* | **App** | Owner e-mail, name, organizationId="NL.KVK.<OWNER_KVK>" |
-| dataspace.\* | **Fixed** | baseUrl:"https://gir-preview.poort8.nl" |
+| dataspace.\* | **Fixed** | name:"DSGO" · policyUrl:"https://gir-preview.poort8.nl/api/policies/" · organizationUrl:".../organization-registry/\_\_ORGANIZATIONID\_\_" · resourceGroupUrl:".../resourcegroups/" |
 | description | **App** | Shown to owner |
 | reference | **App** | Internal ID (not used by Keyper) |
+| expiresInSeconds | **App** | *Guideline*: 604800 (1 week) |
+| redirectUrl | **App** | Landing page after approval |
 | addPolicyTransactions\[0\] | **App** | Single **write** policy (registrar) – see example |
 | addPolicyTransactions\[1\] | **App** | Single **read** policy (data-consumer, e.g. EDSN) – see example |
-| orchestration.flow | **Fixed** | "dsgo.gir@v1" |
+| orchestration.flow | **Fixed** | "dsgo.gir@1" |
 | addOROrganizationTransaction | **Optional** | Include if owner not in OR – see section on [Missing Owner](#missing-owner-in-the-organization-register) below |
 
 **Notes:**
 - **One policy per VBO-ID** – use separate policy transactions in a single approval-link for different buildings
 - **BAG validation**: `resourceId` must be a valid 16-digit BAG VBO-ID; Keyper returns 400 if not found
+- **Authentication methods**: ⚠️ In production, must include `"eHerkenning"` only, preview allows `"email"` as well
 
 ## **JSON Skeleton**
 
 ```json
 {
+  "authenticationMethods": ["email","eHerkenning"],
   "requester": {
-    "name": "<REGISTRAR_NAME>",
     "email": "<REGISTRAR_EMAIL>",
-    "organization": "<REGISTRAR_ORGANIZATION_NAME>",
+    "organization": "<REGISTRAR_NAME>",
     "organizationId": "NL.KVK.<REGISTRAR_KVK>"
   },
   "approver": {
-    "name": "<OWNER_NAME>",
     "email": "<OWNER_EMAIL>",
-    "organization": "<OWNER_ORGANIZATION_NAME>",
+    "organization": "<OWNER_NAME>",
     "organizationId": "NL.KVK.<OWNER_KVK>"
   },
   "dataspace": {
-    "baseUrl": "https://gir-preview.poort8.nl"
+    "name": "DSGO",
+    "policyUrl": "https://gir-preview.poort8.nl/api/policies/",
+    "organizationUrl": "https://gir-preview.poort8.nl/api/organization-registry/__ORGANIZATIONID__",
+    "resourceGroupUrl": "https://gir-preview.poort8.nl/api/resourcegroups/"
   },
   "description": "GIR registration approval",
   "reference": "<APP_REFERENCE>",
+  "expiresInSeconds": 604800,
+  "redirectUrl": "<APP_REDIRECT>",
   "addPolicyTransactions": [
     {
       "useCase": "GIR",
@@ -95,22 +103,22 @@ sequenceDiagram
       "license": "0005"
     },
     {
-      "useCase": "GIR",
-      "issuedAt": "<NOW>", // Unix timestamp - Keyper may override if in past
-      "notBefore": "<NOW>", // Keyper may override if in past
-      "expiration": "<NOW_PLUS_3Y>",
-      "issuerId": "NL.KVK.<OWNER_KVK>",
-      "subjectId": "NL.KVK.39098825", // Policy request on behalf of Data Consumer EDSN
-      "serviceProvider": "NL.KVK.27248698",
-      "action": "read",
-      "resourceId": "<VBO_ID>",
-      "type": "vboID",
-      "attribute": "*",
-      "license": "0005",
-      "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.10)" //Fixed subset of NL/SfB codes for EDSN
-    }
+        "useCase": "GIR",
+        "issuedAt": "<NOW>", // Unix timestamp - Keyper may override if in past
+        "notBefore": "<NOW>", // Keyper may override if in past
+        "expiration": "<NOW_PLUS_3Y>",
+        "issuerId": "NL.KVK.<OWNER_KVK>",
+        "subjectId": "NL.KVK.39098825", // Policy request on behalf of Data Consumer EDSN
+        "serviceProvider": "NL.KVK.27248698",
+        "action": "read",
+        "resourceId": "<VBO_ID>",
+        "type": "vboID",
+        "attribute": "*",
+        "license": "0005",
+        "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.10)" //Fixed subset of NL/SfB codes for EDSN
+      }
   ],
-  "orchestration": { "flow": "dsgo.gir@v1" }
+  "orchestration": { "flow": "dsgo.gir@1" }
 }
 ```
 
@@ -120,7 +128,7 @@ sequenceDiagram
 
 ## **Authentication Example**
 
-### **Approval link Token**
+### **⚠️ Approval link Token** - required soon
 
 ```bash
 curl -X POST https://poort8.eu.auth0.com/oauth/token \
@@ -138,27 +146,31 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
 ## **Complete Example Request**
 
 ```bash
-curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
+curl -X POST https://keyper-preview.poort8.nl/api/approval-links \
   -H "Authorization: Bearer <REGISTRAR_ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
+    "authenticationMethods": ["email","eHerkenning"],
     "requester": {
-      "name": "Installer representative",
       "email": "installer@example.com",
       "organization": "Example Installer BV",
       "organizationId": "NL.KVK.12345678"
     },
     "approver": {
-      "name": "Building owner",
       "email": "owner@building.com",
       "organization": "Building Owner BV", 
       "organizationId": "NL.KVK.87654321"
     },
     "dataspace": {
-      "baseUrl": "https://gir-preview.poort8.nl"
+      "name": "DSGO",
+      "policyUrl": "https://gir-preview.poort8.nl/api/policies/",
+      "organizationUrl": "https://gir-preview.poort8.nl/api/organization-registry/__ORGANIZATIONID__",
+      "resourceGroupUrl": "https://gir-preview.poort8.nl/api/resourcegroups/"
     },
     "description": "Permission to register building installations for VBO 0344010000126888",
     "reference": "INSTALL-REQ-2025-001",
+    "expiresInSeconds": 604800,
+    "redirectUrl": "https://installer-app.example.com/approval-complete",
     "addPolicyTransactions": [
       {
         "useCase": "GIR",
@@ -175,7 +187,7 @@ curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
         "license": "0005"
       }
     ],
-    "orchestration": { "flow": "dsgo.gir@v1" }
+    "orchestration": { "flow": "dsgo.gir@1" }
   }'
 ```
 

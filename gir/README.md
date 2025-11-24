@@ -41,9 +41,13 @@ It combines NoodleBar modules (Organization Register, Authorization Register, Ke
 | Step | What you build | Guide |
 |------|----------------|-------|
 | **1. Register installation** | `POST /GIRBasisdataMessage` (create / update) | **[Register Installations](register-installations.md)** |
-| **2. Ask for *write* access** | `POST /approval-links` (write policy) | **[Registrar Flow](registrar-flow.md)** |
-| **3. Ask for *read* access** | `POST /approval-links` (read policy) | **[Data-Consumer Flow](data-consumer-flow.md)** |
+| **2. Ask for *write* access** | `POST /approval-links` (write policy) | **[Registrar Flow](registrar-flow.md)** ¹ |
+| **3. Ask for *read* access** | `POST /approval-links` (read policy) | **[Data-Consumer Flow](data-consumer-flow.md)** ² |
 | **4. Retrieve data** | `GET /GIRBasisdataMessage` (filter by VBO, KVK, etc.) | [Section 4](#4-querying-installations) below |
+
+¹ This guide covers version 1 (v1) of the Keyper API, of which the POST endpoint has been updated. If you're looking for coverage of the previous version (v0) of the Keyper API, please refer to the [legacy version of this guide](legacy/registrar-flow.md) instead.
+
+² This guide covers version 1 (v1) of the Keyper API, of which the POST endpoint has been updated. If you're looking for coverage of the previous version (v0) of the Keyper API, please refer to the [legacy version of this guide](legacy/data-consumer-flow.md) instead.
 
 ### **Quick Reference**
 
@@ -112,7 +116,6 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
 ⚠️ **Key Production Changes:**
 - **Service-provider KVK** → will switch from Techniek Nederland to Stichting Ketenstandaarden: `NL.KVK.41084554`. This impact policy registration in approval links.
 - **eHerkenning L3 required** for approvals (email disabled)
-- **Keyper API authentication** will soon require OAuth credentials issued by Poort8 (also on Preview). Integration details and onboarding instructions will be provided in upcoming updates.
 - **iSHARE tokens replace Auth0** for the GIR data API 
 
 ---
@@ -131,4 +134,4 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
 - **[Ketenstandaarden Documentation about GIR](https://ketenstandaard.semantic-treehouse.nl/docs/TNL/GIR/)** – GIR framework background
 - **[DSGO Standards](https://www.digigo.nu/wat-is-dsgo/)** – Authorization and data governance framework
 - **[GIR Live API Docs](https://gir-preview.poort8.nl/scalar/v1)** – Interactive Scalar UI
-- **[Keyper Live API Docs](https://keyper-preview.poort8.nl/scalar)** – Interactive Scalar UI
+- **[Keyper Live API Docs](https://keyper-preview.poort8.nl/scalar/v1)** – Interactive Scalar UI
