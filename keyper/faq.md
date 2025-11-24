@@ -33,7 +33,7 @@ Keyper includes several orchestration options:
 
 ## Where can I find the API documentation?
 
-You can find the complete Keyper API documentation at: [https://keyper-preview.poort8.nl/scalar/](https://keyper-preview.poort8.nl/scalar/)
+You can find the complete Keyper API documentation at: [https://keyper-preview.poort8.nl/scalar/v1](https://keyper-preview.poort8.nl/scalar/v1)
 
 ## How does authentication work?
 
