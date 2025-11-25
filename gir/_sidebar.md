@@ -15,9 +15,9 @@
   - [Live API Documentation](https://gir-preview.poort8.nl/scalar/v1)
 
 - **External Links**
-  - [NoodleBar Docs](/noodlebar/)
+  - [NoodleBar Docs](../noodlebar/)
   - [Keyper Preview](https://keyper-preview.poort8.nl/)
 
 - **Legacy Documentation**
-  - [Registrar Flow](/legacy/registrar-flow.md)
-  - [Data-Consumer Flow](/legacy/data-consumer-flow.md)
+  - [Registrar Flow](legacy/registrar-flow.md)
+  - [Data-Consumer Flow](legacy/data-consumer-flow.md)
