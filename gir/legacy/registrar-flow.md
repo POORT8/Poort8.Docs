@@ -1,6 +1,6 @@
 # Registrar Flow – "May I register installations in this building?"
 
->**Note**: This guide covers version 0 (v0) of the Keyper API, which uses the previous version of the POST endpoint. For the updated version (v1) of the Keyper API, please refer to the [new guide](registrar-flow.md).
+>**Note**: This guide covers version 0 (v0) of the Keyper API, which uses the previous version of the POST endpoint. For the updated version (v1) of the Keyper API, please refer to the [new guide](../registrar-flow.md).
 
 This guide walks through the approval workflow for installers/registrars who need permission to register building installations on behalf of property owners.
 

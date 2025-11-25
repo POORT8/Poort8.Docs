@@ -1,6 +1,6 @@
 # Data-Consumer Flow – "May I read installation data?"
 
->**Note**: This guide covers version 0 (v0) of the Keyper API, which uses the previous version of the POST endpoint. For the updated version (v1) of the Keyper API, please refer to the [new guide](data-consumer-flow.md).
+>**Note**: This guide covers version 0 (v0) of the Keyper API, which uses the previous version of the POST endpoint. For the updated version (v1) of the Keyper API, please refer to the [new guide](../data-consumer-flow.md).
 
 This guide walks through the approval workflow for data consumers (like EDSN) who need read access to building installation data.
 
