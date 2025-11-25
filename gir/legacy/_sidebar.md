@@ -1,12 +1,12 @@
 - [← Back to Poort8 Overview](/)
 
 - **Getting Started**
-  - [Introduction](README.md)
+  - [Introduction](../README.md)
 
 - **Integration Guides**  
-  - [Register Installations](register-installations.md)
-  - [Registrar Flow](registrar-flow.md)
-  - [Data-Consumer Flow](data-consumer-flow.md)
+  - [Register Installations](../register-installations.md)
+  - [Registrar Flow](../registrar-flow.md)
+  - [Data-Consumer Flow](../data-consumer-flow.md)
 
 - **Technical Reference**
   - [Ketenstandaard GIR API](https://ketenstandaard.semantic-treehouse.nl/docs/api/GIR/)
@@ -19,5 +19,5 @@
   - [Keyper Preview](https://keyper-preview.poort8.nl/)
 
 - **Legacy Documentation**
-  - [Registrar Flow](legacy/registrar-flow.md)
-  - [Data-Consumer Flow](legacy/data-consumer-flow.md)
+  - [Registrar Flow](registrar-flow.md)
+  - [Data-Consumer Flow](data-consumer-flow.md)
