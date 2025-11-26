@@ -36,15 +36,15 @@ With GDS, building owners:
 ## Key participants & their roles
 GDS involves five distinct roles in the data ecosystem. To make these roles clear, we use personas throughout the documentation:
 
-### Alice – Building owner (data owner)
-Alice owns a commercial building with IoT sensors installed. She wants to enable energy optimization services but needs to maintain control over her building's data. Through GDS, Alice receives approval requests and decides who can access which data for what purpose.
+### Bob – Building owner (data owner)
+Bob owns a commercial building with IoT sensors installed. He wants to enable energy optimization services but needs to maintain control over his building's data. Through GDS, Bob receives approval requests and decides who can access which data for what purpose.
 
-**Her value**: Complete visibility and control over building data sharing.
+**His value**: Complete visibility and control over building data sharing.
 
-### Bob – Building manager (data end-user)
-Bob manages building operations and wants to optimize energy usage and tenant comfort. He uses a building management platform to access sensor insights and make data-driven decisions.
+### Alice – Building manager (data end-user)
+Alice manages building operations and wants to optimize energy usage and tenant comfort. She uses a building management platform to access sensor insights and make data-driven decisions.
 
-**His value**: Seamless access to sensor data from multiple buildings, all authorized by the building owners.
+**Her value**: Seamless access to sensor data from multiple buildings, all authorized by the building owners.
 
 ### Charlie – IoT sensor platform (data service provider)
 Charlie represents the organization that installs and operates building IoT sensors. Instead of creating custom integrations with every building management platform, Charlie implements one standardized dataspace connector that works with all compliant systems.
@@ -59,7 +59,7 @@ David represents platforms that provide building optimization services. Through 
 ## What makes GDS different?
 
 ### 1. Data sovereignty
-Building owners (Alice) maintain complete control. Every data access requires explicit approval through secure email verification. Permissions are granular – approval is required per building, per service, per purpose.
+Building owners (Bob) maintain complete control. Every data access requires explicit approval through secure email verification. Permissions are granular – approval is required per building, per service, per purpose.
 
 ### 2. Standardized integration
 IoT providers (Charlie) and building management platforms (David) use the same integration pattern. This means:
@@ -68,7 +68,7 @@ IoT providers (Charlie) and building management platforms (David) use the same i
 - New participants join easily without custom development
 
 ### 3. Transparent approval process
-When a building management platform (David) wants sensor data, the building owner (Alice) receives a clear request showing:
+When a building management platform (David) wants sensor data, the building owner (Bob) receives a clear request showing:
 - Who wants access (which organization)
 - On behalf of whom (which building manager)
 - What data they need (which building, which sensors)
@@ -76,45 +76,45 @@ When a building management platform (David) wants sensor data, the building owne
 - How long access will last
 
 ## Real-world use case example
-Let's walk through how Alice, Bob, Charlie, and David interact in a typical scenario:
+Let's walk through how Bob, Alice, Charlie, and David interact in a typical scenario:
 
 ### Initial situation
-- **Alice** owns an office building in Rotterdam with environmental sensors installed by Charlie's IoT platform
-- **Bob** manages Alice's building and wants to use David's optimization platform to reduce energy costs
+- **Bob** owns an office building in Rotterdam with environmental sensors installed by Charlie's IoT platform
+- **Alice** manages Bob's building and wants to use David's optimization platform to reduce energy costs
 - **Charlie** (IoT platform) has real-time temperature, humidity, and energy consumption data
 - **David** (building management platform) can provide optimization recommendations if given access to sensor data
 
 ### The GDS Flow
 
-**Step 1: Bob initiates request**
-- Bob logs into David's building management platform
-- Searches for Alice's building
+**Step 1: Alice initiates request**
+- Alice logs into David's building management platform
+- Searches for Bob's building
 - Sees that sensor data is "Not Requested" and clicks "Request Access"
 
-**Step 2: Alice reviews request**
-- Alice receives an email: "Building management platform requests access to sensor data"
+**Step 2: Bob reviews request**
+- Bob receives an email: "Building management platform requests access to sensor data"
 - Opens the secure approval link
-- Reviews exactly what's being requested: real-time environmental sensor data for her Rotterdam building
-- Sees who's requesting: David's platform, on behalf of building manager Bob
+- Reviews exactly what's being requested: real-time environmental sensor data for his Rotterdam building
+- Sees who's requesting: David's platform, on behalf of building manager Alice
 
-**Step 3: Alice approves**
-- Alice approves the request
+**Step 3: Bob approves**
+- Bob approves the request
 - GDS registers the policy in the Authorization Registry
 
 **Step 4: Data flows securely**
 - David's platform can now retrieve sensor data from Charlie's IoT platform
 - Charlie's system verifies each request against the GDS Authorization Registry
 - Only approved data for the approved building is shared
-- Bob sees real-time insights in his dashboard
+- Alice sees real-time insights in her dashboard
 
 **Step 5: Ongoing control**
-- Alice can check active permissions anytime
-- She can revoke access if needed
+- Bob can check active permissions anytime
+- He can revoke access if needed
 - When permissions expire, access automatically stops
 
 ### The result
-- **Alice** maintains control while enabling valuable services
-- **Bob** gets the insights he needs to optimize building performance
+- **Bob** maintains control while enabling valuable services
+- **Alice** gets the insights she needs to optimize building performance
 - **Charlie** serves multiple building management platforms with one integration
 - **David** accesses sensor data from multiple IoT providers using standardized protocols
 
@@ -136,14 +136,14 @@ Each transaction requires explicit building owner approval. Requests for certain
 
 ## Benefits for each participant
 
-### For building owners (Alice)
+### For building owners (Bob)
 - **Maintain control** over building data at all times
 - **Transparent requests** showing exactly what's being shared
 - **Granular permissions** per building, per service, per purpose
 - **Revoke access** anytime without complex contract negotiations
 - **Enable services** confidently, knowing data won't be misused
 
-### For building managers (Bob)
+### For building managers (Alice)
 - **Seamless access** to sensor data from multiple buildings
 - **No technical complexity** – authorization handled in background
 - **Better insights** enabling data-driven building management

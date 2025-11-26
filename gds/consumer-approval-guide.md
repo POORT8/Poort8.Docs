@@ -33,14 +33,14 @@ Before diving into implementation, this is what the approval workflow looks like
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Bob as Building manager<br/>(Bob)
+    participant Alice as Building manager<br/>(Alice)
     participant Consumer as Your platform<br/>(building management)
     participant Keyper as Keyper Approve
-    participant Owner as Building owner<br/>(Alice)
+    participant Owner as Building owner<br/>(Bob)
     participant Auth as GDS Authorization<br/>Registry
 
     rect rgb(255,250,240)
-    Bob->>Consumer: Initiates data access request
+    Alice->>Consumer: Initiates data access request
     Consumer->>Keyper: POST /approval-links (with policies)
     Keyper-->>Consumer: 201 Created (approval link ID)
     end
@@ -74,13 +74,13 @@ sequenceDiagram
 Before making an approval request, gather the following information:
 
 ### Requester information (your platform)
-- `name`: Name of the person initiating the request (e.g., "Bob Anderson")
+- `name`: Name of the person initiating the request (e.g., "Alice Anderson")
 - `email`: Email address of the person initiating the request
 - `organization`: Your organization's name (e.g., "Building Optimization Corp")
 - `organizationId`: Your organization's identifier in KvK format (e.g., "NL.KVK.12345678")
 
 ### Approver information (building owner)
-- `name`: Name of the building owner who will approve (e.g., "Alice Johnson")
+- `name`: Name of the building owner who will approve (e.g., "Bob Johnson")
 - `email`: Email address where approval link will be sent
 - `organization`: Building owner's organization name
 - `organizationId`: Building owner's organization identifier in KvK format (e.g., "NL.KVK.87654321")
@@ -262,14 +262,14 @@ Here's a concrete example with all placeholders replaced:
 ```json
 {
   "requester": {
-    "name": "Bob Anderson",
-    "email": "bob@buildingopt.com",
+    "name": "Alice Anderson",
+    "email": "alice@buildingopt.com",
     "organization": "Building Optimization Corp",
     "organizationId": "NL.KVK.12345678"
   },
   "approver": {
-    "name": "Alice Johnson",
-    "email": "alice@ownerco.com",
+    "name": "Bob Johnson",
+    "email": "bob@ownerco.com",
     "organization": "Property Management Inc",
     "organizationId": "NL.KVK.87654321"
   },

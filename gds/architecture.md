@@ -34,7 +34,7 @@ This connector enables existing IoT platforms to participate in the dataspace wi
 The building management platform (David) implements:
 - Integration with Keyper to request approvals
 - API calls to Data Service Provider connectors to retrieve/send data
-- User interface for building managers (Bob) to work with sensor data
+- User interface for building managers (Alice) to work with sensor data
 - Business logic for optimization, analytics, etc.
 
 In the GDS proof-of-concept, Poort8 developed a demo prototype demonstrating this role.
@@ -53,7 +53,7 @@ A **policy** is a formal statement granting permission. Each policy specifies:
 - **Who granted it** (the building owner organization)
 
 These are some basic fundamental properties that each policy will contain:
-- **`issuer`**: The party who grants the permission, in this case the building owner organization (Alice's company).
+- **`issuer`**: The party who grants the permission, in this case the building owner organization (Bob's company).
 - **`subject`**: The party to whom the policy is granted to, in this case the building management platform (David's company).
 - **`serviceProvider`**: The party provides the data, in this case the IoT sensor platform (Charlie's company).
 - **`action`**: The action that the subject can perform, in this case `GET` or `POST`.
@@ -78,14 +78,14 @@ Let's trace what happens when a building management platform requests access to 
 ### Step-by-step approval process
 
 #### 1. Request initiation
-- Building manager (Bob) identifies a building needing sensor data
-- The building management platform (David) that Bob uses sends approval request to Keyper API
+- Building manager (Alice) identifies a building needing sensor data
+- The building management platform (David) that Alice uses sends approval request to Keyper API
 - Request includes:
   - What data is needed (sensor metadata, measurements, control)
   - Which building (BAG number)
   - Who is requesting (David's organization ID)
-  - Who should approve (Alice's organization ID)
-  - On whose behalf (Bob's name/email)
+  - Who should approve (Bob's organization ID)
+  - On whose behalf (Alice's name/email)
 
 #### 2. Keyper creates approval link
 - Keyper receives request and validates it
@@ -94,7 +94,7 @@ Let's trace what happens when a building management platform requests access to 
 - Returns approval link ID to requesting platform
 
 #### 3. Building owner notification
-- Keyper sends email to building owner (Alice)
+- Keyper sends email to building owner (Bob)
 - Email contains:
   - Clear description of what's being requested
   - Secure link to approval interface
@@ -102,44 +102,44 @@ Let's trace what happens when a building management platform requests access to 
 
 #### 4. Review & decision
 - Keyper displays request details in human-readable format
-- Alice sees:
+- Bob sees:
   - Which platform wants access (David)
-  - Who will use it (building manager Bob)
+  - Who will use it (building manager Alice)
   - What data is requested (measurements, control, etc.)
   - Which building (BAG number)
   - How long access will last
-- Alice can:
+- Bob can:
   - Approve (proceed to verification step)
   - Reject (request is denied, requesting party will not be notified)
 
 #### 5. Email verification
-If Alice chooses to approve or reject:
-- Keyper sends a one-time verification code to Alice's email
-- Alice must enter this code to confirm her decision
+If Bob chooses to approve or reject:
+- Keyper sends a one-time verification code to Bob's email
+- Bob must enter this code to confirm his decision
 - This verifies:
-  - Alice has access to the registered email address
+  - Bob has access to the registered email address
   - The approval/rejection is intentional and not accidental
-  - Alice's identity as the authorized approver
+  - Bob's identity as the authorized approver
 
 #### 6. Policy registration
-- If Alice had approved the request:
+- If Bob had approved the request:
   - Keyper registers the policies in GDS
   - The policies are active upon registration
-- If Alice had rejected the request:
+- If Bob had rejected the request:
   - Keyper does not register the policies in GDS
 
 #### 7. Confirmation
-- If Alice had approved the request:
-  - Alice sees confirmation of her approval
-  - Bob can now access the data through the building management platform
-- If Alice had rejected the request:
-  - Alice sees confirmation of her rejection
-  - Bob cannot access the data through the building management platform
+- If Bob had approved the request:
+  - Bob sees confirmation of his approval
+  - Alice can now access the data through the building management platform
+- If Bob had rejected the request:
+  - Bob sees confirmation of his rejection
+  - Alice cannot access the data through the building management platform
 
 ### Approval bundling
 To reduce approval friction, multiple permissions can be bundled in one request:
-- Single approval flow for Bob
-- Single email for Alice
+- Single approval flow for Alice
+- Single email for Bob
 - Single authentication session
 - Multiple policies created upon approval
 
@@ -147,11 +147,11 @@ Example bundled request:
 - Permission to retrieve measurements (read data)
 - Permission to send control commands (control)
 
-Alice approves once, two policies are created.
+Bob approves once, two policies are created.
 
 ### Important characteristics
-**Time-Limited**: Approval links expire (typically after a few days). If Alice doesn't respond, the request becomes invalid and must be re-initiated.
-**Revocable**: After approval, Alice can revoke policies anytime through the organization management interface. Revoked policies immediately stop authorizing requests.
+**Time-Limited**: Approval links expire (typically after a few days). If Bob doesn't respond, the request becomes invalid and must be re-initiated.
+**Revocable**: After approval, Bob can revoke policies anytime through the organization management interface. Revoked policies immediately stop authorizing requests.
 **Auditable**: All approval actions are logged. Organizations can see who approved what and when.
 **Secure**: Email-based verification ensures only authorized representatives with access to the registered email can approve requests. The one-time code mechanism prevents unauthorized approvals.
 

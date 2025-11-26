@@ -21,7 +21,7 @@ Understand what GDS is, what problems it solves, and how different participants 
 **You'll learn:**
 - What problem GDS solves
 - How the approval process works from a user perspective
-- Real-world use case examples with personas (Alice, Bob, Charlie, David)
+- Real-world use case examples with personas (Bob, Alice, Charlie, David)
 - The two core data transactions
 - Benefits for each participant type
 
@@ -99,8 +99,8 @@ Each transaction requires explicit building owner approval via the Keyper Approv
 
 ## Personas used in documentation
 Throughout the documentation, we use personas to clarify roles:
-- **Alice** – Building owner (data owner) who approves access requests
-- **Bob** – Building manager (data end-user) who uses optimization platforms
+- **Bob** – Building owner (data owner) who approves access requests
+- **Alice** – Building manager (data end-user) who uses optimization platforms
 - **Charlie** – IoT sensor platform (data service provider) providing sensor data
 - **David** – Building management platform (data service consumer) requesting sensor access
 
