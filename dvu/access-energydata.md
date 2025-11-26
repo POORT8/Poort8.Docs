@@ -27,19 +27,19 @@ Een datadienstgebruiker (M2M client) vraagt namens een gebouweigenaar toestemmin
 ### Gestandaardiseerde DVU persona's
 | Persona | Rol (NL) | Korte Omschrijving |
 |---------|----------|--------------------|
-| Alice | Data-eigenaar (energiecontractant) | Autoriseert datatoegang |
-| Bob | Eindgebruiker (gebouwbeheerder) | Ontvangt optimalisatie-inzichten |
+| Bob | Data-eigenaar (energiecontractant) | Autoriseert datatoegang |
+| Alice | Eindgebruiker (gebouwbeheerder) | Ontvangt optimalisatie-inzichten |
 | Charlie | Datadienstaanbieder (SDS) | Levert platform / distributie |
 | David | Datadienstgebruiker | Bouwt optimalisatie- of analyse‑dienst |
 
 ### Voorbeeld gebruikersreis
-Situatie: Bob wil een optimalisatiedienst inzetten; David faciliteert dit namens Charlie; Alice moet toestemming geven.
+Situatie: Alice wil een optimalisatiedienst inzetten; David faciliteert dit namens Charlie; Bob moet toestemming geven.
 
-1. Service discovery – Bob kiest een optimalisatiedienst.
-2. Toestemmingsaanvraag – David initieert via Keyper een approval‑link richting Alice.
-3. Toestemmingsflow – Alice doorloopt de DVU/Keyper autorisatie (dagelijkse verbruiksdata).
+1. Service discovery – Alice kiest een optimalisatiedienst.
+2. Toestemmingsaanvraag – David initieert via Keyper een approval‑link richting Bob.
+3. Toestemmingsflow – Bob doorloopt de DVU/Keyper autorisatie (dagelijkse verbruiksdata).
 4. Activatie – M2M connector valideert tokens en zet datastromen op.
-5. Levering – Bob ontvangt inzichten / rapportage.
+5. Levering – Alice ontvangt inzichten / rapportage.
 6. Technische validatie – DVU controleert integriteit & iSHARE conformiteit.
 
 ## 3. Technische Implementatiearchitectuur
@@ -58,7 +58,7 @@ Situatie: Bob wil een optimalisatiedienst inzetten; David faciliteert dit namens
 De datadienstgebruiker moet de volgende lagen/onderdelen voorzien:
 
 #### Applicatiewebsite / Portaal
-- Portaal voor eindgebruikers (Bob) met dienstselectie
+- Portaal voor eindgebruikers (Alice) met dienstselectie
 - Optioneel integratie binnen omgeving van datadienstaanbieder (Charlie)
 - Redirect naar Keyper voor autorisatie
 
@@ -97,7 +97,7 @@ Zie implementatiegids: [Single Building Access](single-building.md) voor stap‑
 
 ## 6. Klantervaring & Gebruikersinterface
 
-### 6.1 Eindgebruiker (Bob)
+### 6.1 Eindgebruiker (Alice)
 **Service discovery**
 - Heldere waardepropositie gericht op dagelijkse optimalisatie
 - Transparante verwachtingen & scope
@@ -111,7 +111,7 @@ Zie implementatiegids: [Single Building Access](single-building.md) voor stap‑
 - Dagelijkse verbruiksprofielen / inzichten
 - Periodieke rapportages (API / dashboard)
 
-### 6.2 Data-eigenaar (Alice)
+### 6.2 Data-eigenaar (Bob)
 **Toestemmingsbeheer dashboard**
 - Overzicht actieve services (dagelijks vs jaarlijks)
 - Intrek / wijzig functionaliteit per EAN
