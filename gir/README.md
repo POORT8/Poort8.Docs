@@ -62,7 +62,7 @@ It combines NoodleBar modules (Organization Register, Authorization Register, Ke
 |---------------|------------------|
 | **Auth tokens** | Auth0 `audience = GIR-Dataspace-CoreManager` → [Authentication examples](registrar-flow.md#authentication-example) |
 | **Installation statuses** | [Section 3](#3-status--lifecycle) – Pending/Active/Archived explained |
-| **Production changes** | [Section 5](#5-heads-up-for-changes-towards-production) – iSHARE, eHerkenning, KVK changes |
+| **Production changes** | [Section 5](#5-heads-up-for-changes-towards-production) – DSGO, authentication, KVK changes |
 
 ---
 
@@ -122,9 +122,9 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
 ## 5 Heads-up for changes towards Production
 
 ⚠️ **Key Production Changes:**
-- **Service-provider KVK** → will switch from Techniek Nederland to Stichting Ketenstandaarden: `NL.KVK.41084554`. This impacts policy registration in approval links.
-- **eHerkenning L3 required** for approvals (email disabled)
-- **iSHARE tokens replace Auth0** for the GIR data API 
+- **Service-provider KVK** → will switch from Techniek Nederland to Centraal Register Techniek: `NL.KVK.xxxxx`. This impacts policy registration in approval links.
+- **Multiple authentication methods** available for approvals
+- **DSGO tokens replace Auth0** for the GIR data API – token endpoints and scopes will change 
 
 ---
 

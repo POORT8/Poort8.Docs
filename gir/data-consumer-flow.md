@@ -98,7 +98,7 @@ sequenceDiagram
 | `issuedAt`, `notBefore`, `expiration` | Unix timestamps. Keyper may override if in the past |
 | `rules` | Optional – NL/SfB classification filter. Remove field for full building access |
 
-**⚠️ Note**: In production, `serviceProvider` changes to **NL.KVK.41084554** (Stichting Ketenstandaard).
+**⚠️ Note**: In production, `serviceProvider` changes to **NL.KVK.xxxxx** (Centraal Register Techniek).
 
 ## **Authentication Example**
 
@@ -115,7 +115,7 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
       }'
 ```
 
-*No scope required. In production, use `audience`: `Poort8-Dataspace-Keyper`.*
+*No scope required. In production, use `audience`: `Poort8-Dataspace-Keyper`. ⚠️ In production, DSGO tokens will replace Auth0 – token endpoints and scopes will change.*
 
 ## **Complete Example Request**
 

@@ -92,21 +92,6 @@ sequenceDiagram
       "type": "vboID",
       "attribute": "*",
       "license": "0005"
-    },
-    {
-      "useCase": "GIR",
-      "issuedAt": "<NOW>",
-      "notBefore": "<NOW>",
-      "expiration": "<NOW_PLUS_3Y>",
-      "issuerId": "NL.KVK.<OWNER_KVK>",
-      "subjectId": "NL.KVK.39098825",
-      "serviceProvider": "NL.KVK.27248698",
-      "action": "read",
-      "resourceId": "<VBO_ID>",
-      "type": "vboID",
-      "attribute": "*",
-      "license": "0005",
-      "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.10)"
     }
   ],
   "orchestration": { "flow": "dsgo.gir@v1" }
@@ -121,7 +106,7 @@ sequenceDiagram
 
 **⚠️ Note**: 
  - In preview, the RegistrarApp (FormulierenApp) already adds the DataConsumer's read policy to the approval link, on behalf of EDSN.
- - In production, `serviceProvider` changes to **NL.KVK.41084554** (Stichting Ketenstandaard).
+ - In production, `serviceProvider` changes to **NL.KVK.xxxxx** (Centraal Register Techniek).
 
 ## **Authentication Example**
 
@@ -138,7 +123,7 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
       }'
 ```
 
-*No scope required. In production, use `audience`: `Poort8-Dataspace-Keyper`.*
+*No scope required. In production, use `audience`: `Poort8-Dataspace-Keyper`. ⚠️ In production, DSGO tokens will replace Auth0 – token endpoints and scopes will change.*
 
 ## **Complete Example Request**
 
@@ -178,21 +163,6 @@ curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
         "type": "vboID",
         "attribute": "*",
         "license": "0005"
-      },
-      {
-        "useCase": "GIR",
-        "issuedAt": 1739881378,
-        "notBefore": 1739881378,
-        "expiration": 1839881378,
-        "issuerId": "NL.KVK.87654321",
-        "subjectId": "NL.KVK.39098825",
-        "serviceProvider": "NL.KVK.27248698",
-        "action": "read",
-        "resourceId": "0344010000126888",
-        "type": "vboID",
-        "attribute": "*",
-        "license": "0005",
-        "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.10)"
       }
     ],
     "orchestration": { "flow": "dsgo.gir@v1" }

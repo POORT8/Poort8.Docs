@@ -168,7 +168,7 @@ sequenceDiagram
 
 ⚠️ **Key Production Changes:**
 - Same JSON contract; base host changes
-- Authentication switches from Auth0 to iSHARE tokens
+- Authentication switches from Auth0 to DSGO tokens – token endpoints and scopes will change
 
 ---
 
