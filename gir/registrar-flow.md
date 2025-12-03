@@ -4,7 +4,7 @@
 
 This guide walks through the approval workflow for installers/registrars who need permission to register building installations on behalf of property owners.
 
-🔗 **[Live API Documentation](https://keyper-preview.poort8.nl/scalar/v1#tag/approval-links/post/v1/api/approval-links)** – Interactive endpoint testing
+🔗 **[API Docs](https://keyper-preview.poort8.nl/scalar/v1#tag/approval-links/post/v1/api/approval-links)** – Interactive endpoint testing
 
 ## **Sequence Diagram – Registrar Flow**
 
@@ -15,27 +15,26 @@ sequenceDiagram
     participant Keyper
     participant Owner
 
-
-    RegistrarApp->>GIR: POST /GIRBasisdataMessage\n (installationID)
+    RegistrarApp->>GIR: POST /GIRBasisdataMessage<br/>(installationID)
     GIR-->>RegistrarApp: 201 Created, status Pending
 
-        RegistrarApp->>RegistrarApp:When Status = pending, start approval request
+    RegistrarApp->>RegistrarApp: When Status = pending,<br/>start approval request
     rect rgb(221, 242, 255)
         note right of RegistrarApp: Create Approval link
-        RegistrarApp->>Keyper: POST /approval-links\n(request write policy)
+        RegistrarApp->>Keyper: POST /approval-links<br/>(request write policy)
         Keyper-->>RegistrarApp: Approval link status = Active
         Keyper->>Owner: Approval e-mail
-        Owner->>Keyper: eHerkenning login\nApprove
+        Owner->>Keyper: Authenticate & Approve
         Keyper->>GIR: Register write policy
         GIR->>GIR: Pending → Active
-        GIR-->Keyper:Confirm
-        Keyper-->Owner:To redirect URL
+        GIR-->Keyper: Confirm
+        Keyper-->Owner: Redirect to success URL
     end
-    RegistrarApp->>GIR: GET /GIRBasisdataMessage\n(Own registrations Pending + Active)
+    RegistrarApp->>GIR: GET /GIRBasisdataMessage<br/>(Pending + Active)
     
     rect rgb(221, 242, 255)
         note right of RegistrarApp: Updating installation
-        RegistrarApp->>GIR: POST same installation<br>(installationID)
+        RegistrarApp->>GIR: POST same installation<br/>(installationID)
         GIR-->>RegistrarApp: 200 OK
     end
 ```
@@ -82,8 +81,8 @@ sequenceDiagram
   "addPolicyTransactions": [
     {
       "useCase": "GIR",
-      "issuedAt": "<NOW>", // Unix timestamp - Keyper may override if in past
-      "notBefore": "<NOW>", // Keyper may override if in past
+      "issuedAt": "<NOW>",
+      "notBefore": "<NOW>",
       "expiration": "<NOW_PLUS_3Y>",
       "issuerId": "NL.KVK.<OWNER_KVK>",
       "subjectId": "NL.KVK.<REGISTRAR_KVK>",
@@ -96,26 +95,32 @@ sequenceDiagram
     },
     {
       "useCase": "GIR",
-      "issuedAt": "<NOW>", // Unix timestamp - Keyper may override if in past
-      "notBefore": "<NOW>", // Keyper may override if in past
+      "issuedAt": "<NOW>",
+      "notBefore": "<NOW>",
       "expiration": "<NOW_PLUS_3Y>",
       "issuerId": "NL.KVK.<OWNER_KVK>",
-      "subjectId": "NL.KVK.39098825", // Policy request on behalf of Data Consumer EDSN
+      "subjectId": "NL.KVK.39098825",
       "serviceProvider": "NL.KVK.27248698",
       "action": "read",
       "resourceId": "<VBO_ID>",
       "type": "vboID",
       "attribute": "*",
       "license": "0005",
-      "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.10)" //Fixed subset of NL/SfB codes for EDSN
+      "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.10)"
     }
   ],
   "orchestration": { "flow": "dsgo.gir@v1" }
 }
 ```
 
+| Field | Notes |
+|-------|-------|
+| `issuedAt`, `notBefore`, `expiration` | Unix timestamps. Keyper may override if in the past |
+| `subjectId` (2nd policy) | `NL.KVK.39098825` = EDSN (data consumer) |
+| `rules` | Fixed subset of NL/SfB codes for EDSN |
+
 **⚠️ Note**: 
- - In preview, the RegistrarApp (FormulierenApp) already adds the DataConsumer's read policy to the approval link, on behalf of EDSN. See the full example below
+ - In preview, the RegistrarApp (FormulierenApp) already adds the DataConsumer's read policy to the approval link, on behalf of EDSN.
  - In production, `serviceProvider` changes to **NL.KVK.41084554** (Stichting Ketenstandaard).
 
 ## **Authentication Example**
@@ -128,12 +133,12 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
   -d '{
         "client_id": "<REGISTRAR_CLIENT_ID>",
         "client_secret": "<REGISTRAR_CLIENT_SECRET>",
-        "audience": "Poort8-Dataspace-Keyper",
+        "audience": "Poort8-Dataspace-Keyper-Preview",
         "grant_type": "client_credentials"
       }'
 ```
 
-*No scope required*
+*No scope required. In production, use `audience`: `Poort8-Dataspace-Keyper`.*
 
 ## **Complete Example Request**
 
@@ -173,11 +178,42 @@ curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
         "type": "vboID",
         "attribute": "*",
         "license": "0005"
+      },
+      {
+        "useCase": "GIR",
+        "issuedAt": 1739881378,
+        "notBefore": 1739881378,
+        "expiration": 1839881378,
+        "issuerId": "NL.KVK.87654321",
+        "subjectId": "NL.KVK.39098825",
+        "serviceProvider": "NL.KVK.27248698",
+        "action": "read",
+        "resourceId": "0344010000126888",
+        "type": "vboID",
+        "attribute": "*",
+        "license": "0005",
+        "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.10)"
       }
     ],
     "orchestration": { "flow": "dsgo.gir@v1" }
   }'
 ```
+
+### **Example Response**
+
+```json
+{
+  "id": "e9e6773f-517f-4b05-9229-3cac2065ab9f",
+  "reference": "INSTALL-REQ-2025-001",
+  "url": "https://keyper-preview.poort8.nl/approve?id=e9e6773f-517f-4b05-9229-3cac2065ab9f",
+  "expiresAtUtc": 1739884978,
+  "status": "Active"
+}
+```
+
+The `url` is the approval link to share with the owner. Once they approve, `status` changes to `Approved`.
+
+> **Note**: By default, Keyper sends an email to the approver when the approval link is created. You don't need to send the URL manually unless you want to use a custom notification flow.
 
 ## **Common Error Responses**
 

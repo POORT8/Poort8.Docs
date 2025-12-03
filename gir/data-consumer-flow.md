@@ -4,7 +4,7 @@
 
 This guide walks through the approval workflow for data consumers (like EDSN) who need read access to building installation data.
 
-🔗 **[Live API Documentation](https://keyper-preview.poort8.nl/scalar/v1#tag/approval-links/post/v1/api/approval-links)** – Interactive endpoint testing
+🔗 **[API Docs](https://keyper-preview.poort8.nl/scalar/v1#tag/approval-links/post/v1/api/approval-links)** – Interactive endpoint testing
 
 ## **Overview**
 
@@ -19,18 +19,18 @@ sequenceDiagram
     participant Keyper
     participant Owner
 
-    DataConsumerApp->>Keyper: POST /approval-links\n(request read policy)
+    DataConsumerApp->>Keyper: POST /approval-links<br/>(request read policy)
     Keyper-->>DataConsumerApp: Approval link status = Active
     Keyper->>Owner: Approval e-mail
-    Owner->>Keyper: eHerkenning login\nApprove
+    Owner->>Keyper: Authenticate & Approve
     Keyper->>GIR: Register read policy
-    GIR-->Keyper:Confirm
-    Keyper-->Owner:To redirect URL
+    GIR-->Keyper: Confirm
+    Keyper-->Owner: Redirect to success URL
     
     Note over DataConsumerApp: After approval
-    DataConsumerApp->>GIR: GET /GIRBasisdataMessage?vboID=...\n(Active + authorized)
+    DataConsumerApp->>GIR: GET /GIRBasisdataMessage?vboID=...<br/>(Active + authorized)
     GIR->>GIR: Check read permissions
-    GIR-->>DataConsumerApp: Installation data (filtered by rules if applicable)
+    GIR-->>DataConsumerApp: Installation data<br/>(filtered by rules if applicable)
 ```
 
 ## **Minimum Payload for POST /approval-links**
@@ -75,8 +75,8 @@ sequenceDiagram
   "addPolicyTransactions": [
     {
       "useCase": "GIR",
-      "issuedAt": "<NOW>", // Unix timestamp - Keyper may override if in past
-      "notBefore": "<NOW>", // Keyper may override if in past
+      "issuedAt": "<NOW>",
+      "notBefore": "<NOW>",
       "expiration": "<NOW_PLUS_3Y>",
       "issuerId": "NL.KVK.<OWNER_KVK>",
       "subjectId": "NL.KVK.<CONSUMER_KVK>",
@@ -86,14 +86,19 @@ sequenceDiagram
       "type": "vboID",
       "attribute": "*",
       "license": "0005",
-      "rules": "Classificaties(...)" // Optional - remove to expose all installations
+      "rules": "Classificaties(...)"
     }
   ],
   "orchestration": { "flow": "dsgo.gir@v1" }
 }
 ```
 
-**Note**: ⚠️ In production, `serviceProvider` changes to **NL.KVK.41084554** (Stichting Ketenstandaard).
+| Field | Notes |
+|-------|-------|
+| `issuedAt`, `notBefore`, `expiration` | Unix timestamps. Keyper may override if in the past |
+| `rules` | Optional – NL/SfB classification filter. Remove field for full building access |
+
+**⚠️ Note**: In production, `serviceProvider` changes to **NL.KVK.41084554** (Stichting Ketenstandaard).
 
 ## **Authentication Example**
 
@@ -110,7 +115,7 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
       }'
 ```
 
-*No scope required*
+*No scope required. In production, use `audience`: `Poort8-Dataspace-Keyper`.*
 
 ## **Complete Example Request**
 
@@ -152,7 +157,7 @@ curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
         "type": "vboID",
         "attribute": "*",
         "license": "0005",
-        "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.18)"
+        "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.10)"
       }
     ],
     "orchestration": { "flow": "dsgo.gir@v1" }
@@ -203,6 +208,22 @@ curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
   }'
 ```
 
+### **Example Response**
+
+```json
+{
+  "id": "a1b2c3d4-5678-90ef-ghij-klmnopqrstuv",
+  "reference": "EDSN-ACCESS-2025-001",
+  "url": "https://keyper-preview.poort8.nl/approve?id=a1b2c3d4-5678-90ef-ghij-klmnopqrstuv",
+  "expiresAtUtc": 1739884978,
+  "status": "Active"
+}
+```
+
+The `url` is the approval link. Once the owner approves, `status` changes to `Approved`.
+
+> **Note**: By default, Keyper sends an email to the approver when the approval link is created. You don't need to send the URL manually unless you want to use a custom notification flow.
+
 ## **Common Error Responses**
 
 | **Status** | **Scenario** | **Solution** |
@@ -234,4 +255,4 @@ GET /api/GIRBasisdataMessage?vboID=<VBO_ID>
 
 **Access behavior**: Only `Active` installations with matching read policies will be returned. If rules were specified in the policy, only installations matching those NL/SfB classifications will be visible.
 
-For complete querying details, see the [main overview](README.md#5-querying-installations) guide.
+For complete querying details, see the [Querying Installations](README.md#4-querying-installations) section.

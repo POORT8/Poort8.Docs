@@ -4,50 +4,57 @@ This guide describes the **GIR**-*preview* dataspace for registering and exchang
 It combines NoodleBar modules (Organization Register, Authorization Register, Keyper Approve) with data(space) standards for API interfaces:
 
 * **DICO** — data-model for installation messages ([Ketenstandaard GIR Spec](https://ketenstandaard.semantic-treehouse.nl/docs/api/GIR/))
-* **DSGO** — approval & access rules
+* **DSGO** — approval & access rules [DSGO Standards](https://www.digigo.nu/wat-is-dsgo/)
 
 ---
 
 ## 1 End-to-End Flow in Four Steps
 
-1. **Register installation**  
+1. **Register installation metadata**  
    *Registrar →* `POST /GIRBasisdataMessage`  
    - If no write-policy is in place, the record is stored as **Pending** (only the registrar can see it).
 
-2. **Request write access**  
+2. **Request write access to metadata**  
   *Registrar →* `POST /approval-links` (write policy)  
-    - Owner receives an e-mail, logs in with eHerkenning, clicks **Approve**.
+    - Owner receives an e-mail, authenticates, clicks **Approve**.
     - Policy is registered in the GIR Authorization Register.
     - GIR automatically promotes any matching **Pending** records to **Active**.
     - ⚠️ *Only in **GIR**-preview, the RegistrarApp (FormulierenApp), includes the request for read access for EDSN in this approval-link.*
     
-
-3. **Request read access**  
+3. **Request read access to metadata**  
    *Data-consumer (e.g. EDSN) →* `POST /approval-links` (read policy, optional NL/SfB filter)  
-   - As above, Owner receives an e-mail, logs in with eHerkenning, clicks Approve.
+   - As above, Owner receives an e-mail, authenticates, clicks **Approve**.
    - Policy is registered in the GIR Authorization Register.
 
-4. **Retrieve data**  
+4. **Retrieve installation metadata**  
    *Any party* calls `GET /GIRBasisdataMessage`  
    - Registrar sees its own **Pending** + **Active** installations.  
-   - Other parties see only **Active** installations they are the owner of OR they have a read-policy for.
+   - Other parties see only **Active** installations they are the owner of OR they have a read or write policy for.
 
 ---
 
 ## 2 Integration Path & Quick Reference
 
-### **Step-by-Step Implementation**
+### **Implementation Guides**
 
 | Step | What you build | Guide |
 |------|----------------|-------|
-| **1. Register installation** | `POST /GIRBasisdataMessage` (create / update) | **[Register Installations](register-installations.md)** |
+| **1. Register installation metadata** | `POST /GIRBasisdataMessage` (create / update) | **[Register Installations](register-installations.md)** |
 | **2. Ask for *write* access** | `POST /approval-links` (write policy) | **[Registrar Flow](registrar-flow.md)** ¹ |
 | **3. Ask for *read* access** | `POST /approval-links` (read policy) | **[Data-Consumer Flow](data-consumer-flow.md)** ² |
-| **4. Retrieve data** | `GET /GIRBasisdataMessage` (filter by VBO, KVK, etc.) | [Section 4](#4-querying-installations) below |
+| **4. Retrieve installation metadata** | `GET /GIRBasisdataMessage` (filter by VBO, KVK, etc.) | [Section 4](#4-querying-installations) below |
 
-¹ This guide covers version 1 (v1) of the Keyper API, of which the POST endpoint has been updated. If you're looking for coverage of the previous version (v0) of the Keyper API, please refer to the [legacy version of this guide](legacy/registrar-flow.md) instead.
+¹ This guide covers version 1 (v1) of the Keyper API, of which the POST endpoint has been updated. If you're looking for coverage of the previous version (v0) of the Keyper API, please refer to the [legacy version of the registrar flow](legacy/registrar-flow.md) instead.
 
-² This guide covers version 1 (v1) of the Keyper API, of which the POST endpoint has been updated. If you're looking for coverage of the previous version (v0) of the Keyper API, please refer to the [legacy version of this guide](legacy/data-consumer-flow.md) instead.
+² This guide covers version 1 (v1) of the Keyper API, of which the POST endpoint has been updated. If you're looking for coverage of the previous version (v0) of the Keyper API, please refer to the [legacy version of the data consumer flow](legacy/data-consumer-flow.md) instead.
+
+> **Migrating from Keyper v0 to v1?** Key changes:
+> - **Endpoint path**: `/api/approval-links` → `/v1/api/approval-links`
+> - **Flow identifier**: `orchestration.flow` changed from `"dsgo.gir@1"` → `"dsgo.gir@v1"`
+> - **Simplified dataspace object**: Now only requires `baseUrl` (removed `name`, `policyUrl`, `organizationUrl`, `resourceGroupUrl`)
+> - **Removed fields**: `authenticationMethods`, `expiresInSeconds`, `redirectUrl` (now handled by Keyper)
+>
+> See the [Registrar Flow](registrar-flow.md) and [legacy version](legacy/registrar-flow.md) for full before/after examples.
 
 ### **Quick Reference**
 
@@ -76,19 +83,20 @@ If the owner clicks **Reject**, the approval link expires and the installation r
 ### 4.1 Endpoint  
 
 ```text
-GET https://gir-preview.poort8.nl/api/GIRBasisdataMessage
+GET https://gir-preview.poort8.nl/api/GIRBasisdataMessage/{guid}
 ```
 
-🔗 **[Live API Documentation](https://gir-preview.poort8.nl/scalar/#tag/girbasisdatamessage/GET/api/GIRBasisdataMessage)** – Interactive endpoint testing
+🔗 **[API Docs](https://gir-preview.poort8.nl/scalar/#tag/girbasisdatamessage/GET/api/GIRBasisdataMessage/{guid})**
 
-### 4.2 Filters (omit the NL.KVK. prefix)
+### 4.2 Query Parameters
 
 | **Parameter** | **Format** | **Notes** |
 | -- | -- | -- |
 | vboID | 16-digit BAG | BAG validation |
-| installationIDValue | string | Matches installationID.value |
-| registrarChamberOfCommerceNumber | 8-digit |  |
-| installationOwnerChamberOfCommerceNumber | 8-digit |  |
+| energyConnectionID | string (EAN-18) | Matches `installation.installationInformation.energyConnectionID` |
+| installationIDValue | string | Matches `installationID.value` |
+| registrarChamberOfCommerceNumber | 8-digit | Omit the NL.KVK. prefix |
+| installationOwnerChamberOfCommerceNumber | 8-digit | Omit the NL.KVK. prefix |
 
 **At least one filter is required.**
 
@@ -114,7 +122,7 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
 ## 5 Heads-up for changes towards Production
 
 ⚠️ **Key Production Changes:**
-- **Service-provider KVK** → will switch from Techniek Nederland to Stichting Ketenstandaarden: `NL.KVK.41084554`. This impact policy registration in approval links.
+- **Service-provider KVK** → will switch from Techniek Nederland to Stichting Ketenstandaarden: `NL.KVK.41084554`. This impacts policy registration in approval links.
 - **eHerkenning L3 required** for approvals (email disabled)
 - **iSHARE tokens replace Auth0** for the GIR data API 
 
@@ -133,5 +141,5 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
 - **[Ketenstandaard GIR API](https://ketenstandaard.semantic-treehouse.nl/docs/api/GIR/)** – Complete DICO schema specification
 - **[Ketenstandaarden Documentation about GIR](https://ketenstandaard.semantic-treehouse.nl/docs/TNL/GIR/)** – GIR framework background
 - **[DSGO Standards](https://www.digigo.nu/wat-is-dsgo/)** – Authorization and data governance framework
-- **[GIR Live API Docs](https://gir-preview.poort8.nl/scalar/v1)** – Interactive Scalar UI
-- **[Keyper Live API Docs](https://keyper-preview.poort8.nl/scalar/v1)** – Interactive Scalar UI
+- **[GIR API Reference](https://gir-preview.poort8.nl/scalar/v1)** – Interactive Scalar Docs
+- **[Keyper API Reference](https://keyper-preview.poort8.nl/scalar/v1)** – Interactive Scalar Docs
