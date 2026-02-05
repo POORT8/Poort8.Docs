@@ -11,6 +11,9 @@
   - [DCL](dcl/)
   - [Binnenvaart](binnenvaart/)
 
+- **Policies**
+  - [API Versioning](api-versioning.md)
+
 - **Products**
   - [HeyWim ➚](https://www.heywim.nl/)
   - [Keyper](keyper/)
