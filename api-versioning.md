@@ -33,6 +33,12 @@ A breaking change is any modification that could cause your existing integration
 
 Non-breaking changes (such as adding new optional fields or new endpoints) do not result in a new major version.
 
+## iSHARE Endpoints
+
+Some of our APIs include endpoints that implement the [iSHARE](https://ishare.eu/) specification. These iSHARE endpoints follow their own versioning, separate from the general API version. This means iSHARE endpoint versions reflect the iSHARE specification version they implement, not changes to our API.
+
+When a new iSHARE specification version is released and supported, a new versioned iSHARE endpoint will be added alongside existing ones.
+
 ## Communication
 
 When a new API version is released, you will be notified with:
