@@ -6,8 +6,8 @@ This document describes how we version our APIs and what you can expect when cha
 
 ## Versioning Approach
 
-- We use **major versions only** (v0, v1, v2, etc.)
-- New APIs start in **v0** during initial development
+- We use **major versions only** (v1, v2, etc.)
+- New APIs start without a version during initial development
 - A new major version is created **only** when there is a breaking change
 - At most **2 versions** are active at any time: the current version and one legacy version
 
@@ -33,11 +33,11 @@ A breaking change is any modification that could cause your existing integration
 
 Non-breaking changes (such as adding new optional fields or new endpoints) do not result in a new major version.
 
-## iSHARE Endpoints
+## iSHARE and DSGO Endpoints
 
-Some of our APIs include endpoints that implement the [iSHARE](https://ishare.eu/) specification. These iSHARE endpoints follow their own versioning, separate from the general API version. This means iSHARE endpoint versions reflect the iSHARE specification version they implement, not changes to our API.
+Some of our APIs include endpoints that implement the [iSHARE](https://ishare.eu/) or [DSGO](https://www.digigo.nu/wat-is-dsgo/) specifications. These endpoints follow their own versioning, separate from the general API version. This means endpoint versions reflect the specification version they implement, not changes to our API.
 
-When a new iSHARE specification version is released and supported, a new versioned iSHARE endpoint will be added alongside existing ones.
+When a new iSHARE or DSGO specification version is released and supported, a new versioned endpoint will be added alongside existing ones.
 
 ## Communication
 

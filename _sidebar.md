@@ -11,7 +11,7 @@
   - [DCL](dcl/)
   - [Binnenvaart](binnenvaart/)
 
-- **Policies**
+- **Reference**
   - [API Versioning](api-versioning.md)
 
 - **Products**
