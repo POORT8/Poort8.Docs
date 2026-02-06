@@ -2,6 +2,8 @@
 
 - **Getting Started**
   - [Introduction](README.md)
+  - [API Versioning](api-versioning.md)
+  - [Changelog](changelog.md)
 
 - **Integration Guides**  
   - [Register Installations](register-installations.md)
