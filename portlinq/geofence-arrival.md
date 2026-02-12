@@ -18,16 +18,19 @@ sequenceDiagram
     participant ASR as PortlinQ-ASR
     participant AR as PortlinQ-AR
     participant Bob as Bob (Port Authority)
-    Note over Charlie,Bob: Prerequisites:<br/>Schip (ENI) + Exploitant + relationships registered in ASR.<br/>Schipper has pre-authorized Charlie for geofence via AR (consent policy).<br/>Bob has registered port contract with Exploitant in AR.<br/>AIS/EuRIS location consent given by schipper (outside PortlinQ).
+    Note over Charlie,Bob: Prerequisites:<br/>Schip (ENI) + Exploitant + relationships registered in ASR.<br/>Schipper has pre-authorized Charlie for geofence via AR (consent policy).<br/>Bob has registered port contract with Exploitant in AR.
 
     %% Ship detected
     Note left of Charlie: AIS/EuRIS: ENI detected<br/>entering port zone
 
     %% Participant verification
-    Charlie->>ASR: 1. Verify participant (ENI)
-    ASR-->>Charlie: ENI confirmed
-    Charlie->>ASR: 2. Resolve exploitant for ENI
-    ASR-->>Charlie: Exploitant (Bob's KvK)
+    rect rgb(255, 243, 205)
+        Note over Charlie,ASR: ⚡ ASR tokens for vessels (not yet in scope)
+        Charlie->>ASR: 1. Verify participant (ENI)
+        ASR-->>Charlie: ENI confirmed
+        Charlie->>ASR: 2. Resolve exploitant for ENI
+        ASR-->>Charlie: Exploitant (Bob's KvK)
+    end
 
     %% Authorization checks
     Charlie->>AR: 3. Check schipper consent<br/>(issuer=ship, subject=Charlie,<br/>resource=geofence)
@@ -61,7 +64,6 @@ Deze stappen worden uitgevoerd vooraf door verschillende partijen:
 | **Schip registratie** | Schip (ENI) + exploitant relatie geregistreerd in ASR | Exploitant |
 | **Schipper consent** | Schipper heeft Charlie geautoriseerd voor geofence monitoring via AR policy | Schipper |
 | **Port contract** | Haven autoriteit (Bob) heeft contract geregistreerd met exploitant in AR | Haven (Bob) |
-| **AIS/EuRIS toegang** | Schipper heeft locatie data consent gegeven (buiten PortlinQ) | Schipper |
 
 ## Stappen
 
@@ -69,56 +71,21 @@ Deze stappen worden uitgevoerd vooraf door verschillende partijen:
 
 Charlie's geofence service ontvangt AIS of EuRIS locatie data en detecteert dat een schip (ENI) een haven geofence zone binnenkomt.
 
-> ℹ️ AIS/EuRIS locatie data integratie valt buiten PortlinQ scope. Charlie moet deze data via officiële kanalen verkrijgen met schipper consent.
+> ℹ️ AIS/EuRIS locatie data integratie valt buiten PortlinQ scope. Charlie moet deze data via officiële kanalen verkrijgen.
 
-### Stap 1: Participant verificatie _(PortlinQ ASR)_
+### Stap 1: Participant verificatie _(PortlinQ ASR)_ 🔜
 
-Charlie verifieert dat het gedetecteerde schip (ENI) een geregistreerde participant is in PortlinQ.
+Charlie verifieert dat het gedetecteerde schip (ENI) een geregistreerde participant is in PortlinQ via ASR.
 
-```http
-GET https://portlinq-asr.poort8.nl/participants/{ENI}
-Authorization: Bearer {charlie_service_token}
-```
-
-**Response:**
-
-```json
-{
-  "eni": "{ENI}",
-  "name": "MS Example Ship",
-  "type": "ship",
-  "status": "active"
-}
-```
+> 🔜 **Binnenkort beschikbaar**: De ASR participant verificatie functionaliteit wordt momenteel ontwikkeld en zal binnenkort beschikbaar zijn.
 
 Als de participant niet gevonden wordt, stopt Charlie de flow (geen event verzonden).
 
-### Stap 2: Exploitant resolutie _(PortlinQ ASR)_
+### Stap 2: Exploitant resolutie _(PortlinQ ASR)_ 🔜
 
-Charlie vraagt de exploitant op die verantwoordelijk is voor dit schip.
+Charlie vraagt de exploitant op die verantwoordelijk is voor dit schip via ASR relationship queries.
 
-```http
-GET https://portlinq-asr.poort8.nl/participants/{ENI}/relationships?type=exploitant
-Authorization: Bearer {charlie_service_token}
-```
-
-**Response:**
-
-```json
-{
-  "participant": "{ENI}",
-  "relationships": [
-    {
-      "type": "managed_by_exploitant",
-      "related_participant": {
-        "kvk": "{Exploitant_KvK}",
-        "name": "Exploitant BV",
-        "type": "organization"
-      }
-    }
-  ]
-}
-```
+> 🔜 **Binnenkort beschikbaar**: De ASR relationship query functionaliteit wordt momenteel ontwikkeld en zal binnenkort beschikbaar zijn.
 
 Charlie gebruikt de exploitant KvK voor de volgende autorisatie checks.
 
@@ -128,24 +95,23 @@ Charlie controleert via AR of de schipper consent heeft gegeven voor geofence mo
 
 ```http
 GET https://portlinq-preview.poort8.nl/api/authorization/explained-enforce
-  ?subject={Charlie_organization_id}
-  &resource=geofence
+  ?subject={havenbedrijf_id}
+  &resource=*
   &action=monitor
-  &useCase=portlinq-geofence
-  &issuer={ENI}
+  &issuer={schipper_organization_id}
   &serviceProvider={Charlie_organization_id}
-  &type=geofence-consent
-  &attribute=*
-  &context={}
+  &type=geo-fence
+  &attribute={haven_locatie_id}
 Authorization: Bearer {charlie_service_token}
 ```
 
 **AR evaluatie:**
 1. AR zoekt naar consent policy waar:
-   - `issuer` = Schip (ENI) — de schipper heeft deze policy aangemaakt
-   - `subject` = Charlie (geofence service)
-   - `resource` = geofence
+   - `issuer` = Schipper organisatie — de schipper heeft deze policy aangemaakt
+   - `subject` = Havenbedrijf
+   - `resource` = * (alle resources)
    - `action` = monitor
+   - `attribute` = Specifieke haven locatie
 2. Als een geldige consent policy bestaat → `Permit`
 3. Anders → `Deny`
 
@@ -157,17 +123,17 @@ Authorization: Bearer {charlie_service_token}
   "explainPolicies": [
     {
       "policyId": "pol_geofence_consent_123",
-      "issuerId": "{ENI}",
-      "subjectId": "{Charlie_organization_id}",
-      "resourceId": "geofence",
+      "issuerId": "{schipper_organization_id}",
+      "subjectId": "{havenbedrijf_id}",
+      "resourceId": "*",
       "action": "monitor",
       "useCase": "portlinq-geofence",
       "issuedAt": 1738368000,
       "notBefore": 1738368000,
       "expiration": 1769904000,
       "serviceProvider": null,
-      "type": null,
-      "attribute": "*",
+      "type": "geo-fence",
+      "attribute": "{haven_locatie_id}",
       "license": null,
       "rules": null,
       "properties": []
@@ -189,27 +155,26 @@ Als `allowed` = `false`, stopt Charlie de flow (geen event verzonden).
 
 ### Stap 4: Port contract verificatie _(PortlinQ AR)_
 
-Charlie controleert via AR of de haven autoriteit (Bob) een contract heeft met de exploitant voor port services.
+Charlie controleert via AR of de exploitant een contract heeft met de haven autoriteit voor invoicing van het schip.
 
 ```http
 GET https://portlinq-preview.poort8.nl/api/authorization/explained-enforce
-  ?subject={Exploitant_KvK}
-  &resource=port-services
-  &action=use
-  &useCase=portlinq-port-contract
-  &issuer={Bob_organization_id}
-  &serviceProvider={Bob_organization_id}
+  ?subject={havenbedrijf_id}
+  &resource={ENI}
+  &action=invoicing
+  &issuer={Exploitant_KvK}
+  &serviceProvider={havenbedrijf_id}
   &type=port-contract
   &attribute=*
-  &context={}
 Authorization: Bearer {charlie_service_token}
 ```
 
 **AR evaluatie:**
 1. AR zoekt naar port contract policy waar:
-   - `issuer` = Bob (haven autoriteit)
-   - `subject` = Exploitant (scheepvaart bedrijf)
-   - `resource` = port-services
+   - `issuer` = Exploitant (scheepvaart bedrijf)
+   - `subject` = Havenbedrijf (Bob)
+   - `resource` = Schip (ENI)
+   - `action` = invoicing
 2. Als een geldig contract bestaat → `Permit`
 3. Anders → `Deny`
 
@@ -221,16 +186,16 @@ Authorization: Bearer {charlie_service_token}
   "explainPolicies": [
     {
       "policyId": "pol_port_contract_456",
-      "issuerId": "{Bob_organization_id}",
-      "subjectId": "{Exploitant_KvK}",
-      "resourceId": "port-services",
-      "action": "use",
+      "issuerId": "{Exploitant_KvK}",
+      "subjectId": "{havenbedrijf_id}",
+      "resourceId": "{ENI}",
+      "action": "invoicing",
       "useCase": "portlinq-port-contract",
       "issuedAt": 1738368000,
       "notBefore": 1738368000,
       "expiration": 1798732800,
-      "serviceProvider": null,
-      "type": null,
+      "serviceProvider": "{havenbedrijf_id}",
+      "type": "port-contract",
       "attribute": "*",
       "license": null,
       "rules": null,
@@ -253,65 +218,17 @@ Als `allowed` = `false`, stopt Charlie de flow (exploitant heeft geen contract m
 
 ### Stap 5: Arrival event verzenden _(extern)_
 
-Als beide autorisaties succesvol zijn, stuurt Charlie een arrival event naar Bob's port authority system.
+Als beide autorisaties succesvol zijn, stuurt Charlie een arrival event naar Bob's port authority system met schip identificatie (ENI), exploitant informatie, timestamp en haven zone.
 
-```http
-POST https://port-authority.example.com/api/arrivals
-Authorization: Bearer {charlie_to_bob_auth}
-Content-Type: application/json
-```
-```json
-{
-  "event_type": "arrival",
-  "ship_eni": "{ENI}",
-  "ship_name": "MS Example Ship",
-  "exploitant_kvk": "{Exploitant_KvK}",
-  "exploitant_name": "Exploitant BV",
-  "port_zone": "rotterdam-main",
-  "timestamp": "2026-02-15T08:23:45Z",
-  "location": {
-    "lat": 51.9244,
-    "lon": 4.4777
-  },
-  "event_id": "arr-12345"
-}
-```
-
-**Response:**
-
-```json
-{
-  "status": "acknowledged",
-  "event_id": "arr-12345",
-  "port_session_id": "ps-67890"
-}
-```
+> ℹ️ De port authority API endpoints en event formaten zijn haven-specifiek en vallen buiten de PortlinQ scope.
 
 Bob's systeem registreert de aankomst en start een port sessie voor facturering.
 
 ### Stap 6-7: Departure event _(PortlinQ AR + extern)_
 
-Wanneer Charlie detecteert dat het schip de haven zone verlaat, herhaalt Charlie de autorisatie checks (stap 3-4) en stuurt een departure event naar Bob.
+Wanneer Charlie detecteert dat het schip de haven zone verlaat, herhaalt Charlie de autorisatie checks (stap 3-4) en stuurt een departure event naar Bob met schip identificatie, exploitant informatie, timestamp en referentie naar het arrival event.
 
-**Departure event:**
-
-```http
-POST https://port-authority.example.com/api/departures
-Authorization: Bearer {charlie_to_bob_auth}
-Content-Type: application/json
-```
-```json
-{
-  "event_type": "departure",
-  "ship_eni": "{ENI}",
-  "exploitant_kvk": "{Exploitant_KvK}",
-  "port_zone": "rotterdam-main",
-  "timestamp": "2026-02-15T14:45:12Z",
-  "arrival_event_id": "arr-12345",
-  "port_session_id": "ps-67890",
-  "event_id": "dep-12346"
-}
-```
+> ℹ️ De port authority API endpoints en event formaten zijn haven-specifiek en vallen buiten de PortlinQ scope.
 
 Bob's systeem sluit de port sessie, berekent de duration en genereert een factuur voor de exploitant.
 
@@ -339,15 +256,16 @@ Content-Type: application/json
 ```
 ```json
 {
-  "subjectId": "{Charlie_organization_id}",
+  "subjectId": "{havenbedrijf_id}",
   "action": "monitor",
-  "resourceId": "geofence",
-  "issuerId": "{ENI}",
-  "useCase": "portlinq-geofence",
+  "resourceId": "*",
+  "issuerId": "{schipper_organization_id}",
   "issuedAt": 1738368000,
   "notBefore": 1738368000,
   "expiration": 1769904000,
-  "attribute": "*"
+  "serviceProvider": "{Charlie_organization_id}",
+  "type": "geo-fence",
+  "attribute": "{haven_locatie_id}"
 }
 ```
 
@@ -356,17 +274,17 @@ Content-Type: application/json
 ```json
 {
   "policyId": "pol_geofence_consent_123",
-  "issuerId": "{ENI}",
-  "subjectId": "{Charlie_organization_id}",
-  "resourceId": "geofence",
+  "issuerId": "{schipper_organization_id}",
+  "subjectId": "{havenbedrijf_id}",
+  "resourceId": "*",
   "action": "monitor",
   "useCase": "portlinq-geofence",
   "issuedAt": 1738368000,
   "notBefore": 1738368000,
   "expiration": 1769904000,
-  "serviceProvider": null,
-  "type": null,
-  "attribute": "*",
+  "serviceProvider": "{Charlie_organization_id}",
+  "type": "geo-fence",
+  "attribute": "{haven_locatie_id}",
   "license": null,
   "rules": null,
   "properties": []
@@ -377,23 +295,24 @@ Deze policy kan via een schipper portal of app interface worden aangemaakt.
 
 ### Haven port contract
 
-De haven autoriteit registreert contracts met exploitanten:
+De exploitant registreert een contract waarmee het havenbedrijf mag factureren voor het schip:
 
 ```http
 POST https://portlinq-preview.poort8.nl/api/policies
-Authorization: Bearer {bob_auth_token}
+Authorization: Bearer {exploitant_auth_token}
 Content-Type: application/json
 ```
 ```json
 {
-  "subjectId": "{Exploitant_KvK}",
-  "action": "use",
-  "resourceId": "port-services",
-  "issuerId": "{Bob_organization_id}",
-  "useCase": "portlinq-port-contract",
+  "subjectId": "{havenbedrijf_id}",
+  "action": "invoicing",
+  "resourceId": "{ENI}",
+  "issuerId": "{Exploitant_KvK}",
   "issuedAt": 1738368000,
   "notBefore": 1738368000,
   "expiration": 1798732800,
+  "serviceProvider": "{havenbedrijf_id}",
+  "type": "port-contract",
   "attribute": "*"
 }
 ```
@@ -403,16 +322,16 @@ Content-Type: application/json
 ```json
 {
   "policyId": "pol_port_contract_456",
-  "issuerId": "{Bob_organization_id}",
-  "subjectId": "{Exploitant_KvK}",
-  "resourceId": "port-services",
-  "action": "use",
+  "issuerId": "{Exploitant_KvK}",
+  "subjectId": "{havenbedrijf_id}",
+  "resourceId": "{ENI}",
+  "action": "invoicing",
   "useCase": "portlinq-port-contract",
   "issuedAt": 1738368000,
   "notBefore": 1738368000,
   "expiration": 1798732800,
-  "serviceProvider": null,
-  "type": null,
+  "serviceProvider": "{havenbedrijf_id}",
+  "type": "port-contract",
   "attribute": "*",
   "license": null,
   "rules": null,
