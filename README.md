@@ -9,7 +9,9 @@ Welcome to the Poort8 docs. This site hosts documentation for all Poort8 product
 - [GIR](gir/)
 - [TSL](tsl/)
 - [DCL](dcl/)
-- [binnenvaart](binnenvaart/)
+- [Bunker Connect](bunkerconnect/)
+- [Interplant Federation](cgiipf/)
+- [PortlinQ](portlinq/)
 
 
 ## Products

@@ -9,7 +9,9 @@
   - [GIR](gir/)
   - [TSL](tsl/)
   - [DCL](dcl/)
-  - [Binnenvaart](binnenvaart/)
+  - [Bunker Connect](bunkerconnect/)
+  - [Interplant Federation](cgiipf/)
+  - [PortlinQ](portlinq/)
 
 - **Reference**
   - [API Versioning](api-versioning.md)
