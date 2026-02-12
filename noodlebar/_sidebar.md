@@ -18,7 +18,9 @@
   - [Database Migrations](09%20-%20Database%20Migrations.md)
 
 - **NoodleBar Instances**
-  - [Binnenvaart NoodleBar](../binnenvaart/)
+  - [Bunker Connect](../bunkerconnect/)
+  - [Interplant Federation](../cgiipf/)
   - [Dataspace Container Logistics (DCL)](../dcl/)
   - [GIR Instance](../gir/)
+  - [PortlinQ](../portlinq/)
   - [TSL Instance](../tsl/)
