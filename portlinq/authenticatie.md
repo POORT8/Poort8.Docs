@@ -66,29 +66,46 @@ Alice selecteert het schip (ENI) waarvoor ze diensten wil aanvragen. De app vraa
 
 > 🔜 **Binnenkort beschikbaar**: Token exchange functionaliteit wordt momenteel ontwikkeld.
 
-**Tijdelijke workaround**: Haal een token op bij het reguliere token endpoint met de volgende properties:
+**Tijdelijke workaround**: Haal een bearer token op via Auth0 met de volgende request:
 
-```http
-POST https://portlinq-preview.poort8.nl/asr/connect/token
-Content-Type: application/x-www-form-urlencoded
-```
-```
-grant_type=client_credentials
-&client_id={client_id}
-&client_secret={client_secret}
-&scope=ship:{ENI}
+```bash
+curl --request POST \
+  --url https://poort8.eu.auth0.com/oauth/token \
+  --header 'content-type: application/json' \
+  --data '{
+    "client_id":"***",
+    "client_secret":"***",
+    "audience":"PortlinQ-Dataspace-CoreManager",
+    "grant_type":"client_credentials"
+  }'
 ```
 
 **Response:**
 
 ```json
 {
-  "access_token": "{ship_scoped_token}",
-  "token_type": "Bearer",
-  "expires_in": 3600,
-  "scope": "ship:{ENI}"
+  "access_token": "***",
+  "token_type": "Bearer"
 }
 ```
+
+Het `access_token` is een JWT bearer token met de volgende claims:
+
+```json
+{
+  "organizationId": "schip:123456",
+  "iss": "https://poort8.eu.auth0.com/",
+  "sub": "GA2GoSLKwZnczBNR1fyFCeOoYhE1aLGb@clients",
+  "aud": "PortlinQ-Dataspace-CoreManager",
+  "iat": 1771360767,
+  "exp": 1771447167,
+  "scope": "read:ar:delegated write:ar:delegated",
+  "jti": "fVuhHyHVeEVBnvoceCtfam",
+  "client_id": "GA2GoSLKwZnczBNR1fyFCeOoYhE1aLGb"
+}
+```
+
+> In deze tijdelijke workaround bevat het veld `organizationId` het ENI id van het schip (bijv. `schip:123456`).
 
 > **Alternatieven**: Andere methoden voor schip-token verkrijging worden onderzocht (bijv. directe schip credentials, roster-based auth).
 

@@ -106,21 +106,18 @@ Charlie's geofence service ontvangt AIS of EuRIS locatie data en detecteert dat 
 
 > ℹ️ AIS/EuRIS locatie data integratie valt buiten PortlinQ scope. Charlie moet deze data via officiële kanalen verkrijgen.
 
-#### Participant verificatie _(PortlinQ ASR)_ 🔜
+#### Participant verificatie _(PortlinQ Organization Registry)_
 
-Charlie verifieert dat het gedetecteerde schip (ENI) een geregistreerde participant is in PortlinQ via ASR.
+Charlie verifieert dat het gedetecteerde schip (ENI) een geregistreerde participant is in PortlinQ via het Organization Registry.
 
-> 🔜 **Binnenkort beschikbaar**: De ASR participant verificatie functionaliteit wordt momenteel ontwikkeld en zal binnenkort beschikbaar zijn.
+```http
+GET https://portlinq-preview.poort8.nl/api/organization-registry/{ENI}
+Authorization: Bearer {charlie_service_token}
+```
+
+Zie de [Organization Registry API docs ➚](https://portlinq-preview.poort8.nl/scalar/#tag/organization-registry/GET/api/organization-registry/{id}) voor de volledige response specificatie.
 
 Als de participant niet gevonden wordt, stopt Charlie de flow (geen event verzonden).
-
-#### Exploitant resolutie _(PortlinQ ASR)_ 🔜
-
-Charlie vraagt de exploitant op die verantwoordelijk is voor dit schip via ASR relationship queries.
-
-> 🔜 **Binnenkort beschikbaar**: De ASR relationship query functionaliteit wordt momenteel ontwikkeld en zal binnenkort beschikbaar zijn.
-
-Charlie gebruikt de exploitant KvK voor de volgende autorisatie checks.
 
 #### Schipper consent verificatie _(PortlinQ AR)_
 
@@ -155,7 +152,7 @@ Authorization: Bearer {charlie_service_token}
   "allowed": true,
   "explainPolicies": [
     {
-      "policyId": "pol_geofence_consent_123",
+      "policyId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
       "issuerId": "{schipper_organization_id}",
       "subjectId": "{havenbedrijf_id}",
       "resourceId": "*",
@@ -218,7 +215,7 @@ Authorization: Bearer {charlie_service_token}
   "allowed": true,
   "explainPolicies": [
     {
-      "policyId": "pol_port_contract_456",
+      "policyId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
       "issuerId": "{Exploitant_KvK}",
       "subjectId": "{havenbedrijf_id}",
       "resourceId": "{ENI}",
@@ -306,7 +303,7 @@ Content-Type: application/json
 
 ```json
 {
-  "policyId": "pol_geofence_consent_123",
+  "policyId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "issuerId": "{schipper_organization_id}",
   "subjectId": "{havenbedrijf_id}",
   "resourceId": "*",
@@ -354,7 +351,7 @@ Content-Type: application/json
 
 ```json
 {
-  "policyId": "pol_port_contract_456",
+  "policyId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
   "issuerId": "{Exploitant_KvK}",
   "subjectId": "{havenbedrijf_id}",
   "resourceId": "{ENI}",
@@ -371,16 +368,6 @@ Content-Type: application/json
   "properties": []
 }
 ```
-
-## Architectuur Voordelen
-
-Deze geofence flow demonstreert belangrijke PortlinQ capabilities:
-
-1. **Consent-based automation**: Schippers hoeven niet handmatig aan te melden bij elke haven
-2. **Multi-party authorization**: Zowel schipper consent als port contract worden gecontroleerd
-3. **Participant verification**: ASR garandeert schip identiteit en exploitant relaties
-4. **Fine-grained policies**: AR ondersteunt verschillende policy types (consent, contract)
-5. **Privacy preserving**: Locatie data blijft bij geofence provider; alleen events worden gedeeld
 
 ## Productie-omgeving
 

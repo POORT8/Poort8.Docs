@@ -84,7 +84,7 @@ Content-Type: application/json
 
 ```json
 {
-  "policyId": "pol_walstroom_123",
+  "policyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   "issuerId": "{schip_organization_id}",
   "subjectId": "{David_organization_id}",
   "resourceId": "walstroom",
@@ -101,26 +101,14 @@ De app stuurt een walstroom reservering naar de walstroom API (Charlie) met het 
 
 ### Stap 3: Participant verificatie _(PortlinQ ASR)_
 
-De walstroom API verifieert dat het schip (ENI) een geregistreerde participant is in PortlinQ via ASR.
+De walstroom API verifieert dat het schip (ENI) een geregistreerde participant is in PortlinQ via het Organization Registry.
 
 ```http
-GET https://portlinq-asr.poort8.nl/participants/{ENI}
+GET https://portlinq-preview.poort8.nl/api/organization-registry/{ENI}
 Authorization: Bearer {charlie_service_token}
 ```
 
-**Response:**
-
-```json
-{
-  "eni": "{ENI}",
-  "name": "MS Example Ship",
-  "exploitant": {
-    "kvk": "{Bob_KvK}",
-    "name": "Exploitant BV"
-  },
-  "status": "active"
-}
-```
+Zie de [Organization Registry API docs ➚](https://portlinq-preview.poort8.nl/scalar/#tag/organization-registry/GET/api/organization-registry/{id}) voor de volledige response specificatie.
 
 Als de participant niet gevonden wordt, weigert Charlie de aanvraag.
 
@@ -138,7 +126,6 @@ GET https://portlinq-preview.poort8.nl/api/authorization/explained-enforce
   &serviceProvider={Charlie_organization_id}
   &type=walstroom-service
   &attribute=*
-  &context={}
 Authorization: Bearer {charlie_service_token}
 ```
 
@@ -158,7 +145,7 @@ Authorization: Bearer {charlie_service_token}
   "allowed": true,
   "explainPolicies": [
     {
-      "policyId": "pol_walstroom_123",
+      "policyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "issuerId": "{schip_organization_id}",
       "subjectId": "{David_organization_id}",
       "resourceId": "walstroom",
@@ -206,22 +193,6 @@ De app toont de bevestiging aan Alice met sessie informatie.
 - **Policy niet gevonden**: AR retourneert `Deny`; exploitant moet policy aanmaken
 - **Policy verlopen**: AR retourneert `Deny`; exploitant moet policy verlengen
 - **Service onbereikbaar**: Standaard HTTP foutafhandeling (retry-mechanisme, timeout)
-
-## Architectuur Componenten
-
-### PortlinQ-IDP (Identity Provider)
-Authenticeert schippers via OIDC. Retourneert identity tokens met schipper claims.
-
-### PortlinQ-ASR (Associatieregister)
-- Beheert participants (schepen, schippers, exploitanten)
-- Beheert relaties tussen participants
-- Biedt token exchange voor ship-scoped tokens
-- Verifieert participant status
-
-### PortlinQ-AR (Authorization Registry)
-- Beheert autorisatie policies
-- Evalueert access control beslissingen
-- Ondersteunt fine-grained policies per resource/service provider
 
 ## Productie-omgeving
 
