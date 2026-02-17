@@ -6,25 +6,25 @@ PortlinQ maakt gecontroleerde gegevensdeling mogelijk tussen binnenhavens, haven
 
 PortlinQ faciliteert digitale havendiensten via een federatief model met drie kerncomponenten:
 
-- **PortlinQ-IDP** (Identity Provider): Authenticeert schippers via OIDC
-- **PortlinQ-ASR** (Authorization Subject Registry): Beheert participants (schepen, schippers, exploitanten) en hun relaties
+- **PortlinQ-ASR** (Associatieregister): Beheert participants (schepen, schippers, exploitanten) en hun relaties
 - **PortlinQ-AR** (Authorization Registry): Beheert autorisatie policies en evalueert access control beslissingen
+- **PortlinQ-IDP** (Identity Provider): Identificeert schepen
 
 Havenbedrijven behouden volledige controle over hun data, schippers kiezen hun eigen app, en platform providers krijgen toegang tot meerdere havens via één gestandaardiseerde integratie.
 
 ## Use Cases
 
-PortlinQ ondersteunt twee primaire flow types:
+PortlinQ ondersteunt twee primaire flow types. Beide flows gebruiken de [Authenticatie Flow](authenticatie.md) voor het verkrijgen van schip-scoped tokens en het registreren van policies namens het schip:
 
 ### 1. Schipper-initiated Services (Walstroom)
 
-Schippers authenticeren, selecteren hun schip, en gebruiken services via hun app met real-time autorisatie verificatie.
+Schippers authenticeren, selecteren hun schip, en gebruiken services via hun app met real-time autorisatie verificatie. De app registreert policies namens het schip voor service toegang.
 
 [→ Bekijk de Walstroom Toegangsflow](walstroom-toegang.md)
 
 ### 2. Consent-based Automation (Geofence Arrival)
 
-Automatische haven aanmeldingen op basis van AIS/EuRIS locatie data, met schipper consent en haven contract verificatie.
+Automatische haven aanmeldingen op basis van AIS/EuRIS locatie data, met schipper consent en haven contract verificatie. De schipper app registreert geofence consent policies namens het schip.
 
 [→ Bekijk de Geofence Arrival Flow](geofence-arrival.md)
 
@@ -33,36 +33,18 @@ Automatische haven aanmeldingen op basis van AIS/EuRIS locatie data, met schippe
 | Dienst | Type | Status |
 |--------|------|--------|
 | **Walstroom afname** | Schipper-initiated | 🔄 Pilot fase (RWS focus usecase) |
-| **Geofence arrival/departure** | Consent-based automation | 🔄 In ontwikkeling |
-| **Havengeld inning** | Schipper-initiated | 🔜 Meest mature usecase, roll-out gepland |
+| **Geofence arrival/departure**, bijv. t.b.v. Havengeld-inning  | Consent-based automation | 🔄 In ontwikkeling |
 | **Ligplaats aanmelding** | Schipper-initiated | 🔜 Conceptueel ontwerp gereed |
 
 ## Deelnemers en rollen
 
 PortlinQ brengt verschillende stakeholders samen:
 
-- **Havenbedrijven (Exploitanten)** — Registreren schepen en schippers in ASR; beheren autorisatie policies in AR
-- **Schippers** — Authenticeren via PortlinQ-IDP; geven consent voor services
-- **Platform providers** — Connect4Shore (walstroom), geofence services, Easy2Pay (havengeld), STIW (nautische diensten)
-- **Havenmeesters** — Ontvangen registraties, betalingsbevestigingen en arrival events
+- **Exploitanten** — organisatie achter een schip (KvK)
+- **Havenbedrijven** — Faciliteren diensten in de haven; zijn vaak dienstaanbieder (bv. walstroom, ligplaats); ontvangen registraties, arrival events
+- **Schippers** — Gebruiken een schippers-app; initieren en geven consent voor services
+- **Dienstenaanbieders** — Connect4Shore (walstroom), geofence services, Easy2Pay (havengeld), STIW (nautische diensten)
 - **Rijkswaterstaat** — Programma sponsor voor walstroom duurzaamheidsdoelen
-- **Topsector Logistiek / Connekt** — Coördineert het federatief afsprakenstelsel
-
-## Architectuur Componenten
-
-### PortlinQ-IDP (Identity Provider)
-Authenticeert schippers via OIDC. Retourneert identity tokens met schipper claims.
-
-### PortlinQ-ASR (Authorization Subject Registry)
-- Beheert participants: schepen (ENI), schippers, exploitanten (KvK)
-- Beheert relaties: schipper → exploitant, exploitant → schip
-- Biedt token exchange voor ship-scoped tokens 🔜
-- Verifieert participant status en relaties
-
-### PortlinQ-AR (Authorization Registry)
-- Beheert autorisatie policies (consent, contracts, access grants)
-- Evalueert access control beslissingen via `explained-enforce`
-- Ondersteunt fine-grained policies per resource, issuer, en service provider
 
 ## Toegang en omgeving
 
@@ -82,7 +64,7 @@ De PortlinQ infrastructuur is bereikbaar via:
 
 ## Meer informatie
 
-PortlinQ is een €500.000 GVC-gefinancierd project uitgevoerd door Connekt, in opdracht van Topsector Logistiek. Het project demonstreert dat federatieve dataspace architectuur praktisch toepasbaar is in de binnenvaart sector, met:
+PortlinQ demonstreert dat federatieve dataspace architectuur praktisch toepasbaar is in de binnenvaartsector, met:
 
 - **Sterke authenticatie**: OIDC-based schipper authenticatie via PortlinQ-IDP
 - **Participant management**: ASR beheert schepen, schippers, exploitanten en hun relaties

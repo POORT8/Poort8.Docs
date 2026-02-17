@@ -6,11 +6,32 @@ Haven autoriteiten kunnen automatisch aankomst- en vertrekmeldingen ontvangen wa
 
 ## Overzicht
 
-De geofence arrival flow is een **automatische, consent-gebaseerde** service waarbij een geofence provider (Charlie) schip bewegingen detecteert via AIS/EuRIS en arrival/departure events naar haven autoriteiten (Bob) stuurt. De schipper geeft vooraf consent voor geofence monitoring, en de exploitant heeft een contract met de haven autoriteit. Charlie verifieert beide autorisaties via PortlinQ AR voordat events worden verstuurd.
+De geofence arrival flow is een **automatische, consent-gebaseerde** service waarbij een geofence provider (Charlie) schip bewegingen detecteert via AIS/EuRIS en arrival/departure events naar haven autoriteiten (Bob) stuurt. De schipper app maakt vooraf een geofence consent policy aan namens het schip via de [Authenticatie Flow](authenticatie.md). Tijdens runtime verifieert Charlie autorisaties via PortlinQ AR voordat events worden verstuurd—volledig machine-to-machine zonder schipper betrokkenheid.
 
 > **Belangrijk:** Deze flow toont hoe PortlinQ consent-based automation ondersteunt zonder actieve schipper betrokkenheid bij elke haven aanmelding.
 
 ## Sequence Diagram
+
+### Setup: Policy Registratie (vooraf)
+
+```mermaid
+sequenceDiagram
+    actor Alice as Alice (Schipper)
+    participant David as David (Schippers APP)
+    participant AR as PortlinQ-AR
+    Note over Alice,AR: Prerequisites: Exploitant heeft Schip (ENI)<br/>geregistreerd in ASR met relaties.
+
+    rect rgb(230, 240, 255)
+        Note over Alice,David: Authenticatie Flow
+        Note over Alice,David: Resulteert in schip-scoped token
+    end
+
+    David->>AR: 1. Create geofence consent policy namens schip<br/>(schip → Charlie → geofence monitoring)
+    AR-->>David: Policy created
+    David-->>Alice: Consent geregistreerd
+```
+
+### Runtime: Automatische Arrival/Departure Events (machine-to-machine)
 
 ```mermaid
 sequenceDiagram
@@ -18,27 +39,27 @@ sequenceDiagram
     participant ASR as PortlinQ-ASR
     participant AR as PortlinQ-AR
     participant Bob as Bob (Port Authority)
-    Note over Charlie,Bob: Prerequisites:<br/>Schip (ENI) + Exploitant + relationships registered in ASR.<br/>Schipper has pre-authorized Charlie for geofence via AR (consent policy).<br/>Bob has registered port contract with Exploitant in AR.
+    Note over Charlie,Bob: Runtime prerequisites:<br/>Schip consent policy exists in AR.<br/>Port contract (optioneel) geregistreerd in AR.
+
+
+    rect rgb(230, 240, 255)
+        Note over Charlie,ASR: Authenticatie Flow
+        Note over Charlie,ASR: Resulteert in schip-scoped token
+    end
 
     %% Ship detected
     Note left of Charlie: AIS/EuRIS: ENI detected<br/>entering port zone
-
-    %% Participant verification
-    rect rgb(255, 243, 205)
-        Note over Charlie,ASR: ⚡ ASR tokens for vessels (not yet in scope)
-        Charlie->>ASR: 1. Verify participant (ENI)
-        ASR-->>Charlie: ENI confirmed
-        Charlie->>ASR: 2. Resolve exploitant for ENI
-        ASR-->>Charlie: Exploitant (Bob's KvK)
-    end
-
+    
     %% Authorization checks
     Charlie->>AR: 3. Check schipper consent<br/>(issuer=ship, subject=Charlie,<br/>resource=geofence)
     Note right of AR: Evaluate schipper's<br/>consent policy
     AR-->>Charlie: Permit
-    Charlie->>AR: 4. Check port contract<br/>(issuer=Bob, subject=Exploitant,<br/>resource=port-services)
-    Note right of AR: Evaluate Bob's<br/>contract policy
-    AR-->>Charlie: Permit
+    rect rgb(240, 240, 240)
+        Note over Charlie,AR: Optioneel
+        Charlie->>AR: 4. Check port contract<br/>(issuer=Bob, subject=Exploitant,<br/>resource=port-services)
+        Note right of AR: Evaluate Bob's<br/>contract policy
+        AR-->>Charlie: Permit
+    end
 
     %% Arrival event
     Charlie->>Bob: 5. Arrival event<br/>(ENI, timestamp, zone, exploitant)
@@ -62,18 +83,30 @@ Deze stappen worden uitgevoerd vooraf door verschillende partijen:
 | Prerequisite | Wat | Wie |
 |--------------|-----|-----|
 | **Schip registratie** | Schip (ENI) + exploitant relatie geregistreerd in ASR | Exploitant |
-| **Schipper consent** | Schipper heeft Charlie geautoriseerd voor geofence monitoring via AR policy | Schipper |
-| **Port contract** | Haven autoriteit (Bob) heeft contract geregistreerd met exploitant in AR | Haven (Bob) |
+| **Schipper consent** | Geofence consent policy aangemaakt via [Authenticatie Flow](authenticatie.md) | Schipper (via app) |
+| **Port contract** (optioneel) | Haven autoriteit heeft contract geregistreerd met exploitant in AR | Haven |
 
 ## Stappen
 
-### Schip detectie _(extern)_
+### Setup: Policy Registratie (vooraf)
+
+#### Authenticatie & Schip Token
+
+Zie [Authenticatie Flow](authenticatie.md) voor de volledige authenticatie stappen. De schipper selecteert het schip, en de app verkrijgt een schip-scoped token via ASR token exchange.
+
+#### Policy Aanmaak: Geofence Consent _(PortlinQ AR)_
+
+De schipper app maakt namens het schip een geofence consent policy aan die Charlie (geofence service) toestemming geeft om geofence monitoring uit te voeren. Zie [Consent Management](#consent-management) sectie voor API details.
+
+### Runtime: Automatische Events (machine-to-machine)
+
+#### Schip detectie _(extern)_
 
 Charlie's geofence service ontvangt AIS of EuRIS locatie data en detecteert dat een schip (ENI) een haven geofence zone binnenkomt.
 
 > ℹ️ AIS/EuRIS locatie data integratie valt buiten PortlinQ scope. Charlie moet deze data via officiële kanalen verkrijgen.
 
-### Stap 1: Participant verificatie _(PortlinQ ASR)_ 🔜
+#### Participant verificatie _(PortlinQ ASR)_ 🔜
 
 Charlie verifieert dat het gedetecteerde schip (ENI) een geregistreerde participant is in PortlinQ via ASR.
 
@@ -81,7 +114,7 @@ Charlie verifieert dat het gedetecteerde schip (ENI) een geregistreerde particip
 
 Als de participant niet gevonden wordt, stopt Charlie de flow (geen event verzonden).
 
-### Stap 2: Exploitant resolutie _(PortlinQ ASR)_ 🔜
+#### Exploitant resolutie _(PortlinQ ASR)_ 🔜
 
 Charlie vraagt de exploitant op die verantwoordelijk is voor dit schip via ASR relationship queries.
 
@@ -89,7 +122,7 @@ Charlie vraagt de exploitant op die verantwoordelijk is voor dit schip via ASR r
 
 Charlie gebruikt de exploitant KvK voor de volgende autorisatie checks.
 
-### Stap 3: Schipper consent verificatie _(PortlinQ AR)_
+#### Schipper consent verificatie _(PortlinQ AR)_
 
 Charlie controleert via AR of de schipper consent heeft gegeven voor geofence monitoring.
 
@@ -153,7 +186,7 @@ Authorization: Bearer {charlie_service_token}
 
 Als `allowed` = `false`, stopt Charlie de flow (geen event verzonden).
 
-### Stap 4: Port contract verificatie _(PortlinQ AR)_
+#### Port contract verificatie (optioneel) _(PortlinQ AR)_
 
 Charlie controleert via AR of de exploitant een contract heeft met de haven autoriteit voor invoicing van het schip.
 
@@ -216,7 +249,7 @@ Authorization: Bearer {charlie_service_token}
 
 Als `allowed` = `false`, stopt Charlie de flow (exploitant heeft geen contract met deze haven).
 
-### Stap 5: Arrival event verzenden _(extern)_
+#### Arrival event verzenden _(extern)_
 
 Als beide autorisaties succesvol zijn, stuurt Charlie een arrival event naar Bob's port authority system met schip identificatie (ENI), exploitant informatie, timestamp en haven zone.
 
@@ -224,9 +257,9 @@ Als beide autorisaties succesvol zijn, stuurt Charlie een arrival event naar Bob
 
 Bob's systeem registreert de aankomst en start een port sessie voor facturering.
 
-### Stap 6-7: Departure event _(PortlinQ AR + extern)_
+#### Departure event _(PortlinQ AR + extern)_
 
-Wanneer Charlie detecteert dat het schip de haven zone verlaat, herhaalt Charlie de autorisatie checks (stap 3-4) en stuurt een departure event naar Bob met schip identificatie, exploitant informatie, timestamp en referentie naar het arrival event.
+Wanneer Charlie detecteert dat het schip de haven zone verlaat, herhaalt Charlie de autorisatie checks en stuurt een departure event naar Bob met schip identificatie, exploitant informatie, timestamp en referentie naar het arrival event.
 
 > ℹ️ De port authority API endpoints en event formaten zijn haven-specifiek en vallen buiten de PortlinQ scope.
 

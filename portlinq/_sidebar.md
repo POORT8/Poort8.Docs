@@ -4,6 +4,7 @@
   - [Introductie](README.md)
 
 - **Integration Guides**
+  - [Authenticatie Flow](authenticatie.md)
   - [Walstroom Toegangsflow](walstroom-toegang.md)
   - [Geofence Arrival Flow](geofence-arrival.md)
 
