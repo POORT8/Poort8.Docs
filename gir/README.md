@@ -40,21 +40,9 @@ It combines NoodleBar modules (Organization Register, Authorization Register, Ke
 | Step | What you build | Guide |
 |------|----------------|-------|
 | **1. Register installation metadata** | `POST /GIRBasisdataMessage` (create / update) | **[Register Installations](register-installations.md)** |
-| **2. Ask for *write* access** | `POST /approval-links` (write policy) | **[Registrar Flow](registrar-flow.md)** ¹ |
-| **3. Ask for *read* access** | `POST /approval-links` (read policy) | **[Data-Consumer Flow](data-consumer-flow.md)** ² |
+| **2. Ask for *write* access** | `POST /approval-links` (write policy) | **[Registrar Flow](registrar-flow.md)** |
+| **3. Ask for *read* access** | `POST /approval-links` (read policy) | **[Data-Consumer Flow](data-consumer-flow.md)** |
 | **4. Retrieve installation metadata** | `GET /GIRBasisdataMessage` (filter by VBO, KVK, etc.) | [Section 4](#4-querying-installations) below |
-
-¹ This guide covers version 1 (v1) of the Keyper API, of which the POST endpoint has been updated. If you're looking for coverage of the previous version (v0) of the Keyper API, please refer to the [legacy version of the registrar flow](legacy/registrar-flow.md) instead.
-
-² This guide covers version 1 (v1) of the Keyper API, of which the POST endpoint has been updated. If you're looking for coverage of the previous version (v0) of the Keyper API, please refer to the [legacy version of the data consumer flow](legacy/data-consumer-flow.md) instead.
-
-> **Migrating from Keyper v0 to v1?** Key changes:
-> - **Endpoint path**: `/api/approval-links` → `/v1/api/approval-links`
-> - **Flow identifier**: `orchestration.flow` changed from `"dsgo.gir@1"` → `"dsgo.gir@v1"`
-> - **Simplified dataspace object**: Now only requires `baseUrl` (removed `name`, `policyUrl`, `organizationUrl`, `resourceGroupUrl`)
-> - **Removed fields**: `authenticationMethods`, `expiresInSeconds`, `redirectUrl` (now handled by Keyper)
->
-> See the [Registrar Flow](registrar-flow.md) and [legacy version](legacy/registrar-flow.md) for full before/after examples.
 
 ### **Quick Reference**
 
