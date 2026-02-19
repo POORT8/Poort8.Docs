@@ -51,7 +51,7 @@ sequenceDiagram
     Note left of Charlie: AIS/EuRIS: ENI detected<br/>entering port zone
     
     %% Authorization checks
-    Charlie->>AR: 3. Check schipper consent<br/>(issuer=ship, subject=Charlie,<br/>resource=geofence)
+    Charlie->>AR: 3. Check schipper consent<br/>(issuer=ship, subject=havenbedrijf,<br/>serviceProvider=Charlie, type=geo-fence)
     Note right of AR: Evaluate schipper's<br/>consent policy
     AR-->>Charlie: Permit
     rect rgb(240, 240, 240)
@@ -157,11 +157,11 @@ Authorization: Bearer {charlie_service_token}
       "subjectId": "{havenbedrijf_id}",
       "resourceId": "*",
       "action": "monitor",
-      "useCase": "portlinq-geofence",
+      "useCase": "ishare",
       "issuedAt": 1738368000,
       "notBefore": 1738368000,
       "expiration": 1769904000,
-      "serviceProvider": null,
+      "serviceProvider": "{Charlie_organization_id}",
       "type": "geo-fence",
       "attribute": "{haven_locatie_id}",
       "license": null,
@@ -295,7 +295,8 @@ Content-Type: application/json
   "expiration": 1769904000,
   "serviceProvider": "{Charlie_organization_id}",
   "type": "geo-fence",
-  "attribute": "{haven_locatie_id}"
+  "attribute": "{haven_locatie_id}",
+  "useCase": "ishare"
 }
 ```
 
@@ -308,7 +309,7 @@ Content-Type: application/json
   "subjectId": "{havenbedrijf_id}",
   "resourceId": "*",
   "action": "monitor",
-  "useCase": "portlinq-geofence",
+  "useCase": "ishare",
   "issuedAt": 1738368000,
   "notBefore": 1738368000,
   "expiration": 1769904000,
