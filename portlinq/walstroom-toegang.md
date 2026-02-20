@@ -48,13 +48,15 @@ Deze stappen worden uitgevoerd door de exploitant vooraf:
 | **Schip registratie** | Schip (ENI) geregistreerd in ASR | Exploitant |
 | **Relaties** | Exploitant → Schip relaties in ASR | Exploitant |
 
+> **ID formaten:** PortlinQ gebruikt samengestelde identifiers: `organization:kvk:xxxxxxxx` voor organisaties (KvK-nummer) en `ship:ENI:xxxxxxxxx` voor schepen (ENI-nummer). In deze documentatie verwijst `{SchipId}` naar het volledige formaat `ship:ENI:xxxxxxxxx`.
+
 ## Stappen
 
 ### Authenticatie & Schip Token
 
 Zie [Authenticatie Flow](authenticatie.md) voor de volledige authenticatie stappen. De schipper selecteert het schip, en de app verkrijgt een schip-scoped token via ASR token exchange.
 
-**Resultaat:** `{ship_scoped_token}` met scope `ship:{ENI} exploitant:{KvK}`
+**Resultaat:** `{ship_scoped_token}` met scope `ship:{SchipId} exploitant:{KvK}`
 
 ### Stap 1: Policy aanmaak _(PortlinQ AR)_
 
@@ -104,7 +106,7 @@ De app stuurt een walstroom reservering naar de walstroom API (Charlie) met het 
 De walstroom API verifieert dat het schip (ENI) een geregistreerde participant is in PortlinQ via het Organization Registry.
 
 ```http
-GET https://portlinq-preview.poort8.nl/api/organization-registry/{ENI}
+GET https://portlinq-preview.poort8.nl/api/organization-registry/{SchipId}
 Authorization: Bearer {charlie_service_token}
 ```
 
@@ -200,8 +202,8 @@ De app toont de bevestiging aan Alice met sessie informatie.
 
 **Verwacht:**
 
-- Preview: `https://portlinq-preview.poort8.nl` (huidige pilot fase)
-- Productie: `https://portlinq.poort8.nl` (na succesvolle pilot validatie)
+- Preview: `https://portlinq-preview.poort8.nl` (huidige living lab fase)
+- Productie: `https://portlinq.poort8.nl` (na succesvolle living lab validatie)
 
 ## Volgende stappen
 

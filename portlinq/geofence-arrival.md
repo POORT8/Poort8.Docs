@@ -86,6 +86,8 @@ Deze stappen worden uitgevoerd vooraf door verschillende partijen:
 | **Schipper consent** | Geofence consent policy aangemaakt via [Authenticatie Flow](authenticatie.md) | Schipper (via app) |
 | **Port contract** (optioneel) | Haven autoriteit heeft contract geregistreerd met exploitant in AR | Haven |
 
+> **ID formaten:** PortlinQ gebruikt tijdens de living lab fase samengestelde identifiers: `organization:kvk:xxxxxxxx` voor organisaties (KvK-nummer) en `ship:ENI:xxxxxxxxx` voor schepen (ENI-nummer). In deze documentatie verwijst `{SchipId}` naar het volledige formaat `ship:ENI:xxxxxxxxx`.
+
 ## Stappen
 
 ### Setup: Policy Registratie (vooraf)
@@ -111,7 +113,7 @@ Charlie's geofence service ontvangt AIS of EuRIS locatie data en detecteert dat 
 Charlie verifieert dat het gedetecteerde schip (ENI) een geregistreerde participant is in PortlinQ via het Organization Registry.
 
 ```http
-GET https://portlinq-preview.poort8.nl/api/organization-registry/{ENI}
+GET https://portlinq-preview.poort8.nl/api/organization-registry/{SchipId}
 Authorization: Bearer {charlie_service_token}
 ```
 
@@ -190,7 +192,7 @@ Charlie controleert via AR of de exploitant een contract heeft met de haven auto
 ```http
 GET https://portlinq-preview.poort8.nl/api/authorization/explained-enforce
   ?subject={havenbedrijf_id}
-  &resource={ENI}
+  &resource={SchipId}
   &action=invoicing
   &issuer={Exploitant_KvK}
   &serviceProvider={havenbedrijf_id}
@@ -218,7 +220,7 @@ Authorization: Bearer {charlie_service_token}
       "policyId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
       "issuerId": "{Exploitant_KvK}",
       "subjectId": "{havenbedrijf_id}",
-      "resourceId": "{ENI}",
+      "resourceId": "{SchipId}",
       "action": "invoicing",
       "useCase": "portlinq-port-contract",
       "issuedAt": 1738368000,
@@ -337,7 +339,7 @@ Content-Type: application/json
 {
   "subjectId": "{havenbedrijf_id}",
   "action": "invoicing",
-  "resourceId": "{ENI}",
+  "resourceId": "{SchipId}",
   "issuerId": "{Exploitant_KvK}",
   "issuedAt": 1738368000,
   "notBefore": 1738368000,
@@ -355,7 +357,7 @@ Content-Type: application/json
   "policyId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
   "issuerId": "{Exploitant_KvK}",
   "subjectId": "{havenbedrijf_id}",
-  "resourceId": "{ENI}",
+  "resourceId": "{SchipId}",
   "action": "invoicing",
   "useCase": "portlinq-port-contract",
   "issuedAt": 1738368000,
@@ -376,8 +378,8 @@ Content-Type: application/json
 
 **Verwacht:**
 
-- Preview: `https://portlinq-preview.poort8.nl` (huidige pilot fase)
-- Productie: `https://portlinq.poort8.nl` (na succesvolle pilot validatie)
+- Preview: `https://portlinq-preview.poort8.nl` (huidige living lab fase)
+- Productie: `https://portlinq.poort8.nl` (na succesvolle living lab validatie)
 
 ## Volgende stappen
 

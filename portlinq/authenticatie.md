@@ -66,7 +66,7 @@ Alice selecteert het schip (ENI) waarvoor ze diensten wil aanvragen. De app vraa
 
 > 🔜 **Binnenkort beschikbaar**: Token exchange functionaliteit wordt momenteel ontwikkeld.
 
-**Tijdelijke workaround**: Haal een bearer token op via Auth0 met de volgende request:
+**Living lab workaround**: Haal een bearer token op via Auth0 met de volgende request:
 
 ```bash
 curl --request POST \
@@ -105,7 +105,7 @@ Het `access_token` is een JWT bearer token met de volgende claims:
 }
 ```
 
-> In deze tijdelijke workaround bevat het veld `organizationId` het ENI id van het schip (bijv. `schip:123456`).
+> In deze living lab workaround bevat het veld `organizationId` het ENI id van het schip (bijv. `schip:123456`).
 
 > **Alternatieven**: Andere methoden voor schip-token verkrijging worden onderzocht (bijv. directe schip credentials, roster-based auth).
 

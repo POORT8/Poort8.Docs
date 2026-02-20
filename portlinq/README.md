@@ -32,7 +32,7 @@ Automatische haven aanmeldingen op basis van AIS/EuRIS locatie data, met schippe
 
 | Dienst | Type | Status |
 |--------|------|--------|
-| **Walstroom afname** | Schipper-initiated | 🔄 Pilot fase (RWS focus usecase) |
+| **Walstroom afname** | Schipper-initiated | 🔄 Living lab fase (RWS focus usecase) |
 | **Geofence arrival/departure**, bijv. t.b.v. Havengeld-inning  | Consent-based automation | 🔄 In ontwikkeling |
 | **Ligplaats aanmelding** | Schipper-initiated | 🔜 Conceptueel ontwerp gereed |
 
