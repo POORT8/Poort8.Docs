@@ -69,7 +69,7 @@ curl -X POST https://gir-preview.poort8.nl/api/GIRBasisdataMessage \
         "guid": "b4d1a2f3-9c6d-4b8e-a317-987654321abc",
         "registrarChamberOfCommerceNumber": "12345678",
         "installation": {
-          "installationID": { "value": "INST-987-001", "type": "registrar" },
+          "installationID": { "value": "INST-987-001", "type": "GUID" },
           "name": "Warmtepomp Installatie",
           "installationOwnerChamberOfCommerceNumber": "87654321",
           "installationLocation": {
@@ -83,7 +83,7 @@ curl -X POST https://gir-preview.poort8.nl/api/GIRBasisdataMessage \
             }
           },
           "installationProperties": {
-            "controlSystemType": "smart"
+            "controlSystemType": ["GBS"]
           },
           "component": [
             {
@@ -95,7 +95,7 @@ curl -X POST https://gir-preview.poort8.nl/api/GIRBasisdataMessage \
                   "version": "9.0"
                 },
                 "datapoolInformation": {
-                  "source": "2BA",
+                  "source": "2baValid",
                   "registrationID": "2BA-12345678"
                 }
               },
