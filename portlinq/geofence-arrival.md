@@ -130,6 +130,7 @@ GET https://portlinq-preview.poort8.nl/api/authorization/explained-enforce
   ?subject={havenbedrijf_id}
   &resource=*
   &action=monitor
+  &useCase=ishare
   &issuer={schipper_organization_id}
   &serviceProvider={Charlie_organization_id}
   &type=geo-fence
@@ -194,6 +195,7 @@ GET https://portlinq-preview.poort8.nl/api/authorization/explained-enforce
   ?subject={havenbedrijf_id}
   &resource={SchipId}
   &action=invoicing
+  &useCase=ishare
   &issuer={Exploitant_KvK}
   &serviceProvider={havenbedrijf_id}
   &type=port-contract
