@@ -41,9 +41,11 @@ Explains how GDS components work together, authorization flows, and technical st
 - Deployment architecture
 
 ### For developers: API implementation
-Ready to implement GDS integration in your building management platform?
+Ready to implement GDS integration in your building management platform or IoT sensor platform?
 
 **[Requesting Building Data Access](consumer-approval-guide.md)** – Developer guide for implementing the Keyper approval workflow to request access to building sensor data from building owners.
+
+**[Get Building Data (Provider Guide)](provider-enforcement-guide.md)** – Developer guide for IoT platforms implementing the enforcement pattern to verify policies and deliver building data.
 
 #### API References
 | Resource | Description |
@@ -72,9 +74,15 @@ If you're implementing GDS integration as a building management platform, follow
 9. Test approval and rejection flows
 10. Confirm policies are registered after approval
 
-### Step 4: Implement data access (coming soon)
-11. Implement sensor data retrieval (guide coming soon)
-12. (Optional) Implement control commands (guide coming soon)
+### Step 4: Implement data delivery (IoT platforms)
+11. Review [Get Building Data (Provider Guide)](provider-enforcement-guide.md)
+12. Implement delegation evidence queries to the Authorization Registry
+13. Implement policy validation and enforcement
+14. Test data delivery with approved policies
+
+### Step 5: Implement data retrieval (building management platforms)
+15. Implement sensor data retrieval from IoT platforms (guide coming soon)
+16. (Optional) Implement control commands (guide coming soon)
 
 
 ## Quick reference for developers
@@ -82,6 +90,7 @@ If you're implementing GDS integration as a building management platform, follow
 |---------------|------------------|
 | **Understanding the flow** | [Architecture guide](architecture.md) |
 | **Requesting approval** | [Requesting Building Data Access](consumer-approval-guide.md) |
+| **Verifying policies & delivering data** | [Get Building Data (Provider Guide)](provider-enforcement-guide.md) |
 | **Interactive API testing** | [GDS Scalar UI](https://gds-preview.poort8.nl/scalar) |
 | **Approval API reference** | [Keyper Scalar UI](https://keyper-preview.poort8.nl/scalar/?api=v1) |
 

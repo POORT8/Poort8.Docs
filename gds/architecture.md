@@ -46,9 +46,9 @@ Authorization in GDS follows a **policy-based** model. Understanding this is key
 ### Policy basics
 A **policy** is a formal statement granting permission. Each policy specifies:
 - **Who** is allowed to do something (the data service consumer organization)
-- **What action** they can perform (`GET` for just viewing the data, or `POST` to set control setpoints)
-- **Which resource** they can access (a specific building, identified by BAG number)
-- **What data** they can access (sensor metadata, measurements, control capabilities)
+- **What action** they can perform (`GET` for reading data, or `POST` for writing data or sending control commands)
+- **Which resource type** they can access (`building` for a whole building, or `asset` for a specific sensor or envibase)
+- **Which resource** they can access (identified by VBO ID for buildings, or asset ID for individual assets)
 - **Time constraints** (when the permission is valid, when it expires)
 - **Who granted it** (the building owner organization)
 
@@ -56,10 +56,13 @@ These are some basic fundamental properties that each policy will contain:
 - **`issuer`**: The party who grants the permission, in this case the building owner organization (Bob's company).
 - **`subject`**: The party to whom the policy is granted to, in this case the building management platform (David's company).
 - **`serviceProvider`**: The party provides the data, in this case the IoT sensor platform (Charlie's company).
-- **`action`**: The action that the subject can perform, in this case `GET` or `POST`.
-- **`resource`**: The resource for which the subject can perform the action, in this case a specific building identified by its BAG number.
+- **`action`**: The action that the subject can perform: `GET` (read) or `POST` (write/control). A `POST` policy implicitly includes `GET` access.
+- **`resource type`**: The level of the resource: `building` (whole building including all assets) or `asset` (specific sensor or envibase).
+- **`resource`**: The resource identifier — a VBO ID (BAG verblijfsobject, 16 digits) for buildings, or an asset ID for individual assets.
 
-For complete policy details and how to request policies, see the [developer guide for building management platforms](consumer-approval-guide.md).
+> **Pilot scope:** During the test phase, only a `GET` policy on building level (VBO ID) is used, granting read access to the building and all its assets.
+
+For complete policy details and how to request policies, see the [developer guide for building management platforms](consumer-approval-guide.md). For how the IoT platform verifies these policies, see the [provider enforcement guide](provider-enforcement-guide.md).
 
 ### Policy enforcement flow
 Every time a data request occurs:
@@ -82,7 +85,7 @@ Let's trace what happens when a building management platform requests access to 
 - The building management platform (David) that Alice uses sends approval request to Keyper API
 - Request includes:
   - What data is needed (sensor metadata, measurements, control)
-  - Which building (BAG number)
+  - Which building (VBO ID)
   - Who is requesting (David's organization ID)
   - Who should approve (Bob's organization ID)
   - On whose behalf (Alice's name/email)
@@ -106,7 +109,7 @@ Let's trace what happens when a building management platform requests access to 
   - Which platform wants access (David)
   - Who will use it (building manager Alice)
   - What data is requested (measurements, control, etc.)
-  - Which building (BAG number)
+  - Which building (VBO ID)
   - How long access will last
 - Bob can:
   - Approve (proceed to verification step)

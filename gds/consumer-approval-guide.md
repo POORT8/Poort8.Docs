@@ -22,9 +22,8 @@ This guide focuses **exclusively on the approval request process** through Keype
 - Handling approval responses and errors
 
 **What this guide does NOT cover:**
-- How to retrieve actual sensor data after approval (covered in a separate guide)
+- How the data service provider (IoT platform) verifies policies and delivers data — see [Get Building Data (Provider Guide)](provider-enforcement-guide.md)
 - How to send control commands after approval (covered in a separate guide)
-- How to implement a data service provider connector (IoT platform integration)
 
 
 ## Overview of the approval workflow
@@ -73,11 +72,11 @@ sequenceDiagram
 ## Step 1: Prepare required data
 Before making an approval request, gather the following information:
 
-### Requester information (your platform)
-- `name`: Name of the person initiating the request (e.g., "Alice Anderson")
+### Requester information (your platform's user)
+- `name`: Name of the person initiating the request on your platform (e.g., "Alice Anderson")
 - `email`: Email address of the person initiating the request
-- `organization`: Your organization's name (e.g., "Building Optimization Corp")
-- `organizationId`: Your organization's identifier in KvK format (e.g., "NL.KVK.12345678")
+- `organization`: The data service consumer organization's name (e.g., "Building Optimization Corp")
+- `organizationId`: The data service consumer organization's identifier in KvK format (e.g., "NL.KVK.12345678")
 
 ### Approver information (building owner)
 - `name`: Name of the building owner who will approve (e.g., "Bob Johnson")
@@ -95,14 +94,14 @@ Before making an approval request, gather the following information:
 
 ### Building and policy information
 For each building you need access to, prepare:
-- `resourceId`: The building identifier (BAG number)
-  - **What it is**: BAG (Basisregistratie Adressen en Gebouwen) is the Dutch national building registry number
+- `resourceId`: The building identifier (VBO ID)
+  - **What it is**: VBO (verblijfsobject) is a unit in the Dutch BAG (Basisregistratie Adressen en Gebouwen) national building registry
   - **Format**: 16 digits (e.g., "0363010000659001")
   - **How to get it**: Building owners typically provide this, or you can look it up via [PDOK BAG API](https://www.pdok.nl/introductie/-/article/basisregistratie-adressen-en-gebouwen-ba-1) using the building address
-  - **Important**: This must match exactly - an incorrect BAG number will result in authorization failures
+  - **Important**: This must match exactly — an incorrect VBO ID will result in authorization failures
 - `serviceProvider`: The IoT platform organization ID that manages the building's sensors in KvK format (e.g., "NL.KVK.23456789")
   - How to get: Ask the building owner which company installed/manages their sensors, they should know their IoT service provider's organization details
-- **Policy type(s)**: What access you need (see Step 3 for details)
+- **Policy type(s)**: What access you need — see Step 3 for the [policy levels](#policy-levels)
 
 
 ## Step 2: Authenticate with Keyper API
@@ -149,34 +148,38 @@ Content-Type: application/json
 **Important:** Store the token and reuse it for multiple requests until it expires. Request a new token only when needed.
 
 
-## Step 3: Understand policy types
-GDS uses **policies** to control what actions your platform can perform on building data. There are two policy types:
+## Step 3: Understand the authorization model
+GDS uses **policies** to control what actions a data service consumer can perform on building data. Each policy combines a **resource type**, a **resource identifier**, an **attribute**, and an **action**.
 
-### Policy type 1: GET (data retrieval)
-Grants permission to **retrieve sensor data** from a building.
+### Policy levels
 
-**Policy properties:**
-- `action`: `"GET"`
-- `type`: `"/public-api/buildings/"`
-- `license`: `"0005"` (fixed value for GDS)
-- `useCase`: `"ishare"` (fixed value for GDS)
+GDS supports authorization at different resource levels:
 
-### Policy Type 2: POST (Control Commands)
-Grants permission to **send control commands** to building systems.
+| Level | Resource type | Resource ID | Attribute | Actions | Description |
+|-------|--------------|-------------|-----------|---------|-------------|
+| Building | `building` | VBO ID | `*` | `GET` / `POST` | Access to the entire building and all its assets |
+| Asset | `asset` | Asset ID | `*` | `GET` / `POST` | Access to a specific sensor or control point |
 
-**Policy properties:**
-- `action`: `"POST"`
-- `type`: `"/public-api/buildings/"`
-- `license`: `"0005"` (fixed value for GDS)
-- `useCase`: `"ishare"` (fixed value for GDS)
+**Action semantics:**
+- `GET` — Read data (sensor measurements, metadata)
+- `POST` — Write data or send control commands (setpoints). A `POST` policy implicitly grants `GET` access
+
+> **Pilot scope:** During the test phase, only a **`GET` policy on building level** (VBO ID) is used. This grants read access to the building and all its assets. The other policy levels will be supported in future phases.
+
+### Fixed policy properties
+All policies share these fixed values:
+- `license`: `"0005"`
+- `useCase`: `"ishare"`
+
+> **Note:** These fixed properties are required for legal compliance within the iSHARE trust framework. They have no functional impact during the pilot and will likely be changed or replaced before production use of GDS.
 
 ### Bundling policies
-You can request **both GET and POST permissions in a single approval request** by including multiple policies in the `addPolicyTransactions` array. This reduces approval friction:
+You can request **multiple permissions in a single approval request** by including multiple policies in the `addPolicyTransactions` array. This reduces approval friction:
 - Building owner receives one email
-- One approval decision grants both permissions
+- One approval decision grants all requested permissions
 - Fewer emails and clicks for the approver
 
-**Recommended approach:** Bundle GET and POST together if you need both types of access.
+For example, you can bundle `GET` and `POST` on the same building, or request access to multiple resource types at once.
 
 
 ## Step 4: Create approval request
@@ -191,7 +194,7 @@ Content-Type: application/json
 ```
 
 ### Request body structure
-**Replace the placeholders** in the example below with the data you prepared in Step 1. The example shows a request for **both GET and POST permissions** in a single approval request (bundled).
+**Replace the placeholders** in the example below with the data you prepared in Step 1. The example shows the **pilot configuration**: a single `GET` policy on building level.
 ```json
 {
   "requester": {
@@ -212,34 +215,19 @@ Content-Type: application/json
   "reference": "<YOUR_UNIQUE_REFERENCE>",    // From Step 1: Your tracking identifier
   "addPolicyTransactions": [
     {
-      // Policy 1: GET permission (data retrieval)
-      "type": "/public-api/buildings/",      // Fixed value for GDS
+      // Pilot policy: GET on building level
+      "type": "building",                     // Resource type (see Step 3)
       "action": "GET",                        // Data retrieval action
       "license": "0005",                      // Fixed value for GDS
       "useCase": "ishare",                    // Fixed value for GDS
       "issuedAt": <CURRENT_UNIX_TIMESTAMP>,  // Current time (Unix seconds)
-      "issuerId": "<BUILDING_OWNER_ORGANIZATION_ID>",  // Who grants permission, so the approver org ID 
+      "issuerId": "<BUILDING_OWNER_ORGANIZATION_ID>",  // Who grants permission, so the approver org ID
       "attribute": "*",                       // All building data
       "notBefore": <CURRENT_UNIX_TIMESTAMP>, // When policy becomes valid
-      "subjectId": "<YOUR_ORGANIZATION_ID>", // Who receives permission (you), so the requester org ID
+      "subjectId": "<DATA_SERVICE_CONSUMER_ORGANIZATION_ID>", // Who receives permission (the data service consumer org ID)
       "expiration": <EXPIRATION_UNIX_TIMESTAMP>,  // When policy expires (e.g., 2147483647 for max)
-      "resourceId": "<BUILDING_BAG_NUMBER>", // 16-digit BAG number
+      "resourceId": "<BUILDING_VBO_ID>",     // 16-digit VBO ID (BAG verblijfsobject)
       "serviceProvider": "<IOT_PLATFORM_ORGANIZATION_ID>"  // Who provides the data
-    },
-    {
-      // Policy 2: POST permission (control commands)
-      "type": "/public-api/buildings/",
-      "action": "POST",                       // Control action
-      "license": "0005",
-      "useCase": "ishare",
-      "issuedAt": <CURRENT_UNIX_TIMESTAMP>,
-      "issuerId": "<BUILDING_OWNER_ORGANIZATION_ID>",
-      "attribute": "*",
-      "notBefore": <CURRENT_UNIX_TIMESTAMP>,
-      "subjectId": "<YOUR_ORGANIZATION_ID>",
-      "expiration": <EXPIRATION_UNIX_TIMESTAMP>,
-      "resourceId": "<BUILDING_BAG_NUMBER>",
-      "serviceProvider": "<IOT_PLATFORM_ORGANIZATION_ID>"
     }
   ],
   "orchestration": {
@@ -250,68 +238,16 @@ Content-Type: application/json
 
 **Key notes:**
 - **Unix timestamps**: Use seconds since epoch, not milliseconds
-- **Fixed values**: `type`, `license`, `useCase`, and `orchestration.flow` must match exactly as shown
+- **Fixed values**: `license`, `useCase`, and `orchestration.flow` must match exactly as shown
+- `type`: Resource type — `"building"` for building-level access (pilot), or `"asset"` for asset-level access (future)
 - `issuerId`: Building owner's organization ID (who grants permission)
-- `subjectId`: Your organization ID (who receives permission)
+- `subjectId`: The data service consumer organization ID (who receives permission). The requester is typically a user of the data service consumer platform
+- `resourceId`: The VBO ID (BAG verblijfsobject number, 16 digits) for building-level policies, or an asset ID for asset-level policies
 - `expiration`: Use `2147483647` for effectively "no expiration" (max Unix timestamp, year 2038)
 
-For complete field documentation, see the [Keyper API reference](https://keyper-preview.poort8.nl/scalar/?api=v1#tag/approval-links/post/v1/api/approval-links).
+> **Bundling example:** To request both `GET` and `POST` permission on the same building, add a second object to the `addPolicyTransactions` array with `"action": "POST"` and the same `type`, `resourceId`, and other fields. See the [policy levels](#policy-levels) in Step 3 for all combinations.
 
-### Example with real values
-Here's a concrete example with all placeholders replaced:
-```json
-{
-  "requester": {
-    "name": "Alice Anderson",
-    "email": "alice@buildingopt.com",
-    "organization": "Building Optimization Corp",
-    "organizationId": "NL.KVK.12345678"
-  },
-  "approver": {
-    "name": "Bob Johnson",
-    "email": "bob@ownerco.com",
-    "organization": "Property Management Inc",
-    "organizationId": "NL.KVK.87654321"
-  },
-  "dataspace": {
-    "baseUrl": "https://gds-preview.poort8.nl"
-  },
-  "reference": "SENSOR-OPT-2025-Q4-001",
-  "addPolicyTransactions": [
-    {
-      "type": "/public-api/buildings/",
-      "action": "GET",
-      "license": "0005",
-      "useCase": "ishare",
-      "issuedAt": 1730736000,
-      "issuerId": "NL.KVK.87654321",
-      "attribute": "*",
-      "notBefore": 1730736000,
-      "subjectId": "NL.KVK.12345678",
-      "expiration": 2147483647,
-      "resourceId": "0363010000659001",
-      "serviceProvider": "NL.KVK.23456789"
-    },
-    {
-      "type": "/public-api/buildings/",
-      "action": "POST",
-      "license": "0005",
-      "useCase": "ishare",
-      "issuedAt": 1730736000,
-      "issuerId": "NL.KVK.87654321",
-      "attribute": "*",
-      "notBefore": 1730736000,
-      "subjectId": "NL.KVK.12345678",
-      "expiration": 2147483647,
-      "resourceId": "0363010000659001",
-      "serviceProvider": "NL.KVK.23456789"
-    }
-  ],
-  "orchestration": {
-    "flow": "gds.sensor-optimization@v1"
-  }
-}
-```
+For complete field documentation, see the [Keyper API reference](https://keyper-preview.poort8.nl/scalar/?api=v1#tag/approval-links/post/v1/api/approval-links).
 
 
 ## Step 5: Handle responses
@@ -437,50 +373,17 @@ Once the building owner approves your request and the status becomes `Approved`:
 1. **Policies are active**: The GET and/or POST policies are now registered in the GDS Authorization Registry
 2. **You can access data**: Your building management platform can now make requests to the data service provider (IoT platform)
 
+For details on how the data service provider (IoT platform) verifies these policies and delivers data, see [Get Building Data (Provider Guide)](provider-enforcement-guide.md).
+
 ### Testing
-**Test environment:** `https://keyper-preview.poort8.nl`
+**Environment:** `https://keyper-preview.poort8.nl`
 
-The test environment is **fully functional** and will:
-- Send real emails to the approver's email address
-- Create actual policies in the preview Authorization Registry
-- Enforce policies when accessing preview data service providers
+The preview environment is used for the **pilot phase** and is fully functional:
+- Sends real emails to the approver's email address
+- Creates actual policies in the preview Authorization Registry
+- Enforces policies when accessing preview data service providers
 
-The test environment uses **separate non-production resources** (preview database, preview registry) so you can safely test without affecting production data.
-
-**Recommendation:** Use the test environment to validate your complete integration before moving to production.
-
-### Production considerations
-Before going to production:
-1. **Error handling**: Implement robust error handling for all error responses
-2. **Token management**: Implement token refresh logic before expiration
-3. **Retry logic**: Add exponential backoff for transient errors (500 responses)
-4. **Monitoring**: Track approval request success/failure rates
-5. **Logging**: Log all requests and responses for debugging
-6. **Security**: Never log or expose client secrets
-
-
-## FAQ
-
-### Q: Can I request access to multiple buildings in one approval request?
-**A:** Currently, each approval request is for one building. To request access to multiple buildings, you need to create separate approval requests for each building.
-
-### Q: How long does the building owner have to approve?
-**A:** Approval links typically expire after 1 hour. If not approved within this time, you'll need to create a new approval request.
-
-### Q: Can I request only GET or only POST permission instead of both?
-**A:** Yes. Simply include only the policy type you need in the `addPolicyTransactions` array. However, bundling both reduces approval friction if you need both types eventually.
-
-### Q: What happens if the building owner rejects my request?
-**A:** The approval status will change to `Rejected`. The building owner is not required to provide a reason. You can create a new approval request if needed.
-
-### Q: How do I know which IoT platform organization ID to use for `serviceProvider`?
-**A:** The IoT platform organization ID should be provided by the building owner or discovered through the GDS organization registry. Contact Poort8 support if you need assistance identifying the correct service provider.
-
-### Q: Do policies expire?
-**A:** Yes, based on the `expiration` timestamp in the policy. The example uses `2147483647` (year 2038) which is effectively permanent for current purposes. You can set a specific expiration date if needed.
-
-### Q: Can I revoke policies after they're approved?
-**A:** Policy revocation is managed by the building owner through the organization management interface. Building management platforms cannot revoke policies themselves – only the building owner who granted the permission can revoke it.
+> **Important:** The preview environment contains **pilot data** and is shared among pilot participants. It is not a free experimental sandbox — treat it as a live environment for pilot purposes.
 
 
 ## Support
@@ -495,3 +398,4 @@ Interactive API reference: https://keyper-preview.poort8.nl/scalar/?api=v1
 **Related documentation:**
 - [GDS Overview](overview.md) – Understanding GDS and its value
 - [GDS Architecture](architecture.md) – How GDS components work together
+- [Get Building Data (Provider Guide)](provider-enforcement-guide.md) – How the IoT platform verifies policies and delivers data
