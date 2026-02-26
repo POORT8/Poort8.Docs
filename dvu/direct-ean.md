@@ -150,6 +150,7 @@ The provided JSON body must include an `addPolicyTransactions` array containing 
 When the approval link is successfully created, you'll receive the following response.
 
 **201 Created**
+
 ```json
 {
   "id": "474e19af-8165-4b85-ad03-be81f9f8dcc2",
