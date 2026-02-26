@@ -1,148 +1,141 @@
-# DVU – Datastelsel Verduurzaming Utiliteit
+# DVU - Intro
 
-DVU enables controlled access to energy data for building sustainability purposes. It combines NoodleBar modules (Authorization Register, Keyper Approve) with iSHARE-based authentication to connect data service consumers with energy data providers.
+Welkom bij de DVU (Datastelsel Verduurzaming Utiliteit) documentatie. Deze documentatie helpt je bij het integreren met DVU om gecontroleerde toegang te krijgen tot energiedata voor verduurzamingsdoeleinden.
 
-## How it works
+## Voor wie is deze documentatie?
 
-Your application requests access to building energy data through Keyper. The energy contractor approves or rejects via an approval link. Once approved, policies are registered in the DVU Authorization Register and you can retrieve data.
+Deze documentatie is bedoeld voor:
+- **Developers** die DVU integreren in hun applicatie → Start met [Getting Started](getting-started.md)
+- **Architecten** die de technische werking willen begrijpen → Lees [Overzicht & Kernconcepten](overview.md)
+- **Product owners** die de mogelijkheden willen verkennen → Lees [Dataproducten](data-products.md)
+- **Gebouweigenaren** die willen weten hoe toegangsbeheer werkt → Lees [Toegangsmodel](access-model.md)
 
-```mermaid
-sequenceDiagram
-    participant App as Your Application
-    participant Keyper as Keyper API
-    participant EC as Energy Contractor
-    participant DVU as DVU Metadata App
-    participant AR as DVU Authorization Register
+## Documentatie-overzicht
 
-    rect rgb(221, 242, 255)
-    note right of App: Approval (one-time per building)
-    App->>Keyper: POST /approval-links
-    Keyper->>EC: Email with approval link
-    EC->>DVU: Fill in building details
-    DVU->>Keyper: Redirect to approval page
-    EC->>Keyper: Review & approve
-    Keyper->>AR: Register access policy
-    end
+### Beginnen
 
-    rect rgb(221, 242, 255)
-    note right of App: Data retrieval (recurring)
-    App->>AR: GET /api/resourcegroups (VBO + EAN identifiers)
-    App->>App: Retrieve energy data from SDS using EAN
-    end
-```
+**[Getting Started](getting-started.md)** - *DVU integratie*
+- Van nul naar je eerste API call
+- Credentials aanvragen en configureren
+- Je eerste approval link maken
+- Volledige flow begrijpen
+- **→ Nieuw bij DVU? Start hier!**
 
-## Getting started
+**[Overzicht & Kernconcepten](overview.md)** - *Achtergrond & context*
+- Wat lost DVU op?
+- Hoe werkt het toegangsproces?
+- Welke dataproducten zijn beschikbaar?
+- Wat heb je nodig voor integratie?
 
-### Get your credentials
+**[Woordenlijst](glossary.md)** - *Begrippen opzoeken*
+- Definities van 40+ termen (VBO, EAN, P4, CAR, etc.)
+- Uitleg van authenticatie (iSHARE, EORI, eHerkenning)
+- Snelle referentietabel met afkortingen
 
-Contact Poort8 at **hello@poort8.nl** with your organization name, contact person, and use case description. You will receive:
-- **Client ID & secret** for Keyper API authentication
-- **KVK number** — your organization identifier in `NL.KVK.<8-digit>` format
+**[Veelgestelde Vragen (FAQ)](faq.md)** - *Snelle antwoorden*
+- 30+ veelgestelde vragen en antwoorden
+- Onderwerpen: authenticatie, implementatie, data-toegang, troubleshooting
+- Praktische voorbeelden
 
-### Test environment
+### Kernconcepten
 
-| Service | URL |
-|---------|-----|
-| Token endpoint | `https://poort8.eu.auth0.com/oauth/token` |
-| Keyper API | `https://keyper-preview.poort8.nl/v1/api/` |
-| DVU dataspace | `https://dvu-test.azurewebsites.net` |
+**[Toegangsmodel](access-model.md)**
+- Uitleg van Variant 1 (Self-service) vs Variant 2 (Externe aanvraag)
+- Segmentatie: kleinverbruik vs grootverbruik
+- Automatische vs handmatige toestemming
+- Procesflow met visuele diagrammen
 
-> The test environment does not perform complete verifications such as organization data validation. Use it only for functional testing.
+**[Dataproducten](data-products.md)**
+- Overzicht van beschikbare dataproducten
+- P4-meterdata, RVO-benchmark, dagstanden
+- Keuze tussen producten voor jouw use case
 
-### Authentication
+### Implementatiegidsen
 
-Every Keyper API call requires an access token:
+> **Let op:** Deze gidsen zijn voor **Variant 2** (externe aanvraag via dataservice consumer).
+> Voor **Variant 1** (self-service) verloopt het proces via de DVU-applicatie zelf.
 
-```http
-POST https://poort8.eu.auth0.com/oauth/token
-Content-Type: application/json
-```
-```json
-{
-  "client_id": "<CLIENT_ID>",
-  "client_secret": "<CLIENT_SECRET>",
-  "audience": "Poort8-Dataspace-Keyper-Preview",
-  "grant_type": "client_credentials"
-}
-```
+**[Single Building Access](single-building.md)**
+- Toegang aanvragen voor één gebouw via VBO-ID
+- Stap-voor-stap technische implementatie
+- Sequence-diagrammen en API-voorbeelden
 
-**200 OK**
-```json
-{
-  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "token_type": "Bearer",
-  "expires_in": 86400
-}
-```
+**[Bulk Building Access](bulk-buildings.md)**
+- Toegang aanvragen voor meerdere gebouwen tegelijk
+- Batch-verwerking van VBO-ID's
+- Efficiënte implementatie voor portfolios
 
-Use the token in subsequent requests: `Authorization: Bearer <access_token>`. Implement automatic refresh when the token expires.
+**[Direct EAN Access](direct-ean.md)**
+- Directe toegang via EAN-codes
+- Wanneer te gebruiken vs VBO-based access
+- Technische flow en API-calls
 
-## Your first approval link
+**[VBO/EAN Data Retrieval](vbo-ean-data-retrieval.md)**
+- Data ophalen na verkregen toestemming
+- API-endpoints en parameters
+- Response-formaten
 
-Create a test approval link for a single building using `POST /approval-links`:
+**[SDS Data Retrieval](sds-data-retrieval.md)**
+- Data ophalen via Smart Data Solutions
+- Endpoints voor verschillende dataproducten
+- Authenticatie en error handling
 
-```http
-POST https://keyper-preview.poort8.nl/v1/api/approval-links
-Accept: application/json
-Authorization: Bearer <ACCESS_TOKEN>
-Content-Type: application/json
-```
-```json
-{
-  "approver": {
-    "email": "<YOUR_EMAIL>",
-    "organization": "Test Energy Contractor",
-    "organizationId": "NL.KVK.76660680"
-  },
-  "dataspace": {
-    "baseUrl": "https://dvu-test.azurewebsites.net"
-  },
-  "requester": {
-    "name": "Test Person",
-    "email": "<YOUR_EMAIL>",
-    "organization": "Test Company",
-    "organizationId": "NL.KVK.12345678"
-  },
-  "description": "My first DVU test request",
-  "reference": "TEST-001",
-  "orchestration": {
-    "flow": "dvu.voeg-gebouw-toe@v1",
-    "payload": {
-      "address": "1341 BA 1",
-      "dataServiceConsumer": "NL.KVK.41265782"
-    }
-  }
-}
-```
+### Business Context
 
-**201 Created**
-```json
-{
-  "id": "474e19af-8165-4b85-ad03-be81f9f8dcc2",
-  "reference": "TEST-001",
-  "url": "https://keyper-preview.poort8.nl/approve?id=474e19af-8165-4b85-ad03-be81f9f8dcc2&app=dvu",
-  "expiresAtUtc": 1759834340,
-  "status": "Active"
-}
-```
+**[Access Energy Data](access-energydata.md)**
+- Business context van beide varianten
+- Marktperspectief voor dataservice consumers
+- Strategische overwegingen
 
-An email with the approval link is sent to the approver. The link is valid for 1 hour. Open it yourself to walk through the full approval flow in the test environment.
+## Aanbevolen leesroute
 
-## Integration guides
+### Voor developers
+1. **[Getting Started](getting-started.md)** - Maak je eerste API call (30 min)
+2. **[Overzicht & Kernconcepten](overview.md)** - Begrijp de basis (10 min)
+3. **[Woordenlijst](glossary.md)** - Leer de terminologie
+4. **Kies je implementatiegids** - Afhankelijk van je use case:
+   - [Single Building Access](single-building.md) - Een gebouw per keer
+   - [Bulk Building Access](bulk-buildings.md) - Meerdere gebouwen tegelijk
+   - [Direct EAN Access](direct-ean.md) - Direct via EAN-codes (geavanceerd)
+5. **[FAQ](faq.md)** - Bij vragen tijdens implementatie
 
-| Guide | When to use |
-|-------|-------------|
-| **[Single Building Access](single-building.md)** | Request access for one building at a time |
-| **[Bulk Building Access](bulk-buildings.md)** | Request access for multiple buildings simultaneously |
-| **[Direct EAN Access](direct-ean.md)** | You already have EAN codes and want to skip address lookup |
-| **[Retrieving VBO and EAN Data](vbo-ean-data-retrieval.md)** | Retrieve building identifiers after approval |
-| **[Energy Data Retrieval from SDS](sds-data-retrieval.md)** | Retrieve actual energy data using EAN codes |
-| **[Data Service Provider Integration](data-service-provider.md)** | Connect as a data service provider to DVU |
+### Voor architecten
+1. **[Overzicht & Kernconcepten](overview.md)** - High-level begrip
+2. **[Toegangsmodel](access-model.md)** - Procesarchitectuur
+3. **[Dataproducten](data-products.md)** - Mogelijkheden verkennen
+4. **[Access Energy Data](access-energydata.md)** - Business context
 
-## More information
+### Voor troubleshooting
+1. **[FAQ](faq.md)** - Controleer of je vraag al beantwoord is
+2. **[Woordenlijst](glossary.md)** - Verifieer begrippen
+3. **Relevante implementatiegids** - Controleer technische details
+4. **Contact support** - Als het probleem blijft bestaan
 
-- [NoodleBar Documentation](../noodlebar/) — shared platform concepts and architecture
-- [Keyper API Documentation ➚](https://keyper-preview.poort8.nl/scalar/?api=v1) — interactive API reference
-- [DVU at RVO ➚](https://www.rvo.nl/onderwerpen/verduurzaming-utiliteitsbouw/dvu) — business context and governance
-- [iSHARE ➚](https://ishare.eu/) — authentication and authorization standard
-- **Support**: hello@poort8.nl
+## Extra informatie
+**Intern**
+- **[Keyper](../keyper/)** - Goedkeurings- en autorisatiesysteem
+- **[NoodleBar](../noodlebar/)** - Aanvullende dataproducten
+
+**Extern**
+- **[DVU](https://www.rvo.nl/onderwerpen/verduurzaming-utiliteitsbouw/dvu)**
+- **[iSHARE](https://ishare.eu/)**
+
+## Tips voor effectief gebruik
+
+- **Gebruik de woordenlijst** regelmatig tijdens het lezen van technische documentatie
+- **Bookmark de FAQ** voor snelle antwoorden op veelvoorkomende vragen
+- **Volg de sequence-diagrammen** stap voor stap tijdens implementatie
+- **Test eerst met één gebouw** voordat je bulk-operaties uitvoert
+- **Lees error messages zorgvuldig** - ze bevatten vaak bruikbare informatie
+
+## Hulp nodig?
+
+- **Technische vragen**: Raadpleeg eerst de [FAQ](faq.md)
+- **Begrippen onduidelijk**: Zie de [Woordenlijst](glossary.md)
+- **Implementatieproblemen**: Controleer de relevante implementatiegids
+- **API-credentials**: Neem contact op met het Poort8-team via hello@poort8.nl
+- **DVU-deelnemersregistratie**: E-mail naar BeheerDVU@rvo.nl
+
+---
+
+**Klaar om te beginnen?** Start met het [Overzicht & Kernconcepten](overview.md)

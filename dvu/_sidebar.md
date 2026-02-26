@@ -1,19 +1,27 @@
-- [← Back to Poort8 Overview](/)
+- [← Terug naar Poort8 Overzicht](/)
 
-- **Getting Started**
-  - [Introduction](README.md)
+- **DVU basis**
+  - [Intro](README.md)
+  - [Overzicht & Kernconcepten](overview.md)
+  - [Toegangsmodel](access-model.md)
+  - [Dataproducten](data-products.md)
 
-- **Integration Guides**
+- **Implementation guides**
+  - [Getting Started](getting-started.md)
   - [Single Building Access](single-building.md)
   - [Bulk Building Access](bulk-buildings.md)
   - [Direct EAN Access](direct-ean.md)
-  - [Retrieving VBO and EAN Data](vbo-ean-data-retrieval.md)
-  - [Energy Data Retrieval from SDS](sds-data-retrieval.md)
-  - [Data Service Provider Integration](data-service-provider.md)
+  - [Retrieving VBO and EAN Data via DVU](vbo-ean-data-retrieval.md)
+  - [Energy data retrieval from Smart Data Solutions (SDS) via DVU](sds-data-retrieval.md)
+  - [Aansluiten als Datadienstaanbieder](data-service-provider.md)
+  
+- **Ondersteuning & referentie**
+  - [FAQ](faq.md)
+  - [Woordenlijst](glossary.md)
 
-- **Technical Reference**
-  - [Keyper API Documentation ➚](https://keyper-preview.poort8.nl/scalar/?api=v1)
+- **Business context M2M**
+  - [M2M Toegang Energiedata](access-energydata.md)
 
-- **External Links**
-  - [NoodleBar Docs](../noodlebar/)
-  - [Keyper Preview ➚](https://keyper-preview.poort8.nl/)
+- **Aanvullende bronnen**
+  - [Keyper Documentatie](../keyper/)
+  - [NoodleBar Documentatie](../noodlebar/)
