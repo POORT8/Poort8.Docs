@@ -7,11 +7,10 @@ This guide explains how to retrieve VBO and EAN data via DVU. All DVU API calls 
 ```mermaid
 sequenceDiagram
     participant App as Your Application
-    participant Assertor as iSHARE
-    participant DVU as Datastelsel Verduurzaming Utiliteit
-    App->>Assertor: POST /iSHARE/connect/token (client assertion)
-    Assertor->>App: Retrieve access token
-    App->>DVU: GET /api/resourcegroups (Access token + VBO + EAN identifiers)
+    participant DVU as Smart Data Solutions
+    App->>DVU: POST /iSHARE/connect/token (Client assertion)
+    DVU->>App: Retrieve access token
+    App->>SDS: GET /api/resourcegroups (Access token + VBO + EAN identifiers)
     DVU->>App: Retrieve data
 ```
 

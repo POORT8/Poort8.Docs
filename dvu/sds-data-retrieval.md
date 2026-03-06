@@ -6,13 +6,15 @@ This guide explains how to retrieve energy data from Smart Data Solutions (SDS).
 
 ## Sequence Diagram
 
+**⚠️ Note**: Complete documentation for SDS data endpoints will be updated once SDS implements query parameter support.
+
 ```mermaid
 sequenceDiagram
     participant App as Your Application
-    participant Assertor as iSHARE
+    participant DVU as Smart Data Solutions
     participant SDS as Smart Data Solutions
-    App->>Assertor: POST /iSHARE/connect/token (client assertion)
-    Assertor->>App: Retrieve access token
+    App->>DVU: POST /iSHARE/connect/token (client assertion)
+    DVU->>App: Retrieve access token
     App->>SDS: GET /api/resourcegroups (Access token + VBO + EAN identifiers)
     SDS->>App: Retrieve data
 ```
