@@ -84,7 +84,7 @@ Content-Type: application/json
 
 ## Example response
 
-**201 Created**
+**200 OK**
 
 ```json
 {

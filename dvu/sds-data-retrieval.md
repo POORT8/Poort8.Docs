@@ -2,39 +2,41 @@
 
 # Energy Data Retrieval from SDS
 
-The following steps describe how to retrieve energy data from Smart Data Solutions (SDS). All API calls to SDS require a valid iSHARE access token — more information on iSHARE can be found on the iSHARE [website ➚](https://ishare.eu/) or [developer portal ➚](https://dev.ishare.eu/).
+This guide explains how to retrieve energy data from Smart Data Solutions (SDS). All API calls to SDS require a valid iSHARE access token — more information on iSHARE can be found on iSHARE's [Website ➚](https://ishare.eu/) and [Developer Portal ➚](https://dev.ishare.eu/).
 
-## Steps
+## Sequence Diagram
 
-### Step 1: Generate a client assertion JWT
-
-An iSHARE access token is required to call SDS. Generate a client assertion JWT signed with your private key and including your X.509 certificate chain.
-
-Headers:
-```json
-{
-  "alg": "RS256",
-  "typ": "JWT",
-  "x5c": ["MIIEfzCCAmegAwIBAgII..."]
-}
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant Assertor as iSHARE
+    participant SDS as Smart Data Solutions
+    App->>Assertor: POST /iSHARE/connect/token (client assertion)
+    Assertor->>App: Retrieve access token
+    App->>DVU: GET /api/resourcegroups (Access token + VBO + EAN identifiers)
+    DVU->>App: Retrieve data
 ```
 
-Claims:
-```json
-{
-  "iss": "NL.KVK.<YOUR_KVK>",
-  "sub": "NL.KVK.<YOUR_KVK>",
-  "aud": "NL.KVK.55819206",
-  "iat": "<UNIX_TIMESTAMP_NOW>",
-  "exp": "<UNIX_TIMESTAMP_NOW_PLUS_30>",
-  "jti": "<UUID>"
-}
-```
+## Generate a client assertion JWT
 
-| Claim | Value |
-|-------|-------|
-| `iss` / `sub` | Your organization identifier (`NL.KVK.<your KVK>`) |
-| `aud` | SDS: `NL.KVK.55819206` |
+An iSHARE access token is required to use the SDS API. Generate a client assertion JWT signed with your private key and including your X.509 certificate chain.
+
+### Headers
+| JSON path | Filled by | Description                                     |
+| :-------- | :-------- | :---------------------------------------------- |
+| `alg`     | Fixed     | `RS256`                                         |
+| `type`    | Fixed     | `JWT`                                           |
+| `x5c`     | App       | Certificate chain `["MIIEfzCCAmegAwIBAgII..."]` |
+
+### Claims
+| JSON path | Filled by | Description                                         |
+| :-------- | :-------- | :-------------------------------------------------- |
+| `iss`     | App       | Your organisation identifier`NL.KVK.<your KVK>`     |
+| `sub`     | App       | Your organisation identifier`NL.KVK.<your KVK>`     |
+| `aud`     | Fixed     | SDS organisation identifier `NL.KVK.55819206`       |
+| `iat`     | App       | Issued at timestamp `<UNIX_TIMESTAMP_NOW>`          |
+| `exp`     | App       | Expires at timestamp `<UNIX_TIMESTAMP_NOW_PLUS_30>` |
+| `jti`     | App       | JWT identifier `<UUID>`                             |
 
 ### Implementation tools
 
@@ -42,10 +44,12 @@ Claims:
 - **Python**: [iSHARE Python code snippets ➚](https://github.com/iSHAREScheme/code-snippets/blob/master/Python/access_token.py)
 - **Other**: [iSHARE Client Assertion specification ➚](https://dev.ishare.eu/reference/ishare-jwt/client-assertion)
 
-### Step 2: Obtain an iSHARE access token
+
+
+## Obtain an iSHARE access token
 
 ```http
-POST https://dvu-test.smartdatasolutions.nl/token
+POST https://dvu-test.azurewebsites.net/iSHARE/connect/token
 Content-Type: application/x-www-form-urlencoded
 ```
 

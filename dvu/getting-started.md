@@ -52,6 +52,7 @@ Replace with your credentials:
 ```json
 {
   "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "scope": "read write",
   "token_type": "Bearer",
   "expires_in": 86400
 }
@@ -116,7 +117,7 @@ Use this sample data, and replace the email placeholders with your actual email 
 - `EU.EORI.NL123456789` → Test EORI
 - `3013 AK 45` → Test building address
 
-#### Expected Response (201 Created)
+#### Expected Response (200 OK)
 ```json
 {
   "id": "474e19af-8165-4b85-ad03-be81f9f8dcc2",

@@ -82,7 +82,7 @@ Format each address as `"<postal code> <house number>"` (e.g., `"3013 AK 45"`). 
 
 ## Example response
 
-**201 Created**
+**200 OK**
 
 ```json
 {

@@ -4,9 +4,7 @@ This guide explains how to request access to meter data directly by providing th
 
 ## Overview
 
-In the standard DVU flow (Single Building (single-building.md) / Bulk Building (bulk-buildings.md)), the DVU metadata app assembles policies based on address lookups. In the direct EAN flow, your application constructs the policy and resource group transactions and includes them in the approval link request. The energy contractor reviews and approves directly in Keyper without visiting CAR.
-
-> DVU needs additional info on EANs to retrieve data (stored in the `properties` of each EAN resource). It is not expected that users will supply this info. Therefore, the availability of this flow depends on the implementation of info from the CAR (Centraal Aansluitingen Register).
+In the standard DVU flow ([Single Building Access](single-building.md) / [Bulk Building Access](bulk-building.md)), the DVU metadata app assembles policies based on address lookups. In the direct EAN flow, your application constructs the policy and resource group transactions and includes them in the approval link request. The energy contractor reviews and approves directly in Keyper without visiting CAR.
 
 ## Sequence diagram
 
@@ -17,12 +15,13 @@ sequenceDiagram
     participant EC as Energy Contractor
     participant AR as DVU Authorization Register
     participant SDS as Smart Data Solutions
+    Note over App: Requesting Approval
     App->>Keyper: POST /approval-links (with policy + resource group)
     Keyper->>EC: Email with approval link
     EC->>Keyper: Open link, review & approve
     Keyper->>AR: Register policy + resource group
     Keyper->>App: Status: Approved
-    Note over App: After approval
+    Note over App: Requesting VBO and EAN Data
     App->>AR: GET /api/resourcegroups (VBO + EAN identifiers)
     App->>SDS: Retrieve energy data using EAN
 ```
@@ -130,7 +129,7 @@ Content-Type: application/json
 
 ## Example response
 
-**201 Created**
+**200 OK**
 
 ```json
 {
@@ -147,11 +146,11 @@ Content-Type: application/json
 | Status | Scenario                        | Solution                                                                                                                      |
 | :----- | :------------------------------ | :---------------------------------------------------------------------------------------------------------------------------- |
 | `400`  | Missing or invalid fields       | Check the `errors` object in the response for details                                                                         |
-| `401`  | Missing or expired access token | Re-authenticate — see Authentication (README.md#authentication)                                                               |
+| `401`  | Missing or expired access token | Re-authenticate — see [Getting Started](getting-started.md)                                                                   |
 | `500`  | Server error                    | Retry after a short delay. If persistent, contact [hello@poort8.nl](mailto:hello@poort8.nl) with your reference and timestamp |
 
 > Keyper does not validate organization identifiers for format. Ensure KVK numbers are correct on your side, as invalid identifiers cause issues with access policies and data retrieval.
 
 ## Follow-up
 
-After approval, retrieve the EAN data via the DVU API — see Retrieving VBO and EAN Data (vbo-ean-data-retrieval.md).
+After approval, retrieve VBO and EAN data via DVU API — see [Retrieving VBO and EAN Data via DVU](vbo-ean-data-retrieval.md).
