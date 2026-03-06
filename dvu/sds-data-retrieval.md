@@ -13,8 +13,8 @@ sequenceDiagram
     participant SDS as Smart Data Solutions
     App->>Assertor: POST /iSHARE/connect/token (client assertion)
     Assertor->>App: Retrieve access token
-    App->>DVU: GET /api/resourcegroups (Access token + VBO + EAN identifiers)
-    DVU->>App: Retrieve data
+    App->>SDS: GET /api/resourcegroups (Access token + VBO + EAN identifiers)
+    SDS->>App: Retrieve data
 ```
 
 ## Generate a client assertion JWT
