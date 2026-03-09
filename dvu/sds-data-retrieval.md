@@ -11,7 +11,7 @@ This guide explains how to retrieve energy data from Smart Data Solutions (SDS).
 ```mermaid
 sequenceDiagram
     participant App as Your Application
-    participant DVU as Smart Data Solutions
+    participant DVU as Datastelsel Verduurzaming Utiliteit
     participant SDS as Smart Data Solutions
     App->>DVU: POST /iSHARE/connect/token (client assertion)
     DVU->>App: Retrieve access token

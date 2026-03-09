@@ -51,15 +51,15 @@ Content-Type: application/json
 ```json
 {
   "requester": {
-    "name": "Alice Data End User",
-    "email": "alice@dataenduser.nl",
-    "organization": "wonderland",
-    "organizationId": "NL.KVK.12345678"
+    "name": "Data Requester",
+    "email": "requester@domain.extension",
+    "organization": "Requester",
+    "organizationId": "<REQUESTING_ORGANISATION_ID>"
   },
   "approver": {
-    "email": "somebody@domain.extension",
-    "organization": "Poort8",
-    "organizationId": "NL.KVK.76660680"
+    "email": "approver@domain.extension",
+    "organization": "Approver",
+    "organizationId": "<APPROVING_ORGANISATION_ID>"
   },
   "dataspace": {
     "baseUrl": "https://dvu-test.azurewebsites.net"
@@ -72,8 +72,8 @@ Content-Type: application/json
       "issuedAt": "<NOW>",
       "notBefore": "<NOW>",
       "expiration": "<EXPIRATION>",
-      "issuerId": "NL.KVK.76660680",
-      "subjectId": "NL.KVK.12345678",
+      "issuerId": "<APPROVING_ORGANISATION_ID>",
+      "subjectId": "<REQUESTING_ORGANISATION_ID>",
       "serviceProvider": "NL.KVK.55819206",
       "action": "Read",
       "resourceId": "dvu:resource:<UUID>",
@@ -95,14 +95,36 @@ Content-Type: application/json
           "useCase": "dvu",
           "name": "<EAN_CODE_1>",
           "description": "ean: <EAN_CODE_1>",
-          "properties": []
+          "properties": [
+            {
+              "key": "<STRING>",
+              "value": "<STRING>",
+              "isIdentifier": "<BOOLEAN>"
+            },
+            {
+              "key": "<STRING>",
+              "value": "<STRING>",
+              "isIdentifier": "<BOOLEAN>"
+            }
+          ]
         },
         {
           "resourceId": "dvu:resource:<EAN_CODE_2>",
           "useCase": "dvu",
           "name": "<EAN_CODE_2>",
           "description": "ean: <EAN_CODE_2>",
-          "properties": []
+          "properties": [
+            {
+              "key": "<STRING>",
+              "value": "<STRING>",
+              "isIdentifier": "<BOOLEAN>"
+            },
+            {
+              "key": "<STRING>",
+              "value": "<STRING>",
+              "isIdentifier": "<BOOLEAN>"
+            }
+          ]
         }
       ]
     }
@@ -123,7 +145,7 @@ Content-Type: application/json
 | `serviceProvider`                     | `NL.KVK.55819206` (Smart Data Solutions)                        |
 | `resourceId` / `resourceGroupId`      | Must match — use the same UUID for both                         |
 | `license`                             | DVU defaults to `iSHARE.0002`                                   |
-| `properties`                          | Should be supplied by the CAR connection when available         |
+| `properties`                          | Custom fields supplying additional information                  |
 
 > DVU requires EANs to be grouped. For this flow, you choose a user-friendly group name as it will be shown to the approver.
 
