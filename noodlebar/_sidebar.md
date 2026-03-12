@@ -20,6 +20,7 @@
 - **NoodleBar Instances**
   - [Bunker Connect](../bunkerconnect/)
   - [Interplant Federation](../cgiipf/)
+  - [Connected Trade Network](../ctn/)
   - [Dataspace Container Logistics (DCL)](../dcl/)
   - [GIR Instance](../gir/)
   - [PortlinQ](../portlinq/)
