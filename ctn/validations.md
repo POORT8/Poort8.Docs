@@ -11,8 +11,6 @@ Standard validation rules for CTN. Apply consistently across User Portal, Admin 
 | Max length | 254 characters |
 | Pattern | `^[^\s@]+@[^\s@]+\.[^\s@]+$` |
 
-Client-side validation catches obvious format errors. Keycloak performs authoritative validation.
-
 ---
 
 ## Phone Number
@@ -33,13 +31,6 @@ Client-side validation catches obvious format errors. Keycloak performs authorit
 | `+32470123456` | `+32470123456` (BE) |
 | `+49151123456` | `+49151123456` (DE) |
 
-### Libraries
-
-| Stack | Library |
-|-------|---------|
-| React (User Portal) | [libphonenumber-js](https://www.npmjs.com/package/libphonenumber-js) |
-| C# (Admin Portal, API, BFF) | [libphonenumber-csharp](https://www.nuget.org/packages/libphonenumber-csharp) |
-
 ---
 
 ## KvK Number
@@ -52,4 +43,34 @@ Netherlands Chamber of Commerce identifier.
 | Example | `12345678` |
 
 Format validation only — use KvK API for existence check during onboarding.
+
+---
+
+## Person Name (First / Last Name)
+
+| Rule | Value |
+|------|-------|
+| Max length | 100 characters |
+
+Applies to first name and last name fields during registration.
+
+---
+
+## Organization Name
+
+| Rule | Value |
+|------|-------|
+| Min length | 2 characters |
+| Max length | 255 characters |
+
+---
+
+## Client ID (System Registration)
+
+| Rule | Value |
+|------|-------|
+| Pattern | `^[a-z0-9]+(-[a-z0-9]+)*$` |
+| Example | `my-api`, `logistics-app` |
+
+Lowercase letters and digits only, separated by hyphens. Used when registering APIs and applications.
 
