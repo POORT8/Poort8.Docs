@@ -77,7 +77,7 @@ Content-Type: application/json
       "subjectId": "<REQUESTING_ORGANISATION_ID>",
       "serviceProvider": "NL.KVK.55819206",
       "action": "Read",
-      "resourceId": "dvu:resource:<UUID>",
+      "resourceId": "<UUID>",
       "type": "P4",
       "attribute": "*",
       "license": "iSHARE.0002"
@@ -92,15 +92,20 @@ Content-Type: application/json
       "provider": "DVU",
       "resources": [
         {
-          "resourceId": "dvu:resource:<EAN_CODE_1>",
+          "resourceId": "dvu:resource:<EAN>",
           "useCase": "dvu",
-          "name": "<EAN_CODE_1>",
-          "description": "ean: <EAN_CODE_1>",
+          "name": "<EAN>",
+          "description": "ean: <EAN>",
           "properties": [
             {
               "key": "Grootverbruik",
               "value": "<BOOLEAN>",
               "isIdentifier": false
+            },
+            {
+                "key": "Product",
+                "value": "<STRING>",
+                "isIdentifier": false
             },
             {
               "key": "IssuingCompanyContactEmail",
@@ -137,15 +142,18 @@ Content-Type: application/json
 
 ### Key fields
 
-| Field                                 | Notes                                                           |
-| :------------------------------------ | :-------------------------------------------------------------- |
-| `issuedAt`, `notBefore`, `expiration` | Unix timestamps. DVU defaults `issuedAt` and `notBefore` to now |
-| `issuerId`                            | KVK of the energy contractor (approver)                         |
-| `subjectId`                           | Your KVK (the data service consumer)                            |
-| `serviceProvider`                     | `NL.KVK.55819206` (Smart Data Solutions)                        |
-| `resourceId` / `resourceGroupId`      | Must match — use the same UUID for both                         |
-| `license`                             | DVU defaults to `iSHARE.0002`                                   |
-| `properties`                          | Custom fields supplying additional information                  |
+| Field                                 | Notes                                                             |
+| :------------------------------------ | :---------------------------------------------------------------- |
+| `issuedAt`, `notBefore`, `expiration` | Unix timestamps. DVU defaults `issuedAt` and `notBefore` to now   |
+| `issuerId`                            | KVK of the energy contractor (approver)                           |
+| `subjectId`, `subjectId`              | KVK code with format `KVK.NL.12345678`                            |
+| `serviceProvider`                     | `NL.KVK.55819206` (Smart Data Solutions)                          |
+| `resourceId` / `resourceGroupId`      | Must match — use the same UUID for both                           |
+| `license`                             | DVU defaults to `iSHARE.0002`                                     |
+| `properties`                          | Custom fields supplying additional information                    |
+| `properties.IssuingCompanyKvk`        | KVK code with format `12345678`                                   |
+| `properties.Grootverbruik`            | Case sensitive string reprentation of a boolean `True` or `False` |
+| `properties.Product`                  | Must contain value `Gas` or `Elektra`                             |
 
 > DVU requires EANs to be grouped. For this flow, you choose a user-friendly group name as it will be shown to the approver.
 
