@@ -35,8 +35,9 @@ sequenceDiagram
 | `dataspace.baseUrl`               | Fixed     | `https://dvu-test.azurewebsites.net`                                                |
 | `description`                     | App       | Shown to the approver (optional)                                                    |
 | `reference`                       | App       | Your internal tracking ID (optional)                                                |
-| `addPolicyTransactions[0]`        | App       | Access policy — see JSON example below                                              |
-| `addResourceGroupTransactions[0]` | App       | EAN resource group — see JSON example below                                         |
+| `addPolicyTransactions[]`         | App       | Access policy — see JSON example below                                              |
+| `addResourceGroupTransactions[]`  | App       | EAN resource group — see JSON example below                                         |
+| `properties`                      | App       | Issuing company information - see JSON example below                                |
 | `orchestration.flow`              | Fixed     | `dvu.direct-ean@v1`                                                                 |
 
 ## JSON example
@@ -97,36 +98,35 @@ Content-Type: application/json
           "description": "ean: <EAN_CODE_1>",
           "properties": [
             {
-              "key": "<STRING>",
-              "value": "<STRING>",
-              "isIdentifier": "<BOOLEAN>"
+              "key": "Grootverbruik",
+              "value": "<BOOLEAN>",
+              "isIdentifier": false
             },
             {
-              "key": "<STRING>",
-              "value": "<STRING>",
-              "isIdentifier": "<BOOLEAN>"
-            }
-          ]
-        },
-        {
-          "resourceId": "dvu:resource:<EAN_CODE_2>",
-          "useCase": "dvu",
-          "name": "<EAN_CODE_2>",
-          "description": "ean: <EAN_CODE_2>",
-          "properties": [
-            {
-              "key": "<STRING>",
-              "value": "<STRING>",
-              "isIdentifier": "<BOOLEAN>"
+              "key": "IssuingCompanyContactEmail",
+              "value": "approver@domain.extension",
+              "isIdentifier": false
             },
             {
-              "key": "<STRING>",
+              "key": "MeasuringCompanyName",
               "value": "<STRING>",
-              "isIdentifier": "<BOOLEAN>"
+              "isIdentifier": false
             }
           ]
         }
       ]
+    }
+  ],
+  "properties": [
+    {
+      "key": "IssuingCompanyKvk",
+      "value": "<APPROVING_ORGANISATION_COC>",
+      "isIdentifier": false
+    },
+    {
+      "key": "IssuingCompanyName",
+      "value": "<STRING>",
+      "isIdentifier": false
     }
   ],
   "orchestration": {
