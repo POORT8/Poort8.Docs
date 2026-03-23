@@ -1,32 +1,26 @@
-# Changelog
+# Weekly Changelog
 
-## 2026-03-18 — KBO API verification for Belgian onboarding + country restriction enforcement
+## 2026-03-20 — Multi-country organization registration + onboarding contract changes
 
-Two follow-up changes to the Belgian registration feature shipped on 2026-03-17.
-
-### Dataspace API
-
-**Changed**
-- Belgian organizations registering via `POST /api/onboarding` are now verified against the official Belgian KBO registry API. A `KboCheck` verification record is created during provisioning, matching the `KvkCheck` behavior for Dutch organizations. Invalid KBO numbers that pass format validation may now be rejected if they are not found in the KBO registry. [#768](https://github.com/POORT8/Poort8.Dataspace.Private/pull/768)
-- `POST /api/onboarding` now returns a 400 validation error when the submitted `CountryCode` is excluded from the dataspace's allowed countries. Dataspace operators can restrict available countries via the `ParticipantRegistry.ExcludeCountryCodes` configuration. [#770](https://github.com/POORT8/Poort8.Dataspace.Private/pull/770)
-
-## 2026-03-17 — Belgian organization registration + onboarding endpoint breaking changes
-
-Belgian organizations can now register on the platform using their KBO number. This release also
-changes the onboarding endpoint contract in three ways — existing integrations must update before upgrading.
+The onboarding endpoint now supports Dutch, Belgian, and German organizations, with live registry verification for each country. This release contains two breaking changes to `POST /api/onboarding` — existing integrations must update before upgrading.
 
 ### Dataspace API
 
 **Breaking**
-- `POST /api/onboarding` now accepts `multipart/form-data` instead of JSON. Update your `Content-Type` header to `multipart/form-data` and encode request fields accordingly. [#762](https://github.com/POORT8/Poort8.Dataspace.Private/pull/762)
-- `POST /api/onboarding` now requires a `CountryCode` field. Set it to `NL` for Dutch registrations or `BE` for Belgian registrations. [#762](https://github.com/POORT8/Poort8.Dataspace.Private/pull/762)
-- The `KvkNumber` field is renamed to `BusinessRegisterNumber`. Update your request payload to use the new field name. [#762](https://github.com/POORT8/Poort8.Dataspace.Private/pull/762)
+- `POST /api/onboarding` now requires `multipart/form-data` encoding instead of JSON, a new required `CountryCode` field (`NL`, `BE`, or `DE`), and renames `KvkNumber` to `BusinessRegisterNumber`. Update your `Content-Type` header to `multipart/form-data`, add `CountryCode: NL` for Dutch registrations, and rename the field in your payload. [#762](https://github.com/POORT8/Poort8.Dataspace.Private/pull/762)
+- `POST /api/onboarding` now requires phone numbers in international E.164 format (e.g., `+31612345678`). Numbers in local format (e.g., `0612345678`) are rejected with a validation error. Add the country dialing prefix to your phone number value. [#786](https://github.com/POORT8/Poort8.Dataspace.Private/pull/786)
 
 **Added**
-- `POST /api/onboarding` now accepts Belgian organization registrations. Set `CountryCode` to `BE` and provide a KBO number as `BusinessRegisterNumber`. [#762](https://github.com/POORT8/Poort8.Dataspace.Private/pull/762)
-- `POST /api/onboarding` now accepts an optional `BusinessRegisterExtract` field — a PDF file upload of the business register extract. [#762](https://github.com/POORT8/Poort8.Dataspace.Private/pull/762)
+- `POST /api/onboarding` now accepts Belgian organization registrations. Set `CountryCode` to `BE` and provide a KBO number as `BusinessRegisterNumber`. The KBO number is verified against the official Belgian business registry — a `KboCheck` verification record is created during provisioning. [#762](https://github.com/POORT8/Poort8.Dataspace.Private/pull/762) [#768](https://github.com/POORT8/Poort8.Dataspace.Private/pull/768)
+- `POST /api/onboarding` now accepts German organization registrations. Set `CountryCode` to `DE`, provide a commercial register number as `BusinessRegisterNumber` (HRB format, e.g., `HRB12345`), and optionally supply a court code in the new `RegistrationCourt` field. The organization's LEI is looked up automatically via the GLEIF registry. [#789](https://github.com/POORT8/Poort8.Dataspace.Private/pull/789)
+- `POST /api/onboarding` now accepts an optional `BusinessRegisterExtract` field — a PDF upload of the business register extract. [#762](https://github.com/POORT8/Poort8.Dataspace.Private/pull/762)
+- `POST /api/onboarding` now accepts an optional `Vat` field for the organization's VAT number. [#785](https://github.com/POORT8/Poort8.Dataspace.Private/pull/785) [#789](https://github.com/POORT8/Poort8.Dataspace.Private/pull/789)
+
+**Changed**
+- `POST /api/onboarding` now returns 400 when the submitted `CountryCode` is not accepted by this dataspace instance. [#770](https://github.com/POORT8/Poort8.Dataspace.Private/pull/770)
+- Belgian organizations onboarded via `POST /api/onboarding` now receive a `VatCheck` verification record during provisioning. The VAT number is automatically derived from the KBO number and verified against the EU VIES service. [#785](https://github.com/POORT8/Poort8.Dataspace.Private/pull/785)
 
 ### Keyper API
 
 **Changed**
-- Users who authenticate successfully but are not authorized to approve for their organization now see a dedicated error screen with a clear "not authorized" message, rather than being redirected back to the authentication step. Affects GIR, GDS, and DVU approval workflows. [#715](https://github.com/POORT8/Poort8.Dataspace.Private/pull/715) [#763](https://github.com/POORT8/Poort8.Dataspace.Private/pull/763)
+- Users who authenticate successfully but are not authorized to approve for their organization now see a dedicated error screen, rather than being redirected back to the authentication step. [#715](https://github.com/POORT8/Poort8.Dataspace.Private/pull/715) [#763](https://github.com/POORT8/Poort8.Dataspace.Private/pull/763)
