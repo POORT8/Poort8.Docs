@@ -1,5 +1,17 @@
 # Weekly Changelog
 
+## 2026-03-27 — Keyper default workflow + onboarding PDF fix
+
+### Dataspace API
+
+**Fixed**
+- `POST /api/onboarding` now correctly validates PDF files submitted as `BusinessRegisterExtract`. Previously, valid PDF files could be incorrectly rejected due to a stream positioning issue during header validation. [#801](https://github.com/POORT8/Poort8.Dataspace.Private/pull/801)
+
+### Keyper API
+
+**Added**
+- A new generic English-language workflow `keyper.default@v1` is now available. Pass `keyper.default@v1` as `orchestration.flow` in `POST /api/approval-links` to use a standard dataspace approval flow without a dataspace-specific customization. [#817](https://github.com/POORT8/Poort8.Dataspace.Private/pull/817)
+
 ## 2026-03-20 — Multi-country organization registration + onboarding contract changes
 
 The onboarding endpoint now supports Dutch, Belgian, and German organizations, with live registry verification for each country. This release contains two breaking changes to `POST /api/onboarding` — existing integrations must update before upgrading.
