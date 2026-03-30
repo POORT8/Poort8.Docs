@@ -8,6 +8,7 @@
 - **Implementation**
   - [Requesting Building Data Access](consumer-approval-guide.md)
   - [Get Building Data (Provider Guide)](provider-enforcement-guide.md)
+  - [GDS Portal](portal-guide.md)
 
 - **Technical reference**
   - [GDS API documentation](https://gds-preview.poort8.nl/scalar/v1)
