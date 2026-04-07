@@ -1,5 +1,17 @@
 # Weekly Changelog
 
+## 2026-04-03 — DSGO authentication endpoint (GIR) + sensor optimization workflow
+
+### GIR Dataspace API
+
+**Added**
+- `POST /connect/token` — new endpoint for DSGO (DigiGO) authentication using JWT client assertions. Submit `grant_type`, `scope`, `client_id`, `client_assertion_type`, and `client_assertion` as `application/x-www-form-urlencoded`. The assertion is validated against the DSGO satellite trusted list using certificate chain verification. Returns a DSGO access token. This endpoint is only available on the GIR instance. [#618](https://github.com/POORT8/Poort8.Dataspace.Private/pull/618) [#826](https://github.com/POORT8/Poort8.Dataspace.Private/pull/826)
+
+### Keyper API
+
+**Added**
+- A new sensor optimization workflow `keyper.sensor-optimization@v1` is now available. Pass `keyper.sensor-optimization@v1` as `orchestration.flow` in `POST /api/approval-links` to use a Dutch-language sensor optimization approval flow. Unlike the default workflow, this flow does not require the approver to be a member of the requesting organization. [#820](https://github.com/POORT8/Poort8.Dataspace.Private/pull/820)
+
 ## 2026-03-27 — Keyper default workflow + onboarding PDF fix
 
 ### Dataspace API
