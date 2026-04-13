@@ -47,7 +47,6 @@ sequenceDiagram
 | description | **App** | Shown to owner |
 | reference | **App** | Internal ID (not used by Keyper) |
 | addPolicyTransactions\[0\] | **App** | Single **write** policy (registrar) – see example |
-| addPolicyTransactions\[1\] | **App** | Single **read** policy (data-consumer, e.g. EDSN) – see example |
 | orchestration.flow | **Fixed** | "dsgo.gir@v1" |
 | addOROrganizationTransaction | **Optional** | Include if owner not in OR – see section on [Missing Owner](#missing-owner-in-the-organization-register) below |
 
@@ -99,12 +98,8 @@ sequenceDiagram
 | Field | Notes |
 |-------|-------|
 | `issuedAt`, `notBefore`, `expiration` | Unix timestamps. Keyper may override if in the past |
-| `subjectId` (2nd policy) | `NL.KVK.39098825` = EDSN (data consumer) |
-| `rules` | Fixed subset of NL/SfB codes for EDSN |
 
-**⚠️ Note**: 
- - In preview, the RegistrarApp (FormulierenApp) already adds the DataConsumer's read policy to the approval link, on behalf of EDSN.
- - In production, `serviceProvider` changes to **NL.KVK.xxxxx** (Centraal Register Techniek).
+**⚠️ Note**: In production, `serviceProvider` changes to **NL.KVK.76660680** (Poort8).
 
 ## **Authentication Example**
 
