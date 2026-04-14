@@ -71,10 +71,10 @@ If the owner clicks **Reject**, the approval link expires and the installation r
 ### 4.1 Endpoint  
 
 ```text
-GET https://gir-preview.poort8.nl/api/GIRBasisdataMessage/{guid}
+GET https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage/{guid}
 ```
 
-🔗 **[API Docs](https://gir-preview.poort8.nl/scalar/#tag/girbasisdatamessage/GET/api/GIRBasisdataMessage/{guid})**
+🔗 **[API Docs](https://gir-preview.poort8.nl/scalar/#tag/girbasisdatamessage/GET/v1/api/GIRBasisdataMessage/{guid})**
 
 ### 4.2 Query Parameters
 
@@ -92,7 +92,7 @@ GET https://gir-preview.poort8.nl/api/GIRBasisdataMessage/{guid}
 
 ```bash
 curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
-  "https://gir-preview.poort8.nl/api/GIRBasisdataMessage?vboID=0344010000126888"
+  "https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage?vboID=0344010000126888"
 ```
 
 ### 4.4 Response (trimmed)

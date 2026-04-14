@@ -204,7 +204,7 @@ This ensures the owner organization is properly registered before the approval f
 After the approval of the approval link by the owner, existing and new installations registered by the registrar on the indicated `vboId` will get status `Active` immediately.
 
 ```bash
-GET /api/GIRBasisdataMessage
+GET /v1/api/GIRBasisdataMessage
 ```
 
 **Status behavior**: Installations will be registered as `Pending` until owner approval completes, then automatically become `Active`. Only the registrar can see pending installations during this phase.

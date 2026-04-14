@@ -44,7 +44,7 @@ curl -X POST https://poort8.eu.auth0.com/oauth/token \
 ## **2 Endpoint**
 
 ```
-POST https://gir-preview.poort8.nl/api/GIRBasisdataMessage
+POST https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage
 Authorization: Bearer <ACCESS_TOKEN>
 Content-Type: application/json
 ```
@@ -62,7 +62,7 @@ The request body follows the **DICO GIRBasisdataMessage** standard.
 ## **4 Example – Create or Update**
 
 ```bash
-curl -X POST https://gir-preview.poort8.nl/api/GIRBasisdataMessage \
+curl -X POST https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{

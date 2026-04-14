@@ -248,7 +248,7 @@ This ensures the owner organization is properly registered before the approval f
 After the approval of the approval link by the owner, the data-consumer can immediately begin querying installation data:
 
 ```bash
-GET /api/GIRBasisdataMessage?vboID=<VBO_ID>
+GET /v1/api/GIRBasisdataMessage?vboID=<VBO_ID>
 ```
 
 **Access behavior**: Only `Active` installations with matching read policies will be returned. If rules were specified in the policy, only installations matching those NL/SfB classifications will be visible.
