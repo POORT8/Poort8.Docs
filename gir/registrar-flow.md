@@ -41,8 +41,8 @@ sequenceDiagram
 
 | **JSON path** | **Filled by** | **Value / validation** |
 | -- | -- | -- |
-| requester.\* | **App** | Registrar e-mail, name, organizationId="NL.KVK.<REG_KVK>" |
-| approver.\* | **App** | Owner e-mail, name, organizationId="NL.KVK.<OWNER_KVK>" |
+| requester.\* | **App** | Registrar e-mail, name, organizationId="did:ishare:EU.NL.NTRNL-<REG_KVK>" |
+| approver.\* | **App** | Owner e-mail, name, organizationId="did:ishare:EU.NL.NTRNL-<OWNER_KVK>" |
 | dataspace.\* | **Fixed** | baseUrl:"https://gir-preview.poort8.nl" |
 | description | **App** | Shown to owner |
 | reference | **App** | Internal ID (not used by Keyper) |
@@ -62,13 +62,13 @@ sequenceDiagram
     "name": "<REGISTRAR_NAME>",
     "email": "<REGISTRAR_EMAIL>",
     "organization": "<REGISTRAR_ORGANIZATION_NAME>",
-    "organizationId": "NL.KVK.<REGISTRAR_KVK>"
+    "organizationId": "did:ishare:EU.NL.NTRNL-<REGISTRAR_KVK>"
   },
   "approver": {
     "name": "<OWNER_NAME>",
     "email": "<OWNER_EMAIL>",
     "organization": "<OWNER_ORGANIZATION_NAME>",
-    "organizationId": "NL.KVK.<OWNER_KVK>"
+    "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>"
   },
   "dataspace": {
     "baseUrl": "https://gir-preview.poort8.nl"
@@ -81,9 +81,9 @@ sequenceDiagram
       "issuedAt": "<NOW>",
       "notBefore": "<NOW>",
       "expiration": "<NOW_PLUS_3Y>",
-      "issuerId": "NL.KVK.<OWNER_KVK>",
-      "subjectId": "NL.KVK.<REGISTRAR_KVK>",
-      "serviceProvider": "NL.KVK.27248698",
+      "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
+      "subjectId": "did:ishare:EU.NL.NTRNL-<REGISTRAR_KVK>",
+      "serviceProvider": "did:ishare:EU.NL.NTRNL-27248698",
       "action": "write",
       "resourceId": "<VBO_ID>",
       "type": "vboID",
@@ -99,7 +99,7 @@ sequenceDiagram
 |-------|-------|
 | `issuedAt`, `notBefore`, `expiration` | Unix timestamps. Keyper may override if in the past |
 
-**⚠️ Note**: In production, `serviceProvider` changes to **NL.KVK.76660680** (Poort8).
+**⚠️ Note**: In production, `serviceProvider` changes to **did:ishare:EU.NL.NTRNL-76660680** (Poort8).
 
 ## **Authentication Example**
 
@@ -129,13 +129,13 @@ curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
       "name": "Installer representative",
       "email": "installer@example.com",
       "organization": "Example Installer BV",
-      "organizationId": "NL.KVK.12345678"
+      "organizationId": "did:ishare:EU.NL.NTRNL-12345678"
     },
     "approver": {
       "name": "Building owner",
       "email": "owner@building.com",
       "organization": "Building Owner BV", 
-      "organizationId": "NL.KVK.87654321"
+      "organizationId": "did:ishare:EU.NL.NTRNL-87654321"
     },
     "dataspace": {
       "baseUrl": "https://gir-preview.poort8.nl"
@@ -148,9 +148,9 @@ curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
         "issuedAt": 1739881378,
         "notBefore": 1739881378,
         "expiration": 1839881378,
-        "issuerId": "NL.KVK.87654321",
-        "subjectId": "NL.KVK.12345678",
-        "serviceProvider": "NL.KVK.27248698",
+        "issuerId": "did:ishare:EU.NL.NTRNL-87654321",
+        "subjectId": "did:ishare:EU.NL.NTRNL-12345678",
+        "serviceProvider": "did:ishare:EU.NL.NTRNL-27248698",
         "action": "write",
         "resourceId": "0344010000126888",
         "type": "vboID",
@@ -183,7 +183,7 @@ The `url` is the approval link to share with the owner. Once they approve, `stat
 | **Status** | **Scenario** | **Solution** |
 |------------|--------------|--------------|
 | `400` | Invalid/unknown VBO-ID | Verify BAG VBO-ID format (16 digits) |
-| `400` | Invalid organizationId format | Use "NL.KVK." prefix + valid KVK number |
+| `400` | Invalid organizationId format | Use "did:ishare:EU.NL.NTRNL-" prefix + valid KVK number |
 
 ## **Missing Owner in the Organization Register?**
 
@@ -191,7 +191,7 @@ If the installation owner is not yet registered in the Organization Register, in
 
 ```json
 {
-  "identifier": "NL.KVK.<OWNER_KVK>",
+  "identifier": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
   "name": "<Owner name>",
   "adherence": { "status": "Active" }
 }

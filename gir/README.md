@@ -83,8 +83,8 @@ GET https://gir-preview.poort8.nl/api/GIRBasisdataMessage/{guid}
 | vboID | 16-digit BAG | BAG validation |
 | energyConnectionID | string (EAN-18) | Matches `installation.installationInformation.energyConnectionID` |
 | installationIDValue | string | Matches `installationID.value` |
-| registrarChamberOfCommerceNumber | 8-digit | Omit the NL.KVK. prefix |
-| installationOwnerChamberOfCommerceNumber | 8-digit | Omit the NL.KVK. prefix |
+| registrarChamberOfCommerceNumber | 8-digit | Omit the did:ishare:EU.NL.NTRNL- prefix |
+| installationOwnerChamberOfCommerceNumber | 8-digit | Omit the did:ishare:EU.NL.NTRNL- prefix |
 
 **At least one filter is required.**
 
@@ -110,7 +110,7 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
 ## 5 Heads-up for changes towards Production
 
 ⚠️ **Key Production Changes:**
-- **Service-provider KVK** → will switch from Techniek Nederland to Centraal Register Techniek: `NL.KVK.xxxxx`. This impacts policy registration in approval links.
+- **Service-provider KVK** → will switch from Techniek Nederland to Centraal Register Techniek: `did:ishare:EU.NL.NTRNL-xxxxx`. This impacts policy registration in approval links.
 - **Multiple authentication methods** available for approvals
 - **DSGO tokens replace Auth0** for the GIR data API – token endpoints and scopes will change 
 

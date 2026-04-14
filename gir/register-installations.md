@@ -23,7 +23,7 @@ This guide covers the actual write call that a registrar performs to create or u
 | Auth0 access token | Audience: `GIR-Dataspace-CoreManager` |
 | Scopes | `read:ar:delegated write:ar:delegated` |
 | Valid BAG VBO-ID | 16-digit BAG identifier |
-| Valid KVK numbers | 8-digit, without `NL.KVK.` prefix |
+| Valid KVK numbers | 8-digit, without `did:ishare:EU.NL.NTRNL-` prefix |
 | Installation with minimum one component | See [DICO GIRBasisdataMessage spec](https://ketenstandaard.semantic-treehouse.nl/docs/api/GIR/) |
 
 ### **Authentication Example**
