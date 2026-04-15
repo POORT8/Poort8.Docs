@@ -1,212 +1,298 @@
-# Registrar Flow – "May I register installations in this building?"
+# Registrar Integration Guide
 
-This guide walks through the approval workflow for installers/registrars who need permission to register building installations on behalf of property owners.
+This guide explains the end-to-end flow for registrars that want to publish and maintain installation data in GIR.
 
-🔗 **[API Docs](https://keyper-preview.poort8.nl/scalar/v1#tag/approval-links/post/v1/api/approval-links)** – Interactive endpoint testing
+It is intentionally an overview page. It describes how the flow works across Keyper, DSGO, and GIR, while endpoint-level implementation details are documented in the dedicated guides.
 
-## **Sequence Diagram – Registrar Flow**
+To successfully publish data to GIR, two conditions must be met:
+
+- Your organization must have an approved write policy for the target building.
+- Your application must call GIR with a valid DSGO bearer token.
+
+## Overview
+
+The registrar flow has four steps:
+
+1. Request and obtain owner approval for write access through Keyper.
+2. Obtain a DSGO bearer token for GIR.
+3. Submit or update installation data in GIR.
+4. Verify records are Active and available for authorized consumers.
+
+This page focuses on orchestration between systems. For payloads, parameters, and response schemas, use the endpoint-specific guides linked throughout this document.
+
+## End-to-End Orchestration
 
 ```mermaid
 sequenceDiagram
-    participant RegistrarApp
-    participant GIR
-    participant Keyper
-    participant Owner
+    participant App as Your Application
+    participant Keyper as Keyper API
+    participant Owner as Installation Owner
+    participant GIR as GIR API
 
-    RegistrarApp->>GIR: POST /GIRBasisdataMessage<br/>(installationID)
-    GIR-->>RegistrarApp: 201 Created, status Pending
+    App->>Keyper: Request write access for a VBO-ID
+    Keyper-->>App: Approval link created
+    Keyper->>Owner: Notify owner
+    Owner->>Keyper: Authenticate and approve
+    Keyper->>GIR: Register write policy
+    GIR-->>Keyper: Policy accepted
 
-    RegistrarApp->>RegistrarApp: When Status = pending,<br/>start approval request
-    rect rgb(221, 242, 255)
-        note right of RegistrarApp: Create Approval link
-        RegistrarApp->>Keyper: POST /approval-links<br/>(request write policy)
-        Keyper-->>RegistrarApp: Approval link status = Active
-        Keyper->>Owner: Approval e-mail
-        Owner->>Keyper: Authenticate & Approve
-        Keyper->>GIR: Register write policy
-        GIR->>GIR: Pending → Active
-        GIR-->Keyper: Confirm
-        Keyper-->Owner: Redirect to success URL
+    App->>GIR: Request DSGO bearer token
+    GIR-->>App: Bearer token issued
+
+    App->>GIR: Submit installation data
+    GIR->>GIR: Validate token, payload, and policy
+    GIR-->>App: Record stored as Active or Pending
+```
+
+## Step 1: Ensure a valid Keyper write policy is present
+
+Before installation data can be broadly shared through GIR, write authorization must be approved by the installation owner.
+
+At a high level, your application asks Keyper to create an approval flow for a specific building, the owner approves it, and Keyper registers the resulting write policy in GIR.
+
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant Keyper as Keyper API
+    participant Owner as Installation Owner
+    participant GIR as GIR API
+
+    App->>Keyper: Create approval link for write access
+    Keyper-->>App: Approval link metadata
+    Keyper->>Owner: Send approval request
+    Owner->>Keyper: Open link and authenticate
+    Owner->>Keyper: Approve request
+    Keyper->>GIR: Register write policy
+    GIR-->>Keyper: Policy stored
+```
+
+### What must align
+
+The approval flow must consistently target:
+
+- The building identifier as a BAG VBO-ID.
+- The installation owner's DID.
+- The registrar (provider) DID.
+- Optional classification rules, if writes should be scoped.
+
+If these identifiers do not line up with the later GIR write request, records may remain `Pending` or be rejected.
+
+### What changes after approval
+
+After owner approval completes:
+
+- A write policy exists in GIR for the building.
+- New and updated records for that scope can become `Active` immediately.
+- Your application can proceed with token acquisition and submission.
+
+### Implementation references
+
+- [../keyper/README.md](../keyper/README.md)
+- [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
+
+## Step 2: Obtain a DSGO bearer token
+
+All GIR write requests require a DSGO bearer token.
+
+The token does not replace the write policy from Step 1. Both are needed:
+
+- The token authenticates your application to GIR.
+- The write policy authorizes publication for the target building.
+
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant GIR as GIR API
+    participant SAT as DSGO Satellite
+
+    App->>App: Create signed client assertion JWT
+    App->>GIR: POST /connect/token
+    GIR->>SAT: Validate membership and certificate chain
+    SAT-->>GIR: Membership active
+    GIR->>GIR: Validate JWT and replay constraints
+    GIR-->>App: access_token
+```
+
+### Operational meaning
+
+Request a token when:
+
+- Your application is about to submit installation data.
+- The previous token has expired.
+- You are starting a new write batch and want a clean token lifecycle.
+
+A valid token by itself is not enough to publish installation data if no matching write policy exists.
+
+### Implementation references
+
+- [connect-token.md](connect-token.md)
+- [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
+- [DSGO Developer Portal ➚](https://digigo-nu.gitbook.io/dsgo-developer-portal/)
+
+## Step 3: Submit installation data
+
+Once Step 1 and Step 2 are complete, your application can submit installation data.
+
+At runtime, GIR evaluates both the token and the installed authorization state before deciding whether the record is immediately `Active` or temporarily `Pending`.
+
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant GIR as GIR API
+
+    App->>GIR: POST installation payload with bearer token
+    GIR->>GIR: Validate token
+    GIR->>GIR: Validate schema and domain constraints
+    GIR->>GIR: Check write policy for registrar and VBO-ID
+    alt Matching write policy exists
+        GIR-->>App: 201/200 with metadata.status = Active
+    else No matching write policy
+        GIR-->>App: 201/200 with metadata.status = Pending
     end
-    RegistrarApp->>GIR: GET /GIRBasisdataMessage<br/>(Pending + Active)
-    
-    rect rgb(221, 242, 255)
-        note right of RegistrarApp: Updating installation
-        RegistrarApp->>GIR: POST same installation<br/>(installationID)
-        GIR-->>RegistrarApp: 200 OK
+```
+
+### Upsert model
+
+The same write endpoint handles both create and update:
+
+- First submission for an installation ID creates a record.
+- Later submission with the same installation ID updates that record.
+
+This allows idempotent operational flows where retries can safely update the same installation state.
+
+### Runtime decision flow
+
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant GIR as GIR API
+
+    alt New installation ID
+        App->>GIR: POST /v1/api/GIRBasisdataMessage
+        GIR-->>App: 201 with Active or Pending
+    else Existing installation ID
+        App->>GIR: POST /v1/api/GIRBasisdataMessage
+        GIR-->>App: 200 with updated record status
     end
 ```
 
-## **Minimum Payload for POST /approval-links**
+### Implementation references
 
-| **JSON path** | **Filled by** | **Value / validation** |
-| -- | -- | -- |
-| requester.\* | **App** | Registrar e-mail, name, organizationId="did:ishare:EU.NL.NTRNL-<REG_KVK>" |
-| approver.\* | **App** | Owner e-mail, name, organizationId="did:ishare:EU.NL.NTRNL-<OWNER_KVK>" |
-| dataspace.\* | **Fixed** | baseUrl:"https://gir-preview.poort8.nl" |
-| description | **App** | Shown to owner |
-| reference | **App** | Internal ID (not used by Keyper) |
-| addPolicyTransactions\[0\] | **App** | Single **write** policy (registrar) – see example |
-| orchestration.flow | **Fixed** | "dsgo.gir@v1" |
-| addOROrganizationTransaction | **Optional** | Include if owner not in OR – see section on [Missing Owner](#missing-owner-in-the-organization-register) below |
+- [insert-installation.md](insert-installation.md)
 
-**Notes:**
-- **One policy per VBO-ID** – use separate policy transactions in a single approval-link for different buildings
-- **BAG validation**: `resourceId` must be a valid 16-digit BAG VBO-ID; Keyper returns 400 if not found
+## Step 4: Activate pending records and publish updates
 
-## **JSON Skeleton**
+When a record is stored as `Pending`, it is persisted but not yet broadly visible to other parties.
 
-```json
-{
-  "requester": {
-    "name": "<REGISTRAR_NAME>",
-    "email": "<REGISTRAR_EMAIL>",
-    "organization": "<REGISTRAR_ORGANIZATION_NAME>",
-    "organizationId": "did:ishare:EU.NL.NTRNL-<REGISTRAR_KVK>"
-  },
-  "approver": {
-    "name": "<OWNER_NAME>",
-    "email": "<OWNER_EMAIL>",
-    "organization": "<OWNER_ORGANIZATION_NAME>",
-    "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>"
-  },
-  "dataspace": {
-    "baseUrl": "https://gir-preview.poort8.nl"
-  },
-  "description": "GIR registration approval",
-  "reference": "<APP_REFERENCE>",
-  "addPolicyTransactions": [
-    {
-      "useCase": "GIR",
-      "issuedAt": "<NOW>",
-      "notBefore": "<NOW>",
-      "expiration": "<NOW_PLUS_3Y>",
-      "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
-      "subjectId": "did:ishare:EU.NL.NTRNL-<REGISTRAR_KVK>",
-      "serviceProvider": "did:ishare:EU.NL.NTRNL-27248698",
-      "action": "write",
-      "resourceId": "<VBO_ID>",
-      "type": "vboID",
-      "attribute": "*",
-      "license": "0005"
-    }
-  ],
-  "orchestration": { "flow": "dsgo.gir@v1" }
-}
+After write approval is completed in Keyper for the same scope, GIR can transition matching pending records to `Active`.
+
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant GIR as GIR API
+    participant Keyper as Keyper API
+    participant Owner as Installation Owner
+
+    App->>GIR: Submit installation before approval
+    GIR-->>App: Stored with Pending status
+
+    App->>Keyper: Initiate owner approval flow
+    Owner->>Keyper: Approve write access
+    Keyper->>GIR: Register write policy
+    GIR->>GIR: Promote matching pending records
+
+    App->>GIR: Retrieve installation for verification
+    GIR-->>App: Record now Active
 ```
 
-| Field | Notes |
-|-------|-------|
-| `issuedAt`, `notBefore`, `expiration` | Unix timestamps. Keyper may override if in the past |
+### What data is actually visible
 
-**⚠️ Note**: In production, `serviceProvider` changes to **did:ishare:EU.NL.NTRNL-76660680** (Poort8).
+For registrars, GIR visibility depends on status and authorization.
 
-## **Authentication Example**
+In practice this means:
 
-### **Approval link Token**
+- Pending records are visible to the registrar for that scope.
+- Active records are visible to parties that have matching read or write authorization.
+- Records outside approved scope are not returned to unauthorized parties.
 
-```bash
-curl -X POST https://poort8.eu.auth0.com/oauth/token \
-  -H "Content-Type: application/json" \
-  -d '{
-        "client_id": "<REGISTRAR_CLIENT_ID>",
-        "client_secret": "<REGISTRAR_CLIENT_SECRET>",
-        "audience": "Poort8-Dataspace-Keyper-Preview",
-        "grant_type": "client_credentials"
-      }'
+### Verification patterns
+
+After a write, verify outcomes with one of these patterns:
+
+- Retrieve one known installation to validate status and metadata.
+- Retrieve a filtered list to verify activation at scale.
+
+Use the retrieval guides for endpoint details.
+
+### Implementation references
+
+- [retrieve-installation.md](retrieve-installation.md)
+- [retrieve-installations.md](retrieve-installations.md)
+
+## What happens when the flow is incomplete
+
+The most common operational issue is that one part of the flow has completed and another has not.
+
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant Keyper as Keyper API
+    participant GIR as GIR API
+
+    App->>GIR: Submit installation data
+    GIR-->>App: Accepted as Pending
+    Note over App,GIR: No approved write policy yet
+
+    App->>Keyper: Create approval flow
+    Keyper->>GIR: Register policy after owner approval
+
+    App->>GIR: Submit update or verify record
+    GIR-->>App: Record returned as Active
 ```
 
-*No scope required. In production, use `audience`: `Poort8-Dataspace-Keyper`. ⚠️ In production, DSGO tokens will replace Auth0 – token endpoints and scopes will change.*
+Typical causes of incomplete activation:
 
-## **Complete Example Request**
+- The owner has not approved the Keyper request yet.
+- The write request targets a different VBO-ID than the approved policy.
+- The bearer token is missing or expired.
+- Classification rules were applied and the write falls outside policy scope.
 
-```bash
-curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
-  -H "Authorization: Bearer <REGISTRAR_ACCESS_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "requester": {
-      "name": "Installer representative",
-      "email": "installer@example.com",
-      "organization": "Example Installer BV",
-      "organizationId": "did:ishare:EU.NL.NTRNL-12345678"
-    },
-    "approver": {
-      "name": "Building owner",
-      "email": "owner@building.com",
-      "organization": "Building Owner BV", 
-      "organizationId": "did:ishare:EU.NL.NTRNL-87654321"
-    },
-    "dataspace": {
-      "baseUrl": "https://gir-preview.poort8.nl"
-    },
-    "description": "Permission to register building installations for VBO 0344010000126888",
-    "reference": "INSTALL-REQ-2025-001",
-    "addPolicyTransactions": [
-      {
-        "useCase": "GIR",
-        "issuedAt": 1739881378,
-        "notBefore": 1739881378,
-        "expiration": 1839881378,
-        "issuerId": "did:ishare:EU.NL.NTRNL-87654321",
-        "subjectId": "did:ishare:EU.NL.NTRNL-12345678",
-        "serviceProvider": "did:ishare:EU.NL.NTRNL-27248698",
-        "action": "write",
-        "resourceId": "0344010000126888",
-        "type": "vboID",
-        "attribute": "*",
-        "license": "0005"
-      }
-    ],
-    "orchestration": { "flow": "dsgo.gir@v1" }
-  }'
-```
+## Recommended implementation split
 
-### **Example Response**
+Treat the flow in your application as four separate concerns:
 
-```json
-{
-  "id": "e9e6773f-517f-4b05-9229-3cac2065ab9f",
-  "reference": "INSTALL-REQ-2025-001",
-  "url": "https://keyper-preview.poort8.nl/approve?id=e9e6773f-517f-4b05-9229-3cac2065ab9f",
-  "expiresAtUtc": 1739884978,
-  "status": "Active"
-}
-```
+1. Approval orchestration.
+   Use Keyper to create and monitor write-access requests.
+2. Token lifecycle.
+   Obtain and refresh DSGO bearer tokens as needed.
+3. Write processing.
+   Submit upserts and track response status (`Active` or `Pending`).
+4. Activation verification.
+	Validate that pending records become active after policy approval.
 
-The `url` is the approval link to share with the owner. Once they approve, `status` changes to `Approved`.
+This split makes troubleshooting easier because each concern has its own state and dedicated implementation guide.
 
-> **Note**: By default, Keyper sends an email to the approver when the approval link is created. You don't need to send the URL manually unless you want to use a custom notification flow.
+## Implementation guides
 
-## **Common Error Responses**
+Use these pages when moving from flow design into endpoint integration:
 
-| **Status** | **Scenario** | **Solution** |
-|------------|--------------|--------------|
-| `400` | Invalid/unknown VBO-ID | Verify BAG VBO-ID format (16 digits) |
-| `400` | Invalid organizationId format | Use "did:ishare:EU.NL.NTRNL-" prefix + valid KVK number |
+- [connect-token.md](connect-token.md)
+- [insert-installation.md](insert-installation.md)
+- [retrieve-installation.md](retrieve-installation.md)
+- [retrieve-installations.md](retrieve-installations.md)
 
-## **Missing Owner in the Organization Register?**
+Related context:
 
-If the installation owner is not yet registered in the Organization Register, include an `addOROrganizationTransaction` in your approval-link request with at least:
+- [README.md](README.md)
+- [data-consumer-flow.md](data-consumer-flow.md)
 
-```json
-{
-  "identifier": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
-  "name": "<Owner name>",
-  "adherence": { "status": "Active" }
-}
-```
+## Summary
 
-This ensures the owner organization is properly registered before the approval flow begins. See the full [iSHARE specification](https://dev.ishare.eu/participant-registry-role/create-entitled-party) for complete details.  ⚠️ In production this transaction will potentially change to match the interface of the DSGO Participant register.
+| Step | Goal | Result |
+|------|------|--------|
+| 1. Keyper approval | Obtain owner-approved write access for a building | Write policy becomes active in GIR |
+| 2. Token acquisition | Authenticate your application to GIR | DSGO bearer token available |
+| 3. GIR write | Create or update installation data | Record stored as Active or Pending |
+| 4. Activation verification | Verify post-approval visibility | Record transitions to Active when authorized |
 
-## **Follow-up Actions**
-
-After the approval of the approval link by the owner, existing and new installations registered by the registrar on the indicated `vboId` will get status `Active` immediately.
-
-```bash
-GET /v1/api/GIRBasisdataMessage
-```
-
-**Status behavior**: Installations will be registered as `Pending` until owner approval completes, then automatically become `Active`. Only the registrar can see pending installations during this phase.
-
-For complete implementation details, see the [Register Installations](register-installations.md) guide.
+For repeated updates on the same building, Step 1 usually does not need to be repeated until policy expiration or scope changes. Step 2 is repeated whenever the current token expires.

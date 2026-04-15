@@ -1,256 +1,246 @@
-# Data-Consumer Flow – "May I read installation data?"
+# Data Consumer Integration Guide
 
-This guide walks through the approval workflow for data consumers (like EDSN) who need read access to building installation data.
+This guide explains the end-to-end flow for data consumers that want to retrieve installation data from GIR.
 
-🔗 **[API Docs](https://keyper-preview.poort8.nl/scalar/v1#tag/approval-links/post/v1/api/approval-links)** – Interactive endpoint testing
+It is intentionally an overview page. It describes how the flow works across Keyper, DSGO, and GIR, while endpoint-level implementation details are documented in the dedicated guides.
 
-## **Overview**
+To successfully read data from GIR, two conditions must be met:
 
-The data-consumer flow uses exactly the same approval-link structure as the [registrar flow](registrar-flow.md) but with a read-policy instead of a write-policy.
+- Your organization must have an approved read policy for the target building.
+- Your application must call GIR with a valid DSGO bearer token.
 
-## **Sequence Diagram – Data-Consumer Flow**
+## Overview
+
+The data-consumer flow has three steps:
+
+1. Request and obtain read access for a building through Keyper.
+2. Obtain a DSGO bearer token for GIR.
+3. Retrieve installation data from GIR.
+
+This page focuses on orchestration between systems. For payloads, parameters, and response schemas, use the endpoint-specific guides linked throughout this document.
+
+## End-to-End Orchestration
 
 ```mermaid
 sequenceDiagram
-    participant DataConsumerApp
-    participant GIR
-    participant Keyper
-    participant Owner
+    participant App as Your Application
+    participant Keyper as Keyper API
+    participant Owner as Installation Owner
+    participant GIR as GIR API
 
-    DataConsumerApp->>Keyper: POST /approval-links<br/>(request read policy)
-    Keyper-->>DataConsumerApp: Approval link status = Active
-    Keyper->>Owner: Approval e-mail
-    Owner->>Keyper: Authenticate & Approve
+    App->>Keyper: Request read access for a VBO-ID
+    Keyper-->>App: Approval link created
+    Keyper->>Owner: Notify owner
+    Owner->>Keyper: Authenticate and approve
     Keyper->>GIR: Register read policy
-    GIR-->Keyper: Confirm
-    Keyper-->Owner: Redirect to success URL
-    
-    Note over DataConsumerApp: After approval
-    DataConsumerApp->>GIR: GET /GIRBasisdataMessage?vboID=...<br/>(Active + authorized)
-    GIR->>GIR: Check read permissions
-    GIR-->>DataConsumerApp: Installation data<br/>(filtered by rules if applicable)
+    GIR-->>Keyper: Policy accepted
+
+    App->>GIR: Request DSGO bearer token
+    GIR-->>App: Bearer token issued
+
+    App->>GIR: Retrieve installation data
+    GIR->>GIR: Validate token and policy
+    GIR-->>App: Authorized installation data
 ```
 
-## **Minimum Payload for POST /approval-links**
+## Step 1: Ensure a valid Keyper read policy is present
 
-| **JSON path** | **Filled by** | **Value / validation** |
-| -- | -- | -- |
-| requester.\* | **App** | Consumer e-mail, name, organizationId="did:ishare:EU.NL.NTRNL-<CONSUMER_KVK>" |
-| approver.\* | **App** | Owner e-mail, name, organizationId="did:ishare:EU.NL.NTRNL-<OWNER_KVK>" |
-| dataspace.\* | **Fixed** | baseUrl:"https://gir-preview.poort8.nl" |
-| description | **App** | Shown to owner |
-| reference | **App** | Internal ID (not used by Keyper) |
-| addPolicyTransactions\[0\] | **App** | Single **read** policy (data-consumer) – see example |
-| orchestration.flow | **Fixed** | "dsgo.gir@v1" |
-| addOROrganizationTransaction | **Optional** | Include if owner not in OR – see section on [Missing Owner](#missing-owner-in-the-organization-register) below |
+Before GIR can return data to a data consumer, the installation owner must approve access for the relevant building.
 
-**Notes:**
-- **One policy per VBO-ID** – use separate policy transactions in a single approval-link for different buildings
-- **BAG validation**: `resourceId` must be a valid 16-digit BAG VBO-ID; Keyper returns 400 if not found
-- **Rules filtering**: Optional `rules` field can specify NL/SfB classifications; omit for full building access
+At a high level, your application asks Keyper to create an approval flow for a specific building, the owner approves it, and Keyper registers the resulting read policy in GIR.
 
-## **JSON Skeleton**
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant Keyper as Keyper API
+    participant Owner as Installation Owner
+    participant GIR as GIR API
 
-```json
-{
-  "requester": {
-    "name": "<CONSUMER_NAME>",
-    "email": "<CONSUMER_EMAIL>",
-    "organization": "<CONSUMER_ORGANIZATION_NAME>",
-    "organizationId": "did:ishare:EU.NL.NTRNL-<CONSUMER_KVK>"
-  },
-  "approver": {
-    "name": "<OWNER_NAME>",
-    "email": "<OWNER_EMAIL>",
-    "organization": "<OWNER_ORGANIZATION_NAME>",
-    "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>"
-  },
-  "dataspace": {
-    "baseUrl": "https://gir-preview.poort8.nl"
-  },
-  "description": "Data access approval for GIR installation data",
-  "reference": "<APP_REFERENCE>",
-  "addPolicyTransactions": [
-    {
-      "useCase": "GIR",
-      "issuedAt": "<NOW>",
-      "notBefore": "<NOW>",
-      "expiration": "<NOW_PLUS_3Y>",
-      "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
-      "subjectId": "did:ishare:EU.NL.NTRNL-<CONSUMER_KVK>",
-      "serviceProvider": "did:ishare:EU.NL.NTRNL-27248698",
-      "action": "read",
-      "resourceId": "<VBO_ID>",
-      "type": "vboID",
-      "attribute": "*",
-      "license": "0005",
-      "rules": "Classificaties(...)"
-    }
-  ],
-  "orchestration": { "flow": "dsgo.gir@v1" }
-}
+    App->>Keyper: Create approval link for read access
+    Keyper-->>App: Approval link metadata
+    Keyper->>Owner: Send approval request
+    Owner->>Keyper: Open link and authenticate
+    Owner->>Keyper: Approve request
+    Keyper->>GIR: Register read policy
+    GIR-->>Keyper: Policy stored
 ```
 
-| Field | Notes |
-|-------|-------|
-| `issuedAt`, `notBefore`, `expiration` | Unix timestamps. Keyper may override if in the past |
-| `rules` | Optional – NL/SfB classification filter. Remove field for full building access |
+### What must align
 
-**⚠️ Note**: In production, `serviceProvider` changes to **did:ishare:EU.NL.NTRNL-xxxxx** (Centraal Register Techniek).
+The approval flow must consistently target:
 
-## **Authentication Example**
+- The building identifier as a BAG VBO-ID.
+- The installation owner's DID.
+- The data consumer's DID.
+- Optional classification rules, if access should be scoped.
 
-### **Data-Consumer Token**
+If these identifiers do not line up with the later GIR query, the query may return no data even though the approval flow itself succeeded.
 
-```bash
-curl -X POST https://poort8.eu.auth0.com/oauth/token \
-  -H "Content-Type: application/json" \
-  -d '{
-        "client_id": "<CONSUMER_CLIENT_ID>",
-        "client_secret": "<CONSUMER_CLIENT_SECRET>",
-        "audience": "Poort8-Dataspace-Keyper-Preview",
-        "grant_type": "client_credentials"
-      }'
+### What changes after approval
+
+After owner approval completes:
+
+- A read policy exists in GIR for the building.
+- GIR can authorize your organization for matching installation records.
+- Your application can move on to token acquisition and data retrieval.
+
+### Implementation references
+
+- [../keyper/README.md](../keyper/README.md)
+- [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
+
+## Step 2: Obtain a DSGO bearer token
+
+All GIR read requests require a DSGO bearer token.
+
+The token does not replace the read policy from Step 1. Both are needed:
+
+- The token authenticates your application to GIR.
+- The read policy authorizes access to the building data.
+
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant GIR as GIR API
+    participant SAT as DSGO Satellite
+
+    App->>App: Create signed client assertion JWT
+    App->>GIR: POST /connect/token
+    GIR->>SAT: Validate membership and certificate chain
+    SAT-->>GIR: Membership active
+    GIR->>GIR: Validate JWT and replay constraints
+    GIR-->>App: access_token
 ```
 
-*No scope required. In production, use `audience`: `Poort8-Dataspace-Keyper`. ⚠️ In production, DSGO tokens will replace Auth0 – token endpoints and scopes will change.*
+### Operational meaning
 
-## **Complete Example Request**
+Request a token when:
 
-### **Example 1: Access with NL/SfB Classification Filter**
+- Your application is about to call GIR.
+- The previous token has expired.
+- You are starting a new retrieval batch and want a fresh token lifecycle.
 
-```bash
-curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
-  -H "Authorization: Bearer <CONSUMER_ACCESS_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "requester": {
-      "name": "EDSN representative",
-      "email": "data@edsn.nl",
-      "organization": "EDSN",
-      "organizationId": "did:ishare:EU.NL.NTRNL-39098825"
-    },
-    "approver": {
-      "name": "Building owner",
-      "email": "owner@building.com",
-      "organization": "Building Owner BV",
-      "organizationId": "did:ishare:EU.NL.NTRNL-87654321"
-    },
-    "dataspace": {
-      "baseUrl": "https://gir-preview.poort8.nl"
-    },
-    "description": "EDSN access to building installation data for energy monitoring",
-    "reference": "EDSN-ACCESS-2025-001",
-    "addPolicyTransactions": [
-      {
-        "useCase": "GIR",
-        "issuedAt": 1739881378,
-        "notBefore": 1739881378,
-        "expiration": 1839881378,
-        "issuerId": "did:ishare:EU.NL.NTRNL-87654321",
-        "subjectId": "did:ishare:EU.NL.NTRNL-39098825",
-        "serviceProvider": "did:ishare:EU.NL.NTRNL-27248698",
-        "action": "read",
-        "resourceId": "0344010000126888",
-        "type": "vboID",
-        "attribute": "*",
-        "license": "0005",
-        "rules": "Classificaties(NLSfB-55.21,NLSfB-56.21,NLSfB-61.15,NLSfB-62.32,NLSfB-61.10)"
-      }
-    ],
-    "orchestration": { "flow": "dsgo.gir@v1" }
-  }'
+A valid token by itself is not enough to read installation data if no matching read policy exists.
+
+### Implementation references
+
+- [connect-token.md](connect-token.md)
+- [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
+- [DSGO Developer Portal ➚](https://digigo-nu.gitbook.io/dsgo-developer-portal/)
+
+## Step 3: Retrieve installation data
+
+Once Step 1 and Step 2 are complete, your application can query GIR.
+
+At runtime, GIR evaluates both the token and the installed authorization state before returning data.
+
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant GIR as GIR API
+
+    App->>GIR: Send GET request with bearer token
+    GIR->>GIR: Validate token
+    GIR->>GIR: Match records to filters
+    GIR->>GIR: Check read policy for each record
+    GIR-->>App: Authorized records only
 ```
 
-### **Example 2: Full Building Access (No NL/SfB Classification Filter)**
+### Two retrieval patterns
 
-```bash
-curl -X POST https://keyper-preview.poort8.nl/v1/api/approval-links \
-  -H "Authorization: Bearer <CONSUMER_ACCESS_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "requester": {
-      "name": "Research Institute representative",
-      "email": "research@university.nl",
-      "organization": "Research Institute",
-      "organizationId": "did:ishare:EU.NL.NTRNL-12345678"
-    },
-    "approver": {
-      "name": "Building owner",
-      "email": "owner@building.com",
-      "organization": "Building Owner BV",
-      "organizationId": "did:ishare:EU.NL.NTRNL-87654321"
-    },
-    "dataspace": {
-      "baseUrl": "https://gir-preview.poort8.nl"
-    },
-    "description": "Research access to all building installation data",
-    "reference": "RESEARCH-ACCESS-2025-001",
-    "addPolicyTransactions": [
-      {
-        "useCase": "GIR",
-        "issuedAt": 1739881378,
-        "notBefore": 1739881378,
-        "expiration": 1839881378,
-        "issuerId": "did:ishare:EU.NL.NTRNL-87654321",
-        "subjectId": "did:ishare:EU.NL.NTRNL-12345678",
-        "serviceProvider": "did:ishare:EU.NL.NTRNL-27248698",
-        "action": "read",
-        "resourceId": "0344010000126888",
-        "type": "vboID",
-        "attribute": "*",
-        "license": "0005"
-      }
-    ],
-    "orchestration": { "flow": "dsgo.gir@v1" }
-  }'
+Use one of these guides depending on how your application retrieves data:
+
+- [retrieve-installation.md](retrieve-installation.md) for a single known GUID.
+- [retrieve-installations.md](retrieve-installations.md) for filtered list retrieval.
+
+### Runtime decision flow
+
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant GIR as GIR API
+
+    alt Known installation GUID
+        App->>GIR: GET /v1/api/GIRBasisdataMessage/{guid}
+        GIR-->>App: Single record, 403, or 404
+    else Search by building or metadata
+        App->>GIR: GET /v1/api/GIRBasisdataMessage?...filters...
+        GIR-->>App: Authorized list, possibly empty
+    end
 ```
 
-### **Example Response**
+### What data is actually visible
 
-```json
-{
-  "id": "a1b2c3d4-5678-90ef-ghij-klmnopqrstuv",
-  "reference": "EDSN-ACCESS-2025-001",
-  "url": "https://keyper-preview.poort8.nl/approve?id=a1b2c3d4-5678-90ef-ghij-klmnopqrstuv",
-  "expiresAtUtc": 1739884978,
-  "status": "Active"
-}
+For data consumers, GIR only returns records that satisfy authorization.
+
+In practice this means:
+
+- Records outside your approved building scope are excluded.
+- Records outside your rule scope are excluded when rules are used.
+- Records you are not authorized to read are not returned.
+
+For list retrieval, unauthorized matches are silently excluded. For single-record retrieval, an existing record can still result in `403 Forbidden`.
+
+## What happens when the flow is incomplete
+
+The most common operational issue is that one part of the flow has completed and another has not.
+
+```mermaid
+sequenceDiagram
+    participant App as Your Application
+    participant Keyper as Keyper API
+    participant GIR as GIR API
+
+    App->>Keyper: Create approval flow
+    Keyper-->>App: Approval link exists
+    App->>GIR: Try to retrieve data too early
+    GIR-->>App: Empty result or forbidden
+    Note over App,GIR: Read policy not approved yet
+
+    Keyper->>GIR: Register policy after approval
+    App->>GIR: Retry with valid token
+    GIR-->>App: Authorized installation data
 ```
 
-The `url` is the approval link. Once the owner approves, `status` changes to `Approved`.
+Typical causes of incomplete access:
 
-> **Note**: By default, Keyper sends an email to the approver when the approval link is created. You don't need to send the URL manually unless you want to use a custom notification flow.
+- The owner has not approved the Keyper request yet.
+- The query targets a different VBO-ID than the approved policy.
+- The bearer token is missing or expired.
+- Classification rules were applied and requested records fall outside them.
 
-## **Common Error Responses**
+## Recommended implementation split
 
-| **Status** | **Scenario** | **Solution** |
-|------------|--------------|--------------|
-| `400` | Invalid/unknown VBO-ID | Verify BAG VBO-ID format (16 digits) |
-| `400` | Invalid organizationId format | Use "did:ishare:EU.NL.NTRNL-" prefix + valid KVK number |
+Treat the flow in your application as three separate concerns:
 
-## **Missing Owner in the Organization Register?**
+1. Approval orchestration.
+   Use Keyper to create and monitor access requests.
+2. Token lifecycle.
+   Obtain and refresh DSGO bearer tokens as needed.
+3. Data retrieval.
+   Use the appropriate GIR read endpoint depending on whether you fetch one record or many.
 
-If the installation owner is not yet registered in the Organization Register, include an `addOROrganizationTransaction` in your approval-link request with at least:
+This split makes troubleshooting easier because each concern has its own state and dedicated implementation guide.
 
-```json
-{
-  "identifier": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
-  "name": "<Owner name>",
-  "adherence": { "status": "Active" }
-}
-```
+## Implementation guides
 
-This ensures the owner organization is properly registered before the approval flow begins. See the full [iSHARE specification](https://dev.ishare.eu/participant-registry-role/create-entitled-party) for complete details. ⚠️ In production this transaction will potentially change to match the interface of the DSGO Participant register.
+Use these pages when moving from flow design into endpoint integration:
 
-## **Follow-up Actions**
+- [connect-token.md](connect-token.md)
+- [retrieve-installation.md](retrieve-installation.md)
+- [retrieve-installations.md](retrieve-installations.md)
 
-After the approval of the approval link by the owner, the data-consumer can immediately begin querying installation data:
+Related context:
 
-```bash
-GET /v1/api/GIRBasisdataMessage?vboID=<VBO_ID>
-```
+- [README.md](README.md)
+- [insert-installation.md](insert-installation.md#activation-after-write-approval)
 
-**Access behavior**: Only `Active` installations with matching read policies will be returned. If rules were specified in the policy, only installations matching those NL/SfB classifications will be visible.
+## Summary
 
-For complete querying details, see the [Querying Installations](README.md#4-querying-installations) section.
+| Step | Goal | Result |
+|------|------|--------|
+| 1. Keyper approval | Obtain owner-approved read access for a building | Read policy becomes active in GIR |
+| 2. Token acquisition | Authenticate your application to GIR | DSGO bearer token available |
+| 3. GIR retrieval | Retrieve installation data | Authorized records returned |
+
+For repeated retrieval on the same building, Step 1 usually does not need to be repeated until the policy expires. Step 2 is repeated whenever the current token expires.

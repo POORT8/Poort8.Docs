@@ -39,16 +39,16 @@ It combines NoodleBar modules (Organization Register, Authorization Register, Ke
 
 | Step | What you build | Guide |
 |------|----------------|-------|
-| **1. Register installation metadata** | `POST /GIRBasisdataMessage` (create / update) | **[Register Installations](register-installations.md)** |
-| **2. Ask for *write* access** | `POST /approval-links` (write policy) | **[Registrar Flow](registrar-flow.md)** |
-| **3. Ask for *read* access** | `POST /approval-links` (read policy) | **[Data-Consumer Flow](data-consumer-flow.md)** |
+| **1. Register installation metadata** | `POST /GIRBasisdataMessage` (create / update) | **[Register or Update an Installation](insert-installation.md)** |
+| **2. Ask for *write* access** | `POST /approval-links` (write policy) | **[Activation after write approval](insert-installation.md#activation-after-write-approval)** |
+| **3. Ask for *read* access and retrieve data** | `POST /approval-links` (read policy) + `GET /GIRBasisdataMessage` | **[Data Consumer Integration Guide](data-consumer-flow.md)** |
 | **4. Retrieve installation metadata** | `GET /GIRBasisdataMessage` (filter by VBO, KVK, etc.) | [Section 4](#4-querying-installations) below |
 
 ### **Quick Reference**
 
 | What you need | Where to find it |
 |---------------|------------------|
-| **Auth tokens** | Auth0 `audience = GIR-Dataspace-CoreManager` → [Authentication examples](registrar-flow.md#authentication-example) |
+| **DSGO bearer tokens** | GIR `/connect/token` → [Data Consumer Integration Guide](data-consumer-flow.md#step-2-obtain-a-dsgo-bearer-token) |
 | **Installation statuses** | [Section 3](#3-status--lifecycle) – Pending/Active/Archived explained |
 | **Production changes** | [Section 5](#5-heads-up-for-changes-towards-production) – DSGO, authentication, KVK changes |
 
@@ -110,9 +110,9 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
 ## 5 Heads-up for changes towards Production
 
 ⚠️ **Key Production Changes:**
-- **Service-provider KVK** → will switch from Techniek Nederland to Centraal Register Techniek: `did:ishare:EU.NL.NTRNL-xxxxx`. This impacts policy registration in approval links.
-- **Multiple authentication methods** available for approvals
-- **DSGO tokens replace Auth0** for the GIR data API – token endpoints and scopes will change 
+- **Service-provider KVK** → will switch from Techniek Nederland to Poort8: `did:ishare:EU.NL.NTRNL-76660680`. This impacts policy registration in approval links.
+- **Approval authentication** → approvals are currently authenticated bilaterally with GIR using Auth0-tokens. DSGO authentication for approvals may be supported in the future.
+- **DSGO token issuance details may still change** between preview and production deployments
 
 ---
 
@@ -120,9 +120,9 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
 
 ### **Integration Guides**
 
-- **[Register Installations](register-installations.md)** – create / update installs
-- **[Registrar Flow](registrar-flow.md)** – request write access  
-- **[Data-Consumer Flow](data-consumer-flow.md)** – request read access
+- **[Registrar Integration Guide](registrar-flow.md)** – orchestrate write approval, token acquisition, installation upserts, and activation verification
+- **[Register or Update an Installation](insert-installation.md)** – create / update installs and understand `Pending` versus `Active`
+- **[Data Consumer Integration Guide](data-consumer-flow.md)** – request read access and retrieve installation data
 
 ### **Technical Reference**
 
