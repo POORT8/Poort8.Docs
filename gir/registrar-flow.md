@@ -144,10 +144,15 @@ sequenceDiagram
     GIR->>GIR: Validate token
     GIR->>GIR: Validate schema and domain constraints
     GIR->>GIR: Check write policy for registrar and VBO-ID
-    alt Matching write policy exists
-        GIR-->>App: 201/200 with metadata.status = Active
-    else No matching write policy
-        GIR-->>App: 201/200 with metadata.status = Pending
+    
+    rect rgb(144, 238, 144)
+    note over GIR: Scenario 1: Matching write policy exists
+    GIR-->>App: 201/200 with metadata.status = Active
+    end
+    
+    rect rgb(176, 196, 222)
+    note over GIR: Scenario 2: No matching write policy
+    GIR-->>App: 201/200 with metadata.status = Pending
     end
 ```
 
@@ -167,12 +172,16 @@ sequenceDiagram
     participant App as Your Application
     participant GIR as GIR API
 
-    alt New installation ID
-        App->>GIR: POST /v1/api/GIRBasisdataMessage
-        GIR-->>App: 201 with Active or Pending
-    else Existing installation ID
-        App->>GIR: POST /v1/api/GIRBasisdataMessage
-        GIR-->>App: 200 with updated record status
+    rect rgb(144, 238, 144)
+    note over App,GIR: Scenario 1: New installation ID
+    App->>GIR: POST /v1/api/GIRBasisdataMessage
+    GIR-->>App: 201 with Active or Pending
+    end
+    
+    rect rgb(176, 196, 222)
+    note over App,GIR: Scenario 2: Existing installation ID
+    App->>GIR: POST /v1/api/GIRBasisdataMessage
+    GIR-->>App: 200 with updated record status
     end
 ```
 

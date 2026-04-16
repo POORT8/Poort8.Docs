@@ -1,18 +1,27 @@
 # API Versioning
 
-For general information about how we version our APIs, see the [API Versioning Policy](/api-versioning.md).
+GIR is built on top of NoodleBar and uses two separate API versioning tracks.
 
-## GIR API Versioning
+## GIR-Specific Endpoints
 
-GIR is built on top of NoodleBar and shares many of its endpoints. However, GIR also has its own specific endpoints. These are treated as a **separate API product** with their own versioning.
+GIR's own endpoints are versioned independently:
 
-This means:
+- `POST /v1/api/GIRBasisdataMessage` — Register or update installation data
+- `GET /v1/api/GIRBasisdataMessage` — Retrieve a list of installations
+- `GET /v1/api/GIRBasisdataMessage/{guid}` — Retrieve a single installation
+- `POST /connect/token` — Obtain a DSGO bearer token
 
-- **NoodleBar endpoints** (e.g., `/policies`, `/approval-links`) follow the general NoodleBar version
-- **GIR-specific endpoints** (e.g., `/GIRBasisdataMessage`) have their own version, independent of the NoodleBar version
+These endpoints currently support **v1**. Breaking changes to these endpoints will increment their version number independently of NoodleBar.
 
-As a result, the version numbers for NoodleBar endpoints and GIR-specific endpoints may differ. When a breaking change occurs on a NoodleBar endpoint, only that version increments. GIR-specific endpoints remain on their current version, and vice versa.
+## NoodleBar Endpoints
+
+GIR also uses standard NoodleBar endpoints for approval workflows and authorization checks:
+
+- `POST /v1/api/approval-links` — Request approval (Keyper)
+- `GET /api/authorization/explained-enforce` — Check authorization (NoodleBar AR)
+
+These follow **NoodleBar's versioning**, which may differ from GIR's endpoint versions.
 
 ## Changelog
 
-See the [changelog](changelog.md) for a list of breaking changes to GIR-specific endpoints.
+See the [Changelog](changelog.md) for breaking changes to GIR-specific endpoints.

@@ -18,11 +18,10 @@ sequenceDiagram
     participant App as Your Application
     participant GIR as GIR API
 
-  App->>GIR: GET /v1/api/GIRBasisdataMessage/:guid
-  App->>GIR: Authorization: Bearer token
+    App->>GIR: GET /v1/api/GIRBasisdataMessage/{guid}<br/>Authorization: Bearer <access_token>
     GIR->>GIR: Look up installation by guid
-  GIR->>GIR: Check read/write policy or registrar identity
-  GIR-->>App: 200 OK - GIRBasisdataMessage
+    GIR->>GIR: Check read/write policy or registrar identity
+    GIR-->>App: 200 OK — GIRBasisdataMessage
 ```
 
 ## Request

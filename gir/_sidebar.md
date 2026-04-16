@@ -5,13 +5,15 @@
   - [API Versioning](api-versioning.md)
   - [Changelog](changelog.md)
 
-- **Integration Guides**  
-  - [Register or Update an Installation](insert-installation.md)
+- **Flow Overviews**
+  - [Registrar Flow (Overview)](registrar-flow.md)
+  - [Data-Consumer Flow (Overview)](data-consumer-flow.md)
+
+- **Endpoint Integration Guides**
   - [Obtaining a DSGO Token](connect-token.md)
+  - [Register or Update an Installation](insert-installation.md)
   - [Retrieve an Installation](retrieve-installation.md)
   - [Retrieve Multiple Installations](retrieve-installations.md)
-  - [Registrar Flow](registrar-flow.md)
-  - [Data-Consumer Flow](data-consumer-flow.md)
 
 - **Technical Reference**
   - [Ketenstandaard GIR API ➚](https://ketenstandaard.semantic-treehouse.nl/docs/api/GIR/)

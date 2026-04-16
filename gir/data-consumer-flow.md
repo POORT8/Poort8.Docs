@@ -160,12 +160,16 @@ sequenceDiagram
     participant App as Your Application
     participant GIR as GIR API
 
-    alt Known installation GUID
-        App->>GIR: GET /v1/api/GIRBasisdataMessage/{guid}
-        GIR-->>App: Single record, 403, or 404
-    else Search by building or metadata
-        App->>GIR: GET /v1/api/GIRBasisdataMessage?...filters...
-        GIR-->>App: Authorized list, possibly empty
+    rect rgb(144, 238, 144)
+    note over App,GIR: Scenario 1: Known installation GUID
+    App->>GIR: GET /v1/api/GIRBasisdataMessage/{guid}
+    GIR-->>App: Single record, 403, or 404
+    end
+    
+    rect rgb(176, 196, 222)
+    note over App,GIR: Scenario 2: Search by building or metadata
+    App->>GIR: GET /v1/api/GIRBasisdataMessage?...filters...
+    GIR-->>App: Authorized list, possibly empty
     end
 ```
 

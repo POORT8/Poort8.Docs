@@ -18,25 +18,32 @@ If no approved write policy exists yet for the registrar and VBO-ID combination,
 
 ## How it works
 
+The flow depends on whether write authorization is already established:
+
 ```mermaid
 sequenceDiagram
-		participant App as Your Application
-		participant GIR as GIR API
-		participant Keyper as Keyper API
-		participant Owner as Installation Owner
+    participant App as Your Application
+    participant GIR as GIR API
+    participant Keyper as Keyper API
+    participant Owner as Installation Owner
 
-		App->>GIR: POST /v1/api/GIRBasisdataMessage
-		GIR->>GIR: Validate DSGO token and payload
-		GIR->>GIR: Check existing write authorization for registrar and VBO-ID
-		alt Write authorization already exists
-				GIR-->>App: 201 or 200 with status Active
-		else No write authorization yet
-				GIR-->>App: 201 or 200 with status Pending
-				App->>Keyper: Request owner approval for write access
-				Owner->>Keyper: Approve request
-				Keyper->>GIR: Register write policy
-				GIR->>GIR: Matching pending records become Active
-		end
+    App->>GIR: POST /v1/api/GIRBasisdataMessage
+    GIR->>GIR: Validate DSGO token and payload
+    GIR->>GIR: Check existing write authorization for registrar and VBO-ID
+
+    rect rgb(144, 238, 144)
+    note over GIR: Scenario 1: Write authorization exists
+    GIR-->>App: 201 or 200 with status Active
+    end
+
+    rect rgb(176, 196, 222)
+    note over GIR: Scenario 2: No authorization yet
+    GIR-->>App: 201 or 200 with status Pending
+    App->>Keyper: Request owner approval for write access
+    Owner->>Keyper: Approve request
+    Keyper->>GIR: Register write policy
+    GIR->>GIR: Matching pending records become Active
+    end
 ```
 
 ## Request
