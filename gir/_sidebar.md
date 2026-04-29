@@ -8,6 +8,7 @@
 - **Flow Overviews**
   - [Registrar Flow (Overview)](registrar-flow.md)
   - [Data-Consumer Flow (Overview)](data-consumer-flow.md)
+  - [Datastekker – Installer Access Flow](datastekker-installateur-flow.md)
 
 - **Endpoint Integration Guides**
   - [Obtaining a DSGO Token](connect-token.md)
