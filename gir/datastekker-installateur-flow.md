@@ -37,8 +37,6 @@ sequenceDiagram
 
     rect rgb(240, 248, 255)
         Note over Form,GIR: Approval flow (one-time per installer / building)
-        Form->>GIR: Look up installations for vboId
-        GIR-->>Form: List of installations at the building
         Form->>Keyper: Create access request for vboId
         Keyper->>Owner: Approval link by email
         Owner->>Keyper: Authenticates and approves
@@ -48,8 +46,9 @@ sequenceDiagram
     rect rgb(255, 248, 240)
         Note over Inst,GIR: Operational data access (bilateral, recurring)
         Inst->>DS: Data request with installationId or componentId
-        DS->>GIR: GET /v1/api/GIRBasisdataMessage?installationIDValue=...
-        GIR-->>DS: Installation record including vboId
+        opt Optional: Resolve componentId to installationId
+            Note over DS,GIR: Endpoint not yet available
+        end
         DS->>GIR: POST /delegation — is policy valid for installer + vboId?
         GIR-->>DS: Delegation evidence
         DS-->>Inst: Authorised performance data
@@ -58,14 +57,23 @@ sequenceDiagram
 
 ### Steps
 
-1. **Access request** — An installer or building owner fills in the form on TechniekNederland. The form queries GIR to show which installations are registered at the given building.
-2. **Keyper triggered** — The form submits an access request to Keyper.
-3. **Approval** — The building owner receives an approval link, authenticates, and approves the access. Keyper registers the policy in GIR.
-4. **Bilateral data access** — The installer calls Datastekker directly. Datastekker looks up the vboId via GIR and verifies authorization via the GIR delegation endpoint.
+**Approval flow (one-time per installer / building)**
 
-## Step 1: Access Request via TechniekNederland *(external)*
+1. The form submits an access request for the vboId to Keyper.
+2. Keyper sends the building owner an approval link by email.
+3. The building owner authenticates and approves.
+4. Keyper registers the policy in GIR.
 
-An installer or the building owner fills in the form on the TechniekNederland website. The form collects the following information:
+**Operational data access (bilateral, recurring)**
+
+5. The installer sends a data request with an installationId or componentId to Datastekker.
+6. *(Optional)* Datastekker queries GIR to resolve a componentId to an installationId.
+7. Datastekker checks the GIR delegation endpoint to verify the active policy.
+8. Datastekker returns authorised performance data to the installer.
+
+## Before the Approval Flow
+
+The TechniekNederland form collects the following information before triggering the Keyper flow:
 
 | Field | Description |
 |-------|-------------|
@@ -78,9 +86,7 @@ An installer or the building owner fills in the form on the TechniekNederland we
 
 > ℹ️ This step is outside the scope of GIR and Keyper. TechniekNederland builds and manages the form.
 
-## Step 2: Look Up Installations via GIRBasisdataMessage *(external)*
-
-The form shows which installations are registered at the given building, so the user can scope the request. Policies are created at vboId level, but Datastekker enforces access at installationId level. The form queries GIR for this purpose:
+The form may optionally query GIR to display the installations registered at the given building, so the user can scope the request:
 
 ```http
 GET https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage?vboID={vboId}
@@ -88,11 +94,11 @@ Authorization: Bearer <ACCESS_TOKEN>
 Accept: application/json
 ```
 
-This returns a list of registered installations at the building, including their `installationID.value` and component information. See [Retrieve Multiple Installations](retrieve-installations.md) for the full parameter reference and the required DSGO token.
+This returns a list of registered installations including their `installationID.value` and component information. See [Retrieve Multiple Installations](retrieve-installations.md) for the full parameter reference and the required DSGO token.
 
-> ℹ️ This step is outside the scope of Keyper. The form uses the GIR API to display installations but does not write any data to GIR.
+## Approval Flow
 
-## Step 3: Keyper Triggered *(Poort8)*
+### Step 1: Form Submits Access Request to Keyper *(Poort8)*
 
 After the form is submitted, TechniekNederland sends a request to the Keyper API. Keyper generates an approval link and sends a notification email to the building owner.
 
@@ -139,54 +145,48 @@ Content-Type: application/json
     }
   ],
   "orchestration": {
-    "flow": "[TBD — instance-specific]"
+    "flow": "dsgo.[TBD — instance-specific]@v1"
   }
 }
 ```
 
 The fields `type`, `license`, `useCase`, `attribute`, and `orchestration.flow` are instance-specific and will be determined during technical configuration of the Datastekker integration. See the [Keyper API reference ➚](https://keyper-preview.poort8.nl/scalar/v1) for full field documentation.
 
-## Step 4: Building Owner Approves *(Poort8)*
+### Step 2: Keyper Sends Approval Link to Building Owner *(Poort8)*
 
-The building owner receives an email with a personal approval link. Through that link:
+Keyper generates a unique approval link and sends a notification email to the building owner. No action is required from the installer or TechniekNederland at this point.
 
-1. The building owner authenticates (for example via eHerkenning).
-2. The owner inspects the requested access: which building, which installer, which data, for how long.
-3. The owner clicks **Approve** or **Reject**.
+### Step 3: Building Owner Authenticates and Approves *(Poort8)*
 
-After approval, Keyper automatically registers the policy in the GIR Authorization Register. The installer does not need to take any action at this point.
+The building owner opens the approval link and:
+
+1. Authenticates (for example via eHerkenning).
+2. Inspects the requested access: which building, which installer, which data, for how long.
+3. Clicks **Approve** or **Reject**.
 
 If the building owner rejects the request, the approval link expires and TechniekNederland can initiate a new request.
 
-## Step 5: Policy Active *(external)*
+### Step 4: Keyper Registers Policy in GIR *(Poort8)*
 
-After approval the policy is active in GIR. The installer can now request data via the Datastekker API. The approval step is one-time per installer–building combination; from that point Datastekker validates every request automatically against GIR.
+On approval, Keyper automatically registers the policy in the GIR Authorization Register. The installer does not need to take any action. The policy is now active and Datastekker can enforce it on every subsequent data request.
 
-## Step 6: Installer Calls Datastekker *(external)*
+## Operational Data Access
+
+### Step 5: Installer Sends Data Request to Datastekker *(external)*
 
 The data exchange between the installer and Datastekker is bilateral and does not flow through GIR. The installer calls the Datastekker API directly, using an installationId or componentId as the identifier.
 
 > ℹ️ The Datastekker API endpoints are outside the scope of this document. Contact 2BA for the technical specifications.
 
-## Step 7: Datastekker Validates Delegation with GIR *(Poort8)*
+### Step 6 (optional): Datastekker Resolves componentId to installationId *(Poort8)*
 
-Before returning data, Datastekker verifies that an active and valid policy exists for the installer. Because the policy in GIR is registered at `vboId` level but the installer provides an `installationId` or `componentId`, Datastekker makes two sequential GIR calls.
+If the installer provides a `componentId` rather than an `installationId`, Datastekker needs to resolve it to an installationId before it can check the delegation policy.
 
-### Resolve installationId to vboId
+> ℹ️ A GIR endpoint for resolving a componentId to an installationId is not yet available. This step is a placeholder pending that capability.
 
-Datastekker looks up the corresponding vboId via GIR:
+### Step 7: Datastekker Checks Delegation in GIR *(Poort8)*
 
-```http
-GET https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage?installationIDValue=<INSTALLATION_ID>
-Authorization: Bearer <ACCESS_TOKEN>
-Accept: application/json
-```
-
-The response contains `installationBaseData.installationLocation.vboID`, which Datastekker uses in the next call.
-
-### Delegation check
-
-With the retrieved vboId, Datastekker calls the GIR delegation endpoint:
+Datastekker calls the GIR delegation endpoint to verify that an active and valid policy exists for the installer:
 
 ```http
 POST https://gir-preview.poort8.nl/delegation
@@ -224,7 +224,52 @@ Content-Type: application/json
 }
 ```
 
-GIR returns delegation evidence if the policy is valid. Datastekker uses this result to decide whether to return the performance data. If no valid policy exists, Datastekker returns an error to the installer.
+### Step 8: Datastekker Returns Authorised Data *(Poort8)*
+
+GIR responds with a `delegationEvidence` object. Datastekker inspects this to confirm the policy covers the requested data elements and has not expired:
+
+```json
+{
+  "delegationEvidence": {
+    "notBefore": "<UNIX TIMESTAMP>",
+    "notOnOrAfter": "<UNIX TIMESTAMP>",
+    "policyIssuer": "did:ishare:EU.NL.NTRNL-<BUILDING OWNER KVK>",
+    "target": {
+      "accessSubject": "did:ishare:EU.NL.NTRNL-<INSTALLER KVK>"
+    },
+    "policySets": [
+      {
+        "maxDelegationDepth": 0,
+        "target": {
+          "environment": {
+            "licenses": ["[TBD — license identifier]"]
+          }
+        },
+        "policies": [
+          {
+            "target": {
+              "resource": {
+                "type": "[TBD — instance-specific]",
+                "identifiers": ["<VBOID>"],
+                "attributes": ["[TBD — data-element set]"]
+              },
+              "actions": ["[TBD — instance-specific, e.g. read]"],
+              "environment": {
+                "serviceProviders": ["did:ishare:EU.NL.NTRNL-<2BA KVK>"]
+              }
+            },
+            "rules": [
+              { "effect": "Permit" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+If no matching policy exists or the policy has expired, GIR returns a response without a `Permit` rule. Datastekker treats any non-permit result as an authorization failure and returns an error to the installer.
 
 ## Policy Parameters
 
