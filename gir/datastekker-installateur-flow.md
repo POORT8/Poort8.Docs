@@ -136,7 +136,7 @@ Content-Type: application/json
       "useCase": "[TBD — instance-specific]",
       "issuedAt": "<UNIX TIMESTAMP>",
       "issuerId": "did:ishare:EU.NL.NTRNL-<BUILDING OWNER KVK>",
-      "attribute": "[TBD — identifier for the data-element set]",
+      "attribute": "[TBD — dataset or data-element identifier (hierarchical)]",
       "notBefore": "<UNIX TIMESTAMP>",
       "subjectId": "did:ishare:EU.NL.NTRNL-<INSTALLER KVK>",
       "expiration": "<UNIX TIMESTAMP matching validity period>",
@@ -209,7 +209,7 @@ Content-Type: application/json
               "resource": {
                 "type": "[TBD — instance-specific]",
                 "identifiers": ["<VBOID>"],
-                "attributes": ["[TBD — data-element set]"]
+                "attributes": ["[TBD — dataset or data-element identifier (hierarchical)]"]
               },
               "actions": ["[TBD — instance-specific, e.g. read]"],
               "environment": {
@@ -251,7 +251,7 @@ GIR responds with a `delegationEvidence` object. Datastekker inspects this to co
               "resource": {
                 "type": "[TBD — instance-specific]",
                 "identifiers": ["<VBOID>"],
-                "attributes": ["[TBD — data-element set]"]
+                "attributes": ["[TBD — dataset or data-element identifier (hierarchical)]"]
               },
               "actions": ["[TBD — instance-specific, e.g. read]"],
               "environment": {
@@ -273,13 +273,19 @@ If no matching policy exists or the policy has expired, GIR returns a response w
 
 ## Policy Parameters
 
-| Parameter | Description | Status |
-|-----------|-------------|--------|
-| `vboId` | BAG Verblijfsobjectidentificatie of the building | Registered in the Keyper policy |
-| `installationId` | Installation identifier from GIRBasisdataMessage | Resolved by Datastekker via GIR |
-| Validity period | Start and end date of access | Provided with the Keyper request |
-| Data-element set | Which performance data is accessible | [TBD — see open questions] |
-| License conditions | Terms of use and restrictions | [TBD — see open questions] |
+| Parameter | Where used | Description | Status |
+|-----------|------------|-------------|--------|
+| `issuerId` | Keyper request, delegation request | DID of the building owner (policy issuer) | Required |
+| `subjectId` | Keyper request, delegation request | DID of the installer (access subject) | Required |
+| `serviceProvider` | Keyper request, delegation request | DID of Datastekker / 2BA (the data service provider) | Required |
+| `resourceId` / `identifiers` | Keyper request, delegation request | Hierarchical resource identifier — a vboId (building) covers all its installations; an installationId scopes to a single installation. Consent may be granted at building level and enforced at installation level. | Required |
+| `notBefore` / `expiration` | Keyper request, delegation evidence | Validity period: start and end of the granted access | Required |
+| `attribute` | Keyper request, delegation request | Hierarchical data-scope identifier — a predefined dataset covers multiple data elements. Consent is granted at dataset level; enforcement can evaluate access at the level of individual data elements. | [TBD — see open questions] |
+| `type` | Keyper request, delegation request | Resource type identifier used in policy matching | [TBD — instance-specific] |
+| `action` | Keyper request, delegation request | Permitted action on the resource (e.g. `read`) | [TBD — instance-specific] |
+| `useCase` | Keyper request | Use case identifier for policy scoping | [TBD — instance-specific] |
+| `license` / `licenses` | Keyper request, delegation evidence | License identifier expressing the terms of use for the data | [TBD — see open questions] |
+| `componentId` | Datastekker internal | Component identifier provided by the installer; must be resolved to an installationId before delegation check | Endpoint not yet available |
 
 ## Open Questions
 
@@ -297,6 +303,8 @@ Why must a software party operating on behalf of an installer meet more requirem
 
 Should an installer also be validated by the installation manufacturer — for example before being allowed to adjust installation parameters? It is not yet clear whether this becomes part of the authorization flow and what the implications are for the policy model.
 
+One option is for Datastekker to forward the `delegationEvidence` token it receives from GIR along with its data requests to manufacturers. This would allow a manufacturer to independently verify the authorization envelope — confirming who approved access, for which building, for which dataset, and for how long — before providing data to Datastekker. Adopting this pattern would also enable manufacturers to enforce their own access control based on the same GIR policy, without a separate authorization check.
+
 **4. Predefined data-element sets**
 
 Which fixed sets of data elements can be authorized? This has a direct impact on the requirements for the Datastekker API: the API must recognise the requested set and filter on it. The definition of these sets is a prerequisite before the `attribute` field in the policy and delegation request can be filled in.
@@ -308,6 +316,20 @@ Which license conditions apply to the use of performance data? Considerations in
 - Obligation to delete data after use (purpose limitation)
 - Prohibition on re-use or onward sharing with third parties
 - GDPR requirements for buildings with occupants, where performance data may indirectly constitute personal data
+
+**6. Attribute hierarchy in the GIR Authorization Register (optional)**
+
+Consent is granted at the level of a predefined data-element set (the `attribute` field). At runtime, Datastekker may need to evaluate access at the level of individual data elements — for example to enforce that only a specific subset of a set's properties is returned.
+
+This could be supported by declaring an attribute hierarchy on the GIR Authorization Register, modelled on the Heatpump Common Ontology (SAREF-based). A coarser `attribute` value in the policy would then implicitly cover the finer-grained ontology terms beneath it, allowing Datastekker to check per-data-element access without requiring the building owner to enumerate every individual field.
+
+TechniekNederland, as the governing organisation for the predefined datasets, would be responsible for maintaining this hierarchy.
+
+Open points:
+
+- Does GIR support attribute hierarchies today, or would this require a new capability?
+- How are the predefined sets mapped to ontology terms in the Heatpump Common Ontology / SAREF?
+- What is the governance process for adding or updating sets (versioning, backwards compatibility)?
 
 ---
 
