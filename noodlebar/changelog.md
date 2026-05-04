@@ -1,5 +1,23 @@
 # Weekly Changelog
 
+## 2026-04-28 — New organization validation endpoints + security hardening
+
+### Dataspace API
+
+**Added**
+- `GET /api/organization-registry/{id}/validate` — checks whether an organization is currently active in the registry. Returns `{ "isValid": boolean, "reason": string }`. [#870](https://github.com/POORT8/Poort8.Dataspace.Private/pull/870)
+- `GET /api/organization-registry/{id}/validate-approver` — checks whether a given person is authorized to act as approver for an organization. Pass the person's email address as `?email=`. Returns `{ "isValid": boolean, "reason": string }`. [#870](https://github.com/POORT8/Poort8.Dataspace.Private/pull/870)
+- `POST /api/organization-registry/names` — resolves a batch of organization identifiers to their display names in a single call. Request body: `{ "identifiers": ["..."] }`. Response: an object mapping each identifier to its display name. [#870](https://github.com/POORT8/Poort8.Dataspace.Private/pull/870)
+
+**Changed**
+- Organization search results are now capped at 50 per request. Requests that previously returned more than 50 results will now receive at most 50. [#851](https://github.com/POORT8/Poort8.Dataspace.Private/pull/851)
+
+### Keyper API
+
+**Changed**
+- The approval page now shows the requester's display name and an optional message to the approver, providing more context when reviewing an access request. [#840](https://github.com/POORT8/Poort8.Dataspace.Private/pull/840)
+- After approving or rejecting an access request in GDS and sensor optimization workflows, the confirmation screen now includes a link back to the portal. [#853](https://github.com/POORT8/Poort8.Dataspace.Private/pull/853)
+
 ## 2026-04-17 — GIR API v1 contract + Keycloak bearer token support
 
 This release contains several breaking changes to the GIR Dataspace API. The GIRBasisdataMessage endpoints have been versioned to `/v1/`, the request schema has been updated, authentication has been restricted to DSGO tokens only, and organization identifiers have changed format. Update integrations before upgrading.
@@ -22,9 +40,6 @@ This release contains several breaking changes to the GIR Dataspace API. The GIR
 
 **Fixed**
 - `GET /api/policies` now correctly returns only policies owned by the requesting organization when called with a standard (non-delegated) scope. Previously, ownership filtering was applied incorrectly, causing some callers to receive an empty or incorrect result set. [#833](https://github.com/POORT8/Poort8.Dataspace.Private/pull/833)
-
-**Changed**
-- `GET /api/organizations` (organization search) now returns a maximum of 50 results per request. [#851](https://github.com/POORT8/Poort8.Dataspace.Private/pull/851)
 
 ### Keyper API
 
