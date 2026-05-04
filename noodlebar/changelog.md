@@ -1,5 +1,36 @@
 # Weekly Changelog
 
+## 2026-04-17 — GIR API v1 contract + Keycloak bearer token support
+
+This release contains several breaking changes to the GIR Dataspace API. The GIRBasisdataMessage endpoints have been versioned to `/v1/`, the request schema has been updated, authentication has been restricted to DSGO tokens only, and organization identifiers have changed format. Update integrations before upgrading.
+
+### GIR Dataspace API
+
+**Breaking**
+- GIRBasisdataMessage endpoints now use the `/v1/` path prefix. Update all calls from `/api/GIRBasisdataMessage` to `/v1/api/GIRBasisdataMessage`. [#850](https://github.com/POORT8/Poort8.Dataspace.Private/pull/850)
+- The `installation` field in GIRBasisdataMessage requests and responses has been renamed to `installationBaseData`. Additional v1 schema changes include updated operational and lifecycle status enums, updated ETIM feature field naming, and stricter validation rules. Update your payload to use the new field name and match the v1 schema. [#842](https://github.com/POORT8/Poort8.Dataspace.Private/pull/842)
+- `GET` and `POST /v1/api/GIRBasisdataMessage` now only accept DSGO bearer tokens obtained via `POST /connect/token`. Auth0 and other bearer tokens are rejected with a 401. [#848](https://github.com/POORT8/Poort8.Dataspace.Private/pull/848)
+- GIR organization identifiers now use the DID format `did:ishare:EU.NL.NTRNL-<kvkNumber>` instead of `NL.KVK.<kvkNumber>`. Update any hardcoded identifiers in your integration. [#843](https://github.com/POORT8/Poort8.Dataspace.Private/pull/843)
+
+**Security**
+- `POST /connect/token` (DSGO) now validates that the requesting party holds a membership in the `EU.DS.NL.DSGO` dataspace. Requests from parties without this membership are rejected. [#841](https://github.com/POORT8/Poort8.Dataspace.Private/pull/841)
+
+### Dataspace API
+
+**Added**
+- The Dataspace API now accepts Keycloak JWT bearer tokens alongside existing Auth0 tokens. Mutation endpoints for resources, resource groups, policies, employees, and organizations enforce that the token's organization matches the resource owner — cross-organization mutations require a delegated scope. [#827](https://github.com/POORT8/Poort8.Dataspace.Private/pull/827) [#828](https://github.com/POORT8/Poort8.Dataspace.Private/pull/828)
+
+**Fixed**
+- `GET /api/policies` now correctly returns only policies owned by the requesting organization when called with a standard (non-delegated) scope. Previously, ownership filtering was applied incorrectly, causing some callers to receive an empty or incorrect result set. [#833](https://github.com/POORT8/Poort8.Dataspace.Private/pull/833)
+
+**Changed**
+- `GET /api/organizations` (organization search) now returns a maximum of 50 results per request. [#851](https://github.com/POORT8/Poort8.Dataspace.Private/pull/851)
+
+### Keyper API
+
+**Changed**
+- The approval page now shows the requester's display name and an optional message-to-approver. After approving or rejecting, approvers are presented with a link back to the portal. [#840](https://github.com/POORT8/Poort8.Dataspace.Private/pull/840) [#853](https://github.com/POORT8/Poort8.Dataspace.Private/pull/853)
+
 ## 2026-04-03 — DSGO authentication endpoint (GIR) + sensor optimization workflow
 
 ### GIR Dataspace API
