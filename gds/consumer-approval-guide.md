@@ -76,13 +76,13 @@ Before making an approval request, gather the following information:
 - `name`: Name of the person initiating the request on your platform (e.g., "Alice Anderson")
 - `email`: Email address of the person initiating the request
 - `organization`: The data service consumer organization's name (e.g., "Building Optimization Corp")
-- `organizationId`: The data service consumer organization's identifier in KvK format (e.g., "NL.KVK.12345678")
+- `organizationId`: The data service consumer organization's identifier in EUID format, for Dutch parties containing the KvK number (e.g., "NLNHR.12345678")
 
 ### Approver information (building owner)
 - `name`: Name of the building owner who will approve (e.g., "Bob Johnson")
 - `email`: Email address where approval link will be sent
 - `organization`: Building owner's organization name
-- `organizationId`: Building owner's organization identifier in KvK format (e.g., "NL.KVK.87654321")
+- `organizationId`: Building owner's organization identifier in EUID format, for Dutch parties containing the KvK number (e.g., "NLNHR.87654321")
   - How to get: Ask the building owner directly, or look up via [KvK Business Register](https://www.kvk.nl/english/)
   - **Note**: This must be registered in the GDS Organization Registry. Contact Poort8 if you encounter organizations not yet registered.
 
@@ -99,7 +99,7 @@ For each building you need access to, prepare:
   - **Format**: 16 digits (e.g., "0363010000659001")
   - **How to get it**: Building owners typically provide this, or you can look it up via [PDOK BAG API](https://www.pdok.nl/introductie/-/article/basisregistratie-adressen-en-gebouwen-ba-1) using the building address
   - **Important**: This must match exactly — an incorrect VBO ID will result in authorization failures
-- `serviceProvider`: The IoT platform organization ID that manages the building's sensors in KvK format (e.g., "NL.KVK.23456789")
+- `serviceProvider`: The IoT platform organization ID that manages the building's sensors in EUID format, for Dutch parties containing the KvK number (e.g., "NLNHR.23456789")
   - How to get: Ask the building owner which company installed/manages their sensors, they should know their IoT service provider's organization details
 - **Policy type(s)**: What access you need — see Step 3 for the [policy levels](#policy-levels)
 

@@ -73,9 +73,9 @@ Each policy registered in GDS contains these fields (matching the explained enfo
 
 | Field | Description | Example |
 |-------|-------------|---------|
-| `issuerId` | Building owner who granted access (Bob) | `NL.KVK.87654321` |
-| `subjectId` | Organization that uses your data service (David) | `NL.KVK.12345678` |
-| `serviceProvider` | Your IoT platform organization (Charlie) | `NL.KVK.23456789` |
+| `issuerId` | Building owner who granted access (Bob) | `NLNHR.87654321` |
+| `subjectId` | Organization that uses your data service (David) | `NLNHR.12345678` |
+| `serviceProvider` | Your IoT platform organization (Charlie) | `NLNHR.23456789` |
 | `type` | Resource type: `building` or `asset` | `building` |
 | `resourceId` | Resource identifier: VBO ID or asset ID | `0363010000659001` |
 | `attribute` | Data attributes | `*` (all) |
@@ -109,9 +109,9 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 | Parameter | Description | Example |
 |-----------|-------------|-------  |
-| `issuer` | Building owner who granted access (Bob) | `NL.KVK.87654321` |
-| `subject` | Organization that uses your data service (David) | `NL.KVK.12345678` |
-| `serviceProvider` | Your IoT platform organization (Charlie) | `NL.KVK.23456789` |
+| `issuer` | Building owner who granted access (Bob) | `NLNHR.87654321` |
+| `subject` | Organization that uses your data service (David) | `NLNHR.12345678` |
+| `serviceProvider` | Your IoT platform organization (Charlie) | `NLNHR.23456789` |
 | `action` | Requested action | `GET` |
 | `resource` | Resource identifier (VBO ID or asset ID) | `0363010000659001` |
 | `type` | Resource type | `building` |
@@ -121,7 +121,7 @@ Authorization: Bearer <ACCESS_TOKEN>
 ### Example request with real values
 
 ```http
-GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer=NL.KVK.87654321&subject=NL.KVK.12345678&serviceProvider=NL.KVK.23456789&action=GET&resource=0363010000659001&type=building&attribute=*&useCase=ishare
+GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer=NLNHR.87654321&subject=NLNHR.12345678&serviceProvider=NLNHR.23456789&action=GET&resource=0363010000659001&type=building&attribute=*&useCase=ishare
 Authorization: Bearer <ACCESS_TOKEN>
 ```
 
@@ -139,9 +139,9 @@ The Authorization Registry returns a JSON object with the enforcement result and
       "issuedAt": 1730736000,
       "notBefore": 1730736000,
       "expiration": 2147483647,
-      "issuerId": "NL.KVK.87654321",
-      "subjectId": "NL.KVK.12345678",
-      "serviceProvider": "NL.KVK.23456789",
+      "issuerId": "NLNHR.87654321",
+      "subjectId": "NLNHR.12345678",
+      "serviceProvider": "NLNHR.23456789",
       "action": "GET",
       "resourceId": "0363010000659001",
       "type": "building",

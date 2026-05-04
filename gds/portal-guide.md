@@ -66,7 +66,7 @@ Use the bearer token to retrieve policies for a specific issuer (data rights hol
 ### Example request
 
 ```http
-GET /api/policies?issuerId=NL.KVK.87654321
+GET /api/policies?issuerId=NLNHR.87654321
 Host: noodlebar.poort8.nl
 Authorization: Bearer <access_token>
 ```
@@ -87,9 +87,9 @@ For a full description of all policy fields and how they interact, see the [Poli
     "issuedAt": 1700000000,
     "notBefore": 1700000000,
     "expiration": 1800000000,
-    "issuerId": "NL.KVK.87654321",
-    "subjectId": "NL.KVK.12345678",
-    "serviceProvider": "NL.KVK.23456789",
+    "issuerId": "NLNHR.87654321",
+    "subjectId": "NLNHR.12345678",
+    "serviceProvider": "NLNHR.23456789",
     "type": "building",
     "resourceId": "0363010000659001",
     "action": "GET",
