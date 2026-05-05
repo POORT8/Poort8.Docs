@@ -30,8 +30,8 @@ sequenceDiagram
 
 | JSON path                         | Filled by | Description                                                                         |
 | :-------------------------------- | :-------- | :---------------------------------------------------------------------------------- |
-| `requester.*`                     | App       | Your name, email, organization, `organizationId` (`NL.KVK.<your KVK>`)              |
-| `approver.*`                      | App       | Energy contractor email, organization, `organizationId` (`NL.KVK.<contractor KVK>`) |
+| `requester.*`                     | App       | Your name, email, organization, `organizationId` (`NLNHR.<your KVK>`)              |
+| `approver.*`                      | App       | Energy contractor email, organization, `organizationId` (`NLNHR.<contractor KVK>`) |
 | `dataspace.baseUrl`               | Fixed     | `https://dvu-test.azurewebsites.net`                                                |
 | `description`                     | App       | Shown to the approver (optional)                                                    |
 | `reference`                       | App       | Your internal tracking ID (optional)                                                |
@@ -75,7 +75,7 @@ Content-Type: application/json
       "expiration": "<EXPIRATION>",
       "issuerId": "<APPROVING_ORGANISATION_ID>",
       "subjectId": "<REQUESTING_ORGANISATION_ID>",
-      "serviceProvider": "NL.KVK.55819206",
+      "serviceProvider": "NLNHR.55819206",
       "action": "Read",
       "resourceId": "<UUID>",
       "type": "P4",
@@ -147,7 +147,7 @@ Content-Type: application/json
 | `issuedAt`, `notBefore`, `expiration` | Unix timestamps. DVU defaults `issuedAt` and `notBefore` to now   |
 | `issuerId`                            | KVK of the energy contractor (approver)                           |
 | `subjectId`, `subjectId`              | KVK code with format `KVK.NL.12345678`                            |
-| `serviceProvider`                     | `NL.KVK.55819206` (Smart Data Solutions)                          |
+| `serviceProvider`                     | `NLNHR.55819206` (Smart Data Solutions)                          |
 | `resourceId` / `resourceGroupId`      | Must match — use the same UUID for both                           |
 | `license`                             | DVU defaults to `iSHARE.0002`                                     |
 | `properties`                          | Custom fields supplying additional information                    |

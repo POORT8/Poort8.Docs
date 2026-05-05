@@ -30,14 +30,14 @@ sequenceDiagram
 
 | JSON path                                   | Filled by | Description                                                                         |
 | :------------------------------------------ | :-------- | :---------------------------------------------------------------------------------- |
-| `requester.*`                               | App       | Your name, email, organization, `organizationId` (`NL.KVK.<your KVK>`)              |
-| `approver.*`                                | App       | Energy contractor email, organization, `organizationId` (`NL.KVK.<contractor KVK>`) |
+| `requester.*`                               | App       | Your name, email, organization, `organizationId` (`NLNHR.<your KVK>`)              |
+| `approver.*`                                | App       | Energy contractor email, organization, `organizationId` (`NLNHR.<contractor KVK>`) |
 | `dataspace.baseUrl`                         | Fixed     | `https://dvu-test.azurewebsites.net`                                                |
 | `description`                               | App       | Shown to the approver (optional)                                                    |
 | `reference`                                 | App       | Your internal tracking ID (optional)                                                |
 | `orchestration.flow`                        | Fixed     | `dvu.voeg-gebouwen-toe@v1`                                                          |
 | `orchestration.payload.addresses`           | App       | Array of building addresses — see formatting below                                  |
-| `orchestration.payload.dataServiceConsumer` | App       | Your organization ID (`NL.KVK.<your KVK>`)                                          |
+| `orchestration.payload.dataServiceConsumer` | App       | Your organization ID (`NLNHR.<your KVK>`)                                          |
 
 ## JSON example
 
@@ -53,7 +53,7 @@ Content-Type: application/json
   "approver": {
     "email": "somebody@domain.extension",
     "organization": "Poort8",
-    "organizationId": "NL.KVK.76660680"
+    "organizationId": "NLNHR.76660680"
   },
   "dataspace": {
     "baseUrl": "https://dvu-test.azurewebsites.net"
@@ -62,7 +62,7 @@ Content-Type: application/json
     "name": "Alice Data End User",
     "email": "alice@dataenduser.nl",
     "organization": "wonderland",
-    "organizationId": "NL.KVK.12345678"
+    "organizationId": "NLNHR.12345678"
   },
   "description": "DVU bulk building access request",
   "reference": "BULK-001",
@@ -70,7 +70,7 @@ Content-Type: application/json
     "flow": "dvu.voeg-gebouwen-toe@v1",
     "payload": {
       "addresses": ["1341 BA 1", "3013 AK 45", "1012 JS 1"],
-      "dataServiceConsumer": "NL.KVK.41265782"
+      "dataServiceConsumer": "NLNHR.41265782"
     }
   }
 }

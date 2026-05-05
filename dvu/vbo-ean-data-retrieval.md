@@ -28,9 +28,9 @@ An iSHARE access token is required to use the DVU API. Generate a client asserti
 ### Claims
 | JSON path | Filled by | Description                                         |
 | :-------- | :-------- | :-------------------------------------------------- |
-| `iss`     | App       | Your organisation identifier`NL.KVK.<your KVK>`     |
-| `sub`     | App       | Your organisation identifier`NL.KVK.<your KVK>`     |
-| `aud`     | Fixed     | DVU (RVO) organisation identifier `NL.KVK.27378529` |
+| `iss`     | App       | Your organisation identifier`NLNHR.<your KVK>`     |
+| `sub`     | App       | Your organisation identifier`NLNHR.<your KVK>`     |
+| `aud`     | Fixed     | DVU (RVO) organisation identifier `NLNHR.27378529` |
 | `iat`     | App       | Issued at timestamp `<UNIX_TIMESTAMP_NOW>`          |
 | `exp`     | App       | Expires at timestamp `<UNIX_TIMESTAMP_NOW_PLUS_30>` |
 | `jti`     | App       | JWT identifier `<UUID>`                             |
@@ -55,7 +55,7 @@ Content-Type: application/x-www-form-urlencoded
 | `grant_type` | `client_credentials` |
 | `scope` | `iSHARE` |
 | `client_assertion_type` | `urn:ietf:params:oauth:client-assertion-type:jwt-bearer` |
-| `client_id` | `NL.KVK.<YOUR_KVK>` |
+| `client_id` | `NLNHR.<YOUR_KVK>` |
 | `client_assertion` | `<CLIENT_ASSERTION>` |
 
 **200 OK**
@@ -70,13 +70,13 @@ Content-Type: application/x-www-form-urlencoded
 ## Retrieve VBO and EAN data
 
 ```http
-GET https://dvu-test.azurewebsites.net/api/resourcegroups?issuer=NL.KVK.<YOUR_KVK>&vbo=<VBO_ID>&ean=<EAN_ID>
+GET https://dvu-test.azurewebsites.net/api/resourcegroups?issuer=NLNHR.<YOUR_KVK>&vbo=<VBO_ID>&ean=<EAN_ID>
 Authorization: Bearer <ACCESS_TOKEN>
 ```
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `issuer` | string | Yes | Your organization identifier (`NL.KVK.<your KVK>`) |
+| `issuer` | string | Yes | Your organization identifier (`NLNHR.<your KVK>`) |
 | `vbo` | string | No* | Filter on specific VBO ID |
 | `ean` | string | No* | Filter on specific EAN ID |
 

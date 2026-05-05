@@ -33,9 +33,9 @@ An iSHARE access token is required to use the SDS API. Generate a client asserti
 ### Claims
 | JSON path | Filled by | Description                                         |
 | :-------- | :-------- | :-------------------------------------------------- |
-| `iss`     | App       | Your organisation identifier`NL.KVK.<your KVK>`     |
-| `sub`     | App       | Your organisation identifier`NL.KVK.<your KVK>`     |
-| `aud`     | Fixed     | SDS organisation identifier `NL.KVK.55819206`       |
+| `iss`     | App       | Your organisation identifier`NLNHR.<your KVK>`     |
+| `sub`     | App       | Your organisation identifier`NLNHR.<your KVK>`     |
+| `aud`     | Fixed     | SDS organisation identifier `NLNHR.55819206`       |
 | `iat`     | App       | Issued at timestamp `<UNIX_TIMESTAMP_NOW>`          |
 | `exp`     | App       | Expires at timestamp `<UNIX_TIMESTAMP_NOW_PLUS_30>` |
 | `jti`     | App       | JWT identifier `<UUID>`                             |
@@ -60,7 +60,7 @@ Content-Type: application/x-www-form-urlencoded
 | `grant_type` | `client_credentials` |
 | `scope` | `iSHARE` |
 | `client_assertion_type` | `urn:ietf:params:oauth:client-assertion-type:jwt-bearer` |
-| `client_id` | `NL.KVK.<YOUR_KVK>` |
+| `client_id` | `NLNHR.<YOUR_KVK>` |
 | `client_assertion` | `<CLIENT_ASSERTION>` |
 
 **200 OK**
