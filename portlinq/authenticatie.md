@@ -66,18 +66,13 @@ Alice selecteert het schip (ENI) waarvoor ze diensten wil aanvragen. De app vraa
 
 > 🔜 **Binnenkort beschikbaar**: Token exchange functionaliteit wordt momenteel ontwikkeld.
 
-**Living lab workaround**: Haal een bearer token op via Auth0 met de volgende request:
+**Living lab workaround**: Haal een bearer token op via Keycloak met de volgende request:
 
 ```bash
 curl --request POST \
-  --url https://poort8.eu.auth0.com/oauth/token \
-  --header 'content-type: application/json' \
-  --data '{
-    "client_id":"***",
-    "client_secret":"***",
-    "audience":"PortlinQ-Dataspace-CoreManager",
-    "grant_type":"client_credentials"
-  }'
+  --url https://auth.poort8.nl/realms/portlinq-preview/protocol/openid-connect/token \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data 'client_id=***&client_secret=***&grant_type=client_credentials&scope=noodlebar-api'
 ```
 
 **Response:**
@@ -94,7 +89,7 @@ Het `access_token` is een JWT bearer token met de volgende claims:
 ```json
 {
   "organizationId": "schip:123456",
-  "iss": "https://poort8.eu.auth0.com/",
+  "iss": "https://auth.poort8.nl/realms/portlinq-preview",
   "sub": "GA2GoSLKwZnczBNR1fyFCeOoYhE1aLGb@clients",
   "aud": "PortlinQ-Dataspace-CoreManager",
   "iat": 1771360767,
