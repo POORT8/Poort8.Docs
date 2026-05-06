@@ -9,6 +9,7 @@
   - [Registrar Flow (Overview)](registrar-flow.md)
   - [Data-Consumer Flow (Overview)](data-consumer-flow.md)
   - [Datastekker – Installer Access Flow](datastekker-installateur-flow.md)
+  - [Digitaal Onderhoudsboekje – Maintenance Data Transfer Flow](digitaal-onderhoudsboekje-flow.md)
 
 - **Endpoint Integration Guides**
   - [Obtaining a DSGO Token](connect-token.md)
