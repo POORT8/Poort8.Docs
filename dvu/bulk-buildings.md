@@ -30,14 +30,14 @@ sequenceDiagram
 
 | JSON path                                   | Filled by | Description                                                                         |
 | :------------------------------------------ | :-------- | :---------------------------------------------------------------------------------- |
-| `requester.*`                               | App       | Your name, email, organization, `organizationId` (`NLNHR.<your KVK>`)              |
-| `approver.*`                                | App       | Energy contractor email, organization, `organizationId` (`NLNHR.<contractor KVK>`) |
-| `dataspace.baseUrl`                         | Fixed     | `https://dvu-test.azurewebsites.net`                                                |
+| `requester.*`                               | App       | Your name, email, organization, `organizationId` (`did:ishare:EU.NL.NTRNL-<your KVK>`)              |
+| `approver.*`                                | App       | Energy contractor email, organization, `organizationId` (`did:ishare:EU.NL.NTRNL-<contractor KVK>`) |
+| `dataspace.baseUrl`                         | Fixed     | `https://dvu-preview.poort8.nl`                                                     |
 | `description`                               | App       | Shown to the approver (optional)                                                    |
 | `reference`                                 | App       | Your internal tracking ID (optional)                                                |
 | `orchestration.flow`                        | Fixed     | `dvu.voeg-gebouwen-toe@v1`                                                          |
 | `orchestration.payload.addresses`           | App       | Array of building addresses — see formatting below                                  |
-| `orchestration.payload.dataServiceConsumer` | App       | Your organization ID (`NLNHR.<your KVK>`)                                          |
+| `orchestration.payload.dataServiceConsumer` | App       | Your organization ID (`did:ishare:EU.NL.NTRNL-<your KVK>`)                                          |
 
 ## JSON example
 
@@ -53,16 +53,16 @@ Content-Type: application/json
   "approver": {
     "email": "somebody@domain.extension",
     "organization": "Poort8",
-    "organizationId": "NLNHR.76660680"
+    "organizationId": "did:ishare:EU.NL.NTRNL-76660680"
   },
   "dataspace": {
-    "baseUrl": "https://dvu-test.azurewebsites.net"
+    "baseUrl": "https://dvu-preview.poort8.nl"
   },
   "requester": {
     "name": "Alice Data End User",
     "email": "alice@dataenduser.nl",
     "organization": "wonderland",
-    "organizationId": "NLNHR.12345678"
+    "organizationId": "did:ishare:EU.NL.NTRNL-12345678"
   },
   "description": "DVU bulk building access request",
   "reference": "BULK-001",
@@ -70,7 +70,7 @@ Content-Type: application/json
     "flow": "dvu.voeg-gebouwen-toe@v1",
     "payload": {
       "addresses": ["1341 BA 1", "3013 AK 45", "1012 JS 1"],
-      "dataServiceConsumer": "NLNHR.41265782"
+      "dataServiceConsumer": "did:ishare:EU.NL.NTRNL-41265782"
     }
   }
 }

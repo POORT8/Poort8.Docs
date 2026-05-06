@@ -16,7 +16,7 @@ This guide helps you understand how DVU integration works before you dive into i
   - Your organization name
   - Contact person details
   - Use case description 
-- **EORI number** - If you don't have one yet, [consult this website](https://business.gov.nl/international/doing-business-abroad/eori-number-for-all-customs-operations/).
+- **KVK number**
 
 ### Step 2. Understanding Keyper integration
 **Keyper** is a standalone approval orchestration API, used by DVU to manage access requests. Requests can be sent to this API to create and view approval links.
@@ -24,7 +24,7 @@ This guide helps you understand how DVU integration works before you dive into i
 #### Test environment URLs
 - **Token endpoint:** `https://poort8.eu.auth0.com/oauth/token`
 - **Keyper API:** `https://keyper-preview.poort8.nl/v1/api/`
-- **DVU Dataspace:** `https://dvu-test.azurewebsites.net`
+- **DVU Dataspace:** `https://dvu-preview.poort8.nl`
 
 >**Note:** The test environment does not perform complete verifications (such as organization data validation). Use it only for functional testing.
 
@@ -91,15 +91,15 @@ Use this sample data, and replace the email placeholders with your actual email 
     "name": "Test Person",
     "email": "<YOUR_EMAIL>",
     "organization": "Test Company",
-    "organizationId": "EU.EORI.NL123456789"
+    "organizationId": "did:ishare:EU.NL.NTRNL-12345678"
   },
   "approver": {
     "email": "<YOUR_EMAIL>",
     "organization": "Test Energy Contractor",
-    "organizationId": "EU.EORI.NL123456789"
+    "organizationId": "did:ishare:EU.NL.NTRNL-12345678"
   },
   "dataspace": {
-    "baseUrl": "https://dvu-test.azurewebsites.net"
+    "baseUrl": "https://dvu-preview.poort8.nl"
   },
   "description": "My first DVU test request",
   "reference": "TEST-001",
@@ -107,14 +107,14 @@ Use this sample data, and replace the email placeholders with your actual email 
     "flow": "dvu.voeg-gebouw-toe@v1",
     "payload": {
       "address": "3013 AK 45",
-      "dataServiceConsumer": "EU.EORI.NL123456789"
+      "dataServiceConsumer": "did:ishare:EU.NL.NTRNL-12345678"
     }
   }
 }
 ```
 
 **Keep these test values:**
-- `EU.EORI.NL123456789` → Test EORI
+- `did:ishare:EU.NL.NTRNL-12345678` → Test iSHARE ID
 - `3013 AK 45` → Test building address
 
 #### Expected Response (200 OK)
@@ -227,7 +227,7 @@ sequenceDiagram
 #### Key concepts
 **Requester** = You / Your application
 - Wants access to energy data
-- Identified by your EORI number
+- Identified by your iSHARE ID
 - Initiates the approval request
 
 **Approver** = Energy contractor

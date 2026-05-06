@@ -30,14 +30,13 @@ sequenceDiagram
 
 | JSON path                         | Filled by | Description                                                                         |
 | :-------------------------------- | :-------- | :---------------------------------------------------------------------------------- |
-| `requester.*`                     | App       | Your name, email, organization, `organizationId` (`NLNHR.<your KVK>`)              |
-| `approver.*`                      | App       | Energy contractor email, organization, `organizationId` (`NLNHR.<contractor KVK>`) |
-| `dataspace.baseUrl`               | Fixed     | `https://dvu-test.azurewebsites.net`                                                |
+| `requester.*`                     | App       | Your name, email, organization, `organizationId` (`did:ishare:EU.NL.NTRNL-<your KVK>`)              |
+| `approver.*`                      | App       | Energy contractor email, organization, `organizationId` (`did:ishare:EU.NL.NTRNL-<contractor KVK>`) |
+| `dataspace.baseUrl`               | Fixed     | `https://dvu-preview.poort8.nl`                                                |
 | `description`                     | App       | Shown to the approver (optional)                                                    |
 | `reference`                       | App       | Your internal tracking ID (optional)                                                |
 | `addPolicyTransactions[]`         | App       | Access policy — see JSON example below                                              |
 | `addResourceGroupTransactions[]`  | App       | EAN resource group — see JSON example below                                         |
-| `properties`                      | App       | Issuing company information - see JSON example below                                |
 | `orchestration.flow`              | Fixed     | `dvu.direct-ean@v1`                                                                 |
 
 ## JSON example
@@ -63,7 +62,7 @@ Content-Type: application/json
     "organizationId": "<APPROVING_ORGANISATION_ID>"
   },
   "dataspace": {
-    "baseUrl": "https://dvu-test.azurewebsites.net"
+    "baseUrl": "https://dvu-preview.poort8.nl"
   },
   "description": "Request for direct EAN access via DVU",
   "reference": "DIRECT-EAN-001",
@@ -75,7 +74,7 @@ Content-Type: application/json
       "expiration": "<EXPIRATION>",
       "issuerId": "<APPROVING_ORGANISATION_ID>",
       "subjectId": "<REQUESTING_ORGANISATION_ID>",
-      "serviceProvider": "NLNHR.55819206",
+      "serviceProvider": "did:ishare:EU.NL.NTRNL-55819206",
       "action": "Read",
       "resourceId": "<UUID>",
       "type": "P4",
@@ -92,46 +91,18 @@ Content-Type: application/json
       "provider": "DVU",
       "resources": [
         {
-          "resourceId": "dvu:resource:<EAN>",
+          "resourceId": "dvu:resource:<EAN1>",
           "useCase": "dvu",
-          "name": "<EAN>",
-          "description": "ean: <EAN>",
-          "properties": [
-            {
-              "key": "Grootverbruik",
-              "value": "<BOOLEAN>",
-              "isIdentifier": false
-            },
-            {
-                "key": "Product",
-                "value": "<STRING>",
-                "isIdentifier": false
-            },
-            {
-              "key": "IssuingCompanyContactEmail",
-              "value": "approver@domain.extension",
-              "isIdentifier": false
-            },
-            {
-              "key": "MeasuringCompanyName",
-              "value": "<STRING>",
-              "isIdentifier": false
-            }
-          ]
+          "name": "<EAN1>",
+          "description": "ean: <EAN1>"
+        },
+        {
+          "resourceId": "dvu:resource:<EAN2>",
+          "useCase": "dvu",
+          "name": "<EAN2>",
+          "description": "ean: <EAN2>"
         }
       ]
-    }
-  ],
-  "properties": [
-    {
-      "key": "IssuingCompanyKvk",
-      "value": "<APPROVING_ORGANISATION_COC>",
-      "isIdentifier": false
-    },
-    {
-      "key": "IssuingCompanyName",
-      "value": "<STRING>",
-      "isIdentifier": false
     }
   ],
   "orchestration": {
@@ -142,18 +113,14 @@ Content-Type: application/json
 
 ### Key fields
 
-| Field                                 | Notes                                                             |
-| :------------------------------------ | :---------------------------------------------------------------- |
-| `issuedAt`, `notBefore`, `expiration` | Unix timestamps. DVU defaults `issuedAt` and `notBefore` to now   |
-| `issuerId`                            | KVK of the energy contractor (approver)                           |
-| `subjectId`, `subjectId`              | KVK code with format `KVK.NL.12345678`                            |
-| `serviceProvider`                     | `NLNHR.55819206` (Smart Data Solutions)                          |
-| `resourceId` / `resourceGroupId`      | Must match — use the same UUID for both                           |
-| `license`                             | DVU defaults to `iSHARE.0002`                                     |
-| `properties`                          | Custom fields supplying additional information                    |
-| `properties.IssuingCompanyKvk`        | KVK code with format `12345678`                                   |
-| `properties.Grootverbruik`            | Case sensitive string reprentation of a boolean `True` or `False` |
-| `properties.Product`                  | Must contain value `Gas` or `Elektra`                             |
+| Field                                        | Notes                                                             |
+| :------------------------------------------- | :---------------------------------------------------------------- |
+| `issuedAt`, `notBefore`, `expiration`        | Unix timestamps. DVU defaults `issuedAt` and `notBefore` to now   |
+| `issuerId`                                   | iSHARE identifier of the energy contractor (approver)             |
+| `subjectId`                                  | iSHARE identifier of the requesting organisation                  |
+| `serviceProvider`                            | `did:ishare:EU.NL.NTRNL-55819206` (Smart Data Solutions)          |
+| `policy.resourceId` / `resourceGroupId`      | Must match — use the same UUID for both                           |
+| `license`                                    | DVU defaults to `iSHARE.0002`                                     |
 
 > DVU requires EANs to be grouped. For this flow, you choose a user-friendly group name as it will be shown to the approver.
 
@@ -178,8 +145,6 @@ Content-Type: application/json
 | `400`  | Missing or invalid fields       | Check the `errors` object in the response for details                                                                         |
 | `401`  | Missing or expired access token | Re-authenticate — see [Getting Started](getting-started.md)                                                                   |
 | `500`  | Server error                    | Retry after a short delay. If persistent, contact [hello@poort8.nl](mailto:hello@poort8.nl) with your reference and timestamp |
-
-> Keyper does not validate organization identifiers for format. Ensure KVK numbers are correct on your side, as invalid identifiers cause issues with access policies and data retrieval.
 
 ## Follow-up
 

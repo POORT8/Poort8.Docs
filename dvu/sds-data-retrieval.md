@@ -33,9 +33,9 @@ An iSHARE access token is required to use the SDS API. Generate a client asserti
 ### Claims
 | JSON path | Filled by | Description                                         |
 | :-------- | :-------- | :-------------------------------------------------- |
-| `iss`     | App       | Your organisation identifier`NLNHR.<your KVK>`     |
-| `sub`     | App       | Your organisation identifier`NLNHR.<your KVK>`     |
-| `aud`     | Fixed     | SDS organisation identifier `NLNHR.55819206`       |
+| `iss`     | App       | Your organisation identifier `did:ishare:EU.NL.NTRNL-<your KVK>`    |
+| `sub`     | App       | Your organisation identifier `did:ishare:EU.NL.NTRNL-<your KVK>`    |
+| `aud`     | Fixed     | SDS organisation identifier `did:ishare:EU.NL.NTRNL-55819206`       |
 | `iat`     | App       | Issued at timestamp `<UNIX_TIMESTAMP_NOW>`          |
 | `exp`     | App       | Expires at timestamp `<UNIX_TIMESTAMP_NOW_PLUS_30>` |
 | `jti`     | App       | JWT identifier `<UUID>`                             |
@@ -51,7 +51,7 @@ An iSHARE access token is required to use the SDS API. Generate a client asserti
 ## Obtain an iSHARE access token
 
 ```http
-POST https://dvu-test.azurewebsites.net/iSHARE/connect/token
+POST https://dvu-test.smartdatasolutions.nl/token
 Content-Type: application/x-www-form-urlencoded
 ```
 
@@ -60,7 +60,7 @@ Content-Type: application/x-www-form-urlencoded
 | `grant_type` | `client_credentials` |
 | `scope` | `iSHARE` |
 | `client_assertion_type` | `urn:ietf:params:oauth:client-assertion-type:jwt-bearer` |
-| `client_id` | `NLNHR.<YOUR_KVK>` |
+| `client_id` | `did:ishare:EU.NL.NTRNL-<YOUR_KVK>` |
 | `client_assertion` | `<CLIENT_ASSERTION>` |
 
 **200 OK**
