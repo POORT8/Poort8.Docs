@@ -102,7 +102,7 @@ The token does not replace the read policy from Step 1. Both are needed:
 sequenceDiagram
     participant App as Your Application
     participant GIR as GIR API
-    participant SAT as DSGO Satellite
+    participant SAT as DSGO Participant Registry
 
     App->>App: Create signed client assertion JWT
     App->>GIR: POST /connect/token

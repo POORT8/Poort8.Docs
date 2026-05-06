@@ -20,8 +20,8 @@ Tokens expire after **3600 seconds (1 hour)**. Request a new one before the curr
 
 Before you can call this endpoint your organization must meet the following conditions:
 
-1. **DSGO membership** — Your organization must be registered in the DSGO satellite with an active `dataspaceMembership` claim for `EU.DS.NL.DSGO`. Contact DSGO to obtain membership.
-2. **An RSA key pair** — You need a private key to sign the client assertion JWT. The corresponding certificate chain must be recognized by the DSGO satellite.
+1. **DSGO membership** — Your organization must be registered in the DSGO participant registry with an active `dataspaceMembership` claim for `EU.DS.NL.DSGO`. Contact DSGO to obtain membership.
+2. **An RSA key pair** — You need a private key to sign the client assertion JWT. The corresponding certificate chain must be recognized by the DSGO participant registry.
 3. **Your organization DID** — Format: `did:ishare:EU.NL.NTRNL-<KVK>`, where `<KVK>` is your 8-digit Dutch Chamber of Commerce (KvK) number.
 
 ## How it works
@@ -30,7 +30,7 @@ Before you can call this endpoint your organization must meet the following cond
 sequenceDiagram
     participant App as Your Application
     participant GIR as GIR API
-    participant SAT as DSGO Satellite
+    participant SAT as DSGO Participant Registry
 
     App->>App: Create signed JWT client assertion
     App->>GIR: POST /connect/token<br/>(form-urlencoded)
@@ -121,7 +121,7 @@ The token is valid for **3600 seconds**. When it expires, repeat Steps 1 and 2 t
 
 | HTTP status | Message | Cause |
 |-------------|---------|-------|
-| `400 Bad Request` | `Invalid client_assertion.` | JWT signature invalid, claims incorrect, party not found in DSGO satellite, no active `dataspaceMembership` for `EU.DS.NL.DSGO`, assertion already used, or certificate chain rejected |
+| `400 Bad Request` | `Invalid client_assertion.` | JWT signature invalid, claims incorrect, party not found in DSGO participant registry, no active `dataspaceMembership` for `EU.DS.NL.DSGO`, assertion already used, or certificate chain rejected |
 | `400 Bad Request` | Validation error on `grant_type`, `scope`, or `client_assertion_type` | One of the fixed parameters has an incorrect value |
 
 GIR returns a generic `Invalid client_assertion.` message for all JWT-related failures to avoid leaking validation details. Use the [Common issues](#common-issues) table to narrow down the cause.
@@ -134,8 +134,8 @@ GIR returns a generic `Invalid client_assertion.` message for all JWT-related fa
 | Every request returns 400 | `iss` and `sub` claims differ from each other |
 | Every request returns 400 | `exp - iat` is not exactly 30 seconds |
 | Second use of the same JWT fails | Token replay: generate a new JWT for every request |
-| 400 despite a valid-looking JWT | Organization is not registered in the DSGO satellite, or doesn't have an active `dataspaceMembership` claim for `EU.DS.NL.DSGO` |
-| 400 on certificate validation | Certificate chain in the `x5c` header is malformed or not trusted by the DSGO satellite |
+| 400 despite a valid-looking JWT | Organization is not registered in the DSGO participant registry, or doesn't have an active `dataspaceMembership` claim for `EU.DS.NL.DSGO` |
+| 400 on certificate validation | Certificate chain in the `x5c` header is malformed or not trusted by the DSGO participant registry |
 
 ## API reference
 
