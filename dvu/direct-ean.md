@@ -87,7 +87,7 @@ Content-Type: application/json
       "resourceGroupId": "<UUID>",
       "useCase": "dvu",
       "name": "<Suitable name for UUID>",
-      "description": "< Suitable description for UUID>",
+      "description": "<Suitable description for UUID>",
       "resources": [
         {
           "resourceId": "<EAN1>",
