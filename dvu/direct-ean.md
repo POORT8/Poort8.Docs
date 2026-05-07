@@ -64,8 +64,8 @@ Content-Type: application/json
   "dataspace": {
     "baseUrl": "https://dvu-preview.poort8.nl"
   },
-  "description": "Request for direct EAN access via DVU",
-  "reference": "DIRECT-EAN-001",
+  "description": "<Suitable description for your approval link>",
+  "reference": "<YOUR-DIRECT-EAN-REFERENCE>",
   "addPolicyTransactions": [
     {
       "useCase": "dvu",
@@ -84,23 +84,22 @@ Content-Type: application/json
   ],
   "addResourceGroupTransactions": [
     {
-      "resourceGroupId": "dvu:resource:<UUID>",
+      "resourceGroupId": "<UUID>",
       "useCase": "dvu",
-      "name": "<UUID>",
-      "description": "ean group: <UUID>",
-      "provider": "DVU",
+      "name": "<Suitable name for UUID>",
+      "description": "< Suitable description for UUID>",
       "resources": [
         {
-          "resourceId": "dvu:resource:<EAN1>",
+          "resourceId": "<EAN1>",
           "useCase": "dvu",
-          "name": "<EAN1>",
-          "description": "ean: <EAN1>"
+          "name": "<Suitable name for EAN1>",
+          "description": "<Suitable description for EAN1>"
         },
         {
-          "resourceId": "dvu:resource:<EAN2>",
+          "resourceId": "<EAN2>",
           "useCase": "dvu",
-          "name": "<EAN2>",
-          "description": "ean: <EAN2>"
+          "name": "<Suitable name for EAN2>",
+          "description": "<Suitable description for EAN2>"
         }
       ]
     }
