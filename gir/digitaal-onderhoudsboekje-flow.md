@@ -167,6 +167,26 @@ See [Retrieve Multiple Installations](retrieve-installations.md) for the full pa
 
 ## Phase 1 — Owner Authorization Flow
 
+```mermaid
+sequenceDiagram
+    participant App as TN GIR App
+    participant Keyper as Keyper API
+    participant Owner as Building Owner
+    participant GIR as GIR API
+    participant F2 as New Installer (F2)
+
+    Owner->>App: Log in via eHerkenning, select VBO-ids and F2
+    App->>Keyper: POST /connect/token (client credentials)
+    Keyper-->>App: Access token
+    App->>Keyper: POST /api/approval-links (AccessRight for F2)
+    Keyper->>Owner: Approval link by email
+    Owner->>Keyper: Authenticate and approve
+    Keyper->>GIR: POST /connect/token (client credentials)
+    GIR-->>Keyper: Access token
+    Keyper->>GIR: Register AccessRight policy (building owner → F2)
+    Keyper->>F2: Confirmation with approved policy and SW1 endpoint
+```
+
 ### Step 1: TN GIR App Creates Approval Link *(Poort8)*
 
 After the owner has selected VBO-ids and F2, the app first obtains an access token from Keyper, then sends the approval link request. Keyper generates an approval link registering an `AccessRight` policy for F2:
@@ -253,6 +273,17 @@ F2 can now initiate the sub-delegation to SW2 and share SW1's endpoint with SW2 
 
 ## Phase 2 — SupplierDelegation
 
+```mermaid
+sequenceDiagram
+    participant F1 as Old Installer (F1)
+    participant SW1 as SW1 (software F1)
+    participant F2 as New Installer (F2)
+    participant SW2 as SW2 (software F2)
+
+    F1->>SW1: SupplierDelegation (mechanism TBD)
+    F2->>SW2: SupplierDelegation + SW1 endpoint
+```
+
 Phases 2a and 2b can happen in parallel and independently of each other. Both must be completed before the M2M data transfer (phase 3) can proceed.
 
 ### Step 5: F1 Issues SupplierDelegation to SW1 *(mechanism TBD)*
@@ -266,6 +297,22 @@ F1 authorizes SW1 to serve maintenance data on F1's behalf. In DSGO terms this i
 F2 authorizes SW2 to request maintenance data on F2's behalf. In DSGO terms this is a `SupplierDelegation` from the legal data service consumer (F2) to the authorized data service consumer (SW2). The same mechanism as step 5 applies. F2 also passes SW1's endpoint URL (received in the Keyper confirmation) to SW2.
 
 ## Phase 3 — M2M Maintenance Data Transfer
+
+```mermaid
+sequenceDiagram
+    participant SW2 as SW2 (software F2)
+    participant SW1 as SW1 (software F1)
+    participant GIR as GIR API
+
+    SW2->>SW1: POST /connect/token (client credentials, eSeal)
+    SW1-->>SW2: Access token
+    SW2->>SW1: GET /maintenance-data (VBO-id scope)
+    SW1->>GIR: POST /connect/token (client credentials)
+    GIR-->>SW1: Access token
+    SW1->>GIR: POST /delegation — verify AccessRight (building owner → F2)
+    GIR-->>SW1: Delegation evidence (Permit)
+    SW1-->>SW2: Standard maintenance data set
+```
 
 This phase is a one-off transaction triggered once after phases 2a and 2b are complete. SW1 is responsible for verifying authorization; SW2 does not need to pre-verify before requesting.
 
