@@ -40,10 +40,10 @@ sequenceDiagram
     participant SW2 as SW2 (software F2)
 
     rect rgb(240, 248, 255)
-        Note over App,GIR: Phase 1 — Owner authorization / AccessRight (one-time per building / installer pair)
-        Note over App,Keyper: F2 or BO initiates via TN GIR app, BO approves via eHerkenning in Keyper
-        App->>Keyper: In-session eHerkenning auth + approval request (VBO-ids, NL/SfB scope, F2)
-        Keyper->>Owner: Approval link (F2-initiated) or direct approval prompt (BO-initiated)
+        Note over App,GIR: Phase 1 — Owner authorization / AccessRight<br/>(one-time per building / installer pair)
+        Note over App,Keyper: F2 or BO initiates via TN GIR app,<br/>BO approves via eHerkenning in Keyper
+        App->>Keyper: In-session eHerkenning auth +<br/>approval request (VBO-ids, NL/SfB scope, F2)
+        Keyper->>Owner: Approval link (F2-initiated)<br/>or direct approval prompt (BO-initiated)
         Owner->>Keyper: Authenticate via eHerkenning and approve
         Keyper->>GIR: Register AccessRight policy (building owner → F2)
         Keyper->>F2: Confirmation incl. SW1 endpoint
@@ -108,7 +108,7 @@ The flow supports two entry points that share the same Keyper-based approval mec
 
 ```mermaid
 sequenceDiagram
-    participant Initiator as Initiator (F2 or Building Owner)
+    participant Initiator as Initiator<br/>(F2 or Building Owner)
     participant App as TN GIR App
     participant Keyper as Keyper
     participant Owner as Building Owner
@@ -118,32 +118,32 @@ sequenceDiagram
     Initiator->>App: Select role and use case
     App->>App: VBO-id lookup via Kadaster/BAG
     App->>Initiator: Show role-specific metadata form
-    Initiator->>App: Submit VBO-ids, NL/SfB filter, party selections
+    Initiator->>App: Submit VBO-ids, NL/SfB filter,<br/>party selections
 
-    opt Installation query — Variant C only (see Installation Query section)
-        App->>Keyper: Request installation data for VBO-ids (in-session)
+    opt Installation query —<br/>Variant C only (see Installation Query section)
+        App->>Keyper: Request installation data<br/>for VBO-ids (in-session)
         Keyper->>GIR: Query installations
         GIR-->>Keyper: Installation list
         Keyper-->>App: Installation list for scope confirmation
-        App->>Initiator: Show registered installations, confirm or adjust scope
+        App->>Initiator: Show registered installations,<br/>confirm or adjust scope
     end
 
-    App->>Keyper: Initiate eHerkenning session + submit approval request
+    App->>Keyper: Initiate eHerkenning session +<br/>submit approval request
     Initiator->>Keyper: Authenticate via eHerkenning
 
     alt F2-initiated
         Keyper->>Owner: Approval link by email
         Owner->>Keyper: Authenticate via eHerkenning and approve
     else BO-initiated
-        Note over Initiator,Keyper: Initiator is the building owner — approves in same session
+        Note over Initiator,Keyper: Initiator is the building owner —<br/>approves in same session
         Initiator->>Keyper: Approve
     end
 
     Keyper->>GIR: POST /connect/token (client credentials)
     GIR-->>Keyper: Access token
-    Keyper->>GIR: Register AccessRight policy (building owner → F2)
+    Keyper->>GIR: Register AccessRight policy<br/>(building owner → F2)
     Keyper->>F2: Confirmation incl. SW1 endpoint
-    Keyper->>Owner: Link to Keyper Manager for ongoing management
+    Keyper->>Owner: Link to Keyper Manager<br/>for ongoing management
 ```
 
 ### Step 1: Role and Use Case Selection *(TechniekNederland)*
@@ -335,7 +335,7 @@ sequenceDiagram
     SW2->>SW1: GET /maintenance-data?vboId=<VBOID>
     SW1->>GIR: POST /connect/token (eSeal client assertion)
     GIR-->>SW1: Access token
-    SW1->>GIR: POST /delegation — verify AccessRight (building owner → F2)
+    SW1->>GIR: POST /delegation —<br/>verify AccessRight (building owner → F2)
     GIR-->>SW1: Delegation evidence (Permit)
     SW1-->>SW2: Standard maintenance data set
 ```
