@@ -41,7 +41,7 @@ sequenceDiagram
 
     rect rgb(240, 248, 255)
         Note over App,GIR: Phase 1 — Owner authorization / AccessRight (one-time per building / installer pair)
-        Note over App,Keyper: F2 or BO initiates via TN GIR app; BO approves via eHerkenning in Keyper
+        Note over App,Keyper: F2 or BO initiates via TN GIR app, BO approves via eHerkenning in Keyper
         App->>Keyper: In-session eHerkenning auth + approval request (VBO-ids, NL/SfB scope, F2)
         Keyper->>Owner: Approval link (F2-initiated) or direct approval prompt (BO-initiated)
         Owner->>Keyper: Authenticate via eHerkenning and approve
@@ -125,7 +125,7 @@ sequenceDiagram
         Keyper->>GIR: Query installations
         GIR-->>Keyper: Installation list
         Keyper-->>App: Installation list for scope confirmation
-        App->>Initiator: Show registered installations; confirm or adjust scope
+        App->>Initiator: Show registered installations, confirm or adjust scope
     end
 
     App->>Keyper: Initiate eHerkenning session + submit approval request
