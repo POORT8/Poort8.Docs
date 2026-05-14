@@ -75,4 +75,4 @@ Keyper Approve supports several enhancements to the introductory approval flow:
 | Provider              | –    | Registry checks             | Provider connector |   |
 | Consumer              |Requests or view status  | –           | Consumer connector |   |
 
-> **Next steps:** Deep‑dive into [Keyper Approve API](https://keyper-preview.poort8.nl/scalar/) or [NoodleBar API](https://noodlebar.poort8.nl/scalar/) when you’re ready to implement.
+> **Next steps:** Deep‑dive into [Keyper Approve API](https://keyper-preview.poort8.nl/scalar/) or [NoodleBar API](https://noodlebar-preview.poort8.nl/scalar/) when you’re ready to implement.
