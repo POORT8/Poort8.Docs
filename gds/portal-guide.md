@@ -3,7 +3,7 @@
 **For parties querying granted access rights**
 
 > **Pilot phase — demo environment**
-> During the pilot phase, the GDS dataspace is not yet used. Instead, all parties work against the **Poort8 demo environment** hosted at `noodlebar.poort8.nl`. The API structure and authentication flow are identical to the production GDS environment. All URLs in this guide point to the demo environment.
+> During the pilot phase, the GDS dataspace is not yet used. Instead, all parties work against the **Poort8 demo environment** hosted at `noodlebar-preview.poort8.nl`. The API structure and authentication flow are identical to the production GDS environment. All URLs in this guide point to the demo environment.
 
 This guide explains how to use the GDS portal API to retrieve policies — the granted access rights that building owners have issued to data service consumers. This is useful for parties who need to inspect which organizations have been granted access to building data (e.g., for auditing, dashboards, or administrative tooling).
 
@@ -16,58 +16,76 @@ sequenceDiagram
     participant Auth as GDS Auth
     participant AR as GDS Authorization<br/>Registry
 
-    Client->>Auth: Request access token (scope: read:ar:delegated)
+    Client->>Auth: Request access token (client credentials)
     Auth-->>Client: Bearer token
     Client->>AR: GET /api/policies?issuerId={organizationId}
     AR-->>Client: List of policies for that issuer
 
-    note over Auth,AR: Pilot environment: noodlebar.poort8.nl
+    note over Auth,AR: Pilot environment: noodlebar-preview.poort8.nl
 ```
 
 ## Step 1: Get an access token
 
 Authenticate against the GDS token endpoint to obtain a bearer token.
 
-**Reference:** [NoodleBar API — Authentication](https://noodlebar.poort8.nl/scalar/#description/authentication) *(pilot environment)*
+**Reference:** [NoodleBar API — Authentication](https://noodlebar-preview.poort8.nl/scalar/#description/authentication) *(pilot environment)*
+
+### Token endpoint
+
+```
+POST https://auth.poort8.nl/realms/noodlebar-preview/protocol/openid-connect/token
+```
 
 ### Required parameters
 
 | Parameter | Value |
 |-----------|-------|
-| `scope` | `read:ar:delegated` |
-| `audience` | `https://noodlebar.poort8.nl` |
+| `grant_type` | `client_credentials` |
+| `client_id` | Your application's client ID |
+| `client_secret` | Your application's client secret |
+| `scope` | Your granted API client ID |
 
-> **Important:** The `audience` must be set to `https://noodlebar.poort8.nl` for the pilot environment. Tokens issued for a different audience will be rejected. This value will change to `https://gds.poort8.nl` when the production GDS environment goes live.
-
-The `read:ar:delegated` scope grants read access to policies across organizations — including policies issued by issuers other than your own organization. This is the delegated variant of the read scope.
+> **Important:** The `scope` must be set to the API client ID that was granted to you by the API supplier. This scope determines which API your token can access. Your API supplier will provide this value when your access is approved.
 
 ### Example token request
 
 ```http
-POST /connect/token
-Host: <auth-server>
+POST /realms/noodlebar-preview/protocol/openid-connect/token HTTP/1.1
+Host: auth.poort8.nl
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=client_credentials
 &client_id=<your-client-id>
 &client_secret=<your-client-secret>
-&scope=read:ar:delegated
-&audience=https://noodlebar.poort8.nl
+&scope=<your-api-client-id>
 ```
 
 The response contains a `access_token` (JWT bearer token) that you include in all subsequent API calls.
+
+### Example response
+
+```json
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 300,
+  "scope": "<your-api-client-id> organization"
+}
+```
+
+> **Token lifetime:** Access tokens are valid for **5 minutes**. Request a new token before the current one expires. Do not cache tokens beyond their expiry.
 
 ## Step 2: Query policies for an issuer
 
 Use the bearer token to retrieve policies for a specific issuer (data rights holder — typically the building owner who granted access).
 
-**Reference:** [NoodleBar API — GET /api/policies](https://noodlebar.poort8.nl/scalar/#tag/policies/GET/api/policies) *(pilot environment)*
+**Reference:** [NoodleBar API — GET /api/policies](https://noodlebar-preview.poort8.nl/scalar/#tag/policies/GET/api/policies) *(pilot environment)*
 
 ### Example request
 
 ```http
 GET /api/policies?issuerId=NLNHR.87654321
-Host: noodlebar.poort8.nl
+Host: noodlebar-preview.poort8.nl
 Authorization: Bearer <access_token>
 ```
 
