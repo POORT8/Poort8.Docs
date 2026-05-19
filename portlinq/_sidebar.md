@@ -6,6 +6,7 @@
 - **Integration Guides**
   - [Authenticatie Flow](authenticatie.md)
   - [Walstroom Toegangsflow](walstroom-toegang.md)
+  - [Walstroom Autorisatie (Charlie)](walstroom-autorisatie.md)
   - [Geofence Arrival Flow](geofence-arrival.md)
 
 - **Technische Referentie**

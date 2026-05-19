@@ -388,6 +388,7 @@ Content-Type: application/json
 - Terug naar de [Introductie](README.md) voor een overzicht
 - Bekijk de [PortlinQ API docs ➚](https://portlinq-preview.poort8.nl/scalar/v1) voor endpoint details
 - Bekijk de [Walstroom Toegangsflow](walstroom-toegang.md) voor schipper-initiated services
+- Bekijk de [Walstroom Autorisatie voor Dienstaanbieders](walstroom-autorisatie.md) voor een concreet provider enforcement voorbeeld
 - Zie de [NoodleBar documentatie](../noodlebar/) voor achtergrond over Authorization Registry
 
 ## Context: Automatische Haven Diensten

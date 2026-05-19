@@ -119,5 +119,6 @@ Elke dienst vereist autorisatie verificatie via PortlinQ-AR voordat de service p
 ## Volgende stappen
 
 - Bekijk de [Walstroom Toegangsflow](walstroom-toegang.md) voor schipper-initiated diensten
+- Bekijk de [Walstroom Autorisatie voor Dienstaanbieders](walstroom-autorisatie.md) voor de runtime check door Charlie
 - Bekijk de [Geofence Arrival Flow](geofence-arrival.md) voor automatische haven aanmeldingen
 - Zie de [PortlinQ API docs ➚](https://portlinq-preview.poort8.nl/scalar/v1) voor endpoint details

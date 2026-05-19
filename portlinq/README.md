@@ -22,6 +22,8 @@ Schippers authenticeren, selecteren hun schip, en gebruiken services via hun app
 
 [→ Bekijk de Walstroom Toegangsflow](walstroom-toegang.md)
 
+[→ Bekijk de Walstroom Autorisatiegids voor dienstaanbieders](walstroom-autorisatie.md)
+
 ### 2. Consent-based Automation (Geofence Arrival)
 
 Automatische haven aanmeldingen op basis van AIS/EuRIS locatie data, met schipper consent en haven contract verificatie. De schipper app registreert geofence consent policies namens het schip.
@@ -56,8 +58,9 @@ De PortlinQ infrastructuur is bereikbaar via:
 
 | Wat je nodig hebt | Waar je het vindt |
 |--------------------|-------------------|
-| **Architectuur begrijpen** | [Lees hierboven](#architectuur-componenten) |
-| **Walstroom implementatie** | [Walstroom Toegangsflow](walstroom-toegang.md) |
+| **Architectuur begrijpen** | [Lees hierboven](#hoe-werkt-het) |
+| **Walstroom app-flow implementeren** | [Walstroom Toegangsflow](walstroom-toegang.md) |
+| **Walstroom autorisatie valideren** | [Walstroom Autorisatie voor Dienstaanbieders](walstroom-autorisatie.md) |
 | **Geofence implementatie** | [Geofence Arrival Flow](geofence-arrival.md) |
 | **API referentie** | [PortlinQ API docs ➚](https://portlinq-preview.poort8.nl/scalar/v1) |
 | **NoodleBar concepten** | [NoodleBar documentatie](../noodlebar/) |

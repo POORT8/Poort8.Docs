@@ -6,7 +6,7 @@ Schippers kunnen walstroom (shore power) reserveren en afnemen via hun gekozen a
 
 ## Overzicht
 
-De walstroom flow combineert **app-lokale authenticatie**, **token exchange met ASR** voor schip-context, **policy aanmaak** door de schipper app namens het schip, en **autorisatie verificatie** via AR. De schipper app maakt een autorisatie policy aan namens het schip, waarna de app een schip-scoped token verkrijgt via Portlinq ASR. Dit token wordt gebruikt bij de walstroom API die de autorisatie verifieert via Portlinq AR.
+De walstroom flow combineert **app-lokale authenticatie**, **token exchange met ASR** voor schip-context, **policy aanmaak** door de schipper app namens het schip, en **autorisatie verificatie** via AR. De schipper app maakt een autorisatie policy aan namens het schip, waarna de app een schip-scoped token verkrijgt via PortlinQ ASR. Dit token wordt gebruikt bij de walstroom API die de autorisatie verifieert via PortlinQ AR.
 
 > **Belangrijk:** Deze flow toont de volledige authenticatie en autorisatie keten. De prerequisite stappen (schip onboarding) worden uitgevoerd door de exploitant vooraf.
 
@@ -91,7 +91,7 @@ Content-Type: application/json
   "subjectId": "{David_organization_id}",
   "resourceId": "walstroom",
   "action": "use",
-  "useCase": "portlinq-walstroom"
+  "useCase": "unspecified"
 }
 ```
 
@@ -123,7 +123,7 @@ GET https://portlinq-preview.poort8.nl/api/authorization/explained-enforce
   ?subject={David_organization_id}
   &resource=walstroom
   &action=use
-  &useCase=portlinq-walstroom
+  &useCase=unspecified
   &issuer={Bob_KvK}
   &serviceProvider={Charlie_organization_id}
   &type=walstroom-service
@@ -133,9 +133,9 @@ Authorization: Bearer {charlie_service_token}
 
 **AR evaluatie:**
 1. AR zoekt naar policies waar:
-   - `issuer` = Schip (via ship-scoped token)
+  - `issuer` = Schip (via ship-scoped token)
    - `subject` = David (app provider)
-   - `resource` = walstroom
+  - `resource` = walstroom
    - `serviceProvider` = Charlie
 2. Als een geldige policy bestaat → `Permit`
 3. Anders → `Deny`
@@ -152,7 +152,7 @@ Authorization: Bearer {charlie_service_token}
       "subjectId": "{David_organization_id}",
       "resourceId": "walstroom",
       "action": "use",
-      "useCase": "portlinq-walstroom",
+      "useCase": "unspecified",
       "issuedAt": 1738368000,
       "notBefore": 1738368000,
       "expiration": 1769904000,
@@ -209,6 +209,7 @@ De app toont de bevestiging aan Alice met sessie informatie.
 
 - Terug naar de [Introductie](README.md) voor een overzicht
 - Bekijk de [PortlinQ API docs ➚](https://portlinq-preview.poort8.nl/scalar/v1) voor endpoint details
+- Bekijk de [Walstroom Autorisatie voor Dienstaanbieders](walstroom-autorisatie.md) voor de Charlie runtime check
 - Bekijk de [Geofence Arrival Flow](geofence-arrival.md) voor automatische haven aanmeldingen
 - Zie de [NoodleBar documentatie](../noodlebar/) voor achtergrond over Authorization Registry
 
