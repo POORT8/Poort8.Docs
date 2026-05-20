@@ -19,7 +19,7 @@ for section_dir in */; do
   section="${section_dir%/}"
   [ -d "$section_dir" ] || continue
 
-  if ! grep -rl '```likec4' --include='*.md' "$section_dir" 2>/dev/null | grep -q .; then
+  if ! grep -rl '```likec4' --include='*.md' --exclude='_*' "$section_dir" 2>/dev/null | grep -q .; then
     continue
   fi
 
@@ -53,7 +53,7 @@ for i, m in enumerate(matches):
 
   # Verify each extracted view-id is present in the generated bundle
   for c4_file in "${section_dir}likec4/"*.c4; do
-    grep -oE 'view [a-zA-Z0-9_]+' "$c4_file" | awk '{print $2}' | while read -r view_id; do
+    (grep -oE 'view [a-zA-Z0-9_]+' "$c4_file" || true) | awk '{print $2}' | while read -r view_id; do
       grep -q "$view_id" "assets/js/${section}-components.js" \
         || { echo "ERROR: view '$view_id' not found in bundle" >&2; exit 1; }
     done

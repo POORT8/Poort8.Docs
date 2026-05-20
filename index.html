@@ -78,21 +78,25 @@
         return;
       }
 
-      hosts.forEach(function(host) {
-        if (installLikeC4OverlayFix(host)) {
-          return;
-        }
-
-        var attempts = 0;
-        var retry = function() {
-          attempts += 1;
-          if (installLikeC4OverlayFix(host) || attempts >= 20) {
+      // Wait for the custom element to be defined (handles dynamic bundle loading).
+      // After definition, the inner shadow DOM may still need a frame to render,
+      // so we keep a short rAF fallback for each host.
+      customElements.whenDefined('likec4-view').then(function() {
+        hosts.forEach(function(host) {
+          if (installLikeC4OverlayFix(host)) {
             return;
           }
-          window.requestAnimationFrame(retry);
-        };
 
-        window.requestAnimationFrame(retry);
+          var attempts = 0;
+          var retry = function() {
+            if (installLikeC4OverlayFix(host) || attempts++ >= 5) {
+              return;
+            }
+            window.requestAnimationFrame(retry);
+          };
+
+          window.requestAnimationFrame(retry);
+        });
       });
     }
 
@@ -143,6 +147,7 @@
             var match = (route || '').match(/#\/?([^/?#]+)(?:\/|$)/);
             if (!match) return;
             var section = match[1];
+            if (!/^[a-zA-Z0-9_-]+$/.test(section)) return;
             if (!loadedBundles[section]) {
               loadedBundles[section] = true;
               import('./assets/js/' + section + '-components.js').catch(function() {
