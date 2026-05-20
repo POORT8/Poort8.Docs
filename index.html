@@ -117,9 +117,16 @@
               return '<div class="mermaid">' + code + '</div>';
             }
             if (lang === "likec4") {
-              var match = code.match(/\bview\s+(\w+)/);
-              if (!match) return this.origin.code.apply(this, arguments);
-              var viewId = match[1];
+              // Allow explicit view selection via first-line directive: // view: <id>
+              var directiveMatch = code.match(/^\/\/ view:\s*(\w+)/);
+              var viewId;
+              if (directiveMatch) {
+                viewId = directiveMatch[1];
+              } else {
+                var autoMatch = code.match(/\bview\s+(\w+)/);
+                if (!autoMatch) return this.origin.code.apply(this, arguments);
+                viewId = autoMatch[1];
+              }
               return '<likec4-view class="likec4-embed" view-id="' + viewId + '" dynamic-variant="sequence"></likec4-view>';
             }
             return this.origin.code.apply(this, arguments);
@@ -133,7 +140,7 @@
           function loadBundleForRoute(route) {
             // Derive the docs section from the Docsify hash (e.g. /#/noodlebar/page -> noodlebar)
             // and attempt to load its bundle. Silently ignored if no bundle exists.
-            var match = (route || '').match(/#\/?([^/?#]+)\//);
+            var match = (route || '').match(/#\/?([^/?#]+)(?:\/|$)/);
             if (!match) return;
             var section = match[1];
             if (!loadedBundles[section]) {
