@@ -8,6 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
+  <style>
+    likec4-view.likec4-embed {
+      display: block;
+      min-height: 720px;
+      border: 1px solid #d7deea;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  </style>
 </head>
 <body>
   <div id="app"></div>
@@ -15,6 +24,77 @@
   <script>
     var num = 0;
     mermaid.initialize({ startOnLoad: false });
+
+    function installLikeC4OverlayFix(host) {
+      if (!host || host.dataset.p8Likec4Fixed === 'true') {
+        return false;
+      }
+
+      var outerShadowRoot = host.shadowRoot;
+      var innerHost = outerShadowRoot && outerShadowRoot.querySelector('.likec4-view');
+      var innerShadowRoot = innerHost && innerHost.shadowRoot;
+
+      if (!innerShadowRoot) {
+        return false;
+      }
+
+      if (!innerShadowRoot.querySelector('style[data-p8-likec4-overlay-fix]')) {
+        var style = document.createElement('style');
+        style.setAttribute('data-p8-likec4-overlay-fix', 'true');
+        style.textContent = [
+          'dialog.likec4-overlay.likec4-overlay--fullscreen_false {',
+          '  position: fixed !important;',
+          '  top: 50% !important;',
+          '  left: 50% !important;',
+          '  transform: translate(-50%, -50%) !important;',
+          '  width: min(calc(100vw - 2rem), 1080px) !important;',
+          '  height: min(calc(100vh - 2rem), 720px) !important;',
+          '  margin: 0 !important;',
+          '  padding: 0 !important;',
+          '  background: #fff !important;',
+          '  border-radius: 12px !important;',
+          '  overflow: hidden !important;',
+          '}',
+          'dialog.likec4-overlay.likec4-overlay--fullscreen_false::backdrop {',
+          '  background: rgba(15, 23, 42, 0.72) !important;',
+          '}',
+          'dialog.likec4-overlay .likec4-overlay-body {',
+          '  background: #fff !important;',
+          '}',
+          'dialog.likec4-overlay .likec4-shadow-root {',
+          '  background: #fff !important;',
+          '}'
+        ].join('\n');
+        innerShadowRoot.appendChild(style);
+      }
+
+      host.dataset.p8Likec4Fixed = 'true';
+      return true;
+    }
+
+    function applyLikeC4OverlayFix() {
+      var hosts = document.querySelectorAll('likec4-view');
+      if (!hosts.length) {
+        return;
+      }
+
+      hosts.forEach(function(host) {
+        if (installLikeC4OverlayFix(host)) {
+          return;
+        }
+
+        var attempts = 0;
+        var retry = function() {
+          attempts += 1;
+          if (installLikeC4OverlayFix(host) || attempts >= 20) {
+            return;
+          }
+          window.requestAnimationFrame(retry);
+        };
+
+        window.requestAnimationFrame(retry);
+      });
+    }
 
     window.$docsify = {
       name: 'Poort8 Docs',
@@ -36,14 +116,38 @@
             if (lang === "mermaid") {
               return '<div class="mermaid">' + code + '</div>';
             }
+            if (lang === "likec4") {
+              var match = code.match(/\bview\s+(\w+)/);
+              if (!match) return this.origin.code.apply(this, arguments);
+              var viewId = match[1];
+              return '<likec4-view class="likec4-embed" view-id="' + viewId + '" dynamic-variant="sequence"></likec4-view>';
+            }
             return this.origin.code.apply(this, arguments);
           }
         }
       },
       plugins: [
         function(hook) {
+          var loadedBundles = {};
+
+          function loadBundleForRoute(route) {
+            // Derive the docs section from the Docsify hash (e.g. /#/noodlebar/page -> noodlebar)
+            // and attempt to load its bundle. Silently ignored if no bundle exists.
+            var match = (route || '').match(/#\/?([^/?#]+)\//);
+            if (!match) return;
+            var section = match[1];
+            if (!loadedBundles[section]) {
+              loadedBundles[section] = true;
+              import('./assets/js/' + section + '-components.js').catch(function() {
+                // No LikeC4 bundle for this section — that's fine
+              });
+            }
+          }
+
           hook.doneEach(function() {
             mermaid.init(undefined, '.mermaid');
+            loadBundleForRoute(window.location.hash || '/');
+            applyLikeC4OverlayFix();
           });
         }
       ]
