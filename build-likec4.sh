@@ -19,7 +19,7 @@ for section_dir in */; do
   section="${section_dir%/}"
   [ -d "$section_dir" ] || continue
 
-  if ! grep -rl '```likec4' --include='*.md' --exclude='_*' "$section_dir" 2>/dev/null | grep -q .; then
+  if ! grep -rl '```likec4' --include='*.md' --exclude='_*' --exclude-dir='_*' "$section_dir" 2>/dev/null | grep -q .; then
     continue
   fi
 
@@ -36,7 +36,7 @@ for section_dir in */; do
     python3 -c "
 import sys, re
 content = open(sys.argv[1], encoding='utf-8').read()
-matches = re.findall(r'\x60\x60\x60likec4\n(.*?)\n\x60\x60\x60', content, re.DOTALL)
+matches = re.findall(r'\x60\x60\x60likec4[^\n]*\n(.*?)\n\x60\x60\x60', content, re.DOTALL)
 base = sys.argv[2]
 for i, m in enumerate(matches):
     fname = base + ('.c4' if len(matches) == 1 else '-' + str(i) + '.c4')

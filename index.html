@@ -149,8 +149,9 @@
             var section = match[1];
             if (!/^[a-zA-Z0-9_-]+$/.test(section)) return;
             if (!loadedBundles[section]) {
-              loadedBundles[section] = true;
-              import('./assets/js/' + section + '-components.js').catch(function() {
+              import('./assets/js/' + section + '-components.js').then(function() {
+                loadedBundles[section] = true;
+              }).catch(function() {
                 // No LikeC4 bundle for this section — that's fine
               });
             }
