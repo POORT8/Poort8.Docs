@@ -16,29 +16,43 @@ Before you begin, ensure the following:
 
 ## Overview
 
-```mermaid
-sequenceDiagram
-    participant David as David (Consumer)
-    participant Portal as Self-Service Portal
-    participant Charlie as Charlie (Provider)
-    participant ASR as Association Registry
-    participant API as Charlie's API
+```likec4
+specification {
+  element actor
+  element system
+}
 
-    David->>Portal: 1. Register application
-    Portal->>ASR : Create APP client
-    Portal-->>David: Client credentials
+model {
+  david = actor 'David (Consumer)'
+  portal = system 'Self-Service Portal'
+  charlie = actor 'Charlie (Provider)'
+  asr = system 'Association Registry'
+  api = system "Charlie's API"
+}
 
-    David->>Portal: 2. Browse catalogue & request access
-    Portal-->>Charlie: Access request notification
+views {
+  dynamic view requesting_api_access {
+    title 'Requesting API access'
+    variant sequence
 
-    Charlie->>Portal: 3. Approve access
-    Portal->>ASR : Assign API scope to APP
+    david -> portal '1. Register application'
+    portal -> asr 'Create APP client'
+    asr -> portal 'Client registered'
+    portal -> david 'Client credentials'
 
-    David->>ASR : 4. Request token (client_credentials)
-    ASR -->>David: Access token
+    david -> portal '2. Browse catalogue and request access'
+    portal -> charlie 'Access request notification'
 
-    David->>API: 5. Call API with Bearer token
-    API-->>David: API response
+    charlie -> portal '3. Approve access'
+    portal -> asr 'Assign API scope to APP'
+
+    david -> asr '4. Request token (client_credentials)'
+    asr -> david 'Access token'
+
+    david -> api '5. Call API with Bearer token'
+    api -> david 'API response'
+  }
+}
 ```
 
 ## Step 1 — Register Your Application
