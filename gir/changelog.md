@@ -20,6 +20,7 @@ This comparison covers the transition from the earlier, non-versioned Registrati
 | Required status fields | Optional | `installationBaseData.operationalStatus` and `installationBaseData.lifeCycleStatus` required | [Add required status fields](#add-required-status-fields) |
 | `controlSystemType` type | Array of strings (e.g. `["GBS"]`) | Single enum value (e.g. `GBS`) | [Update controlSystemType](#update-controlsystemtype) |
 | Enum constraints | Arbitrary strings accepted for key enum fields | Defined enum values required | [Update enum-constrained fields](#update-enum-constrained-fields) |
+| Response metadata field | `metadata.deletedAt` included in responses | `metadata.deletedAt` field removed | [Remove deletedAt field handling](#remove-deletedat-field-handling) |
 
 ### Update endpoint URLs
 
@@ -91,6 +92,44 @@ Several fields that previously accepted any string now require a value from a fi
 | `installationBaseData.classifications[].classificationType` | `NLSFB_tabel1` |
 | `installationBaseData.component[].componentID[].type` | `SGTIN`, `SerialNumber` |
 | `installationBaseData.component[].productInformation.datapoolInformation.source` | `2baValid`, `2baNonValid` |
+
+### Remove deletedAt field handling
+
+The `metadata.deletedAt` field has been removed from all GIRBasisdataMessage endpoint responses as part of soft delete cleanup for the Authorization Registry.
+
+**Affected endpoints:**
+- `POST /v1/api/GIRBasisdataMessage`
+- `GET /v1/api/GIRBasisdataMessage`
+- `GET /v1/api/GIRBasisdataMessage/{guid}`
+
+**Migration:** If your client code reads `response.metadata.deletedAt`, remove that logic. Records are no longer soft-deleted.
+
+Example response before:
+```json
+{
+  "metadata": {
+    "issuer": "did:ishare:EU.NL.NTRNL-30276543",
+    "createdAt": "2025-01-15T10:00:00Z",
+    "updatedAt": null,
+    "deletedAt": null,
+    "status": "Active"
+  }
+}
+```
+
+Example response now:
+```json
+{
+  "metadata": {
+    "issuer": "did:ishare:EU.NL.NTRNL-30276543",
+    "createdAt": "2025-01-15T10:00:00Z",
+    "updatedAt": null,
+    "status": "Active"
+  }
+}
+```
+
+For details on the current API response schema, see [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1). ([#933](https://github.com/POORT8/Poort8.Dataspace.Private/pull/933))
 
 ### Non-breaking Changes
 

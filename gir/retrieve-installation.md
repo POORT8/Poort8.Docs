@@ -86,7 +86,6 @@ A successful `200` response returns a single `GIRBasisdataMessage` object:
     "issuer": "did:ishare:EU.NL.NTRNL-30276543",
     "createdAt": "2025-01-15T10:00:00Z",
     "updatedAt": null,
-    "deletedAt": null,
     "status": "Active"
   }
 }
