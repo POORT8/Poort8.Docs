@@ -2,13 +2,11 @@
 
 Schippers kunnen walstroom (shore power) reserveren en afnemen via hun gekozen app. Deze flow beschrijft de authenticatie, autorisatie en walstroom sessie flow met PortlinQ's Associatieregister (ASR) en Authorization Registry (AR).
 
-🔗 **[API Docs ➚](https://portlinq-preview.poort8.nl/scalar/v1)** — Interactieve endpoint testing
+[PortlinQ API Docs ➚](https://portlinq-preview.poort8.nl/scalar/v1)
 
 ## Overzicht
 
-De walstroom flow combineert **app-lokale authenticatie**, **token exchange met ASR** voor schip-context, **policy aanmaak** door de schipper app namens het schip, en **autorisatie verificatie** via AR. De schipper app maakt een autorisatie policy aan namens het schip, waarna de app een schip-scoped token verkrijgt via PortlinQ ASR. Dit token wordt gebruikt bij de walstroom API die de autorisatie verifieert via PortlinQ AR.
-
-> **Belangrijk:** Deze flow toont de volledige authenticatie en autorisatie keten. De prerequisite stappen (schip onboarding) worden uitgevoerd door de exploitant vooraf.
+De walstroom flow combineert **app-lokale authenticatie**, **policy aanmaak** door de schipper app namens de exploitant, en **autorisatie verificatie** via AR. De schipper app maakt een autorisatie policy aan namens de exploitant, waarna de app een exploitant-scoped token gebruikt. Dit token wordt gebruikt bij de walstroom API die de autorisatie verifieert via PortlinQ AR.
 
 ## Sequence Diagram
 
@@ -19,66 +17,55 @@ sequenceDiagram
     participant ASR as PortlinQ-ASR
     participant AR as PortlinQ-AR
     participant Charlie as Charlie (Walstroom API)
-    Note over Alice,AR: Prerequisites: Exploitant heeft Schip (ENI)<br/>en Exploitant (KvK) geregistreerd in ASR met relaties.
 
     rect rgb(230, 240, 255)
         Note over Alice,David: Authenticatie Flow (zie authenticatie.md)
-        Note over Alice,David: Resulteert in schip-scoped token
+        Note over Alice,David: Resulteert in exploitant-scoped token
     end
 
-    David->>AR: 1. Create policy namens schip<br/>(schip → David → walstroom)
+    David->>AR: 1. Create policy namens exploitant<br/>(Bob → David → kast-001)
     AR-->>David: Policy created
 
-    David->>Charlie: 2. Walstroom request + ship token
-    Charlie->>ASR: 3. Verify participant (ENI)
-    ASR-->>Charlie: ENI confirmed
-    Charlie->>AR: 4. Check authorization<br/>(subject=David, resource=walstroom,<br/>serviceProvider=Charlie, issuer=schip)
-    Note right of AR: Evaluate schip's policy
+    David->>Charlie: 2. Walstroom request + exploitant token
+    Charlie->>ASR: 3. Verify participant (Bob)<br/>(organization:kvk:12345678)
+    ASR-->>Charlie: Bob confirmed
+    Charlie->>AR: 4. Check authorization<br/>(subject=David, resource=kast-001,<br/>serviceProvider=Charlie, issuer=Bob)
+    Note right of AR: Evaluate Bob's policy
     AR-->>Charlie: Permit
     Charlie-->>David: 5. Walstroom sessie gestart
     David-->>Alice: Bevestiging
 ```
 
-## Voorwaarden (Prerequisites)
-
-Deze stappen worden uitgevoerd door de exploitant vooraf:
-
-| Prerequisite | Wat | Wie |
-|--------------|-----|-----|
-| **Schip registratie** | Schip (ENI) geregistreerd in ASR | Exploitant |
-| **Relaties** | Exploitant → Schip relaties in ASR | Exploitant |
-
-> **ID formaten:** PortlinQ gebruikt samengestelde identifiers: `organization:kvk:xxxxxxxx` voor organisaties (KvK-nummer) en `ship:ENI:xxxxxxxxx` voor schepen (ENI-nummer). In deze documentatie verwijst `{SchipId}` naar het volledige formaat `ship:ENI:xxxxxxxxx`.
-
 ## Stappen
 
-### Authenticatie & Schip Token
+### Authenticatie & Exploitant Token
 
-Zie [Authenticatie Flow](authenticatie.md) voor de volledige authenticatie stappen. De schipper selecteert het schip, en de app verkrijgt een schip-scoped token via ASR token exchange.
+Zie [Authenticatie Flow](authenticatie.md) voor de volledige authenticatie stappen. De app verkrijgt een exploitant-scoped token.
 
-**Resultaat:** `{ship_scoped_token}` met scope `ship:{SchipId} exploitant:{KvK}`
+**Resultaat:** Een access token (`{exploitant_token}`) waarmee de app gemachtigd is om namens Bob (`organization:kvk:12345678`) te handelen.
 
 ### Stap 1: Policy aanmaak _(PortlinQ AR)_
 
-De schipper app maakt namens het schip een autorisatie policy aan die David (de app) toestemming geeft om walstroom te gebruiken.
+De schipper app maakt namens de exploitant (Bob) een autorisatie policy aan die David (de app) toestemming geeft om walstroom te gebruiken.
 
 ```http
 POST https://portlinq-preview.poort8.nl/api/policies
-Authorization: Bearer {ship_scoped_token}
+Authorization: Bearer {exploitant_token}
 Content-Type: application/json
 ```
 ```json
 {
-  "subjectId": "{David_organization_id}",
+  "subjectId": "organization:kvk:87654321",
   "action": "use",
-  "resourceId": "walstroom",
-  "issuerId": "{schip_organization_id}",
+  "resourceId": "kast-001",
+  "issuerId": "organization:kvk:12345678",
   "issuedAt": 1738368000,
   "notBefore": 1738368000,
   "expiration": 1769904000,
-  "serviceProvider": "{Charlie_organization_id}",
+  "serviceProvider": "organization:kvk:23456789",
   "type": "walstroom-service",
-  "attribute": "*"
+  "attribute": "*",
+  "useCase": "unspecified"
 }
 ```
 
@@ -87,45 +74,59 @@ Content-Type: application/json
 ```json
 {
   "policyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "issuerId": "{schip_organization_id}",
-  "subjectId": "{David_organization_id}",
-  "resourceId": "walstroom",
+  "useCase": "unspecified",
+  "issuedAt": 1738368000,
+  "notBefore": 1738368000,
+  "expiration": 1769904000,
+  "issuerId": "organization:kvk:12345678",
+  "subjectId": "organization:kvk:87654321",
+  "serviceProvider": "organization:kvk:23456789",
   "action": "use",
-  "useCase": "unspecified"
+  "resourceId": "kast-001",
+  "type": "walstroom-service",
+  "attribute": "*",
+  "license": null,
+  "rules": null,
+  "properties": []
 }
 ```
 
+> **Tip: Toegang laten goedkeuren via e-mail?**
+> Als alternatief voor het direct inschrijven van de policy (waarvoor de app direct gemachtigd moet zijn namens de exploitant), kan de app gebruikmaken van **Keyper Approval Links**. Hiermee genereert de app een verzoek dat automatisch per e-mail naar de goedkeurder (Bob) wordt gestuurd. Zodra Bob akkoord geeft, schrijft Keyper de policy automatisch in het AR.
+>
+> [→ Lees hoe je Keyper Approval Links integreert](../keyper/)
+
 ### Stap 2: Walstroom reservering _(extern)_
 
-De app stuurt een walstroom reservering naar de walstroom API (Charlie) met het ship-scoped token.
+De app stuurt een walstroom reservering naar de walstroom API (Charlie) met het exploitant token.
 
 > ℹ️ De walstroom API endpoints en request/response formaten zijn service provider-specifiek. Raadpleeg de documentatie van de dienstaanbieder voor specifieke API details.
 
 ### Stap 3: Participant verificatie _(PortlinQ ASR)_
 
-De walstroom API verifieert dat het schip (ENI) een geregistreerde participant is in PortlinQ via het Organization Registry.
+De walstroom API (Charlie) verifieert via het Associatieregister (ASR) dat de exploitant (Bob, `organization:kvk:12345678`) een actieve en geregistreerde participant is binnen PortlinQ. Hiervoor wordt de Organization Registry API geraadpleegd:
 
 ```http
-GET https://portlinq-preview.poort8.nl/api/organization-registry/{SchipId}
+GET https://portlinq-preview.poort8.nl/api/organization-registry/organization:kvk:12345678
 Authorization: Bearer {charlie_service_token}
 ```
 
-Zie de [Organization Registry API docs ➚](https://portlinq-preview.poort8.nl/scalar/#tag/organization-registry/GET/api/organization-registry/{id}) voor de volledige response specificatie.
+Zie de [Organization Registry API docs ➚](https://portlinq-preview.poort8.nl/scalar/#tag/organization-registry/GET/api/organization-registry/{id}) voor de volledige details van deze ASR-check.
 
-Als de participant niet gevonden wordt, weigert Charlie de aanvraag.
+Als Bob niet gevonden wordt of niet actief is in het ASR, weigert Charlie de aanvraag.
 
 ### Stap 4: Autorisatie verificatie _(PortlinQ AR)_
 
-De walstroom API controleert via AR of David (de app) toestemming heeft om walstroom te gebruiken namens Bob's schepen.
+De walstroom API controleert via AR of David (de app) toestemming heeft om walstroom te gebruiken namens Bob (de exploitant).
 
 ```http
 GET https://portlinq-preview.poort8.nl/api/authorization/explained-enforce
-  ?subject={David_organization_id}
-  &resource=walstroom
+  ?subject=organization:kvk:87654321
+  &resource=kast-001
   &action=use
   &useCase=unspecified
-  &issuer={Bob_KvK}
-  &serviceProvider={Charlie_organization_id}
+  &issuer=organization:kvk:12345678
+  &serviceProvider=organization:kvk:23456789
   &type=walstroom-service
   &attribute=*
 Authorization: Bearer {charlie_service_token}
@@ -133,10 +134,10 @@ Authorization: Bearer {charlie_service_token}
 
 **AR evaluatie:**
 1. AR zoekt naar policies waar:
-  - `issuer` = Schip (via ship-scoped token)
-   - `subject` = David (app provider)
-  - `resource` = walstroom
-   - `serviceProvider` = Charlie
+  - `issuer` = `organization:kvk:12345678` (de scheepsoperator/exploitant)
+  - `subject` = `organization:kvk:87654321` (de schippers-app)
+  - `resource` = `kast-001` (het specifieke walstroomkast-ID)
+  - `serviceProvider` = `organization:kvk:23456789` (Charlie)
 2. Als een geldige policy bestaat → `Permit`
 3. Anders → `Deny`
 
@@ -148,15 +149,15 @@ Authorization: Bearer {charlie_service_token}
   "explainPolicies": [
     {
       "policyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "issuerId": "{schip_organization_id}",
-      "subjectId": "{David_organization_id}",
-      "resourceId": "walstroom",
-      "action": "use",
       "useCase": "unspecified",
       "issuedAt": 1738368000,
       "notBefore": 1738368000,
       "expiration": 1769904000,
-      "serviceProvider": "{Charlie_organization_id}",
+      "issuerId": "organization:kvk:12345678",
+      "subjectId": "organization:kvk:87654321",
+      "serviceProvider": "organization:kvk:23456789",
+      "action": "use",
+      "resourceId": "kast-001",
       "type": "walstroom-service",
       "attribute": "*",
       "license": null,
@@ -186,15 +187,15 @@ De app toont de bevestiging aan Alice met sessie informatie.
 
 ## Foutafhandeling
 
-[TBD — Wordt aangevuld zodra de API-specificatie beschikbaar is. Zie de [PortlinQ API docs ➚](https://portlinq-preview.poort8.nl/scalar/v1) voor actuele foutcodes.]
+Zie de [PortlinQ API docs ➚](https://portlinq-preview.poort8.nl/scalar/v1) voor actuele foutcodes.
 
 **Verwachte scenario's:**
 
-- **Ongeldige token exchange**: ASR retourneert 403 als Alice niet gelinkt is aan exploitant of schip
-- **Participant niet gevonden**: Charlie weigert aanvraag als ENI niet geregistreerd in ASR
-- **Policy niet gevonden**: AR retourneert `Deny`; exploitant moet policy aanmaken
-- **Policy verlopen**: AR retourneert `Deny`; exploitant moet policy verlengen
-- **Service onbereikbaar**: Standaard HTTP foutafhandeling (retry-mechanisme, timeout)
+- **Ongeldige token exchange**: ASR retourneert 403 als Alice niet gelinkt is aan de exploitant.
+- **Participant niet gevonden**: Charlie weigert de aanvraag met `403 Forbidden` als Bob (de exploitant) niet geregistreerd of actief is in het Associatieregister (ASR).
+- **Policy niet gevonden**: AR retourneert `Deny`; exploitant moet policy aanmaken.
+- **Policy verlopen**: AR retourneert `Deny`; exploitant moet policy verlengen.
+- **Service onbereikbaar**: Standaard HTTP foutafhandeling (retry-mechanisme, timeout).
 
 ## Productie-omgeving
 
@@ -209,6 +210,7 @@ De app toont de bevestiging aan Alice met sessie informatie.
 
 - Terug naar de [Introductie](README.md) voor een overzicht
 - Bekijk de [PortlinQ API docs ➚](https://portlinq-preview.poort8.nl/scalar/v1) voor endpoint details
+- Bekijk hoe je [Keyper Approval Links](../keyper/) integreert om policies te laten goedkeuren
 - Bekijk de [Walstroom Autorisatie voor Dienstaanbieders](walstroom-autorisatie.md) voor de Charlie runtime check
 - Bekijk de [Geofence Arrival Flow](geofence-arrival.md) voor automatische haven aanmeldingen
 - Zie de [NoodleBar documentatie](../noodlebar/) voor achtergrond over Authorization Registry

@@ -2,10 +2,12 @@
 
 - **Getting Started**
   - [Introductie](README.md)
+  - [Aansluiten App & API](aansluiten-app-api.md)
 
 - **Integration Guides**
   - [Authenticatie Flow](authenticatie.md)
   - [Walstroom Toegangsflow](walstroom-toegang.md)
+  - [Keyper Approval Links](../keyper/)
   - [Walstroom Autorisatie (Charlie)](walstroom-autorisatie.md)
   - [Geofence Arrival Flow](geofence-arrival.md)
 

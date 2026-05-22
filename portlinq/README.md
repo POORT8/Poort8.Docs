@@ -59,7 +59,9 @@ De PortlinQ infrastructuur is bereikbaar via:
 | Wat je nodig hebt | Waar je het vindt |
 |--------------------|-------------------|
 | **Architectuur begrijpen** | [Lees hierboven](#hoe-werkt-het) |
+| **App & API aansluiten (Onboarding)** | [Aansluiten App & API](aansluiten-app-api.md) |
 | **Walstroom app-flow implementeren** | [Walstroom Toegangsflow](walstroom-toegang.md) |
+| **Toegang goedkeuren via Keyper** | [Keyper Approval Links](../keyper/) |
 | **Walstroom autorisatie valideren** | [Walstroom Autorisatie voor Dienstaanbieders](walstroom-autorisatie.md) |
 | **Geofence implementatie** | [Geofence Arrival Flow](geofence-arrival.md) |
 | **API referentie** | [PortlinQ API docs ➚](https://portlinq-preview.poort8.nl/scalar/v1) |
