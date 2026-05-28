@@ -6,7 +6,7 @@
 
 The Digitaal Onderhoudsboekje enables a building owner to authorize a new installation service party to retrieve maintenance history from the previous installation service party. GIR manages the authorization; Keyper orchestrates owner approval; the actual maintenance data exchange happens directly between the software parties via M2M, authenticated with eSeals.
 
-This guide describes the NI-initiated flow, where the new installer starts the authorization through the TechniekNederland GIR app or directly via the Keyper API, then delegates SW2 as authorized data service consumer. The initial request contains the building owner and VBO-id scope. SW1 acts as the data service provider in the M2M phase.
+This guide describes the New Installer-initiated flow, where the new installer starts the authorization through the TechniekNederland GIR app or directly via the Keyper API, then delegates SW2 as authorized data service consumer. The initial request contains the building owner and VBO-id scope. SW1 acts as the data service provider in the M2M phase.
 
 🔗 [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
 🔗 [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
@@ -27,39 +27,46 @@ This guide describes the NI-initiated flow, where the new installer starts the a
 
 The flow has three phases: a one-time owner authorization (`AccessRight` via Keyper), NI issuing a `SupplierDelegation` to SW2, and a one-off M2M data transfer.
 
-```mermaid
-sequenceDiagram
-    participant App as TN GIR App
-    participant Keyper as Keyper
-    participant Owner as Building Owner
-    participant GIR as GIR
-    participant SW1 as SW1 (data service provider)
-    participant NI as New Installer (NI)
-    participant SW2 as SW2 (software NI)
+```likec4
+// view: dob_overview
+specification {
+  element actor
+  element system
+}
 
-    rect rgb(240, 248, 255)
-      Note over App,GIR: Phase 1 — Owner authorization / AccessRight<br/>(one-time per building / new installer pair)
-        Note over App,Keyper: NI initiates via TN GIR app or Keyper API,<br/>BO approves via eHerkenning in Keyper
-        App->>Keyper: Approval request<br/>(owner, VBO-ids, NL/SfB scope, NI)
-        Keyper->>Owner: Approval link
-        Owner->>Keyper: Authenticate via eHerkenning and approve
-        Keyper->>GIR: Register AccessRight policy (building owner → NI)
-      GIR-->>Keyper: AccessRight registered
-      Keyper->>NI: Confirmation incl. SW1 endpoint where available
-    end
+model {
+  app = system 'TN GIR App'
+  keyper = system 'Keyper'
+  owner = actor 'Building Owner'
+  gir = system 'GIR'
+  sw1 = system 'SW1'
+  ni = actor 'New Installer (NI)'
+  sw2 = system 'SW2'
+}
 
-    rect rgb(240, 255, 240)
-      Note over NI,SW2: Phase 2 — NI SupplierDelegation to SW2
-        NI->>SW2: SupplierDelegation + SW1 endpoint
-    end
+views {
+  dynamic view dob_overview {
+    title 'Digitaal Onderhoudsboekje – Full Flow'
+    variant sequence
 
-    rect rgb(255, 240, 255)
-        Note over SW2,SW1: Phase 3 — M2M maintenance data transfer (one-off)
-        SW2->>SW1: Authenticate (eSeal) + request maintenance data
-        SW1->>GIR: Verify AccessRight (building owner → NI)
-        GIR-->>SW1: Delegation evidence (Permit)
-        SW1-->>SW2: Standard maintenance data set
-    end
+    app -> keyper 'Approval request (owner, VBO-ids, NI); two policies: maintenance data + GIR basisdata read'
+    keyper -> owner 'Approval link'
+    owner -> keyper 'Authenticate via eHerkenning and approve'
+    keyper -> gir 'Register both AccessRight policies (building owner → NI)'
+    gir -> keyper 'Policies registered'
+    keyper -> ni 'Confirmation'
+    ni -> app 'Supply SW2 party details'
+    app -> keyper 'SupplierDelegation request (NI as requester and approver)'
+    keyper -> ni 'Approval link'
+    ni -> keyper 'Authenticate via eHerkenning and approve'
+    keyper -> gir 'Register SupplierDelegation (NI → SW2) for vboId'
+    ni -> sw2 'SupplierDelegation details + vboId'
+    sw2 -> sw1 'Authenticate (eSeal) + request maintenance data by installationId'
+    sw1 -> gir 'Verify AccessRight (building owner → NI) for installationId'
+    gir -> sw1 'Delegation evidence (Permit)'
+    sw1 -> sw2 'Standard maintenance data set'
+  }
+}
 ```
 
 ## Prerequisites
@@ -85,40 +92,50 @@ DSGO distinguishes two authorization types that apply in this flow:
 | `AccessRight` | The data service rights holder (building owner) authorizes a legal data service consumer (NI) to access a data service. | Registered in GIR by Keyper after owner approval (phase 1). |
 | `SupplierDelegation` | A legal party authorizes an authorized party to act on its behalf. | NI → SW2 (consumer side, phase 2). |
 
-> **⚠️ Open decision**: The exact value of the `type` field in GIR policies has not been confirmed. See [Open Decisions](#open-decisions).
-
 ---
 
 ## Phase 1 — Owner Authorization
 
 The Digitaal Onderhoudsboekje flow starts with the new installer (NI). NI submits the request through the TN GIR app or directly via the Keyper API, after which Keyper handles the building owner's approval through eHerkenning. The TN GIR app itself holds no credentials.
 
-```mermaid
-sequenceDiagram
-    participant NI as New Installer (NI)
-    participant App as TN GIR App
-    participant GIRData as GIR Basisdata
-    participant Keyper as Keyper
-    participant Owner as Building Owner
-    participant GIR as GIR
+```likec4
+// view: dob_phase1
+specification {
+  element actor
+  element system
+}
 
-    NI->>App: Select use case
-    App->>App: VBO-id lookup via Kadaster/BAG
-    App->>GIRData: Query GIRBasisdataMessages for VBO-id scope
-    GIRData-->>App: Installation records + metadataissuer
-    App->>NI: Show request form
-    NI->>App: Submit owner, VBO-ids, NL/SfB filter,<br/>validity period
+model {
+  ni = actor 'New Installer (NI)'
+  app = system 'TN GIR App'
+  girdata = system 'GIR Basisdata'
+  keyper = system 'Keyper'
+  owner = actor 'Building Owner'
+  gir = system 'GIR'
+}
 
-    App->>Keyper: Initiate eHerkenning session +<br/>submit approval request
-    Keyper->>Owner: Approval link by email
-    Owner->>Keyper: Authenticate via eHerkenning and approve
+views {
+  dynamic view dob_phase1 {
+    title 'Phase 1 — Owner Authorization'
+    variant sequence
 
-    Keyper->>GIR: POST /connect/token (client credentials)
-    GIR-->>Keyper: Access token
-    Keyper->>GIR: Register AccessRight policy<br/>(building owner → NI)
-    GIR-->>Keyper: AccessRight registered
-    Keyper->>NI: Confirmation incl. SW1 endpoint where available
-    Keyper->>Owner: Link to Keyper Manager<br/>for ongoing management
+    ni -> app 'Select use case'
+    app -> app 'VBO-id lookup via Kadaster/BAG'
+    app -> girdata 'Query GIRBasisdataMessages for VBO-id scope'
+    girdata -> app 'Installation records + metadataissuer'
+    app -> ni 'Show request form'
+    ni -> app 'Submit owner, VBO-ids, NL/SfB filter, validity period'
+    app -> keyper 'Initiate eHerkenning session + submit approval request'
+    keyper -> owner 'Approval link by email'
+    owner -> keyper 'Authenticate via eHerkenning and approve'
+    keyper -> gir 'POST /connect/token (client credentials)'
+    gir -> keyper 'Access token'
+    keyper -> gir 'Register AccessRight policy (building owner → NI)'
+    gir -> keyper 'AccessRight registered'
+    keyper -> ni 'Confirmation'
+    keyper -> owner 'Link to Keyper Manager for ongoing management'
+  }
+}
 ```
 
 ### Step 1: Start the Request in the TN GIR App *(TechniekNederland)*
@@ -180,27 +197,43 @@ The approval request includes:
   "reference": "<UNIQUE REFERENCE>",
   "addPolicyTransactions": [
     {
-      "type": "[TBD — instance-specific, see Open Decisions]",
+      "type": "GIRMaintenanceLog",
       "action": "read",
-      "license": "[TBD — terms of use for the maintenance data, see Open Decisions]",
-      "useCase": "[TBD — instance-specific, see Open Decisions]",
+      "license": "[PLACEHOLDER]",
+      "useCase": "dsgo.gir-digitaalonderhoudsboekje@v1",
       "issuedAt": "<UNIX TIMESTAMP>",
       "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER KVK>",
       "subjectId": "did:ishare:EU.NL.NTRNL-<NI KVK>",
-      "serviceProvider": "did:ishare:EU.NL.NTRNL-<SW1 KVK>",
+      "serviceProvider": "*",
       "resourceId": "<VBOID>",
-      "attribute": "[TBD — NL/SfB code or wildcard, see Open Decisions]",
+      "attribute": "*",
+      "notBefore": "<UNIX TIMESTAMP>",
+      "expiration": "<UNIX TIMESTAMP>"
+    },
+    {
+      "type": "GIRBasisdataMessage",
+      "action": "read",
+      "license": "[PLACEHOLDER]",
+      "useCase": "dsgo.gir-digitaalonderhoudsboekje@v1",
+      "issuedAt": "<UNIX TIMESTAMP>",
+      "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER KVK>",
+      "subjectId": "did:ishare:EU.NL.NTRNL-<NI KVK>",
+      "serviceProvider": "did:ishare:EU.NL.NTRNL-<GIR KVK>",
+      "resourceId": "<VBOID>",
+      "attribute": "*",
       "notBefore": "<UNIX TIMESTAMP>",
       "expiration": "<UNIX TIMESTAMP>"
     }
   ],
   "orchestration": {
-    "flow": "[TBD — instance-specific, see Open Decisions]"
+    "flow": "dsgo.gir-digitaalonderhoudsboekje@v1"
   }
 }
 ```
 
-> ℹ️ Multiple VBO-ids require one entry per VBO-id in `addPolicyTransactions`. The `resourceId` field takes a single identifier.
+> ℹ️ Multiple VBO-ids require one entry per VBO-id in the `addPolicyTransactions` block. The `resourceId` field takes a single identifier.
+
+> ℹ️ **NL/SfB scoping**: To restrict access to specific installation types, replace `"attribute": "*"` with an NL/SfB code — for example `"L"` (mechanical installations) or `"L1"` (HVAC). Both the `GIRMaintenanceLog` and `GIRBasisdataMessage` entries must use the same code. See [Authorization Granularity](#authorization-granularity) for the full overview of scoping options.
 
 See the [Keyper API reference ➚](https://keyper-preview.poort8.nl/scalar/v1) for the full field documentation and authentication flow.
 
@@ -215,7 +248,7 @@ On rejection, the approval link expires and a new request can be initiated.
 
 ### Step 5: Keyper Registers the AccessRight in GIR *(Poort8)*
 
-On approval, Keyper obtains a GIR access token and registers the `AccessRight` policy in GIR-AR:
+On approval, Keyper obtains a GIR access token and registers both `AccessRight` policies in GIR-AR:
 
 ```http
 POST https://gir-preview.poort8.nl/connect/token
@@ -232,29 +265,53 @@ Once the `AccessRight` is registered, Keyper sends NI a confirmation that includ
 
 - The approved policy details (VBO-ids, NL/SfB scope, validity period).
 - The previous installer(s) derived from GIR registration metadata.
-- SW1's maintenance data endpoint URL, if available.
-
-> **⚠️ Open decision**: The mechanism for capturing SW1's endpoint and including it in the Keyper confirmation has not been specified. See [Open Decisions](#open-decisions).
 
 ---
 
 ## Phase 2 — SupplierDelegation
 
-NI must complete this phase before the M2M data transfer (phase 3) can proceed.
+NI must complete this phase before the M2M data transfer (phase 3) can proceed. NI delegates its `AccessRight` to SW2 via Keyper, scoped to the authorized VBO-id(s). No GIR query is needed in this phase; installation-level scoping is deferred to a later refinement.
 
-```mermaid
-sequenceDiagram
-    participant NI as New Installer (NI)
-    participant SW2 as SW2 (software NI)
+```likec4
+// view: dob_phase2
+specification {
+  element actor
+  element system
+}
 
-    NI->>SW2: SupplierDelegation + SW1 endpoint
+model {
+  ni = actor 'New Installer (NI)'
+  app = system 'TN GIR App'
+  gir = system 'GIR'
+  keyper = system 'Keyper'
+  sw2 = system 'SW2'
+}
+
+views {
+  dynamic view dob_phase2 {
+    title 'Phase 2 — SupplierDelegation'
+    variant sequence
+
+    ni -> app 'Supply SW2 party details'
+    app -> keyper 'SupplierDelegation request (NI as requester and approver)'
+    keyper -> ni 'Approval link'
+    ni -> keyper 'Authenticate via eHerkenning and approve'
+    keyper -> gir 'Register SupplierDelegation (NI → SW2) for vboId'
+    gir -> keyper 'Policy registered'
+    ni -> sw2 'SupplierDelegation details + vboId'
+  }
+}
 ```
 
-### Step 7: NI Issues SupplierDelegation to SW2 *(mechanism TBD)*
+### Step 7: NI Issues SupplierDelegation to SW2 *(Poort8)*
 
-NI authorizes SW2 to request maintenance data on NI's behalf. In DSGO terms this is a `SupplierDelegation` from the legal data service consumer (NI) to the authorized data service consumer (SW2). NI also passes SW1's endpoint URL (received in the Keyper confirmation from phase 1) to SW2.
+NI delegates its `AccessRight` to SW2 by registering a `SupplierDelegation` policy in GIR, scoped to the authorized VBO-id(s). NI supplies the SW2 party details in the TN GIR app, which kicks off a Keyper approval flow. Because NI is both the requesting party and the approving party, Keyper sends the approval link to NI's own email address.
 
-> **⚠️ Open decision**: The mechanism by which NI issues a `SupplierDelegation` to SW2 has not been determined. Options per DSGO: the legal party's own authorization registry (DSGO variant 1/2), or a third-party registry such as GIR (DSGO variant 5). See [Open Decisions](#open-decisions).
+NI authenticates via eHerkenning and approves. On approval, Keyper registers the `SupplierDelegation` policy in GIR.
+
+> ℹ️ The `SupplierDelegation` mechanism is defined in the [DSGO afsprakenstelsel ➚](https://afsprakenstelseldsgo.atlassian.net/wiki/spaces/dsgo/pages/1025933400). Exact data format and field values will be determined during technical configuration and are not detailed here.
+
+NI then informs SW2 of the delegation details.
 
 ---
 
@@ -262,20 +319,34 @@ NI authorizes SW2 to request maintenance data on NI's behalf. In DSGO terms this
 
 This phase is the implementation guide for the M2M data transaction. It is triggered once phase 2 is complete. SW1 is responsible for verifying authorization at request time; SW2 does not pre-verify.
 
-```mermaid
-sequenceDiagram
-    participant SW2 as SW2 (software NI)
-  participant SW1 as SW1 (data service provider)
-    participant GIR as GIR
+```likec4
+// view: dob_phase3
+specification {
+  element actor
+  element system
+}
 
-    SW2->>SW1: POST /connect/token (eSeal client assertion)
-    SW1-->>SW2: Access token
-    SW2->>SW1: GET /maintenance-data?vboId=<VBOID>
-    SW1->>GIR: POST /connect/token (eSeal client assertion)
-    GIR-->>SW1: Access token
-    SW1->>GIR: POST /delegation —<br/>verify AccessRight (building owner → NI)
-    GIR-->>SW1: Delegation evidence (Permit)
-    SW1-->>SW2: Standard maintenance data set
+model {
+  sw2 = system 'SW2 (software NI)'
+  sw1 = system 'SW1 (data service provider)'
+  gir = system 'GIR'
+}
+
+views {
+  dynamic view dob_phase3 {
+    title 'Phase 3 — M2M Maintenance Data Transfer'
+    variant sequence
+
+    sw2 -> sw1 'POST /connect/token (eSeal client assertion)'
+    sw1 -> sw2 'Access token'
+    sw2 -> sw1 'GET /maintenance-data?installationId=<INSTALLATION_ID>'
+    sw1 -> gir 'POST /connect/token (eSeal client assertion)'
+    gir -> sw1 'Access token'
+    sw1 -> gir 'POST /delegation — verify AccessRight (building owner → NI) for installationId'
+    gir -> sw1 'Delegation evidence (Permit)'
+    sw1 -> sw2 'Standard maintenance data set'
+  }
+}
 ```
 
 ### Authentication to SW1 *(external)*
@@ -289,12 +360,10 @@ Content-Type: application/x-www-form-urlencoded
 grant_type=client_credentials&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_assertion=<SIGNED_JWT>
 ```
 
-> ℹ️ SW1's endpoint URL is received by NI in the Keyper confirmation (step 6) and passed to SW2 as part of the `SupplierDelegation` (step 7).
-
 ### Maintenance Data Request *(external)*
 
 ```http
-GET <SW1 ENDPOINT>/maintenance-data?vboId=<VBOID>
+GET <SW1 ENDPOINT>/maintenance-data?installationId=<INSTALLATION_ID>
 Authorization: Bearer <SW1_ACCESS_TOKEN>
 ```
 
@@ -311,7 +380,7 @@ grant_type=client_credentials&scope=iSHARE&client_id=did:ishare:EU.NL.NTRNL-<SW1
 
 ### AccessRight Verification *(Poort8)*
 
-SW1 verifies that NI holds a valid `AccessRight` for the requested VBO-ids:
+SW1 verifies that NI holds a valid `AccessRight` covering the requested installation:
 
 ```http
 POST https://gir-preview.poort8.nl/delegation
@@ -332,15 +401,18 @@ Content-Type: application/json
           {
             "target": {
               "resource": {
-                "type": "[TBD — instance-specific, see Open Decisions]",
-                "identifiers": ["<VBOID>"],
-                "attributes": ["[TBD — NL/SfB code or wildcard, see Open Decisions]"]
+                "type": "GIRMaintenanceLog",
+                "identifiers": ["<INSTALLATION_ID>"],
+                "attributes": ["*"]
               },
               "actions": ["read"],
               "environment": {
                 "serviceProviders": ["did:ishare:EU.NL.NTRNL-<SW1 KVK>"]
               }
-            }
+            },
+            "rules": [
+              { "effect": "Permit" }
+            ]
           }
         ]
       }
@@ -351,9 +423,9 @@ Content-Type: application/json
 
 ### Maintenance Data Response *(external)*
 
-If GIR returns a `Permit`, SW1 returns the standard maintenance data set for the authorized VBO-ids and NL/SfB scope. Any non-permit result causes SW1 to return an authorization error to SW2.
+If GIR returns a `Permit`, SW1 returns the standard maintenance data set for the authorized installation. Any non-permit result causes SW1 to return an authorization error to SW2.
 
-> **⚠️ Open decision**: The content and format of the standard maintenance data set is to be defined by a DICO standard developed by Ketenstandaard. Phase 3 implementation is blocked until this standard is available.
+> **⚠️ Open decision**: The content and format of the standard maintenance data set is defined by the DICO standard `GIRMaintenanceLog` developed by Ketenstandaard.
 
 ---
 
@@ -361,12 +433,12 @@ If GIR returns a `Permit`, SW1 returns the standard maintenance data set for the
 
 Authorization can be scoped at two levels:
 
-| Level | Scope | Use case |
-|-------|-------|----------|
-| VBO-id | All installations in a building | Full portfolio transfer (e.g. housing corporation handing over all units) |
-| VBO-id + NL/SfB | Specific installation types within a building | Partial transfer (e.g. only HVAC, not electrical) |
+| Level | Scope | `attribute` value | Use case |
+|-------|-------|-------------------|----------|
+| VBO-id | All installations in a building | `*` | Full portfolio transfer (e.g. housing corporation handing over all units) |
+| VBO-id + NL/SfB | Specific installation types within a building | NL/SfB code, e.g. `L` or `L1` | Partial transfer (e.g. only HVAC, not electrical) |
 
-In both cases, the full standard maintenance data set is included for the authorized installations. The NL/SfB filter is optional.
+The NL/SfB code is set in the `attribute` field of both `addPolicyTransactions` entries in the Keyper request, and in the delegation check in phase 3. Using `*` grants access to all installation types registered under the VBO-id.
 
 ## Policy Parameters
 
@@ -374,14 +446,17 @@ In both cases, the full standard maintenance data set is included for the author
 |-----------|------------|-------------|--------|
 | `issuerId` | Keyper request, delegation request | DID of the building owner (policy issuer) | Required |
 | `subjectId` | Keyper request, delegation request | DID of NI (the data service consumer) | Required |
-| `serviceProvider` | Keyper request, delegation request | DID of SW1 (the data service provider) | Required |
-| `resourceId` / `identifiers` | Keyper request, delegation request | VBO-id; covers all registered installations in the building | Required |
+| `serviceProvider` | Phase 1 Keyper request (`GIRMaintenanceLog`) | `*` (wildcard) — any SW1 may serve maintenance data; no specific SW1 endpoint is captured in the policy | `*` |
+| `serviceProvider` | Phase 1 Keyper request (`GIRBasisdataMessage`) | DID of GIR (basisdata read) | Required |
+| `serviceProvider` | Phase 2 Keyper request, delegation request | DID of SW1 (data service provider in the SupplierDelegation) | Required |
+| `resourceId` | Phase 1 Keyper request | VBO-id; covers all registered installations in the building | Required |
+| `resourceId` / `identifiers` | Phase 2 Keyper request, delegation request | VBO-id; delegates NI's AccessRight to SW2 at building scope. Installation-level scoping is deferred to a later phase. | Required |
 | `notBefore` / `expiration` | Keyper request, delegation evidence | Validity period of the authorization | Required |
-| `attribute` | Keyper request, delegation request | NL/SfB code for optional scoping; wildcard for all installation types | **TBD** |
-| `action` | Keyper request, delegation request | `read` | **TBD — instance-specific** |
-| `type` | Keyper request, delegation request | Resource type identifier for policy matching | **TBD — instance-specific** |
-| `useCase` | Keyper request | Use case identifier for policy scoping | **TBD — instance-specific** |
-| `license` | Keyper request, delegation evidence | License identifier for the terms of use | **TBD — instance-specific** |
+| `attribute` | Keyper request, delegation request | NL/SfB code to restrict access to specific installation types (e.g. `L` for mechanical, `L1` for HVAC); use `*` for all installation types. Both policy entries must use the same value. | `*` (wildcard) or NL/SfB code |
+| `action` | Keyper request, delegation request | `read` | `read` |
+| `type` | Keyper request, delegation request | Resource type identifier used in policy matching | `GIRMaintenanceLog` (maintenance data), `GIRBasisdataMessage` (basisdata read) |
+| `useCase` | Keyper request | Use case identifier for policy scoping | `dsgo.gir-digitaalonderhoudsboekje@v1` |
+| `license` / `licenses` | Keyper request, delegation evidence | License identifier expressing the terms of use for the data | `[PLACEHOLDER]` |
 
 ---
 
@@ -391,19 +466,35 @@ The following must be resolved before the corresponding parts of this flow can b
 
 **1. Policy field values (`type`, `useCase`, `attribute`, `license`, `orchestration.flow`)**
 
-These are all instance-specific and must be defined during technical configuration of the GIR integration. The `type` field also depends on whether the GIR instance maps directly to the DSGO `AccessRight` type identifier or uses a GIR-specific resource type string.
+The following values are used for all policy transactions in this flow:
 
-**2. SupplierDelegation mechanism (NI → SW2)**
+- `type`: `GIRMaintenanceLog` (maintenance data), `GIRBasisdataMessage` (basisdata read)
+- `useCase`: `dsgo.gir-digitaalonderhoudsboekje@v1`
+- `attribute`: `*` (wildcard for all installation types) or an NL/SfB code to restrict scope (e.g. `L`, `L1`)
+- `license`: `[PLACEHOLDER]`
+- `action`: `read`
 
-How does NI issue a `SupplierDelegation` to SW2? Options per DSGO: the legal party's own authorization registry (DSGO variant 1/2), or a third-party registry such as GIR (DSGO variant 5).
+These values apply to both the Phase 1 AccessRight and the Phase 2 SupplierDelegation. No further technical configuration is required for these fields.
 
-**3. SW1 endpoint delivery via Keyper**
+**2. SW1 discovery by SW2**
 
-The Keyper confirmation to NI must include SW1's endpoint URL. The mechanism for capturing SW1's endpoint during the authorization request and passing it through to the confirmation has not been specified.
+The `serviceProvider` field in the `GIRMaintenanceLog` policy is a wildcard (`*`), meaning no specific SW1 endpoint is captured during the authorization flow. It is an open question how SW2 discovers which SW1 party (or parties) holds the relevant maintenance data for a given installation. A building may have data registered by more than one previous software party. The discovery mechanism — for example via GIR metadata, the DSGO participant register, or out-of-band communication — has not been specified.
 
-**4. Standard maintenance data set**
+**3. Standard maintenance data set**
 
 The content and format of the maintenance data transferred in phase 3 will be defined by a DICO standard developed by Ketenstandaard. Phase 3 implementation is blocked until this standard is published.
+
+**4. Authentication under DSGO: client credentials, eSeals, and PKI-Overheid certificates**
+
+All parties with M2M connections (SW1, SW2, Keyper, GIR) are described as requiring a DSGO-approved Electronic Seal (eSeal). It is an open question what DSGO authentication with client credentials means in practice, and whether PKI-Overheid certificates are an accepted alternative to eSeals for parties that hold them. The implications for onboarding requirements and the trust model need to be clarified.
+
+**5. Multiple new installers**
+
+How should the flow handle a building that is handed over to more than one new installer simultaneously? The proposed approach is that each new installer initiates their own approval request, scoped to the relevant VBO-id(s) and optional NL/SfB filter. The building owner then approves (or rejects) each request independently. This needs to be confirmed and reflected in the TN GIR app design.
+
+**6. Multiple previous installers**
+
+A building may have installation data registered by more than one previous installer. For the current phase, only the most recent registrar per installation is in scope — the TN GIR app derives a single previous installer from the `metadata.issuer` of the latest `GIRBasisdataMessage` per installation. For a later phase, the approval flow may query GIR for all `GIRBasisdataMessage` records for the relevant VBO-ids where the building owner is the `installationOwnerChamberOfCommerceNumber`, collect all unique `registrarChamberOfCommerceNumber` values from that history, and present them to the approver for optional deselection. A policy would then be created for each selected (previous) issuer.
 
 ---
 
