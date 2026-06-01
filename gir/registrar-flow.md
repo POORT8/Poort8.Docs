@@ -71,8 +71,8 @@ sequenceDiagram
 The approval flow must consistently target:
 
 - The building identifier as a BAG VBO-ID.
-- The installation owner's DID.
-- The registrar (provider) DID.
+- The installation owner's organization identifier.
+- The registrar (provider) organization identifier.
 - Optional classification rules, if writes should be scoped.
 
 If these identifiers do not line up with the later GIR write request, records may remain `Pending` or be rejected.
@@ -89,6 +89,128 @@ After owner approval completes:
 
 - [../keyper/README.md](../keyper/README.md)
 - [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
+
+### Keyper approval-link example (v1)
+
+Use this example as a template to create the owner approval request for write access.
+
+```http
+POST https://keyper-preview.poort8.nl/v1/api/approval-links
+Authorization: Bearer <KEYPER_ACCESS_TOKEN>
+Content-Type: application/json
+Accept: application/json
+```
+
+```json
+{
+    "requester": {
+        "name": "<REGISTRAR_CONTACT_NAME>",
+        "email": "<REGISTRAR_CONTACT_EMAIL>",
+        "organization": "<REGISTRAR_ORGANIZATION_NAME>",
+        "organizationId": "did:ishare:EU.NL.NTRNL-<REGISTRAR_ORG_ID>"
+    },
+    "approver": {
+        "name": "<OWNER_CONTACT_NAME>",
+        "email": "<OWNER_CONTACT_EMAIL>",
+        "organization": "<OWNER_ORGANIZATION_NAME>",
+        "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_ORG_ID>"
+    },
+    "dataspace": {
+        "baseUrl": "https://gir-preview.poort8.nl"
+    },
+    "reference": "<YOUR_REFERENCE>",
+    "addPolicyTransactions": [
+        {
+            "type": "GIRBasisdataMessage",
+            "rules": null,
+            "action": "write",
+            "license": "0005",
+            "useCase": "GIR",
+            "issuedAt": 1760446448,
+            "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_ORG_ID>",
+            "attribute": "*",
+            "notBefore": 1760446448,
+            "subjectId": "did:ishare:EU.NL.NTRNL-<REGISTRAR_ORG_ID>",
+            "expiration": 2147483647,
+            "resourceId": "<BAG_VBO_ID_16_DIGITS>",
+            "serviceProvider": "did:ishare:EU.NL.NTRNL-<GIR_SERVICE_PROVIDER_ORG_ID>"
+        }
+    ],
+    "orchestration": {
+        "flow": "dsgo.gir@v1"
+    }
+}
+```
+
+On success, Keyper returns an approval-link id and status. Keep the id so you can track approval progress.
+
+```json
+{
+    "id": "<APPROVAL_LINK_ID>",
+    "reference": "<YOUR_REFERENCE>",
+    "url": "https://keyper-preview.poort8.nl/approve/<APPROVAL_LINK_ID>",
+    "expiresAtUtc": <UNIX_TIMESTAMP_SECONDS>,
+    "status": "Active"
+}
+```
+
+Check approval status with:
+
+```http
+GET https://keyper-preview.poort8.nl/v1/api/approval-links/<APPROVAL_LINK_ID>
+Authorization: Bearer <KEYPER_ACCESS_TOKEN>
+Accept: application/json
+```
+
+Typical status lifecycle: `Active` -> `Approved` or `Rejected` or `Expired`.
+
+### Attribute filtering in policy
+
+`attribute` supports either a wildcard (`*`) or scope-style filters.
+
+Use this token style:
+
+```text
+gir:<resource>:<action>[:key=value]
+```
+
+Example with multiple NLSFB classifications:
+
+```text
+gir:class:nlsfb_tabel1=52.16 gir:class:nlsfb_tabel1=52.20 gir:class:nlsfb_tabel1=53.40
+```
+
+Recommended usage in this flow:
+
+- Use `*` when no classification filtering is required.
+- Use one or more `gir:class:nlsfb_tabel1=<code>` tokens when permission must be limited to specific NLSFB classes.
+- Keep classification codes as strings exactly as provided in GIRBasisdataMessages (for example `52.16`).
+
+Evaluation semantics:
+
+- Multiple `gir:class:nlsfb_tabel1=<code>` tokens are evaluated as OR within that classification set.
+- Resource and action constraints are evaluated as AND with classification constraints.
+- If no class token is present, classification is unfiltered.
+
+## Execution paths
+
+Use one of these operational paths.
+
+### Path A: approval-first (fastest activation)
+
+1. Create approval link.
+2. Poll until status is `Approved`.
+3. Obtain DSGO bearer token.
+4. Submit installation write.
+5. Expect write status `Active`.
+
+### Path B: write-first (deferred activation)
+
+1. Obtain DSGO bearer token.
+2. Submit installation write before approval.
+3. Expect write status `Pending`.
+4. Create and complete owner approval flow.
+5. Re-check installation until status is `Active`.
 
 ## Step 2: Obtain a DSGO bearer token
 
@@ -277,9 +399,48 @@ Treat the flow in your application as four separate concerns:
 3. Write processing.
    Submit upserts and track response status (`Active` or `Pending`).
 4. Activation verification.
-	Validate that pending records become active after policy approval.
+    Validate that pending records become active after policy approval.
 
 This split makes troubleshooting easier because each concern has its own state and dedicated implementation guide.
+
+## Registrar implementation checklist
+
+Use this sequence for a new registrar integration:
+
+1. Create a Keyper approval-link request for the target VBO-ID using the v1 template above.
+2. Store the returned `id`, `reference`, `expiresAtUtc`, and initial `status`.
+3. Poll `GET /v1/api/approval-links/{id}` until status is final (`Approved`, `Rejected`, or `Expired`).
+4. If approved, obtain a DSGO bearer token using [connect-token.md](connect-token.md).
+5. Submit the installation message using [insert-installation.md](insert-installation.md).
+6. Inspect `metadata.status` in the write response (`Active` or `Pending`).
+7. Verify outcome with [retrieve-installation.md](retrieve-installation.md) or [retrieve-installations.md](retrieve-installations.md).
+8. On `Rejected` or `Expired`, create a new approval request with a new `reference`.
+
+## Runtime decision matrix
+
+| Approval status | Token status | Write attempt result | What to do next |
+|-----------------|--------------|----------------------|-----------------|
+| `Approved` | Valid | `Active` | Continue normal updates |
+| `Approved` | Missing/expired | `401` | Refresh token and retry |
+| `Active` | Valid | `Pending` | Validate policy scope alignment (`resourceId`, identifiers, classification filters) |
+| `Rejected` | Valid | Not attempted | Create a new approval request |
+| `Expired` | Valid | Not attempted | Create a new approval request |
+
+## Operational monitoring
+
+Track these fields per request cycle:
+
+- Keyper approval-link `id`
+- `reference`
+- `resourceId` (VBO-ID)
+- Installation ID used in GIR writes
+- Write `metadata.status`
+
+Recommended alerts:
+
+- `Pending` records that stay unresolved beyond expected approval SLA
+- High number of `Expired` approval links
+- Repeated scope mismatches for the same `resourceId`
 
 ## Implementation guides
 
