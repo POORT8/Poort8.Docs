@@ -14,6 +14,7 @@
   - [Retrieving VBO and EAN Data via DVU](vbo-ean-data-retrieval.md)
   - [Energy data retrieval from Smart Data Solutions (SDS) via DVU](sds-data-retrieval.md)
   - [Aansluiten als Datadienstaanbieder](data-service-provider.md)
+  - [Aansluiten als Datadienstaanbieder (Nieuw)](data-service-provider-2.0.md)
   
 - **Ondersteuning & referentie**
   - [FAQ](faq.md)
