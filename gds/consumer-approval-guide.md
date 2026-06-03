@@ -219,7 +219,6 @@ Content-Type: application/json
       "type": "building",                     // Resource type (see Step 3)
       "action": "GET",                        // Data retrieval action
       "license": "0005",                      // Fixed value for GDS
-      "useCase": "ishare",                    // Fixed value for GDS
       "issuedAt": <CURRENT_UNIX_TIMESTAMP>,  // Current time (Unix seconds)
       "issuerId": "<BUILDING_OWNER_ORGANIZATION_ID>",  // Who grants permission, so the approver org ID
       "attribute": "*",                       // All building data
@@ -238,7 +237,7 @@ Content-Type: application/json
 
 **Key notes:**
 - **Unix timestamps**: Use seconds since epoch, not milliseconds
-- **Fixed values**: `license`, `useCase`, and `orchestration.flow` must match exactly as shown
+- **Fixed values**: `license` and `orchestration.flow` must match exactly as shown
 - `type`: Resource type — `"building"` for building-level access (pilot), or `"asset"` for asset-level access (future)
 - `issuerId`: Building owner's organization ID (who grants permission)
 - `subjectId`: The data service consumer organization ID (who receives permission). The requester is typically a user of the data service consumer platform
