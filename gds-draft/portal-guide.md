@@ -6,12 +6,36 @@ The GDS Self-Service Portal allows participants to manage their organization, re
 
 **URL:** [gds-preview.poort8.nl/portal ➚](https://gds-preview.poort8.nl/portal)
 
+## Organization onboarding and approval
+
+An organization must be onboarded and approved to access all dataspace features.
+
+### Summary
+
+1. The organization is onboarded through the Self-Service Portal
+2. The onboarding user becomes the organization's first administrator
+3. Poort8 reviews and approves or rejects the organization
+
+Until Poort8 approves your organization, users from that organization cannot access dataspace systems.
+
+For the complete onboarding and verification flow (KvK checks, email verification, and approval states), see [Organization Registration](onboarding.md).
+
+### User roles in an organization
+
+Users have one of two roles:
+
+| Role | Capabilities |
+|------|--------------|
+| **Administrator** | Full organization management, including changing user roles and removing users |
+| **Member** | Can use portal features available to the organization and invite new users |
+
+The user who onboards the organization becomes the organization's first **administrator**.
+
 ## Portal capabilities by role
 
 | Capability | David (Consumer) | Charlie (Provider) | Bob (Owner) |
 |------------|-----------------|-------------------|-------------|
 | View organization details | ✓ | ✓ | ✓ |
-| Upload business register extract | ✓ | ✓ | ✓ |
 | Register an application | ✓ | — | — |
 | Register an API | — | ✓ | — |
 | Browse API catalogue | ✓ | ✓ | ✓ |
@@ -67,14 +91,3 @@ When a consumer requests access to your API:
 4. **Approve** or **reject** the request
 
 Once approved, the consumer can request tokens targeting your API. You can **revoke** access at any time.
-
-## View granted policies (Bob)
-
-Building owners can inspect which policies have been granted for their buildings:
-
-1. Log in to the portal
-2. Navigate to the policies overview
-3. Filter by your organization to see active policies
-4. Review which consumers have access to which buildings
-
-For revoking policies, contact the dataspace administrator or use the admin interface if you have appropriate access.

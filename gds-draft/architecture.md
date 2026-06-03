@@ -6,42 +6,53 @@ This guide explains how the GDS components work together to enable sovereign bui
 
 ## System components
 
-```mermaid
-flowchart TB
-    subgraph "GDS Participant Registry (Keycloak)"
-        KC[Identity & Access Management]
-        CAT[API Catalogue]
-    end
+This sequence shows the end-to-end interaction order in two phases: first approval and policy registration, then data access with policy enforcement.
 
-    subgraph "GDS Authorization Registry (NoodleBar)"
-        OR[Organization Registry]
-        AR[Authorization Registry]
-    end
+```likec4
+// view: architecture_end_to_end
+specification {
+    element actor
+    element system
+}
 
-    subgraph "Keyper Approve"
-        KA[Approval Workflow Manager]
-    end
+model {
+    david = actor 'David\'s Platform'
+    kc = system 'GDS Participant Registry (Keycloak)'
+    keyper = system 'Keyper Approve'
+    bob = actor 'Building Owner (Bob)'
+    ar = system 'GDS Authorization Registry'
+    charlie = system 'Charlie\'s IoT Platform'
+}
 
-    subgraph "External"
-        DSP[Data Service Provider<br/>Charlie's IoT Platform]
-        DSC[Data Service Consumer<br/>David's Platform]
-        BO[Building Owner<br/>Bob]
-    end
+views {
+    dynamic view architecture_end_to_end {
+        title 'GDS End-to-End Flow'
+        variant sequence
 
-    DSC -->|1. Authenticate| KC
-    DSC -->|2. Call API| DSP
-    DSP -->|3. Check policy| AR
-    DSC -->|4. Request approval| KA
-    KA -->|5. Notify| BO
-    BO -->|6. Approve| KA
-    KA -->|7. Register policy| AR
+        david -> kc 'Request token for Keyper API'
+        kc -> david 'JWT access token'
+        david -> keyper 'POST /v1/api/approval-links'
+        keyper -> david '201 Created (approval link ID)'
+        keyper -> bob 'Email with approval link'
+        bob -> keyper 'Approves + enters verification code'
+        keyper -> ar 'Registers policies'
+        ar -> keyper 'Policies stored'
+
+        david -> kc 'Request token for provider API'
+        kc -> david 'JWT access token'
+        david -> charlie 'GET /data + Bearer token'
+        charlie -> ar 'GET /api/authorization/explained-enforce'
+        ar -> charlie 'HTTP 200: {allowed: true/false, policies}'
+        charlie -> david 'If allowed: 200 + data / If denied: 403'
+    }
+}
 ```
 
 ### GDS Participant Registry
 
 The Participant Registry is a Keycloak-based identity service that manages:
 
-- **Organization identities** — Registration, verification (KvK, LEI, VIES), and approval
+- **Organization identities** — Registration, verification, and approval
 - **User accounts** — Credentials, email verification, and organization membership
 - **Application registrations** — OAuth2 clients for data service consumers (David)
 - **API registrations** — Service definitions for data service providers (Charlie)
@@ -103,7 +114,7 @@ https://auth.poort8.nl/realms/gds-preview/protocol/openid-connect/token
 https://auth.poort8.nl/realms/gds-preview/protocol/openid-connect/certs
 ```
 
-Tokens are short-lived (5 minutes) and include an `organization` claim identifying the consumer's verified organization.
+Tokens are short-lived (5 minutes) and include an `organization` claim identifying the consumer's verified organization. The same token endpoint serves both provider API calls (scope: the API's client ID) and Keyper API calls (scope: `keyper-api`), so a single registered M2M application is sufficient for all GDS interactions.
 
 ## Authorization model
 
@@ -178,4 +189,3 @@ Both layers must be satisfied for data to flow. A consumer needs:
 | REST / JSON | All API communication |
 | OpenAPI 3.x | API specification format |
 | iSHARE | Policy model for authorization enforcement |
-| BAG / VBO | Dutch building identification for resource IDs |

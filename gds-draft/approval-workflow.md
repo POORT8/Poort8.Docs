@@ -12,9 +12,22 @@ This guide is for **David** — a data service consumer who needs to request bui
 
 | Requirement | Description |
 |-------------|-------------|
+| Application registered | You have registered your application in the Self-Service Portal — see [Requesting API Access](requesting-api-access.md) Step 1 |
 | API access approved | Charlie has approved your application's access to their API |
-| Keyper credentials | OAuth2 client credentials for Keyper (contact Poort8 at hello@poort8.nl) |
+| Keyper API access approved | You have requested access to **Keyper** for your application in the Self-Service Portal and the request is approved |
 | Building details known | VBO ID of the target building and building owner's organization |
+
+### One-time setup: Request access to Keyper
+
+Keyper is registered as an API in the GDS Self-Service Portal, just like any other system. Before you can call the Keyper API, your application needs access to it.
+
+1. Log in to the [Self-Service Portal](https://gds-preview.poort8.nl/portal)
+2. Navigate to the **Catalogue** and search for **Keyper**
+3. Click **Request Access**
+
+Your request will have status **Pending** until approved.
+
+> **You can continue implementing while you wait.** The repeatable steps in this guide can be built and tested independently of your access request status. Your approval requests will not go through until your application has been granted access to Keyper.
 
 ## Overview
 
@@ -54,18 +67,16 @@ views {
 
 ## Step 1 — Authenticate with Keyper
 
-Obtain an access token for the Keyper API:
+Use the same M2M application credentials registered in the Self-Service Portal (see [Requesting API Access](requesting-api-access.md#step-1--register-your-application)) to request an access token. Specify `keyper-api` as the scope:
 
 ```http
-POST https://poort8.eu.auth0.com/oauth/token
-Content-Type: application/json
+POST https://auth.poort8.nl/realms/gds-preview/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
 
-{
-  "client_id": "<YOUR_KEYPER_CLIENT_ID>",
-  "client_secret": "<YOUR_KEYPER_CLIENT_SECRET>",
-  "audience": "Poort8-Dataspace-Keyper-Preview",
-  "grant_type": "client_credentials"
-}
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+scope=keyper-api
 ```
 
 Response:
@@ -73,11 +84,11 @@ Response:
 {
   "access_token": "eyJhbGciOiJSUzI1NiIs...",
   "token_type": "Bearer",
-  "expires_in": 3600
+  "expires_in": 300
 }
 ```
 
-Store the token and reuse it for multiple requests until it expires (1 hour).
+> **Token lifetime:** Tokens are valid for **5 minutes**. Request a new token before the current one expires. Do not cache tokens beyond their expiry.
 
 ## Step 2 — Prepare required data
 
@@ -198,7 +209,7 @@ Content-Type: application/json
 {
   "id": "474e19af-8165-4b85-ad03-be81f9f8dcc2",
   "reference": "SENSOR-OPT-2025-Q4-001",
-  "url": "https://keyper-preview.poort8.nl/approve/474e19af-8165-4b85-ad03-be81f9f8dcc2",
+  "url": "https://keyper-preview.poort8.nl/approve?id=474e19af-8165-4b85-ad03-be81f9f8dcc2&app=your-app-id",
   "expiresAtUtc": 1730739600,
   "status": "Active"
 }
