@@ -82,3 +82,15 @@ Keyper is designed for modular, composable dataspaces like **NoodleBar**, where 
 The API supports structured JSON requests and handles both **human-to-machine (H2M)** and **machine-to-machine (M2M)** authentication. Bearer token support is optional for now but will soon be required for all endpoints.
 
 For sample payloads or implementation support, contact the Poort8 team or refer to the detailed endpoint documentation.
+
+## Policy Use Cases
+
+Policies submitted as part of an approval link have an optional `useCase` field. When this field is left blank on a policy transaction, Keyper automatically derives the use case from the `orchestration.flow` value by stripping the version suffix (everything before the `@`).
+
+For example, if `orchestration.flow` is `dataspace.default@v1`, every policy transaction with no explicit `useCase` will receive `dataspace.default` as its use case.
+
+This means you typically do not need to set `useCase` on individual policy transactions — just configure `orchestration.flow` to the correct flow and Keyper will handle the rest.
+
+If you do provide an explicit `useCase` on a policy transaction, it takes precedence over the derived value.
+
+How the use case string is then mapped to an authorization enforcement model is documented in the [NoodleBar Use Case Authorization Models](../noodlebar/12%20-%20Use%20Case%20Authorization%20Models.md) page.
