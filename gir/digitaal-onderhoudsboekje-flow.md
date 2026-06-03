@@ -200,7 +200,6 @@ The approval request includes:
       "type": "GIRMaintenanceLog",
       "action": "read",
       "license": "[PLACEHOLDER]",
-      "useCase": "dsgo.gir-digitaalonderhoudsboekje@v1",
       "issuedAt": "<UNIX TIMESTAMP>",
       "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER KVK>",
       "subjectId": "did:ishare:EU.NL.NTRNL-<NI KVK>",
@@ -214,7 +213,6 @@ The approval request includes:
       "type": "GIRBasisdataMessage",
       "action": "read",
       "license": "[PLACEHOLDER]",
-      "useCase": "dsgo.gir-digitaalonderhoudsboekje@v1",
       "issuedAt": "<UNIX TIMESTAMP>",
       "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER KVK>",
       "subjectId": "did:ishare:EU.NL.NTRNL-<NI KVK>",
@@ -455,7 +453,7 @@ The NL/SfB code is set in the `attribute` field of both `addPolicyTransactions` 
 | `attribute` | Keyper request, delegation request | NL/SfB code to restrict access to specific installation types (e.g. `L` for mechanical, `L1` for HVAC); use `*` for all installation types. Both policy entries must use the same value. | `*` (wildcard) or NL/SfB code |
 | `action` | Keyper request, delegation request | `read` | `read` |
 | `type` | Keyper request, delegation request | Resource type identifier used in policy matching | `GIRMaintenanceLog` (maintenance data), `GIRBasisdataMessage` (basisdata read) |
-| `useCase` | Keyper request | Use case identifier for policy scoping | `dsgo.gir-digitaalonderhoudsboekje@v1` |
+| `useCase` | Keyper request | Use case identifier for policy scoping. Optional: when omitted, Keyper derives it automatically from `orchestration.flow` by stripping the version suffix. | `dsgo.gir-digitaalonderhoudsboekje` |
 | `license` / `licenses` | Keyper request, delegation evidence | License identifier expressing the terms of use for the data | `[PLACEHOLDER]` |
 
 ---
@@ -469,7 +467,7 @@ The following must be resolved before the corresponding parts of this flow can b
 The following values are used for all policy transactions in this flow:
 
 - `type`: `GIRMaintenanceLog` (maintenance data), `GIRBasisdataMessage` (basisdata read)
-- `useCase`: `dsgo.gir-digitaalonderhoudsboekje@v1`
+- `useCase`: optional — when omitted, Keyper derives it from `orchestration.flow` (e.g. `dsgo.gir-digitaalonderhoudsboekje`)
 - `attribute`: `*` (wildcard for all installation types) or an NL/SfB code to restrict scope (e.g. `L`, `L1`)
 - `license`: `[PLACEHOLDER]`
 - `action`: `read`

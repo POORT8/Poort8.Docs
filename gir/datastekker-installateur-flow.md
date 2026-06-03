@@ -141,7 +141,6 @@ Content-Type: application/json
       "type": "<DICO:GIR-DATASTEKKER>",
       "action": "read",
       "license": "[PLACEHOLDER]",
-      "useCase": "dsgo.gir-datastekker@v1",
       "issuedAt": "<UNIX TIMESTAMP>",
       "issuerId": "did:ishare:EU.NL.NTRNL-<BUILDING OWNER KVK>",
       "attribute": "*",
@@ -315,7 +314,7 @@ If authorization succeeds, Datastekker returns the authorised performance data t
 | `attribute` | Keyper request, delegation request | `*` (wildcard); use a predefined dataset identifier to restrict scope. See open questions #4 and #6 for the future attribute hierarchy. | `*` |
 | `type` | Keyper request, delegation request | Resource type identifier used in policy matching | `<DICO:GIR-DATASTEKKER>` |
 | `action` | Keyper request, delegation request | Permitted action on the resource | `read` |
-| `useCase` | Keyper request | Use case identifier for policy scoping | `dsgo.gir-datastekker@v1` |
+| `useCase` | Keyper request | Use case identifier for policy scoping. Optional: when omitted, Keyper derives it automatically from `orchestration.flow` by stripping the version suffix. | `dsgo.gir-datastekker` |
 | `license` / `licenses` | Keyper request, delegation evidence | License identifier expressing the terms of use for the data | `[PLACEHOLDER]` |
 | `componentId` | Datastekker internal | Component identifier provided by the installer; must be resolved to an installationId before the GIR query and delegation check | Open point — see Open Questions |
 

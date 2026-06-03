@@ -125,7 +125,6 @@ Accept: application/json
             "rules": null,
             "action": "write",
             "license": "0005",
-            "useCase": "GIR",
             "issuedAt": 1760446448,
             "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_ORG_ID>",
             "attribute": "*",
