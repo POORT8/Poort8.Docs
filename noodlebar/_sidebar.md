@@ -10,6 +10,7 @@
   - [Implementation Stages](04%20-%20NoodleBar%20Implementation%20Stages.md)
   - [Tech Stack](05%20-%20Tech%20Stack.md)
   - [Scopes](11%20-%20Scopes.md)
+  - [Use Case Authorization Models](12%20-%20Use%20Case%20Authorization%20Models.md)
   - [Requesting API Access (David)](requesting-api-access.md)
   - [Validating API Tokens (Charlie)](validating-api-tokens.md)
 
