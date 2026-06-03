@@ -68,7 +68,6 @@ Content-Type: application/json
   "reference": "<YOUR-DIRECT-EAN-REFERENCE>",
   "addPolicyTransactions": [
     {
-      "useCase": "dvu",
       "issuedAt": "<NOW>",
       "notBefore": "<NOW>",
       "expiration": "<EXPIRATION>",
@@ -85,19 +84,16 @@ Content-Type: application/json
   "addResourceGroupTransactions": [
     {
       "resourceGroupId": "<UUID>",
-      "useCase": "dvu",
       "name": "<Suitable name for UUID>",
       "description": "<Suitable description for UUID>",
       "resources": [
         {
           "resourceId": "<EAN1>",
-          "useCase": "dvu",
           "name": "<Suitable name for EAN1>",
           "description": "<Suitable description for EAN1>"
         },
         {
           "resourceId": "<EAN2>",
-          "useCase": "dvu",
           "name": "<Suitable name for EAN2>",
           "description": "<Suitable description for EAN2>"
         }
