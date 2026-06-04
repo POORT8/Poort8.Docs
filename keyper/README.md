@@ -17,13 +17,15 @@ The flow is triggered by creating an **approval link**, which leads the user to 
 
 To start using Keyper in your dataspace application:
 
-1. **Review the API documentation** at [https://keyper-preview.poort8.nl/scalar/v1](https://keyper-preview.poort8.nl/scalar/v1)
+1. **Review the API documentation** at [Keyper API reference ➚](https://keyper-preview.poort8.nl/scalar/v1)
 2. **Contact the Poort8 team** for API access and integration support
 3. **Prepare your transaction payloads** according to the API specifications
 4. **Configure your approval flows** with the desired orchestration options
 5. **Test your integration** with sample approval scenarios
 
 For detailed implementation guidance, see the [FAQ](faq.md) section.
+
+For bearer token access, read/write policies, and trusted API clients, see [Keyper API Authentication](api-authentication.md).
 
 ## Approval Flow Overview
 
