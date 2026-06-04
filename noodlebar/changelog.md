@@ -2,6 +2,36 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-06-04
+
+**✨ Highlights:** Core NoodleBar API endpoints are now versioned at `/v1/api/`, and GIR installations no longer return a `deletedAt` field in metadata.
+
+### NoodleBar
+
+#### Added
+
+- Core API endpoints are now available at versioned `/v1/api/` paths: `POST /v1/api/authorization/enforce`, `POST /v1/api/authorization/explained-enforce`, `GET|POST|PUT|DELETE /v1/api/policies`, `GET|POST|PUT|DELETE /v1/api/resourcegroups`, `POST /v1/api/resourcegroups/{id}/resources`, and `GET|POST|PUT|DELETE /v1/api/resources`. Unversioned `/api/` routes remain active for 90 days; migrate to `/v1/api/` routes as soon as possible. [#965](https://github.com/POORT8/Poort8.Dataspace.Private/pull/965)
+
+#### Fixed
+
+- `POST /v1/api/resourcegroups` now correctly assigns each resource's own `useCase` when creating a resource group. Previously, the resource group's `useCase` was propagated to child resources, causing policies to target the wrong use case. [#939](https://github.com/POORT8/Poort8.Dataspace.Private/pull/939)
+
+### NoodleBar (GIR)
+
+#### Changed
+
+- **BREAKING:** The `deletedAt` field has been removed from all GIR registration metadata responses. GIR now permanently removes records (hard delete) rather than marking them as deleted. Clients that rely on `deletedAt` to detect removed registrations should instead treat absent records as deleted. [#933](https://github.com/POORT8/Poort8.Dataspace.Private/pull/933)
+
+### Keyper
+
+#### Added
+
+- The Keyper API now accepts Keycloak JWT bearer tokens alongside Auth0 tokens, allowing Keycloak-managed clients to authenticate directly. Contact Poort8 to configure your Keycloak client for Keyper access. [#966](https://github.com/POORT8/Poort8.Dataspace.Private/pull/966)
+
+#### Changed
+
+- The `useCase` field in resource group requests within `POST /v1/api/approval-links` is now optional. Existing payloads that include `useCase` continue to work without changes. [#970](https://github.com/POORT8/Poort8.Dataspace.Private/pull/970)
+
 ## 2026-04-28
 
 **✨ Highlights:** Organization validation is now available through dedicated API endpoints, and organization search responses are capped for safer, more predictable integrations.
