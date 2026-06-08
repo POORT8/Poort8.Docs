@@ -9,6 +9,7 @@ Every policy stored in the Authorization Registry has a `useCase` field. This fi
 | `default` | Simple subject / resource / action enforcement. Use for basic non-iSHARE dataspaces. |
 | `ishare` | Full iSHARE-compliant enforcement. Requires `serviceProvider`, `type`, `attribute`, and `license`. |
 | `isharerules` | Extends `ishare` with custom rule enforcement (used for e.g. GIR building classifications). |
+| `isharescoped` | Like `ishare`, but resolves resource groups **issuer-scoped**: a policy only reaches the resources owned by its own issuer. See [Resource Group Scoping](13%20-%20Resource%20Group%20Scoping.md). |
 
 ## Use Case to Model Mapping
 
@@ -33,6 +34,7 @@ If neither the full use case nor its family prefix is in the table, the registry
 | `dsgo` | `isharerules` |
 | `ishare` | `ishare` |
 | `isharerules` | `isharerules` |
+| `isharescoped` | `isharescoped` |
 | `hwct` | `default` |
 | `efti` | `ishare` |
 | `inlandcontainerdata` | `ishare` |
