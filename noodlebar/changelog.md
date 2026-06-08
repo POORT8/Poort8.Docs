@@ -2,6 +2,17 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-06-05
+
+**✨ Highlights:** Keyper request validation is now stricter for approval-link payloads, and the API reference now documents Keycloak as the default token flow.
+
+### Keyper
+
+#### Changed
+
+- `POST /api/approval-links` now enforces non-empty values for `requester.name`, `addEmployeeToOrganizationTransactions[].employee.employeeId`, and `addEmployeeToOrganizationTransactions[].employee.useCase`; requests with null or empty values for these fields now fail validation. [#976](https://github.com/POORT8/Poort8.Dataspace.Private/pull/976)
+- The Keyper API authentication documentation now lists per-dataspace Keycloak token endpoints and keeps Auth0 documented as legacy migration support. [#976](https://github.com/POORT8/Poort8.Dataspace.Private/pull/976)
+
 ## 2026-06-04
 
 **✨ Highlights:** Core NoodleBar API endpoints are now versioned at `/v1/api/`, and GIR installations no longer return a `deletedAt` field in metadata.
