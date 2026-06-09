@@ -37,10 +37,9 @@ You can find the complete Keyper API documentation at: [Keyper API reference ➚
 
 ## How does authentication work?
 
-Keyper supports multiple authentication methods:
+Keyper distinguishes between two kinds of authentication:
 
-- **eHerkenning** for Dutch organization verification
-- **Email verification** for simpler use cases
-- **Bearer token support** (optional now, will be required soon)
+- **Approver authentication** — used by the end user who approves a request through the approval link UI. Supported methods include **eHerkenning** (for Dutch organizations) and **email verification**.
+- **API authentication** — used by machine-to-machine clients calling the Keyper API. All API endpoints require a bearer token. Keycloak tokens (per dataspace) are the default; existing Auth0 tokens remain supported as a legacy fallback. See [Keyper API Authentication](api-authentication.md) for details on supported token types, read/write access, and trusted clients.
 
-The API handles both human-to-machine (H2M) and machine-to-machine (M2M) authentication patterns.
+The API supports both human-to-machine (H2M) and machine-to-machine (M2M) integration patterns.
