@@ -145,7 +145,7 @@ sequenceDiagram
     participant AR as Authorization Registry
 
     David->>Charlie: GET /buildings/{vboId} + Bearer token
-    Charlie->>Charlie: Extract organization from token
+    Charlie->>Charlie: Derive the organization EUID from token claim
     Charlie->>AR: GET /api/authorization/explained-enforce
     AR-->>Charlie: {allowed: true/false, policies: [...]}
     alt Allowed

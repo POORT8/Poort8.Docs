@@ -29,7 +29,7 @@ views {
     variant sequence
 
     david -> charlie 'GET /buildings/{vboId} + Bearer token'
-    charlie -> charlie 'Validate token & extract organization'
+    charlie -> charlie 'Validate token & derive organization EUID'
     charlie -> ar 'GET /api/authorization/explained-enforce'
     ar -> charlie 'HTTP 200: {allowed: true/false, policies}'
     charlie -> david 'If allowed: 200 + data / If denied: 403'
@@ -40,6 +40,8 @@ views {
 ## Policy model
 
 When a building owner (Bob) approves an access request through Keyper, policies are registered in the GDS Authorization Registry. Each policy specifies:
+
+For GDS, EUID is the chosen identifier format for policy identities. This means `issuerId`, `subjectId`, and `serviceProvider` are EUID values.
 
 | Field | Description | Example |
 |-------|-------------|---------|
@@ -76,9 +78,9 @@ GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer={BU
 
 | Parameter | Description | Example |
 |-----------|-------------|---------|
-| `issuer` | Building owner who granted access (Bob) | `NLNHR.87654321` |
-| `subject` | Organization requesting data (David) | `NLNHR.12345678` |
-| `serviceProvider` | Your organization (Charlie) | `NLNHR.23456789` |
+| `issuer` | Building owner who granted access (Bob), as EUID | `NLNHR.87654321` |
+| `subject` | Organization requesting data (David), as EUID | `NLNHR.12345678` |
+| `serviceProvider` | Your organization (Charlie), as EUID | `NLNHR.23456789` |
 | `action` | Requested action | `GET` |
 | `resource` | Resource identifier (VBO ID or asset ID) | `0363010000659001` |
 | `type` | Resource type | `building` |
@@ -134,7 +136,7 @@ The endpoint always returns HTTP 200 — even when authorization is denied. When
 | Check | Requirement |
 |-------|-------------|
 | **Allowed** | `allowed` must be `true` |
-| **Subject match** | `explainPolicies[].subjectId` must match the organization extracted from the incoming request's bearer token |
+| **Subject match** | `explainPolicies[].subjectId` must match the EUID derived from the incoming request's `organization` claim |
 
 ### Recommended responses to your consumers
 
@@ -155,7 +157,7 @@ Putting it all together — a simplified enforcement flow:
 ```
 1. Receive request with Bearer token and resource identifier
 2. Validate token (signature, expiry, issuer, audience)
-3. Extract organization EUID from token's `organization` claim
+3. Derive the organization EUID from the token's `organization` claim
 4. Determine the building owner (issuer) for the requested resource
 5. Call explained-enforce (no auth required) with subject=consumer, serviceProvider=you, resource=vboId
 6. Enforce always returns HTTP 200 — check the `allowed` field

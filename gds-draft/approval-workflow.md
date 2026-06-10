@@ -94,6 +94,8 @@ Response:
 
 Gather the following before creating an approval request:
 
+For GDS, EUID is the chosen identifier format. Use EUID consistently for `organizationId`, `issuerId`, `subjectId`, and `serviceProvider`.
+
 ### Requester information (your platform's user)
 
 | Field | Description | Example |

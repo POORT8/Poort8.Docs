@@ -41,7 +41,7 @@ views {
 
     david -> api 'API call + Authorization: Bearer {token}'
     api -> api 'Verify signature, expiry, issuer, audience'
-    api -> api 'Extract organization claim'
+    api -> api 'Derive the organization EUID from organization claim'
     api -> david 'API response'
   }
 }
@@ -57,7 +57,7 @@ Perform these checks in order. Reject the request immediately if any check fails
 | 2 | **Expiration** | `exp` claim is in the future | `401 Unauthorized` |
 | 3 | **Issuer** | `iss` equals `https://auth.poort8.nl/realms/gds-preview` | `401 Unauthorized` |
 | 4 | **Audience** | `aud` contains your API's client ID | `403 Forbidden` |
-| 5 | **Organization** | `organization` claim is present | Use for business logic |
+| 5 | **Organization** | `organization` claim is present and contains an `EUID` value | Use for business logic |
 
 > **Step 4 is critical.** Without audience validation, a token intended for a different API could be used to access yours. Always verify that your API's client ID appears in the `aud` claim.
 
@@ -87,6 +87,15 @@ A decoded access token from a GDS consumer:
   "client_id": "CONSUMER_APP_CLIENT_ID",
   "organization": {
     "NLNHR.12345678": {
+      "KVK": [
+        "12345678"
+      ],
+      "EORI": [
+        "NL123456789"
+      ],
+      "EUID": [
+        "NLNHR.12345678"
+      ],
       "id": "550e8400-e29b-41d4-a716-446655440000"
     }
   }
@@ -102,23 +111,52 @@ A decoded access token from a GDS consumer:
 | `iat` | number | Issued-at time (Unix timestamp) |
 | `scope` | string | Space-separated granted scopes |
 | `client_id` | string | Consumer application's client ID |
-| `organization` | object | Consumer's verified organization identity |
+| `organization` | object | Consumer's verified organization identity with one or more identifier types |
 
-## Organization claim
+## Deriving the organization identifier
 
-The `organization` claim identifies the consumer's organization:
+After successful token validation, derive the caller organization identifier from the `organization` claim.
+
+The `organization` claim is a Keycloak-specific JSON structure. For each organization it can contain multiple identifier types represented as arrays. The chosen identifier in GDS is EUID.
+
+In GDS, EUID is the canonical identifier for authorization. Use the derived EUID consistently as:
+
+- `subject` in explained-enforce requests
+- `organizationId` in approval request payloads
+- `subjectId`, `issuerId`, and `serviceProvider` values in policy payloads
+
+Use this algorithm:
+
+1. Iterate through organizations in the `organization` object.
+2. For each organization, check whether the EUID attribute exists and has a non-empty array.
+3. Take the first array item as the caller organization identifier.
+
+Example structure:
 
 ```json
 {
   "organization": {
     "NLNHR.12345678": {
+      "KVK": [
+        "12345678"
+      ],
+      "EORI": [
+        "NL123456789"
+      ],
+      "EUID": [
+        "NLNHR.12345678"
+      ],
       "id": "550e8400-e29b-41d4-a716-446655440000"
     }
   }
 }
 ```
 
-The key (e.g., `NLNHR.12345678`) is the organization's **EUID** — derived from the official KvK registration number and verified during onboarding. This is not a self-declared value.
+Reject the request with `403 Forbidden` when:
+
+- The `organization` claim is missing
+- The `organization` claim is not a valid JSON object
+- The `EUID` attribute is missing or empty for all organizations
 
 Use this to:
 - Identify which organization is calling your API
@@ -144,9 +182,23 @@ const jwtCheck = auth({
 app.use(jwtCheck);
 
 app.get("/data", (req, res) => {
-  const organization = req.auth.payload.organization;
-  const orgId = Object.keys(organization)[0]; // e.g., "NLNHR.12345678"
-  res.json({ message: `Data for ${orgId}` });
+  const organizationClaim = req.auth.payload.organization;
+  const identifierAttribute = "EUID";
+
+  let organizationIdentifier = null;
+  for (const org of Object.values(organizationClaim || {})) {
+    const identifiers = org[identifierAttribute];
+    if (Array.isArray(identifiers) && identifiers.length > 0) {
+      organizationIdentifier = identifiers[0];
+      break;
+    }
+  }
+
+  if (!organizationIdentifier) {
+    return res.status(403).json({ error: "organization identifier not found" });
+  }
+
+  res.json({ message: `Data for ${organizationIdentifier}` });
 });
 
 app.listen(3000);
@@ -173,8 +225,25 @@ app.UseAuthorization();
 
 app.MapGet("/data", (HttpContext ctx) =>
 {
-    var organization = ctx.User.FindFirst("organization")?.Value;
-    return Results.Ok(new { message = $"Data for {organization}" });
+  var organizationClaim = ctx.User.FindFirst("organization")?.Value;
+  var identifierAttribute = "EUID";
+
+  if (string.IsNullOrWhiteSpace(organizationClaim))
+    return Results.Forbid();
+
+  using var document = JsonDocument.Parse(organizationClaim);
+  foreach (var organization in document.RootElement.EnumerateObject())
+  {
+    if (organization.Value.TryGetProperty(identifierAttribute, out var identifiers)
+      && identifiers.ValueKind == JsonValueKind.Array
+      && identifiers.GetArrayLength() > 0)
+    {
+      var identifier = identifiers[0].GetString();
+      return Results.Ok(new { message = $"Data for {identifier}" });
+    }
+  }
+
+  return Results.Forbid();
 }).RequireAuthorization();
 
 app.Run();
