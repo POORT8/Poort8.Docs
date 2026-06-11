@@ -24,11 +24,6 @@ De data-rechthebbende (gebouweigenaar) via Keyper, met eHerkenning-authenticatie
 **Hoe lang is een policy geldig?**
 Dat bepaalt de DVU Metadata app bij het aanmaken van de policies en resource groups. Het veld `expiration` in de policy bevat de einddatum als Unix timestamp.
 
-## Implementatie
-
-**Welke iSHARE-identifier moet ik gebruiken voor `serviceProvider`?**
-Voor SDS is dit `did:ishare:EU.NL.NTRNL-55819206`. Neem voor andere datadienst-aanbieders contact op via **hello@poort8.nl**.
-
 **Waar vind ik de API-referentie?**
 - [DVU API docs ➚](https://dvu-preview.poort8.nl/scalar/v1)
 - [Keyper API docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
