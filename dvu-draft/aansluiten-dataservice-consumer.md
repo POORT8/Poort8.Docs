@@ -55,27 +55,31 @@ sequenceDiagram
 | Wat | Hoe |
 |-----|-----|
 | Organisatie + App geregistreerd in DVU Participantenregister | Zie [Onboarding](onboarding.md) |
-| Keycloak `client_id` + `client_secret` | Wordt door Poort8 uitgegeven |
-| Geldige iSHARE-identifier | Door Poort8 toegewezen tijdens registratie |
-| Akkoord van de gebouweigenaar (via Keyper) | Per gebouw / per use case |
+| API-toegang tot de datadienst-aanbieder API en Keyper | Via de catalogus in de portal, zie [Onboarding – Stap 4](onboarding.md) |
+| Keycloak `client_id` + `client_secret` | Wordt bij het registreren van de app uitgegeven |
+| Akkoord van de gebouweigenaar (via Keyper) | Per gebouw |
 
-## Stap 1: Token ophalen
+## Stap 1: Token ophalen voor Keyper
+
+Voor het aanmaken van een goedkeuringsverzoek heb je een token nodig met scope `keyper-api`. Dit token is alleen geldig voor de Keyper API.
 
 ```http
 POST https://auth.poort8.nl/realms/dvu-preview/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=<YOUR-CLIENT-ID>
+grant_type=client_credentials
+&client_id=<YOUR-CLIENT-ID>
 &client_secret=<YOUR-CLIENT-SECRET>
-&grant_type=client_credentials
-&scope=noodlebar-api
+&scope=keyper-api
 ```
 
-Het verkregen access token gebruik je voor zowel Keyper als voor verzoeken aan de datadienst-aanbieder.
+Voor verzoeken aan de datadienst-aanbieder heb je later een apart token nodig met de scope van die aanbieder.
 
 ## Stap 2: Goedkeuringsverzoek aanmaken via Keyper
 
-Maak een approval-link aan voor de combinatie gebouw (VBO) + EAN(s) waarvoor je toegang wilt:
+Maak een approval-link aan met flow `dvu.voeg-gebouw-toe@v1` (één gebouw) of `dvu.voeg-gebouwen-toe@v1` (meerdere gebouwen tegelijk). Je geeft geen policies of resource groups mee — die worden aangemaakt door de DVU Metadata app nadat de data-rechthebbende de link opent.
+
+De payload bevat het adres (postcode + huisnummer als één string) en `dataServiceConsumer`: het organisatie-ID van jouw eigen organisatie (de consumer die na goedkeuring de data mag ophalen).
 
 ```http
 POST https://keyper-preview.poort8.nl/v1/api/approval-links
@@ -83,55 +87,66 @@ Authorization: Bearer <ACCESS_TOKEN>
 Content-Type: application/json
 ```
 
+**Één gebouw (`dvu.voeg-gebouw-toe@v1`):**
+
 ```json
 {
   "requester": {
     "name": "<REQUESTER_NAME>",
     "email": "<REQUESTER_EMAIL>",
     "organization": "<REQUESTER_ORG>",
-    "organizationId": "<REQUESTER_ORG_ID>"
+    "organizationId": "did:ishare:EU.NL.NTRNL-<REQUESTER_KVK_NUMBER>"
   },
   "approver": {
-    "name": "<DATA_OWNER_NAME>",
     "email": "<DATA_OWNER_EMAIL>",
     "organization": "<DATA_OWNER_ORG>",
-    "organizationId": "<DATA_OWNER_ORG_ID>"
+    "organizationId": "did:ishare:EU.NL.NTRNL-<DATA_OWNER_KVK_NUMBER>"
   },
   "dataspace": {
     "baseUrl": "https://dvu-preview.poort8.nl"
   },
   "reference": "<UNIQUE_REFERENCE>",
-  "addPolicyTransactions": [
-    {
-      "type": "VBO-EAN",
-      "action": "GET",
-      "license": "iSHARE.0002",
-      "useCase": "dvu",
-      "issuerId": "<DATA_OWNER_ORG_ID>",
-      "subjectId": "<REQUESTER_ORG_ID>",
-      "serviceProvider": "[TBD – iSHARE-ID van de datadienst-aanbieder, bv. SDS]",
-      "resourceId": "<VBO_ID>",
-      "attribute": "*",
-      "issuedAt": "<UNIX_TIMESTAMP>",
-      "notBefore": "<UNIX_TIMESTAMP>",
-      "expiration": "<UNIX_TIMESTAMP>"
+  "orchestration": {
+    "flow": "dvu.voeg-gebouw-toe@v1",
+    "payload": {
+      "address": "1341 BA 1",
+      "dataServiceConsumer": "did:ishare:EU.NL.NTRNL-<YOUR_KVK_NUMBER>"
     }
-  ],
-  "addResourceGroupTransactions": [
-    {
-      "resourceGroupId": "<VBO_ID>",
-      "name": "<BUILDING_NAME>",
-      "useCase": "dvu",
-      "resources": [
-        { "resourceId": "<EAN_1>" },
-        { "resourceId": "<EAN_2>" }
-      ]
-    }
-  ]
+  }
 }
 ```
 
-[TBD – de exacte velden voor `addPolicyTransactions` en `addResourceGroupTransactions` voor DVU 2.0 verifiëren met een werkend voorbeeld in de preview-omgeving.]
+**Meerdere gebouwen (`dvu.voeg-gebouwen-toe@v1`):**
+
+```json
+{
+  "requester": {
+    "name": "<REQUESTER_NAME>",
+    "email": "<REQUESTER_EMAIL>",
+    "organization": "<REQUESTER_ORG>",
+    "organizationId": "did:ishare:EU.NL.NTRNL-<REQUESTER_KVK_NUMBER>"
+  },
+  "approver": {
+    "email": "<DATA_OWNER_EMAIL>",
+    "organization": "<DATA_OWNER_ORG>",
+    "organizationId": "did:ishare:EU.NL.NTRNL-<DATA_OWNER_KVK_NUMBER>"
+  },
+  "dataspace": {
+    "baseUrl": "https://dvu-preview.poort8.nl"
+  },
+  "reference": "<UNIQUE_REFERENCE>",
+  "orchestration": {
+    "flow": "dvu.voeg-gebouwen-toe@v1",
+    "payload": {
+      "addresses": [
+        "1341 BA 1",
+        "5261 AD 1"
+      ],
+      "dataServiceConsumer": "did:ishare:EU.NL.NTRNL-<YOUR_KVK_NUMBER>"
+    }
+  }
+}
+```
 
 Zie de [Keyper API docs ➚](https://keyper-preview.poort8.nl/scalar/v1) voor het volledige schema.
 
@@ -139,18 +154,26 @@ Zie de [Keyper API docs ➚](https://keyper-preview.poort8.nl/scalar/v1) voor he
 
 Keyper stuurt een e-mail naar de aangewezen approver. Na goedkeuring (of afwijzing) is de policy zichtbaar in het DVU AR.
 
-[TBD – beschrijven of/hoe de status van een approval-link kan worden opgevraagd, en welke webhook of polling-strategie wordt aanbevolen.]
-
 ## Stap 4: Energiedata opvragen
 
-Na goedkeuring stuur je dataverzoeken naar de datadienst-aanbieder (bv. SDS), met je DVU-bearer token:
+Na goedkeuring vraag je een nieuw token op, nu met de scope van de datadienst-aanbieder (de `client_id` van diens API zoals geregistreerd in de catalogus):
 
 ```http
-GET https://<datadienst-aanbieder>/<endpoint>?ean=<EAN>
-Authorization: Bearer <ACCESS_TOKEN>
+POST https://auth.poort8.nl/realms/dvu-preview/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id=<YOUR-CLIENT-ID>
+&client_secret=<YOUR-CLIENT-SECRET>
+&scope=<DATADIENST_AANBIEDER_API_CLIENT_ID>
 ```
 
-[TBD – per datadienst-aanbieder de exacte endpoints en responseformaten beschrijven of doorlinken.]
+Stuur daarna het dataverzoek naar de datadienst-aanbieder. De exacte URL, parameters en het responseformaat worden bepaald door de datadienst-aanbieder zelf — raadpleeg diens API-documentatie. Het enige dat DVU vereist is dat je een geldig bearer token meestuurt:
+
+```http
+GET https://<datadienst-aanbieder>/<endpoint-per-aanbieder>
+Authorization: Bearer <ACCESS_TOKEN>
+```
 
 De datadienst-aanbieder valideert het token, controleert via `explained-enforce` of er een geldige policy bestaat, en levert daarna de data uit. Zie [Aansluiten als datadienst-aanbieder](aansluiten-datadienst-aanbieder.md) voor de aanbieder-kant van deze flow.
 
@@ -160,9 +183,8 @@ De datadienst-aanbieder valideert het token, controleert via `explained-enforce`
 |------|-----------|-------|
 | `401 Unauthorized` | Token ontbreekt, is verlopen of ongeldig | Vraag een nieuw token aan |
 | `403 Forbidden` | Geen geldige policy gevonden | Controleer of de approval-flow is afgerond en de gebouweigenaar heeft goedgekeurd |
-| `400 Bad Request` | Verkeerde of ontbrekende parameters | Controleer EAN/VBO en `useCase` |
+| `400 Bad Request` | Verkeerde of ontbrekende parameters | Controleer request parameters |
 
 ## Hulp nodig?
 
 - Technische vragen of credential-verzoeken: **hello@poort8.nl**
-- Toelating tot DVU: **BeheerDVU@rvo.nl**

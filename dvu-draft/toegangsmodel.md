@@ -66,4 +66,4 @@ Voor de technische uitwerking per rol:
 
 ## Marktsegmentatie
 
-Voor energiedata is het onderscheid tussen kleinverbruik (KV) en grootverbruik (GV) relevant voor welke dataproducten geleverd kunnen worden. De segmentatie wordt bepaald op basis van de aansluitgegevens van het gebouw. Zie [Dataproducten](dataproducten.md) voor welke producten beschikbaar zijn per segment. [TBD – per dataproduct in detail beschrijven welke segmentatie geldt en hoe die wordt vastgesteld.]
+Voor energiedata is het onderscheid tussen kleinverbruik (KV) en grootverbruik (GV) relevant voor welke dataproducten geleverd kunnen worden. De segmentatie wordt bepaald op basis van de aansluitgegevens van het gebouw. Zie [Dataproducten](dataproducten.md) voor welke producten beschikbaar zijn per segment.

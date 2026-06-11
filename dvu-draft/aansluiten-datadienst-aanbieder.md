@@ -12,7 +12,7 @@ SDS is in DVU terminologie een **datadienst-aanbieder** (`serviceProvider`): een
 
 Deze gids is voor datadienst-aanbieders die:
 
-- Energiedata uitleveren binnen het DVU dataspace (P4-meterdata, dagstanden, RVO-benchmark)
+- Energiemeterdata uitleveren binnen het DVU dataspace
 - Moeten verifiëren of een dataservice consumer geautoriseerd is om data van een specifiek gebouw / EAN op te halen
 - Het DVU autorisatiepatroon willen implementeren via `explained-enforce`
 
@@ -74,7 +74,7 @@ De DVU Approval-flow beschrijft hoe een policy wordt aangemaakt namens de data-r
 
 | Veld | Beschrijving | Voorbeeld |
 | -- | -- | -- |
-| `type` | Resource type — `VBO-EAN` (combi VBO + EANs) of `EAN` (los, in afstemming) | `VBO-EAN` |
+| `type` | Resource type — `VBO-EAN` (combi VBO + EANs) | `VBO-EAN` |
 | `action` | Toegestane actie | `GET` |
 | `license` | iSHARE licentie | `iSHARE.0002` |
 | `useCase` | Use case | `dvu` |
@@ -161,15 +161,13 @@ Authenticeer met de DVU API via OAuth2 client credentials:
 POST https://auth.poort8.nl/realms/dvu-preview/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=<YOUR-CLIENT-ID>
+grant_type=client_credentials
+&client_id=<YOUR-CLIENT-ID>
 &client_secret=<YOUR-CLIENT-SECRET>
-&grant_type=client_credentials
 &scope=noodlebar-api
 ```
 
 Het verkregen access token authenticeert SDS als *applicatie* tegen het DVU AR. Het is uitdrukkelijk **geen** identiteitstoken tussen David en SDS — de identiteiten van issuer/subject/serviceProvider worden expliciet als query-parameters meegegeven aan `explained-enforce` (zie [§ Stap 3](#stap-3-explained-enforce-request)).
-
-Neem contact op met Poort8 via **hello@poort8.nl** om client credentials aan te vragen.
 
 ## Stap 3: Explained-enforce request
 
@@ -276,11 +274,11 @@ Voordat de enforcement flow werkt, moet het volgende zijn ingericht:
 
 | Wat | Wie |
 | -- | -- |
-| SDS geregistreerd in DVU Participantenregister, inclusief App en API registratie | Poort8 / SDS |
-| SDS Keycloak client credentials uitgegeven voor het AR | Poort8 |
-| Data-rechthebbende (Bob) geregistreerd in DVU Participantenregister | Poort8 / DVU-beheer (RVO) |
-| Dataservice consumer (David) geregistreerd in DVU Participantenregister, inclusief App registratie | Poort8 / DVU-beheer (RVO) |
-| Dataservice consumer (David) Keycloak client credentials uitgegeven voor de SDS API | Poort8 / DVU-beheer (RVO) |
+| SDS geregistreerd in DVU Participantenregister, inclusief App en API | Self-service via [dvu-preview.poort8.nl/portal](https://dvu-preview.poort8.nl/portal), zie [Onboarding](onboarding.md) |
+| SDS Keycloak client credentials voor het DVU AR | Worden aangemaakt bij het registreren van de app in de portal |
+| Data-rechthebbende (Bob) geregistreerd in DVU Participantenregister | Self-service via de portal; DVU-beheerder (RVO) keurt goed |
+| Dataservice consumer (David) geregistreerd in DVU Participantenregister, inclusief App | Self-service via de portal; DVU-beheerder (RVO) keurt goed |
+| Dataservice consumer (David) heeft API-toegang aangevraagd tot de SDS API | Via de catalogus in de portal, zie [Onboarding – Stap 4](onboarding.md) |
 | Policy aangemaakt in DVU AR | Approval-flow / Keyper |
 | Resource Group (VBO + EANs) aangemaakt voor het gebouw | Approval-flow / Keyper |
 | Testscenario zonder passende policy, ter demonstratie van weigering | — |
