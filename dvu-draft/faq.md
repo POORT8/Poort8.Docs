@@ -5,7 +5,7 @@
 ## Algemeen
 
 **Wat is DVU 2.0?**
-De NoodleBar Keycloak-variant van DVU. Functioneel vergelijkbaar met de eerdere implementatie, maar gebaseerd op het standaard Poort8 NoodleBar-platform met Keycloak als identity provider, vergelijkbaar met PortlinQ en GIR.
+De NoodleBar Keycloak-variant van DVU. Functioneel vergelijkbaar met de eerdere implementatie, maar gebaseerd op de standaard Poort8 NoodleBar-oplossing met Keycloak als identity provider.
 
 **Blijft DVU 1.0 nog beschikbaar?**
 Ja. De [DVU 1.0 documentatie](../dvu/) en de bijbehorende implementatie blijven voorlopig naast deze versie bestaan.

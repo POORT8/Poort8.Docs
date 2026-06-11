@@ -1,6 +1,6 @@
 # Aansluiten als data-rechthebbende
 
-Deze gids is voor gebouweigenaren (data-rechthebbenden) die toestemming geven om energiedata van hun gebouw(en) te laten delen via DVU. Goedkeuring verloopt via Keyper; de uiteindelijke policy wordt geregistreerd in het DVU Authorization Registry.
+Deze gids is voor gebouweigenaren (data-rechthebbenden) die toestemming geven om energiedata van hun gebouw(en) te laten delen via DVU. Goedkeuring verloopt via Keyper; de uiteindelijke policy wordt geregistreerd in het DVU Autorisatieregister.
 
 ## Wat doe jij in dit proces?
 
@@ -16,7 +16,7 @@ Bij goedkeuring registreert Keyper automatisch de bijbehorende policy in het DVU
 
 | Wat | Wie |
 |-----|-----|
-| Organisatie geregistreerd in DVU Participant Registry | Poort8 / RVO – zie [Onboarding](onboarding.md) |
+| Organisatie geregistreerd in DVU Participantenregister | Poort8 / RVO – zie [Onboarding](onboarding.md) |
 | Tekenbevoegd persoon met eHerkenning | Eigen verantwoordelijkheid van de organisatie |
 | Toegang tot het e-mailadres dat als contactpersoon is opgegeven | Data-rechthebbende |
 

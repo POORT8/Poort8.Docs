@@ -1,8 +1,8 @@
 # DVU – Datastelsel Verduurzaming Utiliteit
 
-DVU maakt gecontroleerde toegang tot energiedata van utiliteitsgebouwen mogelijk voor verduurzamingsdoeleinden. Een gebouweigenaar geeft via DVU expliciet toestemming aan een dataservice consumer om energiedata van een specifiek gebouw op te halen bij een datadienst-aanbieder. RVO is dataspace-beheerder; Poort8 levert het platform.
+DVU maakt gecontroleerde toegang tot energiedata van utiliteitsgebouwen mogelijk voor verduurzamingsdoeleinden. Een gebouweigenaar geeft via DVU expliciet toestemming aan een dataservice consumer om energiedata van een specifiek gebouw op te halen bij een datadienst-aanbieder. RVO is dataspace-beheerder; Poort8 levert de dataspace-componenten en -services.
 
-> **DVU 2.0 — NoodleBar Keycloak-variant.** Deze documentatie beschrijft de nieuwe DVU-implementatie op basis van NoodleBar met Keycloak, vergelijkbaar met PortlinQ en GIR. De [oudere DVU 1.0 documentatie](../dvu/) blijft voorlopig naast deze versie bestaan.
+> **DVU 2.0 — NoodleBar Keycloak-variant.** Deze documentatie beschrijft de nieuwe DVU-implementatie op basis van NoodleBar met Keycloak. De [oudere DVU 1.0 documentatie](../dvu/) blijft voorlopig naast deze versie bestaan.
 
 ## Hoe werkt het?
 
@@ -10,12 +10,12 @@ DVU brengt drie partijen bij elkaar rond één gebouw:
 
 - **Data-rechthebbende** (bv. gebouweigenaar) — geeft toestemming voor toegang tot energiedata van zijn gebouw(en).
 - **Dataservice consumer** — een applicatie die namens een gebouweigenaar energiedata wil ophalen, bijvoorbeeld voor verduurzamingsadvies of rapportage.
-- **Datadienst-aanbieder** — een platform (bv. SDS) dat de energiedata daadwerkelijk uitlevert, na verificatie van de toestemming bij DVU.
+- **Datadienst-aanbieder** — een dienst (bv. SDS) die de energiedata daadwerkelijk uitlevert, na verificatie van de toestemming bij DVU.
 
 DVU bestaat uit drie kerncomponenten:
 
-- **DVU Authorization Registry** — beheert policies (toestemmingen) en evalueert toegangscontrole via `explained-enforce`.
-- **DVU Organization Registry** (Participant Registry) — beheert deelnemende organisaties en hun rollen.
+- **DVU Autorisatieregister** — beheert policies (toestemmingen) en evalueert toegangscontrole via `explained-enforce`.
+- **DVU Participantenregister** — beheert de deelnemende organisaties van de dataspace.
 - **Keyper** — verzorgt de goedkeuringsflow waarmee de data-rechthebbende toestemming geeft.
 
 ```mermaid
@@ -24,59 +24,64 @@ sequenceDiagram
     participant Bob as Bob (Data-rechthebbende)
     participant David as David (Dataservice consumer)
     participant Keyper as Keyper
+    participant Meta as DVU Metadata app
     participant DVU as DVU AR
     participant Charlie as Charlie (Datadienst-aanbieder / SDS)
     participant MB as Meetbedrijf
 
     rect rgb(200, 220, 255)
     note over David,DVU: Toestemming (eenmalig per gebouw)
-    David->>Keyper: Approval-aanvraag voor VBO + EAN(s)
+    David->>Keyper: Approval-aanvraag voor postcode en huisnummer + bearer token
     Keyper->>Bob: Goedkeuringslink (e-mail)
-    Bob->>Keyper: Login + goedkeuring
-    Keyper->>DVU: Policy registreren (issuer, subject, serviceProvider, resource)
+    Bob->>Keyper: Opent goedkeuringslink
+    Keyper->>Meta: Redirect naar DVU Metadata app (gebouwgegevens aanleveren)
+    Meta->>Bob: Formulier gebouwgegevens (VBO en EAN's automatisch opgehaald, meetbedrijf invullen)
+    Bob->>Meta: Gebouwgegevens ingevuld
+    Meta->>Keyper: Update van approval link met policies en resource groups
+    Meta->>Keyper: Redirect terug naar Keyper
+    Keyper->>Bob: eHerkenning login
+    Bob->>Keyper: Ingelogd via eHerkenning
+    Keyper->>DVU: Policies en resource groups registreren
+    Keyper->>Meta: Webhook (goedkeuring afgerond)
+    Meta->>Charlie: Aanmelden VBO, EAN's en meetbedrijf
     end
 
     rect rgb(220, 255, 220)
     note over David,Charlie: Datalevering (terugkerend)
     David->>Charlie: Dataverzoek (EAN) + bearer token
-    Charlie->>DVU: GET /api/authorization/explained-enforce
-    DVU-->>Charlie: allowed: true + policy
-    Charlie->>MB: Energiedata ophalen
-    MB-->>Charlie: P4 / dagstanden
-    Charlie-->>David: 200 OK – energiedata
+    Charlie->>DVU: Explained enforce voor de autorisatie van David
+    DVU-->>Charlie: enforce resultaat (allowed + policies)
+    alt Toegestaan
+        Charlie->>MB: Energiedata ophalen
+        MB-->>Charlie: P4 / dagstanden
+        Charlie-->>David: 200 OK – energiedata
+    else Niet toegestaan
+        Charlie-->>David: 403 Forbidden
+    end
     end
 ```
 
 ### Stappen
 
-1. **Onboarden** — De dataservice consumer en datadienst-aanbieder worden geregistreerd in het DVU Participant Registry en krijgen Keycloak-credentials.
-2. **Toestemming aanvragen** — De dataservice consumer maakt via Keyper een goedkeuringsverzoek aan voor een gebouw (VBO) en bijbehorende EAN's.
-3. **Toestemming verlenen** — De data-rechthebbende keurt de aanvraag goed via een Keyper-link. Keyper registreert een policy in het DVU AR.
-4. **Datalevering** — Bij elk dataverzoek controleert de datadienst-aanbieder de policy via `explained-enforce` en levert vervolgens de energiedata uit.
-
-## Data-transacties
-
-| Transactie | Doel | Richting |
-|------------|------|----------|
-| Toestemming (policy) | Gebouweigenaar geeft dataservice consumer toegang tot energiedata van een specifiek gebouw | Keyper → DVU AR |
-| P4-meterdata | Standaard energieverbruik per meetpunt | Meetbedrijf → datadienst-aanbieder → dataservice consumer |
-| Dagstanden | Dagelijkse meterstanden | Meetbedrijf → datadienst-aanbieder → dataservice consumer |
-
-Zie [Dataproducten](dataproducten.md) voor details.
+1. **Onboarden** — De dataservice consumer en datadienst-aanbieder worden geregistreerd in het DVU Participantenregister en krijgen Keycloak-credentials.
+2. **Toestemming aanvragen** — De dataservice consumer maakt via Keyper een goedkeuringsverzoek aan voor een gebouw op een postcode en huisnummer.
+3. **Gebouwgegevens aanleveren** — De data-rechthebbende wordt via Keyper doorgestuurd naar de DVU Metadata app. Het VBO en de bijbehorende EAN's worden automatisch opgehaald op basis van de postcode en het huisnummer; de data-rechthebbende vult alleen het meetbedrijf aan. De metadata app schrijft de policies en resource groups terug naar Keyper.
+4. **Toestemming verlenen** — De data-rechthebbende keurt de aanvraag goed via eHerkenning. Keyper registreert policies en resource groups in het DVU AR.
+5. **Gebouw activeren bij datadienst-aanbieder** — Na goedkeuring stuurt Keyper een webhook naar de DVU Metadata app. De metadata app meldt het VBO, de EAN's en het meetbedrijf aan bij de datadienst-aanbieder, zodat die klaar is om dataverzoeken te verwerken.
+6. **Datalevering** — Bij elk dataverzoek controleert de datadienst-aanbieder de policy via `explained-enforce` en levert vervolgens de energiedata uit.
 
 ## Deelnemers en rollen
 
 - **RVO** — dataspace-beheerder; verantwoordelijk voor governance en deelnemersregistratie.
-- **Poort8** — platformleverancier (DVU AR, Participant Registry, Keyper).
+- **Poort8** — leverancier van de dataspace-componenten en -services (DVU AR en Metadata app, Participantenregister, Keyper).
 - **Data-rechthebbenden** — gebouweigenaren die toestemming verlenen.
 - **Dataservice consumers** — applicaties die namens gebouweigenaren energiedata willen ophalen.
-- **Datadienst-aanbieders** — platforms die energiedata uitleveren (bv. SDS).
+- **Datadienst-aanbieders** — diensten die energiedata uitleveren (bv. SDS).
 - **Meetbedrijven** — bron van de energiedata.
 
 ## Toegang en omgeving
 
 - **Preview:** https://dvu-preview.poort8.nl/
-- **Productie:** [TBD – beschikbaar na productie-deployment]
 
 Authenticatie verloopt via het Keycloak-realm `dvu-preview` op `https://auth.poort8.nl/`.
 
@@ -89,13 +94,12 @@ Authenticatie verloopt via het Keycloak-realm `dvu-preview` op `https://auth.poo
 | Toestemming organiseren als gebouweigenaar | [Aansluiten als data-rechthebbende](aansluiten-data-rechthebbende.md) |
 | Implementeren als dataservice consumer | [Aansluiten als dataservice consumer](aansluiten-dataservice-consumer.md) |
 | Implementeren als datadienst-aanbieder | [Aansluiten als datadienst-aanbieder](aansluiten-datadienst-aanbieder.md) |
-| API-referentie | [DVU API docs ➚](https://dvu-preview.poort8.nl/scalar/v1) |
-| Keyper-referentie | [Keyper API docs ➚](https://keyper-preview.poort8.nl/scalar/v1) |
+| NoodleBar API | [DVU API docs ➚](https://dvu-preview.poort8.nl/scalar/v1) |
+| Keyper API | [Keyper API docs ➚](https://keyper-preview.poort8.nl/scalar/v1) |
 | NoodleBar-concepten | [NoodleBar documentatie](../noodlebar/) |
 
 ## Meer informatie
 
 - **[DVU bij RVO ➚](https://www.rvo.nl/onderwerpen/verduurzaming-utiliteitsbouw/dvu)**
-- **[iSHARE Trust Framework ➚](https://ishare.eu/)**
 
 Vragen? Neem contact op met Poort8 via **hello@poort8.nl** of met het DVU-beheerteam via **BeheerDVU@rvo.nl**.

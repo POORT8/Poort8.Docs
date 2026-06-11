@@ -1,10 +1,10 @@
 # DVU Autorisatie voor Datadienst-aanbieders
 
-Deze gids is voor ontwikkelaars die een datadienst-platform bouwen op DVU en autorisatiebeleid moeten verifiëren voordat zij energiedata uitleveren aan een dataservice consumer. De gids beschrijft hoe **Charlie (SDS)** het `explained-enforce` endpoint van het DVU Autorisatieregister bevraagt om te controleren of een geldige policy bestaat voor **David (Dataservice Consumer)** namens **Bob (Data-rechthebbende / gebouweigenaar)**.
+Deze gids is voor ontwikkelaars die een datadienst bouwen op DVU en autorisatiebeleid moeten verifiëren voordat zij energiedata uitleveren aan een dataservice consumer. De gids beschrijft hoe **Charlie (SDS)** het `explained-enforce` endpoint van het DVU Autorisatieregister bevraagt om te controleren of een geldige policy bestaat voor **David (Dataservice Consumer)** namens **Bob (Data-rechthebbende / gebouweigenaar)**.
 
-SDS is in DVU terminologie een **datadienst-aanbieder** (`serviceProvider`): een platform dat namens een data-rechthebbende energiedata bij meetbedrijven ophaalt en aan een geautoriseerde consumer levert. Hoewel deze gids zich richt op SDS, is hetzelfde enforcement patroon toepasbaar op andere datadienst-aanbieders op DVU.
+SDS is in DVU terminologie een **datadienst-aanbieder** (`serviceProvider`): een dienst die namens een data-rechthebbende energiedata bij meetbedrijven ophaalt en aan een geautoriseerde consumer levert. Hoewel deze gids zich richt op SDS, is hetzelfde enforcement patroon toepasbaar op andere datadienst-aanbieders op DVU.
 
-> **Let op:** DVU 2.0 wordt opgezet als NoodleBar Keycloak-variant, vergelijkbaar met PortlinQ en GIR. De policystructuur blijft inhoudelijk vergelijkbaar met de iSHARE-stijl die in DVU 1.0 werd gebruikt, maar wordt nu toegepast op de NoodleBar Keycloak-variant. De iSHARE-AR-implementatie laten we voor nu naast deze nieuwe variant bestaan.
+> **Let op:** DVU 2.0 wordt opgezet als NoodleBar Keycloak-variant. De policystructuur blijft inhoudelijk vergelijkbaar met de iSHARE-stijl die in DVU 1.0 werd gebruikt, maar wordt nu toegepast op de NoodleBar Keycloak-variant. De iSHARE-AR-implementatie laten we voor nu naast deze nieuwe variant bestaan.
 
 [DVU API Docs ➚](https://dvu-preview.poort8.nl/scalar/v1)
 
@@ -68,7 +68,7 @@ sequenceDiagram
 
 ## Autorisatiemodel
 
-De DVU Approval-flow beschrijft hoe een policy wordt aangemaakt namens de data-rechthebbende (Bob), via Keyper of via een goedkeuringslink. Jouw platform bevraagt die bestaande policy via `explained-enforce`.
+De DVU Approval-flow beschrijft hoe een policy wordt aangemaakt namens de data-rechthebbende (Bob), via Keyper of via een goedkeuringslink. Jouw dienst bevraagt die bestaande policy via `explained-enforce`.
 
 ### Policy velden
 
@@ -276,10 +276,10 @@ Voordat de enforcement flow werkt, moet het volgende zijn ingericht:
 
 | Wat | Wie |
 | -- | -- |
-| SDS geregistreerd in DVU Participant Registry, inclusief App en API registratie | Poort8 / SDS |
+| SDS geregistreerd in DVU Participantenregister, inclusief App en API registratie | Poort8 / SDS |
 | SDS Keycloak client credentials uitgegeven voor het AR | Poort8 |
-| Data-rechthebbende (Bob) geregistreerd in DVU Participant Registry | Poort8 / DVU-beheer (RVO) |
-| Dataservice consumer (David) geregistreerd in DVU Participant Registry, inclusief App registratie | Poort8 / DVU-beheer (RVO) |
+| Data-rechthebbende (Bob) geregistreerd in DVU Participantenregister | Poort8 / DVU-beheer (RVO) |
+| Dataservice consumer (David) geregistreerd in DVU Participantenregister, inclusief App registratie | Poort8 / DVU-beheer (RVO) |
 | Dataservice consumer (David) Keycloak client credentials uitgegeven voor de SDS API | Poort8 / DVU-beheer (RVO) |
 | Policy aangemaakt in DVU AR | Approval-flow / Keyper |
 | Resource Group (VBO + EANs) aangemaakt voor het gebouw | Approval-flow / Keyper |

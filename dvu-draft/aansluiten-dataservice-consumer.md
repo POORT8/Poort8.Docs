@@ -54,7 +54,7 @@ sequenceDiagram
 
 | Wat | Hoe |
 |-----|-----|
-| Organisatie + App geregistreerd in DVU Participant Registry | Zie [Onboarding](onboarding.md) |
+| Organisatie + App geregistreerd in DVU Participantenregister | Zie [Onboarding](onboarding.md) |
 | Keycloak `client_id` + `client_secret` | Wordt door Poort8 uitgegeven |
 | Geldige iSHARE-identifier | Door Poort8 toegewezen tijdens registratie |
 | Akkoord van de gebouweigenaar (via Keyper) | Per gebouw / per use case |

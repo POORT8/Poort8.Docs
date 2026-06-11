@@ -1,21 +1,21 @@
 # Onboarding & registratie
 
-Voordat je met DVU kunt integreren, moet je organisatie als deelnemer zijn geregistreerd in het DVU Participant Registry en credentials hebben ontvangen voor het Keycloak-realm `dvu-preview`.
+Voordat je met DVU kunt integreren, moet je organisatie als deelnemer zijn geregistreerd in het DVU Participantenregister en credentials hebben ontvangen voor het Keycloak-realm `dvu-preview`.
 
 ## Voorwaarden per rol
 
 | Rol | Wat moet geregistreerd zijn |
 |-----|------------------------------|
-| Dataservice consumer | Organisatie + App in Participant Registry, Keycloak client credentials voor de datadienst-aanbieder API |
-| Datadienst-aanbieder | Organisatie + App + API in Participant Registry, Keycloak client credentials voor het DVU AR |
-| Data-rechthebbende (gebouweigenaar) | Organisatie in Participant Registry; gebruiker met geldige eHerkenning voor goedkeuring via Keyper |
+| Dataservice consumer | Organisatie + App in Participantenregister, Keycloak client credentials voor de datadienst-aanbieder API |
+| Datadienst-aanbieder | Organisatie + App + API in Participantenregister, Keycloak client credentials voor het DVU AR |
+| Data-rechthebbende (gebouweigenaar) | Organisatie in Participantenregister; gebruiker met geldige eHerkenning voor goedkeuring via Keyper |
 
 ## Wie regelt wat
 
 | Wat | Wie |
 |-----|-----|
 | Toelating tot DVU | RVO (DVU-beheer) |
-| Registratie in Participant Registry | Poort8, na akkoord van RVO |
+| Registratie in Participantenregister | Poort8, na akkoord van RVO |
 | Uitgifte Keycloak client credentials | Poort8 |
 | Aanmaken Keyper-aanvragen | Dataservice consumer |
 | Aanmaken policies | Data-rechthebbende via Keyper-goedkeuringsflow |

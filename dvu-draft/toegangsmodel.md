@@ -1,6 +1,6 @@
 # Toegangsmodel
 
-Het DVU-toegangsmodel beschrijft hoe een data-rechthebbende toestemming geeft om energiedata van zijn gebouw(en) te delen, en hoe die toestemming wordt vastgelegd als policy in het DVU Authorization Registry.
+Het DVU-toegangsmodel beschrijft hoe een data-rechthebbende toestemming geeft om energiedata van zijn gebouw(en) te delen, en hoe die toestemming wordt vastgelegd als policy in het DVU Autorisatieregister.
 
 ## Twee varianten
 
@@ -21,7 +21,7 @@ In beide varianten verleent de data-rechthebbende expliciete goedkeuring via Key
 | David | Dataservice consumer | Verduurzamingsadviestool die energiedata wil ophalen |
 | Charlie | Datadienst-aanbieder | SDS – levert energiedata na enforcement-check |
 | Keyper | Goedkeuringsflow | Stuurt e-mail naar Bob, registreert policy na akkoord |
-| DVU AR | Authorization Registry | Beheert policies, evalueert via `explained-enforce` |
+| DVU AR | Autorisatieregister | Beheert policies, evalueert via `explained-enforce` |
 | RVO | Dataspace-beheerder | Toelating en governance |
 
 ## Policy-structuur

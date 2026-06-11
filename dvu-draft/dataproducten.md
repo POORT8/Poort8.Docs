@@ -1,6 +1,6 @@
 # Dataproducten
 
-DVU geeft toegang tot energiedata-producten van utiliteitsgebouwen. De daadwerkelijke uitlevering verloopt via een datadienst-aanbieder zoals Smart Data Solutions (SDS), na een policy-check in het DVU Authorization Registry.
+DVU geeft toegang tot energiedata-producten van utiliteitsgebouwen. De daadwerkelijke uitlevering verloopt via een datadienst-aanbieder zoals Smart Data Solutions (SDS), na een policy-check in het DVU Autorisatieregister.
 
 ## Beschikbare producten
 
