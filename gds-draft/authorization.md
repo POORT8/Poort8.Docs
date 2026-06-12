@@ -20,6 +20,7 @@ specification {
 model {
   david = actor 'Data Consumer'
   charlie = system 'Your IoT Platform'
+  kc = system 'GDS Participant Registry'
   ar = system 'GDS Authorization Registry'
 }
 
@@ -30,7 +31,9 @@ views {
 
     david -> charlie 'GET /buildings/{vboId} + Bearer token'
     charlie -> charlie 'Validate token & derive organization EUID'
-    charlie -> ar 'GET /api/authorization/explained-enforce'
+    charlie -> kc 'Request token (client_credentials, scope=noodlebar-api)'
+    kc -> charlie 'Access token'
+    charlie -> ar 'GET /api/authorization/explained-enforce + Bearer token'
     ar -> charlie 'HTTP 200: {allowed: true/false, policies}'
     charlie -> david 'If allowed: 200 + data / If denied: 403'
   }
@@ -62,16 +65,31 @@ For GDS, EUID is the chosen identifier format for policy identities. This means 
 
 **Action semantics:**
 - `GET` — Read data (sensor measurements, metadata)
-- `POST` — Write data or send control commands. A `POST` policy implicitly grants `GET` access
+- `POST` — Write data or send control commands.
 
-> **Pilot scope:** During the test phase, only a `GET` policy on building level (VBO ID) is used.
+## Step 1 — Obtain an access token
 
-## Step 1 — Query the explained enforce endpoint
+Authenticate using the OAuth 2.0 client credentials grant with the application you registered for the NoodleBar API (see [Validating API Tokens — Prerequisites](validating-api-tokens.md)):
 
-The explained enforce endpoint is publicly accessible (no authentication required). Call it to check whether a valid policy exists for the incoming request:
+```http
+POST https://auth.poort8.nl/realms/gds-preview/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id=YOUR_APP_CLIENT_ID
+&client_secret=YOUR_APP_CLIENT_SECRET
+&scope=noodlebar-api
+```
+
+> **Note:** This token authenticates your IoT platform as an *application* against the Authorization Registry. It is not an identity token between David and your platform — the consumer's organization identity is passed explicitly as the `subject` query parameter.
+
+## Step 2 — Query the explained enforce endpoint
+
+Call the endpoint with the access token from Step 1 to check whether a valid policy exists for the incoming request:
 
 ```http
 GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer={BUILDING_OWNER}&subject={DATA_CONSUMER}&serviceProvider={YOUR_ORG}&action=GET&resource={VBO_ID}&type=building&attribute=*&useCase=ishare
+Authorization: Bearer {token}
 ```
 
 ### Query parameters
@@ -91,6 +109,7 @@ GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer={BU
 
 ```http
 GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer=NLNHR.87654321&subject=NLNHR.12345678&serviceProvider=NLNHR.23456789&action=GET&resource=0363010000659001&type=building&attribute=*&useCase=ishare
+Authorization: Bearer {token}
 ```
 
 ### Response — authorized
@@ -129,7 +148,7 @@ GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer=NLN
 }
 ```
 
-## Step 2 — Validate and respond
+## Step 3 — Validate and respond
 
 The endpoint always returns HTTP 200 — even when authorization is denied. When you receive the enforce response, verify:
 
@@ -159,10 +178,11 @@ Putting it all together — a simplified enforcement flow:
 2. Validate token (signature, expiry, issuer, audience)
 3. Derive the organization EUID from the token's `organization` claim
 4. Determine the building owner (issuer) for the requested resource
-5. Call explained-enforce (no auth required) with subject=consumer, serviceProvider=you, resource=vboId
-6. Enforce always returns HTTP 200 — check the `allowed` field
-7. If allowed=true and subject matches: deliver data (200)
-8. If allowed=false: reject the request (403)
+5. Obtain an access token for the Authorization Registry (client credentials, scope `noodlebar-api`)
+6. Call explained-enforce with `Authorization: Bearer {token}`, subject=consumer, serviceProvider=you, resource=vboId
+7. Enforce always returns HTTP 200 — check the `allowed` field
+8. If allowed=true and subject matches: deliver data (200)
+9. If allowed=false: reject the request (403)
 ```
 
 > **Determining the issuer:** Your platform needs to know which building owner (issuer) corresponds to each building/asset in your system. This mapping is typically established during building onboarding in your platform.

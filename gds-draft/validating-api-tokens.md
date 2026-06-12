@@ -11,6 +11,9 @@ This guide is for **Charlie** — a data service provider who exposes APIs in th
 | Organization registered | Your organization is registered and approved in the GDS Participant Registry |
 | API registered | Your API is registered in the Self-Service Portal |
 | API implemented | You have an API ready to receive requests and validate tokens |
+| NoodleBar API access | You have registered a **separate application** in the Self-Service Portal and received approved access to the **NoodleBar API** — required to authenticate when calling the Authorization Registry (see [Requesting API Access](requesting-api-access.md)) |
+
+> **As a data service provider, you play two roles.** You registered your own API in the portal so that consumers can discover it and request access to it. To verify authorization on incoming data requests, you *also* act as a consumer of the GDS Authorization Registry — listed in the portal as the **NoodleBar API**. This requires a separate registered application with approved access to the NoodleBar API. Its credentials are used to obtain an access token that authenticates your platform when calling `/explained-enforce`. See [Requesting API Access](requesting-api-access.md) for the registration steps; select **NoodleBar API** as the target API when requesting access.
 
 ## Overview
 

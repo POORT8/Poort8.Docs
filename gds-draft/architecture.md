@@ -41,7 +41,9 @@ views {
         david -> kc 'Request token for provider API'
         kc -> david 'JWT access token'
         david -> charlie 'GET /data + Bearer token'
-        charlie -> ar 'GET /api/authorization/explained-enforce'
+        charlie -> kc 'Request token for NoodleBar API (client_credentials)'
+        kc -> charlie 'Access token'
+        charlie -> ar 'GET /api/authorization/explained-enforce + Bearer token'
         ar -> charlie 'HTTP 200: {allowed: true/false, policies}'
         charlie -> david 'If allowed: 200 + data / If denied: 403'
     }
@@ -142,11 +144,14 @@ sequenceDiagram
     autonumber
     participant David as Data Consumer
     participant Charlie as IoT Platform
+    participant KC as GDS Participant Registry
     participant AR as Authorization Registry
 
     David->>Charlie: GET /buildings/{vboId} + Bearer token
     Charlie->>Charlie: Derive the organization EUID from token claim
-    Charlie->>AR: GET /api/authorization/explained-enforce
+    Charlie->>KC: POST /token (client_credentials, scope=noodlebar-api)
+    KC-->>Charlie: Access token
+    Charlie->>AR: GET /api/authorization/explained-enforce + Bearer token
     AR-->>Charlie: {allowed: true/false, policies: [...]}
     alt Allowed
         Charlie-->>David: 200 OK + building data
