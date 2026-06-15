@@ -2,6 +2,28 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-06-12
+
+**✨ Highlights:** Resource and resource-group mutation endpoints now enforce strict field validation, and all Keyper approval-link endpoints now require authentication
+
+### NoodleBar
+
+#### Fixed
+
+- `GET /v1/api/authorization/explained-enforce` query parameters (`useCase`, `issuer`, `serviceProvider`, `type`, `attribute`, `context`) were incorrectly documented as required; they are now correctly marked as optional. Calls that omit any of these parameters continue to work as before. [#974](https://github.com/POORT8/Poort8.Dataspace.Private/pull/974)
+- `POST /v1/api/policies` now correctly documents a `201 Created` response. The API was already returning `201`; the OpenAPI reference was incorrectly showing `200 Success`. Update client code that matches on the documented `200` status. [#993](https://github.com/POORT8/Poort8.Dataspace.Private/pull/993)
+
+#### Changed
+
+- `POST` and `PUT` endpoints for resource groups (`/v1/api/resourcegroups`) and resources (`/v1/api/resources`, `/v1/api/resourcegroups/{resourceGroupId}/resources`) now validate that `resourceGroupId`, `useCase`, `name`, and `description` are non-null and non-empty; requests with missing or blank values now return `400 Bad Request` instead of being accepted silently. Additionally, each resource's `useCase` must match the parent resource group's `useCase`; mismatches also return `400`. Clients that always supply complete, non-empty values for these fields are unaffected. [#980](https://github.com/POORT8/Poort8.Dataspace.Private/pull/980)
+
+### Keyper
+
+#### Changed
+
+- All Keyper approval-link endpoints now require an API token; unauthenticated requests are rejected. The previous notice that authentication "will be mandatory soon" has been removed from the API reference. See the Authentication section of the Keyper API docs for how to obtain a token for your dataspace. [#982](https://github.com/POORT8/Poort8.Dataspace.Private/pull/982)
+- `PUT /api/v1/approval-links/{id}` is now documented as a partial-update operation: only the fields included in the request body are updated; omitted or null fields retain their existing value. The endpoint returns `403 Forbidden` when the approval link is not in an updatable state for its current orchestration flow. [#982](https://github.com/POORT8/Poort8.Dataspace.Private/pull/982)
+
 ## 2026-06-05
 
 **✨ Highlights:** Keyper request validation is now stricter for approval-link payloads, and the API reference now documents Keycloak as the default token flow.
