@@ -22,7 +22,7 @@ All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API
 #### Changed
 
 - All Keyper approval-link endpoints now require an API token; unauthenticated requests are rejected. The previous notice that authentication "will be mandatory soon" has been removed from the API reference. See the Authentication section of the Keyper API docs for how to obtain a token for your dataspace. [#982](https://github.com/POORT8/Poort8.Dataspace.Private/pull/982)
-- `PUT /api/v1/approval-links/{id}` is now documented as a partial-update operation: only the fields included in the request body are updated; omitted or null fields retain their existing value. The endpoint returns `403 Forbidden` when the approval link is not in an updatable state for its current orchestration flow. [#982](https://github.com/POORT8/Poort8.Dataspace.Private/pull/982)
+- `PUT /v1/api/approval-links/{id}` is now documented as a partial-update operation: only the fields included in the request body are updated; omitted or null fields retain their existing value. The endpoint returns `403 Forbidden` when the approval link is not in an updatable state for its current orchestration flow. [#982](https://github.com/POORT8/Poort8.Dataspace.Private/pull/982)
 
 ## 2026-06-05
 
