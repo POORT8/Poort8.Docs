@@ -160,7 +160,6 @@ Both create and update responses return the stored message together with metadat
 		"issuer": "did:ishare:EU.NL.NTRNL-30276543",
 		"createdAt": "2026-04-15T10:00:00Z",
 		"updatedAt": null,
-		"deletedAt": null,
 		"status": "Pending"
 	}
 }
