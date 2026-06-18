@@ -13,6 +13,8 @@ DVU ondersteunt twee varianten om een toegangsaanvraag te starten. Beide leiden 
 
 In beide varianten verleent de data-rechthebbende expliciete goedkeuring via Keyper voordat de policy actief wordt.
 
+Als alternatief kan een door Poort8 goedgekeurde **control plane app** policies rechtstreeks in het DVU Autorisatieregister registreren, buiten Keyper om. De app is dan zelf verantwoordelijk voor het vastleggen van de toestemming van de data-rechthebbende. Zie [Aansluiten als control plane app](aansluiten-control-plane.md).
+
 ## Actoren
 
 | Actor | Rol | Voorbeeld |

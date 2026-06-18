@@ -12,6 +12,7 @@
   - [Aansluiten als data-rechthebbende](aansluiten-data-rechthebbende.md)
   - [Aansluiten als dataservice consumer](aansluiten-dataservice-consumer.md)
   - [Aansluiten als datadienst-aanbieder](aansluiten-datadienst-aanbieder.md)
+  - [Aansluiten als control plane app](aansluiten-control-plane.md)
 
 - **Ondersteuning**
   - [FAQ](faq.md)
