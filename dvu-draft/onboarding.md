@@ -29,12 +29,15 @@ Datadienst-aanbieders registreren hun API zodat die vindbaar is in de catalogus 
 3. Upload je **OpenAPI-specificatie** — die wordt in de catalogus getoond zodat consumers de documentatie kunnen inzien.
 4. Na registratie verschijnt je API in de catalogus. Noteer de `client_id` van je API — die gebruiken consumers als `scope` bij het ophalen van een token.
 
-## Stap 4 — API-toegang aanvragen *(alleen dataservice consumers)*
+## Stap 4 — API-toegang aanvragen
 
-Dataservice consumers vragen toegang aan tot de API's die ze willen gebruiken: de API van de datadienst-aanbieder en de Keyper API.
+Zowel dataservice consumers als datadienst-aanbieders vragen toegang aan tot de API's die ze nodig hebben:
+
+- **Dataservice consumers** vragen toegang tot de API van de datadienst-aanbieder en de Keyper API (`keyper-api`).
+- **Datadienst-aanbieders** vragen toegang tot het DVU Autorisatieregister (`noodlebar-api`), zodat ze autorisaties kunnen registreren.
 
 1. Ga naar **Catalogus** in de portal.
-2. Zoek de gewenste API op (bijv. de energiedata-API van de datadienst-aanbieder of `keyper-api`).
+2. Zoek de gewenste API op (bijv. de energiedata-API van de datadienst-aanbieder, `keyper-api` of `noodlebar-api`).
 3. Klik op **Toegang aanvragen**.
 
 Je aanvraag krijgt de status **In afwachting**. De API-eigenaar kent de toegang toe. Daarna kun je tokens ophalen met je client credentials. Let op, ook hier krijg je geen bericht van. Hou zelf de portal in de gaten of je al bent toegelaten tot de API.

@@ -53,7 +53,7 @@ sequenceDiagram
         Note over Charlie,AR: Autorisatie & Verificatie
         Charlie->>Auth: Token ophalen (client credentials)
         Auth-->>Charlie: Bearer token
-        Charlie->>AR: GET /api/authorization/explained-enforce (issuer, subject, resource, ...)
+        Charlie->>AR: GET /v1/api/authorization/explained-enforce (issuer, subject, resource, ...)
         AR-->>Charlie: Enforce resultaat (allowed + policies)
     end
 
@@ -174,7 +174,7 @@ Het verkregen access token authenticeert SDS als *applicatie* tegen het DVU AR. 
 Roep `explained-enforce` aan om autorisatie te controleren. In DVU vereist de implementatie **7 query-parameters**:
 
 ```http
-GET https://dvu-preview.poort8.nl/api/authorization/explained-enforce
+GET https://dvu-preview.poort8.nl/v1/api/authorization/explained-enforce
   ?issuer=did:ishare:EU.NL.NTRNL-12345678
   &subject=did:ishare:EU.NL.NTRNL-87654321
   &serviceProvider=did:ishare:EU.NL.NTRNL-55819206
@@ -289,7 +289,7 @@ Voordat de enforcement flow werkt, moet het volgende zijn ingericht:
 | -- | -- |
 | Token endpoint | `https://auth.poort8.nl/realms/dvu-preview/protocol/openid-connect/token` |
 | DVU Autorisatieregister | `https://dvu-preview.poort8.nl` |
-| Explained-enforce endpoint | `https://dvu-preview.poort8.nl/api/authorization/explained-enforce` |
+| Explained-enforce endpoint | `https://dvu-preview.poort8.nl/v1/api/authorization/explained-enforce` |
 | API documentatie | [DVU API docs ➚](https://dvu-preview.poort8.nl/scalar/v1) |
 
 Vragen? Neem contact op met Poort8 via **hello@poort8.nl**.

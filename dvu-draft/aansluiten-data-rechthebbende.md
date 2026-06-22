@@ -77,7 +77,7 @@ Zie [Toegangsmodel – Policy-structuur](toegangsmodel.md#policy-structuur) voor
 
 ## Toestemming intrekken
 
-Een eerder verleende toestemming kan worden ingetrokken via de **Keyper Manager**, beschikbaar op [keyper-preview.poort8.nl](https://keyper-preview.poort8.nl).
+Een eerder verleende toestemming kan worden ingetrokken via de **Keyper Manager**, beschikbaar op [keyper-preview.poort8.nl](https://keyper-preview.poort8.nl). Je logt hier in met dezelfde gebruikersnaam en wachtwoord als in de [DVU self-service portal](https://dvu-preview.poort8.nl/portal).
 
 ## Hulp nodig?
 

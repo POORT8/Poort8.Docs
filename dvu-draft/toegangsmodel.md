@@ -21,10 +21,13 @@ Als alternatief kan een door Poort8 goedgekeurde **control plane app** policies 
 |-------|-----|-----------|
 | Bob | Data-rechthebbende / gebouweigenaar | Eigenaar van een kantoorgebouw |
 | David | Dataservice consumer | Verduurzamingsadviestool die energiedata wil ophalen |
+| Alice | Eindgebruiker (gebouwbeheerder) | Start de aanvraag in de applicatie van David |
 | Charlie | Datadienst-aanbieder | SDS – levert energiedata na enforcement-check |
 | Keyper | Goedkeuringsflow | Stuurt e-mail naar Bob, registreert policy na akkoord |
 | DVU AR | Autorisatieregister | Beheert policies, evalueert via `explained-enforce` |
 | RVO | Dataspace-beheerder | Toelating en governance |
+
+Alice heeft geen formele rol in het toegangsmodel en komt niet voor op de policy. De policy legt alleen `issuerId` (Bob), `subjectId` (David) en `serviceProvider` (Charlie) vast; Alice is de eindgebruiker die de aanvraag namens David initieert.
 
 ## Policy-structuur
 
@@ -42,6 +45,8 @@ Een DVU-policy autoriseert een specifieke combinatie van issuer (data-rechthebbe
 | `resourceId` | VBO-ID van het gebouw | `0599100000506575` |
 | `attribute` | Data-attributen | `*` |
 | `expiration` | Geldigheid mandaat (Unix timestamp) | `2147483647` |
+
+De `did:ishare:EU.NL.NTRNL-<nummer>`-identifiers (`issuerId`, `subjectId` en `serviceProvider`) zijn gebaseerd op het KVK-nummer van de organisatie — het deel na `NTRNL-` is het 8-cijferige KVK-nummer (bijv. `12345678`).
 
 Een policy hoort bij een **Resource Group** waarvan `resourceGroupId` gelijk is aan de VBO-ID; de individuele EAN's hangen daaronder als resources. Hierdoor kan enforcement plaatsvinden op EAN-niveau terwijl de toestemming op gebouwniveau is gegeven. Zie het voorbeeld in [Aansluiten als datadienst-aanbieder](aansluiten-datadienst-aanbieder.md#autorisatiemodel).
 
