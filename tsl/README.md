@@ -6,7 +6,7 @@ TSL (Instantie voor Topsector Logistiek) is a specialized implementation of Nood
 
 ## Live API Documentation
 
-🔗 **[TSL API Documentation](https://tsl-dataspace-coremanager.azurewebsites.net/scalar/v1)** - Interactive API reference with live testing capabilities
+🔗 **[TSL API Documentation](https://tsl.poort8.nl/scalar/v1)** - Interactive API reference with live testing capabilities
 
 ## Core Components
 
@@ -59,18 +59,26 @@ GET  /api/authorization-registry-organizations/{id}
 
 ## Authentication & Security
 
+TSL uses **Keycloak** for identity and access management.
+
+### **Getting API Access**
+
+1. Register your application in the [TSL Self-Service Portal](https://tsl.poort8.nl/portal) - you immediately receive a `client_id` and `client_secret`.
+2. Browse the catalogue and request access to the **NoodleBar API**.
+3. Once your access request is approved, your application can fetch access tokens for the TSL API.
+
 ### **OAuth 2.0 Client Credentials Flow**
-- **Token Endpoint**: `https://topsector-logistiek.eu.auth0.com/oauth/token`
-- **Audience**: `TSL-Dataspace-CoreManager`
-- **Grant Type**: `client_credentials`
 
-### **Available Scopes**
-- `read:or` / `write:or` - Organization Register permissions
-- `read:ar` / `write:ar` - Authorization Register permissions  
-- `read:or:delegated` / `write:or:delegated` - Delegated Organization Registry access
-- `read:ar:delegated` / `write:ar:delegated` - Delegated Authorization Registry access
+```http
+POST https://auth.poort8.nl/realms/tsl/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
 
-*Note: The OAuth token authenticates your application to the TSL API. Authorization between logistics participants is managed separately through the Authorization Registry policies.*
+grant_type=client_credentials
+&client_id=<YOUR_CLIENT_ID>
+&client_secret=<YOUR_CLIENT_SECRET>
+&scope=noodlebar-api
+```
+
 
 ## Logistics Sector Benefits
 
@@ -132,7 +140,7 @@ TSL leverages NoodleBar's proven modular components specifically configured for 
 ## Getting Started
 
 1. **Organization Registration**: Register your logistics organization in the TSL dataspace
-2. **Authentication Setup**: Obtain OAuth credentials for API access
+2. **Authentication Setup**: Register your app in the self-service portal and request access to the `noodlebar-api` audience to obtain Keycloak client credentials
 3. **Policy Configuration**: Define data sharing policies with your logistics partners
 4. **Integration**: Connect your existing logistics systems via standardized APIs
 5. **Go Live**: Begin secure data sharing within the TSL logistics ecosystem

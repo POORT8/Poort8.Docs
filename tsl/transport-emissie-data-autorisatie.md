@@ -2,9 +2,9 @@
 
 Deze gids is voor ontwikkelaars die een transport-emissiedatadienst bouwen en autorisatiebeleid moeten verifiëren voordat zij emissiedata uitleveren aan een dataservice consumer. De gids beschrijft hoe **Charlie (BigMile)** het `explained-enforce` endpoint bevraagt om te controleren of een geldige policy bestaat voor **David (VAA / GreenlinQ)** namens **Bob (wegvervoerder / data-rechthebbende)**.
 
-> Deze PoC draait tijdelijk tegen de NoodleBar preview-omgeving met Keycloak, omdat TSL nog niet naar Keycloak is gemigreerd. De definitieve TSL-omgeving en production-URLs zijn `[TBD - na TSL Keycloak migratie]`.
+> **Nieuwe TSL-instantie (juni 2026):** Deze gids is bijgewerkt voor de TSL Keycloak-instantie. Eerder werd de PoC uitgevoerd tegen de NoodleBar preview-omgeving (`noodlebar-preview.poort8.nl` / realm `noodlebar-preview`). Voor TSL kan je nu de TSL-instantie gebruiken zoals beschreven in deze gids.
 
-[NoodleBar API Docs ➚](https://noodlebar-preview.poort8.nl/scalar/v1)
+[TSL API Docs ➚](https://tsl.poort8.nl/scalar/v1)
 
 ## Voor wie is deze gids?
 
@@ -34,7 +34,7 @@ Wanneer BigMile een dataverzoek verwerkt voor een specifiek klantnummer namens e
 1. **Ontvang het verzoek**: BigMile ontvangt een dataverzoek met minimaal het klantnummer en de periode, plus een bearer token van David.
 2. **Valideer het inkomende token**: verifieer het bearer token en haal de organisatie-identifier van David uit de `organization` claim.
 3. **Bepaal de issuer**: koppel het klantnummer in BigMile's administratie aan de wegvervoerder die als `issuer` optreedt.
-4. **Haal een register-token op**: authenticeer BigMile tegen de NoodleBar preview-omgeving via OAuth 2.0 client credentials.
+4. **Haal een register-token op**: authenticeer BigMile tegen de TSL Keycloak-omgeving via OAuth 2.0 client credentials.
 5. **Bevraag het Autorisatieregister**: roep `explained-enforce` aan met issuer, subject, serviceProvider, action, resource, type en useCase.
 6. **Lever uit of weiger**: bij `allowed: true` levert BigMile de emissiedataset aan David. Anders retourneert BigMile `403 Forbidden`.
 
@@ -43,8 +43,8 @@ sequenceDiagram
     autonumber
     participant David as David (VAA / GreenlinQ)
     participant Charlie as Charlie (BigMile)
-    participant Auth as NoodleBar Keycloak
-    participant AR as NoodleBar Autorisatieregister
+    participant Auth as TSL Keycloak
+    participant AR as TSL Autorisatieregister
 
     David->>Charlie: Dataverzoek (klantnummer, periode) + Bearer token
     Charlie->>Charlie: Valideer token en bepaal subject
@@ -89,18 +89,18 @@ Het gedocumenteerde `useCase` is `unspecified`. In NoodleBar mapt deze waarde na
 
 Voordat BigMile de autorisatiecheck uitvoert, valideert BigMile het bearer token dat David heeft meegestuurd. Hiermee stelt BigMile vast dat het token authentiek is en welke organisatie David vertegenwoordigt.
 
-Gebruik de OpenID Connect metadata van het NoodleBar preview-realm:
+Gebruik de OpenID Connect metadata van het TSL-realm:
 
 ```text
-https://auth.poort8.nl/realms/noodlebar-preview/.well-known/openid-configuration
+https://auth.poort8.nl/realms/tsl/.well-known/openid-configuration
 ```
 
 Voer minimaal deze checks uit:
 
 | Check | Vereiste |
 | --- | --- |
-| Signature | Het token is ondertekend door het NoodleBar preview-realm |
-| Issuer | `iss` is `https://auth.poort8.nl/realms/noodlebar-preview` |
+| Signature | Het token is ondertekend door het TSL-realm |
+| Issuer | `iss` is `https://auth.poort8.nl/realms/tsl` |
 | Audience | `aud` bevat de client ID van de BigMile API |
 | Expiry | `exp` ligt in de toekomst en `nbf` ligt, indien aanwezig, in het verleden |
 | Organization | De `organization` claim bevat de EUID van David |
@@ -129,10 +129,10 @@ Weiger het verzoek met `403 Forbidden` als de `organization` claim ontbreekt, ge
 
 ## Stap 2: Haal een register-token op
 
-Authenticeer BigMile tegen de NoodleBar preview-omgeving via OAuth 2.0 client credentials:
+Authenticeer BigMile tegen de TSL Keycloak-omgeving via OAuth 2.0 client credentials:
 
 ```http
-POST https://auth.poort8.nl/realms/noodlebar-preview/protocol/openid-connect/token
+POST https://auth.poort8.nl/realms/tsl/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=client_credentials
@@ -141,14 +141,14 @@ grant_type=client_credentials
 &scope=noodlebar-api
 ```
 
-Het verkregen access token authenticeert BigMile als applicatie tegen de NoodleBar API. Het bepaalt niet wie de issuer, subject of serviceProvider in de dataspace-transactie zijn; die waarden geef je expliciet mee aan `explained-enforce`.
+Het verkregen access token authenticeert BigMile als applicatie tegen de TSL API. Het bepaalt niet wie de issuer, subject of serviceProvider in de dataspace-transactie zijn; die waarden geef je expliciet mee aan `explained-enforce`.
 
 ## Stap 3: Bevraag explained-enforce
 
 Roep `explained-enforce` aan om de autorisatie te controleren:
 
 ```http
-GET https://noodlebar-preview.poort8.nl/v1/api/authorization/explained-enforce
+GET https://tsl.poort8.nl/v1/api/authorization/explained-enforce
   ?issuer=NLNHR.11223344
   &subject=NLNHR.55667788
   &serviceProvider=NLNHR.99001122
@@ -232,7 +232,7 @@ Als `allowed` `false` is, of als een optionele controle faalt die BigMile verpli
 | Code | Betekenis | Wanneer |
 | --- | --- | --- |
 | `200 OK` | Autorisatiecheck uitgevoerd | Bevat `allowed: true` of `allowed: false` |
-| `401 Unauthorized` | Ongeldig of ontbrekend token | Het token naar BigMile of het token naar de NoodleBar API ontbreekt, is ongeldig of is verlopen |
+| `401 Unauthorized` | Ongeldig of ontbrekend token | Het token naar BigMile of het token naar de TSL API ontbreekt, is ongeldig of is verlopen |
 | `403 Forbidden` | Niet geautoriseerd | Token-validatie, organisatie-afleiding of autorisatiecontrole faalt |
 | `400 Bad Request` | Ongeldig verzoek | Een verplichte query-parameter ontbreekt of een parameterwaarde kan niet worden verwerkt |
 | `500 Internal Server Error` | Technische fout | Onverwachte fout aan AR-zijde; log de fout en implementeer retry-logica waar passend |
@@ -299,8 +299,8 @@ Voordat de enforcement-flow werkt, moet het volgende zijn ingericht:
 
 | Wat | Wie |
 | --- | --- |
-| BigMile geregistreerd in het NoodleBar preview Participantenregister, inclusief app en API | BigMile / Poort8 |
-| BigMile client credentials voor de NoodleBar API | Poort8 / self-service portal |
+| BigMile geregistreerd in het TSL Participantenregister, inclusief app en API | BigMile / Poort8 |
+| BigMile client credentials voor de TSL API | Poort8 / self-service portal |
 | Wegvervoerder geregistreerd in het Participantenregister met identity en klantnummercontext | Wegvervoerder / Poort8 |
 | VAA / GreenlinQ geregistreerd in het Participantenregister, inclusief app | VAA / Poort8 |
 | VAA heeft API-toegang aangevraagd tot de BigMile API | VAA via de catalogus |
@@ -310,14 +310,12 @@ Voordat de enforcement-flow werkt, moet het volgende zijn ingericht:
 
 Zie [Requesting API Access](../noodlebar/requesting-api-access.md) voor het algemene proces waarmee een consumer API-toegang aanvraagt.
 
-## Testomgeving
+## Omgevingsgegevens
 
 | Service | URL |
 | --- | --- |
-| Token endpoint | `https://auth.poort8.nl/realms/noodlebar-preview/protocol/openid-connect/token` |
-| Autorisatieregister | `https://noodlebar-preview.poort8.nl` |
-| Explained-enforce endpoint | `https://noodlebar-preview.poort8.nl/v1/api/authorization/explained-enforce` |
-| API documentatie | [NoodleBar API docs ➚](https://noodlebar-preview.poort8.nl/scalar/v1) |
-| Definitieve TSL omgeving | `[TBD - na TSL Keycloak migratie]` |
+| Token endpoint | `https://auth.poort8.nl/realms/tsl/protocol/openid-connect/token` |
+| Explained-enforce endpoint | `https://tsl.poort8.nl/v1/api/authorization/explained-enforce` |
+| API documentatie | [TSL API docs ➚](https://tsl.poort8.nl/scalar/v1) |
 
 Vragen? Neem contact op met Poort8 via **hello@poort8.nl**.

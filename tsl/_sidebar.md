@@ -2,6 +2,7 @@
 
 - **Getting Started**
   - [Introduction](README.md)
+  - [Onboarding](onboarding.md)
 
 - **Integration Guides**
   - [Transport Emissie Data Autorisatie](transport-emissie-data-autorisatie.md)
