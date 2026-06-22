@@ -2,6 +2,22 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-06-19
+
+**✨ Highlights:** Token endpoint OpenAPI documentation now explicitly defines successful response payload fields for both NoodleBar and GIR consumers.
+
+### NoodleBar
+
+#### Fixed
+
+- `POST /connect/token` now documents the `200 OK` JSON response body with `access_token`, `token_type`, and `expires_in`, so generated clients and API consumers can reliably parse successful token responses. [#1014](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1014)
+
+### NoodleBar (GIR)
+
+#### Fixed
+
+- `POST /connect/token` now documents the `200 OK` JSON response body with `access_token`, `token_type`, and `expires_in`, aligning GIR token endpoint behavior with the published OpenAPI contract for client generation and validation. [#1014](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1014)
+
 ## 2026-06-12
 
 **✨ Highlights:** Resource and resource-group mutation endpoints now enforce strict field validation, and all Keyper approval-link endpoints now require authentication
