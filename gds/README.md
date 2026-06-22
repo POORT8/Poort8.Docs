@@ -1,124 +1,82 @@
-# GDS Introduction
+# Green Data Space (GDS)
 
-Welcome to the **Green Data Space (GDS)** documentation. This guide will help you navigate the documentation based on your role and what you want to accomplish.
+The Green Data Space (GDS) is a dataspace for secure, sovereign data sharing in the built environment. It enables building management platforms to access IoT sensor data — with explicit building owner approval — while keeping data owners in full control.
 
-## What you'll find here
-The documentation covers:
-- **What GDS is** and the problem it solves
-- **How GDS works** architecturally and technically
-- **How to implement** GDS integration as a building management platform
-- **API references** for all GDS components
+GDS is built on Poort8's NoodleBar dataspace technology and uses a Keycloak-based Participant Registry for identity management.
+
+## Key capabilities
+
+- **Organization onboarding** — Self-service registration with automated business register (KvK) verification
+- **API catalogue** — Discover and request access to data services registered by providers
+- **OAuth2-based access** — Standardized token-based authentication for machine-to-machine API calls
+- **Policy-based authorization** — Building owners approve access through Keyper; policies are enforced on every data request
+- **Data sovereignty** — Building owners maintain control and can revoke access at any time
+
+## Participants
+
+GDS involves four participant personas:
+
+| Persona | Role | Primary tool |
+|---------|------|--------------|
+| **Alice** — Building Manager | Manages building operations, consumes sensor data | Self-Service Portal |
+| **Bob** — Building Owner | Owns or controls building data; approves or rejects access requests | Self-Service Portal / Email |
+| **Charlie** — IoT Sensor Platform | Registers APIs and provides building sensor data | Self-Service Portal |
+| **David** — Building Management Platform | Registers applications that consume building data APIs | Self-Service Portal |
+
+## How it works
+
+```mermaid
+flowchart LR
+    subgraph Onboarding
+        A[Organization registers] --> B[Admin verifies & approves]
+    end
+    subgraph Access
+        C[David registers application] --> D[David requests API access]
+        D --> E[Charlie approves access]
+    end
+    subgraph Authorization
+        F[David requests building data via Keyper] --> G[Bob approves]
+        G --> H[Policy registered in GDS]
+    end
+    subgraph Data Exchange
+        I[David calls Charlie's API] --> J[Charlie checks policy]
+        J --> K[Data delivered]
+    end
+
+    B --> C
+    E --> F
+    H --> I
+```
+
+## Two layers of access control
+
+GDS uses two complementary access control mechanisms:
+
+| Layer | Purpose | Managed by |
+|-------|---------|------------|
+| **API access** (Participant Registry) | Controls which applications can call which APIs | Charlie approves David's access request |
+| **Data authorization** (Authorization Registry) | Controls which data a consumer can access for specific buildings | Bob approves via Keyper |
+
+API access grants the ability to call an API. Data authorization determines which buildings and actions are permitted within that API.
+
+## Environments
+
+| Environment | URL |
+|-------------|-----|
+| Self-Service Portal | [gds-preview.poort8.nl/portal ➚](https://gds-preview.poort8.nl/portal) |
+| GDS API documentation | [gds-preview.poort8.nl/scalar ➚](https://gds-preview.poort8.nl/scalar/) |
+| Keyper (approval workflow) | [keyper-preview.poort8.nl ➚](https://keyper-preview.poort8.nl/) |
 
 ## Choose your path
-Select the documentation that matches your needs:
 
-### Understanding GDS
-Start here if you're new to GDS or want to understand what it does and why it matters.
+| I want to... | Read |
+|--------------|------|
+| Understand the technical architecture | [Architecture](architecture.md) |
+| Register my organization | [Organization Registration](onboarding.md) |
+| Use the self-service portal | [Self-Service Portal](portal-guide.md) |
+| Consume building data (David) | [Requesting API Access](requesting-api-access.md) then [Keyper Approval Workflow](approval-workflow.md) |
+| Provide building data (Charlie) | [Validating API Tokens](validating-api-tokens.md) then [Authorization Enforcement](authorization.md) |
 
-**[GDS overview](overview.md)**  
-Understand what GDS is, what problems it solves, and how different participants benefit. No technical background required.
+## Background
 
-**You'll learn:**
-- What problem GDS solves
-- How the approval process works from a user perspective
-- Real-world use case examples with personas (Bob, Alice, Charlie, David)
-- The two core data transactions
-- Benefits for each participant type
-
-### How GDS works
-Read this if you want to understand the technical architecture, without diving into code.
-
-**[Architecture guide](architecture.md)**  
-Explains how GDS components work together, authorization flows, and technical standards. Accessible to both technical and non-technical readers.
-
-**You'll learn:**
-- System components and their responsibilities
-- How policy-based authorization works
-- The approval workflow step-by-step
-- Data exchange processes for all two transactions
-- Security layers and authentication mechanisms
-- Technical standards (OAuth2, PDOK/BAG)
-- Deployment architecture
-
-### For developers: API implementation
-Ready to implement GDS integration in your building management platform or IoT sensor platform?
-
-**[Requesting Building Data Access](consumer-approval-guide.md)** – Developer guide for implementing the Keyper approval workflow to request access to building sensor data from building owners.
-
-**[Get Building Data (Provider Guide)](provider-enforcement-guide.md)** – Developer guide for IoT platforms implementing the enforcement pattern to verify policies and deliver building data.
-
-#### API References
-| Resource | Description |
-|----------|-------------|
-| **[GDS API docs](https://gds-preview.poort8.nl/scalar)** | Interactive API documentation for GDS data transactions (Scalar UI) |
-| **[Keyper API docs](https://keyper-preview.poort8.nl/scalar/?api=v1)** | Interactive API documentation for approval workflow (Scalar UI) |
-| **[NoodleBar docs](../noodlebar/)** | Documentation for the underlying dataspace platform |
-
-
-## Quick Start: implementation path
-If you're implementing GDS integration as a building management platform, follow this sequence:
-
-### Step 1: Understanding
-1. Read [Overview](overview.md) to understand use cases and benefits
-2. Read [Architecture](architecture.md) to understand how the system works
-
-### Step 2: Implement approval workflow
-3. Review [Requesting Building Data Access](consumer-approval-guide.md)
-4. Implement Keyper API authentication
-5. Implement approval request creation
-6. Implement approval status checking (polling or webhooks)
-
-### Step 3: Test approval workflow
-7. Test approval requests in test environment
-8. Verify building owner receives approval emails
-9. Test approval and rejection flows
-10. Confirm policies are registered after approval
-
-### Step 4: Implement data delivery (IoT platforms)
-11. Review [Get Building Data (Provider Guide)](provider-enforcement-guide.md)
-12. Implement delegation evidence queries to the Authorization Registry
-13. Implement policy validation and enforcement
-14. Test data delivery with approved policies
-
-### Step 5: Implement data retrieval (building management platforms)
-15. Implement sensor data retrieval from IoT platforms (guide coming soon)
-16. (Optional) Implement control commands (guide coming soon)
-
-
-## Quick reference for developers
-| What you need | Where to find it |
-|---------------|------------------|
-| **Understanding the flow** | [Architecture guide](architecture.md) |
-| **Requesting approval** | [Requesting Building Data Access](consumer-approval-guide.md) |
-| **Verifying policies & delivering data** | [Get Building Data (Provider Guide)](provider-enforcement-guide.md) |
-| **Interactive API testing** | [GDS Scalar UI](https://gds-preview.poort8.nl/scalar) |
-| **Approval API reference** | [Keyper Scalar UI](https://keyper-preview.poort8.nl/scalar/?api=v1) |
-
-
-## The two data transactions
-GDS enables two types of data exchange between building management platforms and IoT sensor platforms:
-
-| Transaction | Purpose | Required policy |
-|-------------|---------|-----------------|
-| **Real-time Measurements** | Retrieve current sensor readings | `GET` |
-| **Control Commands** | Send setpoint adjustments | `POST` |
-
-Each transaction requires explicit building owner approval via the Keyper Approve flow. See the [Overview](overview.md) for detailed descriptions and [Architecture Guide](architecture.md) for technical details.
-
-
-## Personas used in documentation
-Throughout the documentation, we use personas to clarify roles:
-- **Bob** – Building owner (data owner) who approves access requests
-- **Alice** – Building manager (data end-user) who uses optimization platforms
-- **Charlie** – IoT sensor platform (data service provider) providing sensor data
-- **David** – Building management platform (data service consumer) requesting sensor access
-
-These personas help illustrate real-world workflows and use cases.
-
-## Contact
-For questions, clarifications, business inquiries, or support with GDS implementation: contact Poort8 by sending an email to hello@poort8.nl.
-
-
-## Next Step
-**New to GDS?** Start with the [Overview](overview.md) to understand what GDS is and how it works.  
-**Ready to build?** Jump to [Requesting Building Data Access](consumer-approval-guide.md) to implement the approval workflow.
+For background on Organization Registry, Authorization Registry, and core dataspace concepts, see the [NoodleBar documentation](../noodlebar/).

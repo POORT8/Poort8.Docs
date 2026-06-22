@@ -2,18 +2,24 @@
 
 - **Getting Started**
   - [Introduction](README.md)
-  - [Overview](overview.md)
   - [Architecture](architecture.md)
 
-- **Implementation**
-  - [Requesting Building Data Access](consumer-approval-guide.md)
-  - [Get Building Data (Provider Guide)](provider-enforcement-guide.md)
-  - [GDS Portal](portal-guide.md)
+- **Participant Onboarding**
+  - [Organization Registration](onboarding.md)
+  - [Self-Service Portal](portal-guide.md)
 
-- **Technical reference**
-  - [GDS API documentation](https://gds-preview.poort8.nl/scalar/v1)
-  - [Keyper API documentation](https://keyper-preview.poort8.nl/scalar/?api=v1)
+- **For Data Service Consumers**
+  - [Requesting API Access](requesting-api-access.md)
+  - [Keyper Approval Workflow](approval-workflow.md)
+
+- **For Data Service Providers**
+  - [Validating API Tokens](validating-api-tokens.md)
+  - [Authorization Enforcement](authorization.md)
+
+- **Environments**
+  - [Self-Service Portal ➚](https://gds-preview.poort8.nl/portal)
 
 - **External Links**
+  - [GDS API documentation ➚](https://gds-preview.poort8.nl/scalar/)
+  - [Keyper API documentation ➚](https://keyper-preview.poort8.nl/scalar/?api=v1)
   - [NoodleBar Docs](../noodlebar/)
-  - [Keyper Preview](https://keyper-preview.poort8.nl/)

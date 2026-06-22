@@ -1,356 +1,194 @@
-# GDS Architecture
-This guide explains the architecture of GDS, displaying the system beyond the high-level overview.
+# Architecture
+
+This guide explains how the GDS components work together to enable sovereign building data sharing.
 
 ## System components
-GDS consists of several interconnected components, each with a specific responsibility:
 
-### NoodleBar (core infrastructure)
-NoodleBar is Poort8's dataspace technology providing the foundation for GDS. It consists of:
-- **Organization Registry**: Maintains a registry of all participating organizations (IoT providers, building management platforms, building owners)
-- **Authorization Registry**: Stores and enforces access policies determining who can access what data
-- **Authentication Service**: Verifies participant identities using OAuth2 tokens
+This sequence shows the end-to-end interaction order in two phases: first approval and policy registration, then data access with policy enforcement.
 
-Think of NoodleBar as the "trust layer" – it ensures all participants are who they claim to be and enforces the rules about data access.
+```likec4
+// view: architecture_end_to_end
+specification {
+    element actor
+    element system
+}
 
-### Keyper Approve (approval workflow manager)
-Keyper manages the approval workflow when a building management platform requests access to building data:
-- Sends approval requests to building owners via email
-- Provides a secure web interface for reviewing and approving/rejecting requests
+model {
+    david = actor 'David\'s Platform'
+    kc = system 'GDS Participant Registry (Keycloak)'
+    keyper = system 'Keyper Approve'
+    bob = actor 'Building Owner (Bob)'
+    ar = system 'GDS Authorization Registry'
+    charlie = system 'Charlie\'s IoT Platform'
+}
+
+views {
+    dynamic view architecture_end_to_end {
+        title 'GDS End-to-End Flow'
+        variant sequence
+
+        david -> kc 'Request token for Keyper API'
+        kc -> david 'JWT access token'
+        david -> keyper 'POST /v1/api/approval-links'
+        keyper -> david '201 Created (approval link ID)'
+        keyper -> bob 'Email with approval link'
+        bob -> keyper 'Approves + enters verification code'
+        keyper -> ar 'Registers policies'
+        ar -> keyper 'Policies stored'
+
+        david -> kc 'Request token for provider API'
+        kc -> david 'JWT access token'
+        david -> charlie 'GET /data + Bearer token'
+        charlie -> kc 'Request token for NoodleBar API (client_credentials)'
+        kc -> charlie 'Access token'
+        charlie -> ar 'GET /api/authorization/explained-enforce + Bearer token'
+        ar -> charlie 'HTTP 200: {allowed: true/false, policies}'
+        charlie -> david 'If allowed: 200 + data / If denied: 403'
+    }
+}
+```
+
+### GDS Participant Registry
+
+The Participant Registry is a Keycloak-based identity service that manages:
+
+- **Organization identities** — Registration, verification, and approval
+- **User accounts** — Credentials, email verification, and organization membership
+- **Application registrations** — OAuth2 clients for data service consumers (David)
+- **API registrations** — Service definitions for data service providers (Charlie)
+- **Access management** — API-level access grants between consumers and providers
+
+The Participant Registry acts as the OAuth2 authorization server. It issues JWT access tokens that consumers present to providers.
+
+**URL:** `https://gds-preview.poort8.nl`
+
+### GDS Authorization Registry (NoodleBar)
+
+The Authorization Registry stores and enforces data-level access policies:
+
+- **Organization Registry** — Master list of all participating organizations
+- **Authorization Registry** — Policy storage and enforcement (who can access what building data)
+
+Policies are registered by Keyper after building owner approval. Data service providers query the Authorization Registry on every data request to verify the consumer is authorized.
+
+**URL:** `https://gds-preview.poort8.nl` (same deployment, different API surface)
+
+### Keyper Approve
+
+Keyper manages the human approval workflow:
+
+- Receives approval requests from data service consumers
+- Sends email notifications to building owners
+- Provides a secure web interface for reviewing and approving requests
 - Verifies approver identity through email-based one-time codes
 - Registers approved policies in the Authorization Registry
 
-Keyper bridges the gap between technical authorization systems and human decision-making.
+**URL:** `https://keyper-preview.poort8.nl`
 
-### Data service provider connector (IoT platform side)
-The IoT sensor platform (Charlie) implements a connector that:
-- Exposes standardized REST API endpoints for sensor data
-- Checks the Authorization Registry before responding to any data request
-- Only returns data when valid policies exist
-- Provides endpoints for all data transactions (measurements, control)
+## Authentication flow
 
-This connector enables existing IoT platforms to participate in the dataspace without major system redesign.
+All API communication uses OAuth2 with Keycloak as the identity provider.
 
-### Data service consumer application (building management side)
-The building management platform (David) implements:
-- Integration with Keyper to request approvals
-- API calls to Data Service Provider connectors to retrieve/send data
-- User interface for building managers (Alice) to work with sensor data
-- Business logic for optimization, analytics, etc.
-
-In the GDS proof-of-concept, Poort8 developed a demo prototype demonstrating this role.
-
-
-## How authorization works
-Authorization in GDS follows a **policy-based** model. Understanding this is key to understanding how the system maintains data sovereignty.
-
-### Policy basics
-A **policy** is a formal statement granting permission. Each policy specifies:
-- **Who** is allowed to do something (the data service consumer organization)
-- **What action** they can perform (`GET` for reading data, or `POST` for writing data or sending control commands)
-- **Which resource type** they can access (`building` for a whole building, or `asset` for a specific sensor or envibase)
-- **Which resource** they can access (identified by VBO ID for buildings, or asset ID for individual assets)
-- **Time constraints** (when the permission is valid, when it expires)
-- **Who granted it** (the building owner organization)
-
-These are some basic fundamental properties that each policy will contain:
-- **`issuer`**: The party who grants the permission, in this case the building owner organization (Bob's company).
-- **`subject`**: The party to whom the policy is granted to, in this case the building management platform (David's company).
-- **`serviceProvider`**: The party provides the data, in this case the IoT sensor platform (Charlie's company).
-- **`action`**: The action that the subject can perform: `GET` (read) or `POST` (write/control). A `POST` policy implicitly includes `GET` access.
-- **`resource type`**: The level of the resource: `building` (whole building including all assets) or `asset` (specific sensor or envibase).
-- **`resource`**: The resource identifier — a VBO ID (BAG verblijfsobject, 16 digits) for buildings, or an asset ID for individual assets.
-
-> **Pilot scope:** During the test phase, only a `GET` policy on building level (VBO ID) is used, granting read access to the building and all its assets.
-
-For complete policy details and how to request policies, see the [developer guide for building management platforms](consumer-approval-guide.md). For how the IoT platform verifies these policies, see the [provider enforcement guide](provider-enforcement-guide.md).
-
-### Policy enforcement flow
-Every time a data request occurs:
-1. **Data service consumer** sends request to **data service provider** with authentication token.
-2. **Data service provider** extracts requestor identity from token.
-3. **Data service provider** queries **Authorization Registry**: "Does a policy exist allowing this organization to perform this action on this resource?"
-4. **Authorization Registry** checks stored policies:
-   - If valid policy exists: the organization is allowed to perform the action on the resource
-   - If no policy exists or policy expired: the organization is not allowed to perform the action on the resource
-5. **Data service provider** either fulfills or rejects the request accordingly
-
-
-## Approval workflow
-Let's trace what happens when a building management platform requests access to sensor data.
-
-### Step-by-step approval process
-
-#### 1. Request initiation
-- Building manager (Alice) identifies a building needing sensor data
-- The building management platform (David) that Alice uses sends approval request to Keyper API
-- Request includes:
-  - What data is needed (sensor metadata, measurements, control)
-  - Which building (VBO ID)
-  - Who is requesting (David's organization ID)
-  - Who should approve (Bob's organization ID)
-  - On whose behalf (Alice's name/email)
-
-#### 2. Keyper creates approval link
-- Keyper receives request and validates it
-- Creates a unique approval link (secure, time-limited URL)
-- Stores request details temporarily
-- Returns approval link ID to requesting platform
-
-#### 3. Building owner notification
-- Keyper sends email to building owner (Bob)
-- Email contains:
-  - Clear description of what's being requested
-  - Secure link to approval interface
-  - Expiration time (approval links expire if not used)
-
-#### 4. Review & decision
-- Keyper displays request details in human-readable format
-- Bob sees:
-  - Which platform wants access (David)
-  - Who will use it (building manager Alice)
-  - What data is requested (measurements, control, etc.)
-  - Which building (VBO ID)
-  - How long access will last
-- Bob can:
-  - Approve (proceed to verification step)
-  - Reject (request is denied, requesting party will not be notified)
-
-#### 5. Email verification
-If Bob chooses to approve or reject:
-- Keyper sends a one-time verification code to Bob's email
-- Bob must enter this code to confirm his decision
-- This verifies:
-  - Bob has access to the registered email address
-  - The approval/rejection is intentional and not accidental
-  - Bob's identity as the authorized approver
-
-#### 6. Policy registration
-- If Bob had approved the request:
-  - Keyper registers the policies in GDS
-  - The policies are active upon registration
-- If Bob had rejected the request:
-  - Keyper does not register the policies in GDS
-
-#### 7. Confirmation
-- If Bob had approved the request:
-  - Bob sees confirmation of his approval
-  - Alice can now access the data through the building management platform
-- If Bob had rejected the request:
-  - Bob sees confirmation of his rejection
-  - Alice cannot access the data through the building management platform
-
-### Approval bundling
-To reduce approval friction, multiple permissions can be bundled in one request:
-- Single approval flow for Alice
-- Single email for Bob
-- Single authentication session
-- Multiple policies created upon approval
-
-Example bundled request:
-- Permission to retrieve measurements (read data)
-- Permission to send control commands (control)
-
-Bob approves once, two policies are created.
-
-### Important characteristics
-**Time-Limited**: Approval links expire (typically after a few days). If Bob doesn't respond, the request becomes invalid and must be re-initiated.
-**Revocable**: After approval, Bob can revoke policies anytime through the organization management interface. Revoked policies immediately stop authorizing requests.
-**Auditable**: All approval actions are logged. Organizations can see who approved what and when.
-**Secure**: Email-based verification ensures only authorized representatives with access to the registered email can approve requests. The one-time code mechanism prevents unauthorized approvals.
-
-### Sequence diagram
 ```mermaid
 sequenceDiagram
     autonumber
-    participant BM as Building manager
-    participant Platform as Your platform
-    participant Auth as Auth0
-    participant Keyper as Keyper
-    participant Owner as Building owner
-    participant GDS as GDS Auth registry
-    participant IoT as IoT platform
+    participant App as David's Application
+    participant KC as GDS Participant Registry<br/>(Keycloak)
+    participant API as Charlie's API
 
-    Note over BM,IoT: Get authorization
-    BM->>Platform: Wants sensor data for Building X
-    Platform->>Auth: Request access token
-    Auth-->>Platform: Token
-    Platform->>Keyper: POST /approval-links
-    Keyper-->>Platform: 201 Created (link ID)
-    Keyper->>Owner: Email with approval link
-    Owner->>Keyper: Approves request
-    Keyper->>GDS: Register policies
-    GDS-->>Keyper: Policies stored
-    Keyper-->>Platform: Status = Approved
-
-    Note over BM,IoT: Retrieve data
-    Platform->>Auth: Request access token
-    Auth-->>Platform: Token
-    Platform->>IoT: GET request
-    IoT->>GDS: Check policy exists?
-    GDS-->>IoT: Policy valid
-    IoT-->>Platform: Sensor data
-    Platform-->>BM: Display data
+    App->>KC: POST /token (client_credentials)
+    Note over App,KC: client_id + client_secret + scope
+    KC-->>App: JWT access token
+    App->>API: GET /data + Authorization: Bearer {token}
+    API->>API: Validate token (signature, expiry, audience)
+    API-->>App: Response
 ```
 
+**Token endpoint:**
+```
+https://auth.poort8.nl/realms/gds-preview/protocol/openid-connect/token
+```
 
-## Data exchange process
-Once authorization is in place (policies exist), data can flow. Here's how the two transactions work:
+**JWKS endpoint (for token validation):**
+```
+https://auth.poort8.nl/realms/gds-preview/protocol/openid-connect/certs
+```
 
-### Real-time measurements
-**Purpose**: Retrieve current sensor readings.
+Tokens are short-lived (5 minutes) and include an `organization` claim identifying the consumer's verified organization. The same token endpoint serves both provider API calls (scope: the API's client ID) and Keyper API calls (scope: `keyper-api`), so a single registered M2M application is sufficient for all GDS interactions.
 
-#### Flow
-1. David sends `GET` request to measurements endpoint
-2. Request specifies building and optionally sensor group or specific sensors
-3. Authorization check validates `GET` permission for measurements
-4. If authorized, returns current values
-5. David's platform processes data for analytics, dashboards, optimization
+## Authorization model
 
-### Control commands
-**Purpose**: Send setpoint adjustments to building systems.
+Authentication answers "who are you?" — authorization answers "what are you allowed to do?"
 
-#### Flow
-1. Based on optimization algorithms, David determines desired setpoint changes
-2. Sends `POST` request to control endpoint
-3. Authorization check validates `POST` permission
-4. If authorized, Charlie's platform applies change to building systems
+GDS uses a **policy-based** authorization model. Even with a valid token and API access, data requests are only fulfilled when a matching policy exists in the Authorization Registry.
 
+### Policy structure
 
-## Security & authentication
-GDS implements multiple security measures to ensure safe, sovereign data sharing.
+Each policy specifies:
 
-### Participant authentication (OAuth2)
-All API requests require authentication tokens:
+| Field | Description | Example |
+|-------|-------------|---------|
+| `issuerId` | Building owner who granted access (Bob) | `NLNHR.87654321` |
+| `subjectId` | Organization consuming data (David) | `NLNHR.12345678` |
+| `serviceProvider` | IoT platform providing data (Charlie) | `NLNHR.23456789` |
+| `type` | Resource type: `building` or `asset` | `building` |
+| `resourceId` | Resource identifier (VBO ID or asset ID) | `0363010000659001` |
+| `action` | Permitted action: `GET` or `POST` | `GET` |
 
-- Participants authenticate with NoodleBar using **OAuth2 client credentials flow**
-- Each organization has client credentials (client ID + secret)
-- Authentication returns a JWT (JSON Web Token) containing:
-  - Organization identity
-  - Token expiration
-  - Scopes/permissions
+### Policy enforcement flow
 
-Tokens are short-lived (typically minutes to hours) and must be refreshed regularly.
+```mermaid
+sequenceDiagram
+    autonumber
+    participant David as Data Consumer
+    participant Charlie as IoT Platform
+    participant KC as GDS Participant Registry
+    participant AR as Authorization Registry
 
-### Request authorization (policy enforcement)
-Even with valid authentication, requests are only fulfilled if:
-- A policy exists granting the specific permission
-- The policy is currently valid (not expired, not revoked)
-- The request scope matches the policy scope
+    David->>Charlie: GET /buildings/{vboId} + Bearer token
+    Charlie->>Charlie: Derive the organization EUID from token claim
+    Charlie->>KC: POST /token (client_credentials, scope=noodlebar-api)
+    KC-->>Charlie: Access token
+    Charlie->>AR: GET /api/authorization/explained-enforce + Bearer token
+    AR-->>Charlie: {allowed: true/false, policies: [...]}
+    alt Allowed
+        Charlie-->>David: 200 OK + building data
+    else Not allowed
+        Charlie-->>David: 403 Forbidden
+    end
+```
 
-**Authentication** answers "Who are you?"  
-**Authorization** answers "What are you allowed to do?"
+## Two access control layers
 
-### Owner approval (email verification)
-Building owners verify their identity using **email-based one-time codes**:
-- Verification code sent to registered email address
-- Code must be entered to confirm approval or rejection decisions
-- Time-limited codes (typically expire after a few minutes)
-- Ensures approver has access to the authorized email account
+GDS separates API-level access from data-level authorization:
 
-This ensures only authorized representatives with access to the registered email can approve data sharing.
+| Layer | What it controls | Who decides | When |
+|-------|-----------------|-------------|------|
+| **API access** | Can David's app call Charlie's API at all? | Charlie (via portal) | During onboarding |
+| **Data authorization** | Can David access building X's sensor data? | Bob (via Keyper) | Per building, on request |
 
-### Layer 4: Transport security
-- All API communication over HTTPS (TLS 1.2+)
-- Prevents eavesdropping and man-in-the-middle attacks
-- Certificate validation ensures endpoint authenticity
+Both layers must be satisfied for data to flow. A consumer needs:
+1. API access (granted by the provider through the portal)
+2. A valid policy for the specific building (granted by the building owner through Keyper)
 
-### Layer 5: Audit logging
-All authorization decisions and data access are logged:
-- Who accessed what data
-- When access occurred
-- What action was performed
-- Whether authorization succeeded or failed
+## Security layers
 
-Logs support compliance, debugging, and incident response.
-
-### Privacy considerations
-While GDS focuses on building sensor data (not personal data), privacy principles are built-in:
-- **Data minimization**: Only approved data is shared
-- **Purpose limitation**: Policies can specify intended use
-- **Transparency**: Building owners see exactly what's shared
-- **Control**: Easy revocation of access
-
-If GDS were extended to include personal data (e.g., occupancy sensors identifying individuals), GDPR compliance would require additional privacy measures.
-
+| Layer | Mechanism | Purpose |
+|-------|-----------|---------|
+| Transport | HTTPS (TLS 1.2+) | Encrypted communication |
+| Authentication | OAuth2 + JWT | Verified participant identity |
+| API access | Keycloak audience/scope | Authorized to call the API |
+| Data authorization | Policy enforcement | Authorized to access specific data |
+| Approval | Email verification (one-time code) | Human consent for data sharing |
+| Audit | Logged authorization decisions | Compliance and incident response |
 
 ## Technical standards
-GDS builds on established and emerging standards.
 
-### OAuth 2.0
-Industry-standard authentication protocol. GDS uses:
-- **Client credentials grant**: For machine-to-machine authentication between systems
-- **JWT tokens**: For conveying participant identity and permissions
-
-### iSHARE
-GDS is designed to be **iSHARE-ready**:
-- iSHARE is a framework for sovereign data sharing
-- Specifies authentication, authorization, and trust frameworks
-- GDS's policy-based authorization aligns with iSHARE delegation evidence model
-- Future versions may implement full iSHARE compliance
-
-### REST API architecture
-All data exchanges use RESTful APIs:
-- Standard HTTP methods (GET, POST, PUT, DELETE)
-- JSON payloads
-- Predictable resource naming
-- HTTP status codes for responses
-
-### OpenAPI/Scalar
-API documentation uses:
-- **OpenAPI 3.x** specification for API definitions
-- **Scalar** for interactive API documentation
-- Enables developers to explore and test APIs easily
-
-
-## Deployment architecture
-
-### Current proof-of-concept setup
-The GDS PoC is deployed with the following structure:
-
-**NoodleBar instance**:
-- Hosted by Poort8
-- URL: `https://gds-preview.poort8.nl`
-- Provides Organization Registry and Authorization Registry APIs
-- Shared infrastructure serving all GDS participants
-
-**Keyper**:
-- Hosted by Poort8
-- URL: `https://keyper-preview.poort8.nl`
-- Manages approval workflows
-
-**Data service provider connector**:
-- Deployed by IoT sensor platform (Charlie)
-- Implements GDS-compliant REST API
-- Communicates with NoodleBar for authorization checks
-- Connects to internal sensor data systems
-
-**Data service consumer application**:
-- Deployed by building management platform (David)
-- Or: Demo prototype hosted by Poort8 for PoC demonstration
-- Implements approval request flows
-- Calls data service provider APIs for data retrieval
-
-
-## Summary
-GDS demonstrates that **sovereign, federated data sharing** is achievable through:
-1. **Clear component separation**: Each system has a specific role (authorization, approval, data provision, data consumption)
-2. **Policy-based authorization**: Formal policies enforced on every request
-3. **Human-friendly approval**: Building owners make informed decisions through clear interfaces
-4. **Standards-based integration**: OAuth2 and REST APIs
-5. **Security in depth**: Multiple layers from authentication to audit logging
-
-The architecture enables **interoperability** (participants can join without custom integration), **sovereignty** (data owners maintain control), and **scalability** (adding participants doesn't require n-to-n integrations).
-
-
-## Next Steps
-
-### For building management platform developers
-Ready to implement GDS integration? See the developer guide:
-- **[Requesting Building Data Access](consumer-approval-guide.md)** – Implement the Keyper approval workflow to request access to building sensor data
-
-### If you have questions
-Contact Poort8 for more information about implementing GDS connectors or participating in dataspace initiatives.
-
-### Learn More About Underlying Technology
-- **[NoodleBar Documentation](../noodlebar/)** – Detailed docs on the dataspace platform
-- **[Keyper Documentation](https://keyper-preview.poort8.nl/scalar/?api=v1)** – API reference for approval workflows
+| Standard | Usage in GDS |
+|----------|--------------|
+| OAuth 2.0 (client credentials) | Machine-to-machine authentication |
+| JWT (RS256) | Token format with organization identity |
+| JWKS | Public key distribution for token validation |
+| REST / JSON | All API communication |
+| OpenAPI 3.x | API specification format |
+| iSHARE | Policy model for authorization enforcement |

@@ -1,137 +1,91 @@
-# GDS Portal Guide
+# Self-Service Portal
 
-**For parties querying granted access rights**
+The GDS Self-Service Portal allows participants to manage their organization, register systems, browse the API catalogue, and manage access.
 
-> **Pilot phase — demo environment**
-> During the pilot phase, the GDS dataspace is not yet used. Instead, all parties work against the **Poort8 demo environment** hosted at `noodlebar-preview.poort8.nl`. The API structure and authentication flow are identical to the production GDS environment. All URLs in this guide point to the demo environment.
+**URL:** [gds-preview.poort8.nl/portal ➚](https://gds-preview.poort8.nl/portal)
 
-This guide explains how to use the GDS portal API to retrieve policies — the granted access rights that building owners have issued to data service consumers. This is useful for parties who need to inspect which organizations have been granted access to building data (e.g., for auditing, dashboards, or administrative tooling).
+## Organization onboarding and approval
 
-## Flow overview
+An organization must be onboarded and approved to access all dataspace features.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Client as Your application
-    participant Auth as GDS Auth
-    participant AR as GDS Authorization<br/>Registry
+### Summary
 
-    Client->>Auth: Request access token (client credentials)
-    Auth-->>Client: Bearer token
-    Client->>AR: GET /api/policies?issuerId={organizationId}
-    AR-->>Client: List of policies for that issuer
+1. The organization is onboarded through the Self-Service Portal
+2. The onboarding user becomes the organization's first administrator
+3. Poort8 reviews and approves or rejects the organization
 
-    note over Auth,AR: Pilot environment: noodlebar-preview.poort8.nl
-```
+Until Poort8 approves your organization, users from that organization cannot access dataspace systems.
 
-## Step 1: Get an access token
+For the complete onboarding and verification flow (KvK checks, email verification, and approval states), see [Organization Registration](onboarding.md).
 
-Authenticate against the GDS token endpoint to obtain a bearer token.
+### User roles in an organization
 
-**Reference:** [NoodleBar API — Authentication](https://noodlebar-preview.poort8.nl/scalar/#description/authentication) *(pilot environment)*
+Users have one of two roles:
 
-### Token endpoint
+| Role | Capabilities |
+|------|--------------|
+| **Administrator** | Full organization management, including changing user roles and removing users |
+| **Member** | Can use portal features available to the organization and invite new users |
 
-```
-POST https://auth.poort8.nl/realms/noodlebar-preview/protocol/openid-connect/token
-```
+The user who onboards the organization becomes the organization's first **administrator**.
 
-### Required parameters
+## Portal capabilities by role
 
-| Parameter | Value |
-|-----------|-------|
-| `grant_type` | `client_credentials` |
-| `client_id` | Your application's client ID |
-| `client_secret` | Your application's client secret |
-| `scope` | Your granted API client ID |
+| Capability | David (Consumer) | Charlie (Provider) | Bob (Owner) |
+|------------|-----------------|-------------------|-------------|
+| View organization details | ✓ | ✓ | ✓ |
+| Register an application | ✓ | — | — |
+| Register an API | — | ✓ | — |
+| Browse API catalogue | ✓ | ✓ | ✓ |
+| Request API access | ✓ | — | — |
+| Approve/reject access requests | — | ✓ | — |
 
-> **Important:** The `scope` must be set to the API client ID that was granted to you by the API supplier. This scope determines which API your token can access. Your API supplier will provide this value when your access is approved.
+## Register an application (David)
 
-### Example token request
+Data service consumers register applications that will call APIs on their behalf.
 
-```http
-POST /realms/noodlebar-preview/protocol/openid-connect/token HTTP/1.1
-Host: auth.poort8.nl
-Content-Type: application/x-www-form-urlencoded
+1. Log in to the Self-Service Portal
+2. Navigate to **Systems** → **Register Application**
+3. Fill in application details (name, description)
+4. Submit the registration
 
-grant_type=client_credentials
-&client_id=<your-client-id>
-&client_secret=<your-client-secret>
-&scope=<your-api-client-id>
-```
+After registration, the portal shows your **client credentials**:
 
-The response contains a `access_token` (JWT bearer token) that you include in all subsequent API calls.
+| Credential | Description |
+|------------|-------------|
+| `client_id` | Your application's unique identifier |
+| `client_secret` | Your application's secret |
 
-### Example response
+> **Important:** The client secret is shown only once. Store it securely (e.g., in a secrets manager). If lost, you will need to generate a new one.
 
-```json
-{
-  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "token_type": "Bearer",
-  "expires_in": 300,
-  "scope": "<your-api-client-id> organization"
-}
-```
+## Register an API (Charlie)
 
-> **Token lifetime:** Access tokens are valid for **5 minutes**. Request a new token before the current one expires. Do not cache tokens beyond their expiry.
+Data service providers register their APIs to make them discoverable in the catalogue.
 
-## Step 2: Query policies for an issuer
+1. Log in to the Self-Service Portal
+2. Navigate to **Systems** → **Register API**
+3. Fill in API details (name, description, base URL)
+4. Upload your **OpenAPI specification** — rendered in the catalogue for consumers to browse
+5. Submit the registration
 
-Use the bearer token to retrieve policies for a specific issuer (data rights holder — typically the building owner who granted access).
+After registration, your API appears in the **Catalogue**. Note your API's client ID — consumers will include this as the `aud` claim in their tokens.
 
-**Reference:** [NoodleBar API — GET /api/policies](https://noodlebar-preview.poort8.nl/scalar/#tag/policies/GET/api/policies) *(pilot environment)*
+## Browse the API catalogue
 
-### Example request
+All participants can browse available APIs:
 
-```http
-GET /api/policies?issuerId=NLNHR.87654321
-Host: noodlebar-preview.poort8.nl
-Authorization: Bearer <access_token>
-```
+1. Navigate to the **Catalogue**
+2. Browse or search for APIs
+3. View API documentation (rendered from the OpenAPI spec)
+4. For consumers: click **Request Access** to initiate an access request
 
-Filter by `issuerId` to retrieve all policies issued by a specific organization (the data rights holder / building owner).
+## Manage access requests (Charlie)
 
-### Policy definition
+When a consumer requests access to your API:
 
-For a full description of all policy fields and how they interact, see the [Policy Fields reference](provider-enforcement-guide?id=policy-fields).
+1. You receive a notification in the portal
+2. Navigate to your API's detail page to see pending requests
+3. Review the requesting organization's identity
+4. **Approve** or **reject** the request
 
-### Example response
-
-```json
-[
-  {
-    "policyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "useCase": "ishare",
-    "issuedAt": 1700000000,
-    "notBefore": 1700000000,
-    "expiration": 1800000000,
-    "issuerId": "NLNHR.87654321",
-    "subjectId": "NLNHR.12345678",
-    "serviceProvider": "NLNHR.23456789",
-    "type": "building",
-    "resourceId": "0363010000659001",
-    "action": "GET",
-    "attribute": "*",
-    "license": "0005",
-    "rules": null,
-    "properties": []
-  }
-]
-```
-
-Timestamps (`issuedAt`, `notBefore`, `expiration`) are Unix timestamps (seconds since epoch).
-
-## Query parameters
-
-All parameters are optional. Combine them to narrow results.
-
-| Parameter | Description |
-|-----------|-------------|
-| `useCase` | Filter by use-case identifier — always use `ishare` for GDS |
-| `issuerId` | Filter by issuer (data rights holder / building owner) |
-| `subjectId` | Filter by subject (data consumer) |
-| `serviceProvider` | Filter by service provider (IoT platform) |
-| `resourceId` | Filter by specific resource (VBO ID or asset ID) |
-| `type` | Filter by policy type (`building` or `asset`) |
-| `action` | Filter by permitted action (`GET`, `POST`) |
-| `attribute` | Filter by attribute |
+Once approved, the consumer can request tokens targeting your API. You can **revoke** access at any time.
