@@ -1,71 +1,52 @@
 # TSL: Instantie voor Topsector Logistiek
 
-## Introduction
+## Introductie
 
-TSL (Instantie voor Topsector Logistiek) is a specialized implementation of NoodleBar designed for the logistics sector in the Netherlands. This dataspace demonstrates how NoodleBar's modular infrastructure enables secure, controlled, and efficient data sharing among logistics stakeholders including transport companies, freight forwarders, ports, terminals, and supply chain partners.
+TSL (Instantie voor Topsector Logistiek) is een gespecialiseerde implementatie van NoodleBar voor de logistieke sector in Nederland. Deze dataspace laat zien hoe NoodleBar's modulaire infrastructuur veilig, gecontroleerd en efficiënt gegevensuitwisseling mogelijk maakt tussen logistieke partijen, waaronder transportbedrijven, expediteurs, havens, terminals en ketenpartners.
 
-## Live API Documentation
+## Live API-documentatie
 
-🔗 **[TSL API Documentation](https://tsl.poort8.nl/scalar/v1)** - Interactive API reference with live testing capabilities
+🔗 **[TSL API-documentatie](https://tsl.poort8.nl/scalar/v1)** - Interactieve API-referentie met live testmogelijkheden
 
-## Core Components
+## Kerncomponenten
 
-### **Organization Registry**
-Central database storing information about all logistics organizations participating in the dataspace:
+### **Participantenregister**
+Centrale database met informatie over alle organisaties die deelnemen aan de dataspace:
 
-- **Identifiers**: Unique IDs for each logistics organization
-- **Names**: Official company names and trading names
-- **Adherence Status**: Compliance information with TSL dataspace standards
-- **Roles**: Data provider, data consumer, logistics service provider, etc.
-- **Additional Properties**: Contact information, certificates, and logistics services offered
-- **Agreements**: Framework agreements, compliance verification, contract management
-- **Sectors**: Specific logistics sectors (freight, maritime, inland shipping, etc.)
+- **Identifiers**: Unieke ID's voor elke organisatie
+- **Namen**: Officiële bedrijfsnamen en handelsnamen
+- **Adhesiestatus**: Nalevingsinformatie ten aanzien van de TSL-dataspacestandaarden
+- **Rollen**: Dataprovider, dataconsumer, logistieke dienstverlener, etc.
+- **Aanvullende eigenschappen**: Contactgegevens, certificaten en aangeboden logistieke diensten
+- **Overeenkomsten**: Raamovereenkomsten, nalevingsverificatie, contractbeheer
+- **Sectoren**: Specifieke logistieke sectoren (vracht, maritiem, binnenvaart, etc.)
 
-### **Authorization Registry**
-Manages access control for sensitive logistics data:
+### **Autorisatieregister**
+Beheert toegangscontrole voor gevoelige logistieke data:
 
-- **Policy Management**: Creation and enforcement of data sharing policies
-- **Access Control**: Fine-grained permissions for logistics data resources
-- **Delegation Evidence**: Signed proofs of authorization for audit compliance
-- **Real-time Verification**: Instant permission checks for logistics operations
+- **Policybeheer**: Aanmaken en handhaven van datauitwisselingsbeleid
+- **Toegangsbeheer**: Fijnmazige rechten voor logistieke databronnen
+- **Delegatiebewijs**: Ondertekend bewijs van autorisatie voor auditdoeleinden
+- **Realtime verificatie**: Directe rechtenchecks voor logistieke operaties
 
-## API Capabilities
+## API-mogelijkheden
 
-### **Organization Registry Endpoints**
+### **Autorisatiebeheer**
 ```
-GET  /api/organization-registry/{id}    # Get organization details
-POST /api/organization-registry         # Register new logistics organization
-```
-
-**Organization Data Model:**
-- Company information and logistics capabilities
-- Service offerings and specializations
-- Compliance certificates and adherence status
-- Authorization registry connections
-- Countries of operation and sector classifications
-
-### **Authorization Management**
-```
-POST /api/authorization/unsigned-delegation     # Test delegated access
-GET  /api/authorization/explained-enforce       # Detailed access decisions  
-GET  /api/authorization/enforce                 # Real-time permission checks
+POST /v1/api/authorization/unsigned-delegation     # Gedelegeerde toegang testen
+GET  /v1/api/authorization/explained-enforce       # Gedetailleerde toegangsbeslissingen
+GET  /v1/api/authorization/enforce                 # Realtime rechtenchecks
 ```
 
-### **Employee & Access Management**
-```
-POST /api/authorization-registry-organizations/{organizationId}/employees
-GET  /api/authorization-registry-organizations/{id}
-```
+## Authenticatie & Beveiliging
 
-## Authentication & Security
+TSL gebruikt **Keycloak** voor identiteits- en toegangsbeheer.
 
-TSL uses **Keycloak** for identity and access management.
+### **API-toegang aanvragen**
 
-### **Getting API Access**
-
-1. Register your application in the [TSL Self-Service Portal](https://tsl.poort8.nl/portal) - you immediately receive a `client_id` and `client_secret`.
-2. Browse the catalogue and request access to the **NoodleBar API**.
-3. Once your access request is approved, your application can fetch access tokens for the TSL API.
+1. Registreer je applicatie in het [TSL Self-Service Portal](https://tsl.poort8.nl/portal) — je ontvangt direct een `client_id` en `client_secret`.
+2. Blader door de catalogus en vraag toegang aan tot de **NoodleBar API**.
+3. Zodra je toegangsverzoek is goedgekeurd, kan je applicatie access tokens ophalen voor de TSL API.
 
 ### **OAuth 2.0 Client Credentials Flow**
 
@@ -79,106 +60,105 @@ grant_type=client_credentials
 &scope=noodlebar-api
 ```
 
+## Voordelen voor de logistieke sector
 
-## Logistics Sector Benefits
+### **Verbeterde zichtbaarheid in de supply chain**
+- Realtime track-and-trace mogelijkheden binnen logistieke netwerken
+- End-to-end transparantie in de keten voor alle betrokkenen
+- Verbeterd vracht- en wagenparkbeheer door gedeelde data
 
-### **Enhanced Supply Chain Visibility**
-- Real-time tracking and tracing capabilities across logistics networks
-- End-to-end supply chain transparency for all stakeholders
-- Improved cargo and fleet management through shared data
+### **Operationele efficiëntie**
+- Minder handmatige gegevensinvoer en -verwerking tussen logistieke partners
+- Geautomatiseerde informatie-uitwisseling conform industriestandaarden
+- Geoptimaliseerde routering en planning door collaboratief datagebruik
 
-### **Operational Efficiency**
-- Reduced manual data entry and processing between logistics partners
-- Automated information exchange following industry standards
-- Optimized routing and scheduling through collaborative data sharing
+### **Wet- en regelgeving & Compliance**
+- Gestandaardiseerde dataformaten en -protocollen voor logistieke rapportage
+- Uitgebreide audittrails voor naleving van wet- en regelgeving
+- Veilige verwerking van gevoelige logistieke en vrachtdata
 
-### **Regulatory Compliance**
-- Standardized data formats and protocols for logistics reporting
-- Comprehensive audit trails for regulatory compliance
-- Secure handling of sensitive logistics and cargo data
+### **Gezamenlijk datagebruik**
+- Veilige gegevensuitwisseling tussen logistieke dienstverleners
+- Integratiemogelijkheden met havencommunitysystemen
+- Connectiviteit met douane- en regelgevingsplatforms
 
-### **Collaborative Data Sharing**
-- Secure data exchange between logistics service providers
-- Port community system integration capabilities
-- Customs and regulatory platform connectivity
+## Integratie met bestaande systemen
 
-## Integration with Existing Systems
+TSL is ontworpen om naadloos aan te sluiten op bestaande logistieke platforms:
 
-TSL is designed to integrate seamlessly with existing logistics platforms:
+- **TMS (Transportation Management Systems)**: Routeoptimalisatie en wagenparkbeheer
+- **WMS (Warehouse Management Systems)**: Voorraadbeheer en fulfilment
+- **Havencommunitysystemen**: Maritieme vrachtafhandeling en documentatie
+- **Douane- en regelgevingsplatforms**: Nalevingsrapportage en inklaring
+- **Supply chain-platforms**: End-to-end zichtbaarheid en coördinatie
 
-- **TMS (Transportation Management Systems)**: Route optimization and fleet management
-- **WMS (Warehouse Management Systems)**: Inventory and fulfillment operations  
-- **Port Community Systems**: Maritime cargo handling and documentation
-- **Customs and Regulatory Platforms**: Compliance reporting and clearance
-- **Supply Chain Platforms**: End-to-end visibility and coordination
+## Architectuur
 
-## Architecture
+TSL maakt gebruik van NoodleBar's bewezen modulaire componenten, specifiek geconfigureerd voor de logistieke sector:
 
-TSL leverages NoodleBar's proven modular components specifically configured for logistics:
+- **Participantenregister**: Beheer van deelnemers in de logistieke sector en hun capaciteiten
+- **Autorisatieregister**: Toegangsbeheer voor gevoelige logistieke en vrachtdata
+- **Datakoppelings-API's**: Gestandaardiseerde interfaces voor logistieke dataprotocollen
+- **Complianceframework**: Naleving van regelgeving en standaarden in de logistieke sector
 
-- **Organization Register**: Managing logistics sector participants and their capabilities
-- **Authorization Register**: Controlling access to sensitive logistics and cargo data
-- **Data Exchange APIs**: Standardized interfaces for logistics data protocols
-- **Compliance Framework**: Ensuring adherence to logistics sector regulations and standards
+## Betrokkenen
 
-## Stakeholders
+- **Transportbedrijven**: Vrachtvervoeders en logistieke dienstverleners
+- **Expediteurs**: Intermediairs die multimodale logistieke operaties coördineren
+- **Havens en terminals**: Infrastructuurbeheerders die vrachtstromen en documentatie afhandelen
+- **Ketenpartners**: Fabrikanten, distributeurs, retailers en eindklanten
+- **Toezichthoudende instanties**: Autoriteiten die toezicht houden op logistieke naleving en douane
+- **Technologieleveranciers**: Softwareleveranciers voor het logistieke ecosysteem
 
-- **Transport Companies**: Freight carriers and logistics service providers
-- **Freight Forwarders**: Intermediaries coordinating multi-modal logistics operations  
-- **Ports and Terminals**: Infrastructure operators managing cargo flows and documentation
-- **Supply Chain Partners**: Manufacturers, distributors, retailers, and end customers
-- **Regulatory Bodies**: Authorities overseeing logistics compliance and customs
-- **Technology Providers**: Software vendors serving the logistics ecosystem
+## Kernthema's
 
-## Key Focus Areas
+- **Gegevensuitwisseling in de supply chain**: Veilig delen van logistieke data in de gehele keten
+- **Transportbeheer**: Realtime datadeling voor transportoptimalisatie en -coördinatie
+- **Haven- en terminalintegratie**: Naadloze gegevensuitwisseling met maritieme en binnenhavensystemen
+- **Compliance en traceerbaarheid**: Voldoen aan regelgevingsvereisten voor logistieke en vrachtdata
 
-- **Supply Chain Data Exchange**: Secure sharing of logistics data across the complete supply chain
-- **Transportation Management**: Real-time data sharing for transport optimization and coordination
-- **Port and Terminal Integration**: Seamless data exchange with maritime and inland port systems  
-- **Compliance and Traceability**: Meeting regulatory requirements for logistics and cargo data
+## Aan de slag
 
-## Getting Started
+1. **Organisatieregistratie**: Registreer je organisatie in de TSL-dataspace
+2. **Authenticatie instellen**: Registreer je app in het self-serviceportal en vraag toegang aan tot de `noodlebar-api` audience om Keycloak-clientcredentials te verkrijgen
+3. **Policyconfiguratie**: Definieer policies voor gegevensuitwisseling met je logistieke partners
+4. **Integratie**: Koppel je bestaande logistieke systemen via gestandaardiseerde API's
+5. **Live gaan**: Begin met veilig gegevens uitwisselen binnen het TSL-logistieke ecosysteem
 
-1. **Organization Registration**: Register your logistics organization in the TSL dataspace
-2. **Authentication Setup**: Register your app in the self-service portal and request access to the `noodlebar-api` audience to obtain Keycloak client credentials
-3. **Policy Configuration**: Define data sharing policies with your logistics partners
-4. **Integration**: Connect your existing logistics systems via standardized APIs
-5. **Go Live**: Begin secure data sharing within the TSL logistics ecosystem
+Voor algemene NoodleBar-concepten en implementatieopties, raadpleeg de [NoodleBar Docs](../noodlebar/) documentatie.
 
-For general NoodleBar concepts and deployment options, refer to the [NoodleBar Docs](../noodlebar/) documentation.
-
-For other use case implementations, visit:
-- [GIR Instance](../gir/) - Building Installation Registration
+Voor andere use case-implementaties:
+- [GIR-instantie](../gir/) — Gebouw Installatie Registratie
 
 ---
 
-*TSL represents Poort8's commitment to transforming data sharing in the logistics sector through secure, standardized dataspace technology powered by proven NoodleBar infrastructure.*
+*TSL vertegenwoordigt Poort8's toewijding aan het transformeren van gegevensuitwisseling in de logistieke sector door middel van veilige, gestandaardiseerde dataspacetechnologie, aangedreven door bewezen NoodleBar-infrastructuur.*
 
-### 1.7 Context and Objective
+### 1.7 Context en doelstelling
 
-The project is under the Basis Data Infrastructuur (BDI) umbrella, pending its ongoing development. The objective is to facilitate setting up dataspaces that follow certain principles, serving as an initial platform for data providers, apps, and data consumers.
+Dit project valt onder de Basis Data Infrastructuur (BDI), die momenteel nog in ontwikkeling is. Het doel is het faciliteren van dataspaces die bepaalde principes volgen, als initieel platform voor dataproviders, apps en dataconsumers.
 
-### 1.8 Roles
+### 1.8 Rollen
 
-- **Data Providers**: Organizations that either offer a data source with raw data or an app with processed data. In all cases, access conditions are set by the data owner.
-- **App Providers**: Organizations that act as intermediaries, adding value to raw data. They act as a Data Consumer on behalf of their end users, and as a Data Provider for their end users.
-- **Data Consumers**: Organizations that use data via Service Providers or directly.
-- **Dataspace Initiators**: Organizations that setup and manage the dataspace.
+- **Dataproviders**: Organisaties die een databron met ruwe data of een app met verwerkte data aanbieden. In alle gevallen worden de toegangsvoorwaarden bepaald door de data-eigenaar.
+- **App-providers**: Organisaties die optreden als tussenpersoon en waarde toevoegen aan ruwe data. Ze treden op als dataconsumer namens hun eindgebruikers en als dataprovider voor hun eindgebruikers.
+- **Dataconsumers**: Organisaties die data gebruiken via serviceproviders of rechtstreeks.
+- **Dataspace-initiatiefnemers**: Organisaties die de dataspace opzetten en beheren.
 
-### 1.9 Principles
+### 1.9 Principes
 
-- **Data Sovereignty**: Data owners (issuers) can issue access to their data, even if through federated apps.
-- **Data Localization**: Data stays at its source unless caching or staging is essential.
-- **Identity Flexibility**: Data consumers choose their identity providers.
+- **Datasoevereiniteit**: Data-eigenaren (issuers) kunnen toegang tot hun data verlenen, ook via gefedereerde apps.
+- **Datalokalisatie**: Data blijft bij de bron, tenzij caching of staging noodzakelijk is.
+- **Identiteitsflexibiliteit**: Dataconsumers kiezen hun eigen identiteitsproviders.
 
-### 1.10 Customer Journeys
+### 1.10 Klantreizen
 
-The wiki describes the following Customer Journeys in more detail:
+De wiki beschrijft de volgende klantreizen in detail:
 
-- **Initiating Dataspace Core**
-- **Onboarding Data Sources**
-- **Onboarding Data Owners and Consumers**
-- **Data Sources Becoming Independent**
-- **Adding Providers and Apps**
+- **Dataspace-kern initiëren**
+- **Databronnen onboarden**
+- **Data-eigenaren en -consumers onboarden**
+- **Databronnen zelfstandig maken**
+- **Providers en apps toevoegen**
 
-The first three journeys comprise the launch of a first (prototype) of a dataspace. Journeys 4 and 5 allow data sources and Service Providers to become independent contributors to the dataspace.
+De eerste drie reizen omvatten de lancering van een eerste (prototype)dataspace. Reizen 4 en 5 stellen databronnen en serviceproviders in staat om zelfstandige bijdragers aan de dataspace te worden.
