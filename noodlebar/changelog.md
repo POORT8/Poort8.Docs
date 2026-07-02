@@ -2,6 +2,16 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-06-26
+
+**✨ Highlights:** GIR API consumers can now request signed delegation evidence directly through a dedicated endpoint for authorization checks.
+
+### NoodleBar (GIR)
+
+#### Added
+
+- `POST /v1/api/delegation` is now available to request signed delegation evidence for GIR authorization checks, returning a `delegation_token` that contains permit/deny evidence for the requested policy context. [#1026](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1026)
+
 ## 2026-06-19
 
 **✨ Highlights:** Token endpoint OpenAPI documentation now explicitly defines successful response payload fields for both NoodleBar and GIR consumers.
