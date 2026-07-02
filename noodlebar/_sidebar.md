@@ -13,6 +13,7 @@
   - [Scopes](11%20-%20Scopes.md)
   - [Use Case Authorization Models](12%20-%20Use%20Case%20Authorization%20Models.md)
   - [Resource Group Scoping](13%20-%20Resource%20Group%20Scoping.md)
+  - [Tags and Catalog Filtering](14%20-%20Tags%20and%20Catalog%20Filtering.md)
   - [Requesting API Access (David)](requesting-api-access.md)
   - [Validating API Tokens (Charlie)](validating-api-tokens.md)
 
