@@ -1,28 +1,28 @@
 - [← Back to Poort8 Overview](/)
 
 - **GIR**
-  - [Introduction](/README.md)
-  - [API Versioning](/api-versioning.md)
-  - [Changelog](/changelog.md)
+  - [Introduction](/gir/README.md)
+  - [API Versioning](/gir/api-versioning.md)
+  - [Changelog](/gir/changelog.md)
 
 - **Digitaal Onderhoudsboekje**
-  - [Introduction](/digitaal-onderhoudsboekje/README.md)
-    - [Phase 1 — Owner Authorization](/digitaal-onderhoudsboekje/owner-authorization.md)
-    - [Phase 2 — SupplierDelegation](/digitaal-onderhoudsboekje/supplier-delegation.md)
-    - [Phase 3 — M2M Data Transfer](/digitaal-onderhoudsboekje/m2m-maintenance-data-transfer.md)
+  - [Introduction](/gir/digitaal-onderhoudsboekje/README.md)
+    - [Phase 1 — Owner Authorization](/gir/digitaal-onderhoudsboekje/owner-authorization.md)
+    - [Phase 2 — SupplierDelegation](/gir/digitaal-onderhoudsboekje/supplier-delegation.md)
+    - [Phase 3 — M2M Data Transfer](/gir/digitaal-onderhoudsboekje/m2m-maintenance-data-transfer.md)
 
 - **Datastekker**
-  - [Flow](/datastekker-installateur-flow.md)
+  - [Flow](/gir/datastekker-installateur-flow.md)
 
 - **Flow Overviews**
-  - [Registrar Flow](/registrar-flow.md)
-  - [Data-Consumer Flow](/data-consumer-flow.md)
+  - [Registrar Flow](/gir/registrar-flow.md)
+  - [Data-Consumer Flow](/gir/data-consumer-flow.md)
 
 - **Endpoint Integration Guides**
-  - [Obtaining a DSGO Token](/connect-token.md)
-  - [Register or Update an Installation](/insert-installation.md)
-  - [Retrieve an Installation](/retrieve-installation.md)
-  - [Retrieve Multiple Installations](/retrieve-installations.md)
+  - [Obtaining a DSGO Token](/gir/connect-token.md)
+  - [Register or Update an Installation](/gir/insert-installation.md)
+  - [Retrieve an Installation](/gir/retrieve-installation.md)
+  - [Retrieve Multiple Installations](/gir/retrieve-installations.md)
 
 - **Technical Reference**
   - [Ketenstandaard GIR API ➚](https://ketenstandaard.semantic-treehouse.nl/docs/api/GIR/)
