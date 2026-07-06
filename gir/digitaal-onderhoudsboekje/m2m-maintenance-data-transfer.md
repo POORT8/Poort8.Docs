@@ -1,6 +1,6 @@
 # Phase 3 — M2M Maintenance Data Transfer
 
-> **Context**: This is Phase 3 of the [Digitaal Onderhoudsboekje flow](./digitaal-onderhoudsboekje-flow.md). It starts after Phase 1 (building owner authorized the New Installation Service Company via Keyper) and (optionally) Phase 2 (New Installation Service Company delegated to their software) have completed.
+> **Context**: This is Phase 3 of the [Digitaal Onderhoudsboekje flow](./README.md). It starts after Phase 1 (building owner authorized the New Installation Service Company via Keyper) and (optionally) Phase 2 (New Installation Service Company delegated to their software) have completed.
 >
 > **Audience**: Unlike Phases 1 and 2, which are addressed to the New Installation Service Company, this phase is addressed to **you as the data provider** — the platform that holds the maintenance data and must verify authorization before serving it.
 
