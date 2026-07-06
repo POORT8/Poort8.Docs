@@ -14,8 +14,14 @@
 - **Datastekker**
   - [Flow](/gir/datastekker-installateur-flow.md)
 
+- **Registrar**
+  - [Introduction](/gir/registrar/README.md)
+    - [Phase 1 — Keyper Approval](/gir/registrar/keyper-approval.md)
+    - [Phase 2 — Token Acquisition](/gir/registrar/token-acquisition.md)
+    - [Phase 3 — Submit Installation](/gir/registrar/submit-installation.md)
+    - [Phase 4 — Activation Verification](/gir/registrar/activation-verification.md)
+
 - **Flow Overviews**
-  - [Registrar Flow](/gir/registrar-flow.md)
   - [Data-Consumer Flow](/gir/data-consumer-flow.md)
 
 - **Endpoint Integration Guides**
