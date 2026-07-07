@@ -35,7 +35,6 @@ model {
   app = system 'TN GIR App'
   keyper = system 'Keyper'
   gir = system 'GIR'
-  ni_software = system 'NI software'
 }
 
 views {
@@ -45,11 +44,10 @@ views {
 
     ni -> app 'Supply software supplier details'
     app -> keyper 'SupplierDelegation request (NI as requester and approver)'
-    keyper -> ni 'Approval link by email'
+    app -> ni 'Redirect to Keyper approval screen'
     ni -> keyper 'Authenticate via eHerkenning and approve'
     keyper -> gir 'Register SupplierDelegation (New Installation Service Company → NI software)'
     gir -> keyper 'Confirm'
-    keyper -> ni_software 'Notify [optional]'
   }
 }
 ```
@@ -65,6 +63,55 @@ views {
 ### Step 1: Submit the SupplierDelegation request
 
 The New Installation Service Company supplies the software supplier details in the TN GIR App and selects which GIR data service types to delegate. For `digitaal onderhoudsboekje`, this is `GIRBasisdataMessage` and `GIRMaintenanceLog`. The TN GIR App forwards the user directly to the Keyper approval screen. The New Installation Service Company authenticates via eHerkenning and self-approves.
+
+The TN GIR App submits the approval link request to Keyper with both the requester and approver set to the New Installation Service Company (self-approval flow):
+
+```http
+POST https://keyper-preview.poort8.nl/api/approval-links
+Authorization: Bearer <APP_ACCESS_TOKEN>
+Content-Type: application/json
+
+{
+  "requester": {
+    "organizationId": "did:ishare:EU.NL.NTRNL-<NI_KVK>"
+  },
+  "approver": {
+    "organizationId": "did:ishare:EU.NL.NTRNL-<NI_KVK>"
+  },
+  "dataspace": {
+    "baseUrl": "https://gir-preview.poort8.nl"
+  },
+  "addPolicyTransactions": [
+    {
+      "type": "GIRMaintenanceLog",
+      "action": "*",
+      "issuerId": "did:ishare:EU.NL.NTRNL-<NI_KVK>",
+      "subjectId": "did:ishare:EU.NL.NTRNL-<SW2_KVK>",
+      "serviceProvider": "*",
+      "resourceId": "*",
+      "attribute": "*",
+      "notBefore": "<UNIX TIMESTAMP>",
+      "expiration": "<UNIX TIMESTAMP>"
+    },
+    {
+      "type": "GIRBasisdataMessage",
+      "action": "*",
+      "issuerId": "did:ishare:EU.NL.NTRNL-<NI_KVK>",
+      "subjectId": "did:ishare:EU.NL.NTRNL-<SW2_KVK>",
+      "serviceProvider": "*",
+      "resourceId": "*",
+      "attribute": "*",
+      "notBefore": "<UNIX TIMESTAMP>",
+      "expiration": "<UNIX TIMESTAMP>"
+    }
+  ],
+  "orchestration": {
+    "flow": "dsgo.gir-digitaalonderhoudsboekje@v1"
+  }
+}
+```
+
+The Keyper response includes a `url` field — the TN GIR App must redirect the New Installation Service Company to this URL to complete the self-approval.
 
 On approval, Keyper registers one `SupplierDelegation` policy per selected data service type in GIR (example for `GIRMaintenanceLog`):
 
@@ -101,21 +148,16 @@ After approval, the New Installation Service Company informs their software supp
 
 The New Installation Service Company can revoke a `SupplierDelegation` themselves via the Keyper Manager portal. No involvement of the building owner is required.
 
+🔗 [Keyper Manager ➚](https://keyper-preview.poort8.nl/)
+
 ---
 
 ## Authorization check in Phase 3
 
-When the previous installation service company's software receives a data request from NI's software supplier (SW2), it performs two checks against GIR:
-
-1. **AccessRight check** — Is there a valid `AccessRight` (owner → NI) for this specific VBO-id and data service type?
-2. **SupplierDelegation check** — Is there a valid `SupplierDelegation` (NI → SW2) for this data service type? Since `resourceId` is always `"*"`, no VBO-id match is needed.
-
-Both checks must pass for the request to be authorized. These may be implemented as a combined enforcement step in GIR.
+For the full authorization check flow, including how to handle the case where a software supplier calls on behalf of the New Installation Service Company, see [Step 3: Verify the AccessRight in GIR](https://docs.poort8.nl/#/gir/digitaal-onderhoudsboekje/m2m-maintenance-data-transfer?id=step-3-verify-the-accessright-in-gir).
 
 ## Known blockers
 
 | Blocker | Description | Status |
 |---------|-------------|--------|
-| **Wildcard `resourceId`** | Whether GIR accepts `resourceId: "*"` or requires the field to be omitted for a generic match is to be confirmed during implementation. | Open |
-| **`action: "*"`** | Whether GIR accepts `action: "*"` or requires separate policies per action (read/write) is to be confirmed during implementation. | Open |
 | **`license` field value** | The license identifier to use has not been finalized. | Open |
