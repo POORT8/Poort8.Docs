@@ -47,7 +47,7 @@ views {
     supplier_delegation_app -> supplier_delegation_ni 'Redirect to Keyper approval screen'
     supplier_delegation_ni -> supplier_delegation_keyper 'Authenticate via eHerkenning and approve'
     supplier_delegation_keyper -> supplier_delegation_gir 'Register SupplierDelegation (New Installation Service Company → NI software)'
-    supplier_delegation_gir -> supplier_delegation_keyper 'Confirm'
+    supplier_delegation_gir -> supplier_delegation_ni 'Confirm'
   }
 }
 ```
@@ -106,7 +106,7 @@ Content-Type: application/json
     }
   ],
   "orchestration": {
-    "flow": "dsgo.gir-digitaalonderhoudsboekje@v1"
+    "flow": "gir.registrar@v1"
   }
 }
 ```

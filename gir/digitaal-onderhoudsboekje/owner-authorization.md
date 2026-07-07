@@ -114,7 +114,7 @@ On approval, Keyper registers two `AccessRight` policies in GIR on behalf of the
     }
   ],
   "orchestration": {
-    "flow": "dsgo.gir-digitaalonderhoudsboekje@v1"
+    "flow": "dsgo.gir@v1"
   }
 }
 ```
