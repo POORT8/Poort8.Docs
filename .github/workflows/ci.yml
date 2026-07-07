@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Test 1: Link Checking (ignores internal Docsify routes)
       - name: Check Markdown Links 🔗
