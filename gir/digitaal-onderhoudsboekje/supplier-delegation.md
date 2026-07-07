@@ -31,10 +31,10 @@ specification {
 }
 
 model {
-  ni = actor 'New Installation Service Company'
-  app = system 'TN GIR App'
-  keyper = system 'Keyper'
-  gir = system 'GIR'
+  supplier_delegation_ni = actor 'New Installation Service Company'
+  supplier_delegation_app = system 'TN GIR App'
+  supplier_delegation_keyper = system 'Keyper'
+  supplier_delegation_gir = system 'GIR'
 }
 
 views {
@@ -42,12 +42,12 @@ views {
     title 'Phase 2 — SupplierDelegation'
     variant sequence
 
-    ni -> app 'Supply software supplier details'
-    app -> keyper 'SupplierDelegation request (NI as requester and approver)'
-    app -> ni 'Redirect to Keyper approval screen'
-    ni -> keyper 'Authenticate via eHerkenning and approve'
-    keyper -> gir 'Register SupplierDelegation (New Installation Service Company → NI software)'
-    gir -> keyper 'Confirm'
+    supplier_delegation_ni -> supplier_delegation_app 'Supply software supplier details'
+    supplier_delegation_app -> supplier_delegation_keyper 'SupplierDelegation request (NI as requester and approver)'
+    supplier_delegation_app -> supplier_delegation_ni 'Redirect to Keyper approval screen'
+    supplier_delegation_ni -> supplier_delegation_keyper 'Authenticate via eHerkenning and approve'
+    supplier_delegation_keyper -> supplier_delegation_gir 'Register SupplierDelegation (New Installation Service Company → NI software)'
+    supplier_delegation_gir -> supplier_delegation_keyper 'Confirm'
   }
 }
 ```
