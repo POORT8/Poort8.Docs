@@ -25,6 +25,8 @@ Gebruikers hebben één van twee rollen:
 
 De gebruiker die de organisatie onboardt, wordt de eerste **administrator**.
 
+> ℹ️ Daarnaast bestaat de platformbrede rol **PortlinQ-beheerder** (Poort8), die de globale tag-lijst beheert. Zie [Tags beheren](tags-beheer.md).
+
 ## Portalmogelijkheden per rol
 
 | Mogelijkheid | David (Consumer) | Charlie (Provider) |
@@ -33,6 +35,8 @@ De gebruiker die de organisatie onboardt, wordt de eerste **administrator**.
 | Applicatie registreren | ✓ | — |
 | API registreren | — | ✓ |
 | Catalogus doorzoeken | ✓ | ✓ |
+| Catalogus filteren op tags | ✓ | ✓ |
+| Tags toevoegen aan eigen API/App | — | ✓ |
 | API-toegang aanvragen | ✓ | — |
 | Toegangsaanvragen goedkeuren/afwijzen | — | ✓ |
 
@@ -66,14 +70,18 @@ Data service providers registreren hun API's om ze vindbaar te maken in de catal
 
 Na registratie verschijnt je API in de **Catalogus**. Noteer de client ID van je API — consumers gebruiken die als `scope` bij het opvragen van een token; Keycloak zet hem in de `aud`-claim.
 
+> 🏷️ **Tip:** voeg meteen ook tags toe aan je API, zodat die vindbaar is via de tag-filters in de catalogus. Zie [Tags toevoegen aan je diensten](tags-toevoegen-diensten.md).
+
 ## Catalogus doorzoeken
 
 Alle deelnemers kunnen beschikbare API's doorzoeken:
 
 1. Ga naar de **Catalogus**
-2. Blader of zoek naar API's
+2. Blader of zoek naar API's, of filter op **tags** om snel te vinden wat je zoekt
 3. Bekijk de API-documentatie (gerenderd vanuit de OpenAPI-spec)
 4. Als consumer: klik op **Request Access** om een toegangsaanvraag te starten
+
+> Zie [Tags bekijken en filteren](tags-bekijken-consumer.md) voor de huidige tags en hoe je erop filtert via de app en de API.
 
 ## Toegangsaanvragen beheren (Charlie)
 
@@ -86,4 +94,4 @@ Wanneer een consumer toegang tot jouw API aanvraagt:
 
 Zodra je goedkeurt, kan de consumer tokens aanvragen die op jouw API gericht zijn. Je kunt toegang op elk moment **intrekken**.
 
-Vragen? Neem contact op met Poort8 via **hello@poort8.nl**.
+Vragen? Neem contact op met Poort8 via **<hello@poort8.nl>**.

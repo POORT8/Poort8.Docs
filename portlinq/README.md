@@ -81,6 +81,7 @@ De PortlinQ-infrastructuur is bereikbaar via:
 | **Organisatie registreren** | [Organisatie Registratie](onboarding.md) |
 | **Self-Service Portal gebruiken** | [Self-Service Portal](self-service-portal.md) |
 | **API-toegang aanvragen (consumer)** | [API-toegang aanvragen](api-toegang-aanvragen.md) |
+| **Diensten ontdekken op tag (consumer)** | [Tags bekijken en filteren](tags-bekijken-consumer.md) |
 | **Tokens valideren (provider)** | [Tokens valideren](access-tokens-valideren.md) |
 | **Autorisatie valideren (provider)** | [Autorisatie valideren](autorisatie.md) |
 | **Walstroom implementeren** 🚧 | [Walstroom Toegangsflow](walstroom-toegang.md) |
