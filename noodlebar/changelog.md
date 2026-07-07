@@ -2,6 +2,23 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-07-03
+
+**✨ Highlights:** NoodleBar now provides catalog endpoints to list dataspace systems and reusable tag filters for API-driven discovery.
+
+### NoodleBar
+
+#### Added
+
+- `GET /v1/api/systems` lists APIs and apps across the dataspace, with optional `type` and repeatable `tag` query filters to narrow discovery results. [#1065](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1065)
+- `GET /v1/api/systems/tags` returns the flat controlled tag list (`id`, `name`) used to filter `/v1/api/systems` results consistently. [#1065](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1065)
+
+### Keyper
+
+#### Changed
+
+- The GIR registrar approval workflow now shows installer-focused approval text and eHerkenning authentication messaging in verification prompts, reducing ambiguity for approvers. [#1072](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1072) [#1079](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1079)
+
 ## 2026-06-26
 
 **✨ Highlights:** GIR API consumers can now request signed delegation evidence directly through a dedicated endpoint for authorization checks.
