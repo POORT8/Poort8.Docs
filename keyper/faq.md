@@ -35,6 +35,19 @@ Keyper includes several orchestration options:
 
 You can find the complete Keyper API documentation at: [Keyper API reference ➚](https://keyper-preview.poort8.nl/scalar/v1)
 
+## What does the `status` field on an approval link mean?
+
+The `status` field returned by the Keyper API describes the state of the **approval link itself** — it is not a reflection of any policy or resource that is created as a result of the approval.
+
+| Status | Meaning |
+|--------|---------|
+| `Active` | The approval link has been created and sent; the approver has not yet responded |
+| `Approved` | The approver accepted the request; Keyper has attempted to execute the transactions |
+| `Rejected` | The approver declined the request |
+| `Expired` | The approval link timed out before the approver responded |
+
+> A status of `Approved` confirms that the approver accepted the request and Keyper has attempted to register the transactions (e.g., policies, organizations, resources). It does **not** guarantee that the resulting policy or resource is active and valid. Policy state is managed separately in the Authorization Registry of the relevant dataspace. Always verify the outcome in the target registry if your integration depends on the policy being effective.
+
 ## How does authentication work?
 
 Keyper distinguishes between two kinds of authentication:
