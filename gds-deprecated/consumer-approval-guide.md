@@ -276,6 +276,8 @@ For complete field documentation, see the [Keyper API reference](https://keyper-
 - `Rejected`: Building owner rejected the request
 - `Expired`: Approval link expired before building owner responded
 
+> **Important:** The `status` field describes the state of the **approval link**, not the state of any resulting policy. A status of `Approved` means the approver accepted the request — it does not directly confirm that the policy is active or valid in the Authorization Registry. Policy state is managed separately.
+
 **What happens next:**
 1. Keyper sends an email to the building owner (`approver.email`)
 2. Building owner clicks the link and reviews the request
