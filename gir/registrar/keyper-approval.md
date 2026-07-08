@@ -82,6 +82,8 @@ Authorization: Bearer <KEYPER_ACCESS_TOKEN>
 
 Status lifecycle: `Active` → `Approved`, `Rejected`, or `Expired`. On `Rejected` or `Expired`, create a new request with a new `reference`.
 
+> **Note:** The `status` field reflects the state of the **approval link**, not the state of the resulting write policy in GIR. A status of `Approved` means the installation owner accepted the request and Keyper has registered the policy — but you must still verify the installation write result separately (see [Activation Verification](./activation-verification.md)).
+
 ### Attribute filtering
 
 Set `attribute` to `*` for unrestricted write access, or use space-separated NLSFB tokens to limit scope:
