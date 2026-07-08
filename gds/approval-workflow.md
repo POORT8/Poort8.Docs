@@ -221,7 +221,7 @@ Content-Type: application/json
 | `reference` | Your tracking reference (echoed) |
 | `url` | Approval link sent to building owner |
 | `expiresAtUtc` | When the link expires (Unix timestamp) |
-| `status` | Current status |
+| `status` | Status of the **approval link**: `Active` (awaiting decision), `Approved` (approver accepted), `Rejected` (approver declined), or `Expired` (link timed out). This reflects the state of the approval link only — it does **not** indicate whether the resulting policy is active or valid. Policy state is managed separately in the GDS Authorization Registry. |
 
 **What happens next:**
 1. Keyper emails Bob with the approval link
@@ -256,7 +256,7 @@ Response:
 }
 ```
 
-> **Note:** The GET response returns the full approval link entity. The `status` field is the most relevant for polling purposes.
+> **Note:** The GET response returns the full approval link entity. The `status` field is the most relevant for polling purposes. It reflects the state of the **approval link** — a status of `Approved` means the approver accepted the request and Keyper has attempted to register the policies. It does **not** directly reflect whether the resulting policy is active or valid in the GDS Authorization Registry.
 
 **Status values:**
 
