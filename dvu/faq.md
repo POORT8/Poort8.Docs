@@ -139,6 +139,8 @@ Bij afwijzing:
 
 >**Let op:** Momenteel is er geen webhook-notificatie voor statuswijzigingen. Je moet mogelijk de approval link-status pollen of wachten tot de goedkeurder u informeert.
 
+> **Belangrijk:** De `status` van een approval link beschrijft de toestand van de **approval link zelf** — niet die van de policy die eventueel is aangemaakt. Een status `Approved` bevestigt dat de goedkeurder het verzoek heeft geaccepteerd. Het garandeert **niet** dat de resulterende policy actief of geldig is in het DVU Authorization Registry. Controleer de policystatus separaat als je integratie hiervan afhankelijk is.
+
 ### Hoe weet ik wanneer een goedkeuring is voltooid?
 Momenteel heb je deze opties:
 

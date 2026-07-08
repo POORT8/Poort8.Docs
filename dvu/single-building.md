@@ -102,7 +102,7 @@ Content-Type: application/json
 | `reference`    | Your tracking reference                                       |
 | `url`          | Approval link sent to the energy contractor via email         |
 | `expiresAtUtc` | Unix timestamp when the link expires (1 hour after creation)  |
-| `status`       | `Active`, `Approved`, `Rejected`, or `Expired`                |
+| `status`       | Status of the **approval link**: `Active` (awaiting decision), `Approved` (approver accepted), `Rejected` (approver declined), or `Expired` (link timed out). This reflects the state of the approval link only — it does **not** indicate whether the resulting policy is active or valid. Policy state is managed separately in the DVU Authorization Registry. |
 
 ## Common errors
 

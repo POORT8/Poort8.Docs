@@ -133,6 +133,8 @@ Content-Type: application/json
 }
 ```
 
+> **Note:** The `status` field reflects the state of the **approval link** (`Active`, `Approved`, `Rejected`, or `Expired`). It does **not** indicate whether the resulting policy is active or valid in the DVU Authorization Registry. Policy state is managed separately.
+
 ## Common errors
 
 | Status | Scenario                        | Solution                                                                                                                      |

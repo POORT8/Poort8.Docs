@@ -134,7 +134,7 @@ Use this sample data, and replace the email placeholders with your actual email 
 - **`reference`**: Your tracking reference (`TEST-001`)
 - **`url`**: The approval link sent to the approver
 - **`expiresAtUtc`**: Unix timestamp when the link expires (1 hour from creation)
-- **`status`**: Current status (`Active`, `Approved`, `Rejected`, or `Expired`)
+- **`status`**: Current status of the **approval link** (`Active`, `Approved`, `Rejected`, or `Expired`). This reflects the state of the approval link only — it does **not** indicate whether any resulting policy is active or valid. Policy state is managed separately in the DVU Authorization Registry.
 
 ##### What just happened?
 1. You requested access to building at address "3013 AK 45" (Rotterdam).
