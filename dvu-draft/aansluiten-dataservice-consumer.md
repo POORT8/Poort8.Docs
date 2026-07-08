@@ -154,6 +154,8 @@ Zie de [Keyper API docs ➚](https://keyper-preview.poort8.nl/scalar/v1) voor he
 
 Keyper stuurt een e-mail naar de aangewezen approver. Na goedkeuring (of afwijzing) is de policy zichtbaar in het DVU AR.
 
+> **Let op:** De `status` van een approval link geeft de toestand van de **approval link zelf** aan, niet de toestand van de policy die erdoor aangemaakt wordt. Een status `Approved` betekent dat de goedkeurder het verzoek heeft geaccepteerd en dat Keyper heeft geprobeerd de policy te registreren in het DVU AR — maar dit bevestigt niet automatisch dat de policy actief en geldig is. Controleer de policystatus separaat in het DVU Authorization Registry als je integratie afhankelijk is van een actieve policy.
+
 ## Stap 4: Energiedata opvragen
 
 Na goedkeuring vraag je een nieuw token op, nu met de scope van de datadienst-aanbieder (de `client_id` van diens API zoals geregistreerd in de catalogus):
