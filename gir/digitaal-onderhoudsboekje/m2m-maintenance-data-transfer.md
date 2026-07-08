@@ -73,7 +73,7 @@ Use the DSGO client credentials flow to get a bearer token from GIR. See [Obtain
 > **Important**: use the subject identity from the validated DSGO bearer token as `accessSubject` — **not** a hardcoded KVK. The caller may be the New Installation Service Company itself, or a software company acting on their behalf (Phase 2 SupplierDelegation). See the note below the request.
 
 ```http
-POST https://gir-preview.poort8.nl/delegation
+POST https://gir-preview.poort8.nl/v1/api/delegation
 Authorization: Bearer <GIR_ACCESS_TOKEN>
 Content-Type: application/json
 

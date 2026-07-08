@@ -67,7 +67,7 @@ The New Installation Service Company supplies the software supplier details in t
 The TN GIR App submits the approval link request to Keyper with both the requester and approver set to the New Installation Service Company (self-approval flow):
 
 ```http
-POST https://keyper-preview.poort8.nl/api/approval-links
+POST https://keyper-preview.poort8.nl/v1/api/approval-links
 Authorization: Bearer <APP_ACCESS_TOKEN>
 Content-Type: application/json
 

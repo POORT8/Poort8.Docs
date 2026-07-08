@@ -217,7 +217,7 @@ The response includes `component[].productInformation.manufacturerName` and rela
 Using the DSGO bearer token obtained in step 6, Datastekker calls the GIR delegation endpoint to verify that an active and valid policy exists for the installer:
 
 ```http
-POST https://gir-preview.poort8.nl/delegation
+POST https://gir-preview.poort8.nl/v1/api/delegation
 Authorization: Bearer <DSGO_ACCESS_TOKEN>
 Content-Type: application/json
 ```
