@@ -23,6 +23,7 @@
 - **Use-case gidsen** 🚧
   - [Walstroom Toegangsflow](walstroom-toegang.md)
   - [Geofence Arrival en Departure Flow](geofence-arrival.md)
+  - [Implementatie Living Lab Demo](referentie-implementatie.md)
 
 - **Technische Referentie**
   - [PortlinQ API documentatie ➚](https://portlinq-preview.poort8.nl/scalar/v1)
