@@ -16,8 +16,8 @@ Keyper uses separate read and write policies on the API endpoints:
 
 | Operation | Example endpoints | Required access |
 | --- | --- | --- |
-| Read approval links | `GET /api/approval-links/{id}` | Read |
-| Create or update approval links | `POST /api/approval-links`, `PUT /api/approval-links/{id}` | Write |
+| Read approval links | `GET /v1/api/approval-links/{id}` | Read |
+| Create or update approval links | `POST /v1/api/approval-links`, `PUT /v1/api/approval-links/{id}` | Write |
 
 For Keycloak bearer tokens, a valid token for the configured Keyper API audience with a resolvable organization can satisfy the Keyper API read and write policies. Access to an individual approval link is then checked separately against the caller organization and trusted-client configuration.
 
