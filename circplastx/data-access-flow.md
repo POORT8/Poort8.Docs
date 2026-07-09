@@ -139,7 +139,7 @@ Before returning data, the service provider's data service validates the manufac
 **NoodleBar explained-enforce example:**
 
 ```http
-GET https://circplastx-preview.poort8.nl/api/authorization/explained-enforce
+GET https://circplastx-preview.poort8.nl/v1/api/authorization/explained-enforce
   ?subject={manufacturerOrganizationId}
   &resource={resourceId}
   &action={action}
