@@ -25,6 +25,12 @@ for section_dir in */; do
 
   rm -rf "$section_dir/likec4"
   mkdir -p "$section_dir/likec4"
+  cat > "${section_dir}likec4/000-spec.c4" <<'EOF'
+specification {
+  element actor
+  element system
+}
+EOF
 
   # Extract each markdown file's likec4 fence into a .c4 source file.
   # The markdown is the single source of truth; .c4 files are generated.
@@ -33,15 +39,29 @@ for section_dir in */; do
     rel="${md_file#"$section_dir"}"
     flat="${rel%.md}"
     flat="${flat//\//-}"
-    python3 -c "
-import sys, re
+    python3 - "$md_file" "${section_dir}likec4/${flat}" <<'PY'
+import os, sys, re
 content = open(sys.argv[1], encoding='utf-8').read()
 matches = re.findall(r'\x60\x60\x60likec4[^\n]*\n(.*?)\n\x60\x60\x60', content, re.DOTALL)
 base = sys.argv[2]
 for i, m in enumerate(matches):
     fname = base + ('.c4' if len(matches) == 1 else '-' + str(i) + '.c4')
-    open(fname, 'w', encoding='utf-8').write(m + '\n')
-" "$md_file" "${section_dir}likec4/${flat}"
+    prefix = re.sub(r'[^a-zA-Z0-9_]+', '_', os.path.basename(fname)[:-3]).strip('_')
+    if not re.match(r'[a-zA-Z_]', prefix):
+        prefix = 'diagram_' + prefix
+    source = re.sub(r'(?ms)^\s*specification\s*\{.*?^\s*\}\s*', '', m, count=1)
+    ids = re.findall(r'(?m)^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(?:actor|system)\b', source)
+    string_re = re.compile(r'''('(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\")''')
+    parts = string_re.split(source)
+    for element_id in sorted(set(ids), key=len, reverse=True):
+        id_re = re.compile(r'(?<![a-zA-Z0-9_])' + re.escape(element_id) + r'(?![a-zA-Z0-9_])')
+        parts = [
+            part if i % 2 else id_re.sub(prefix + '_' + element_id, part)
+            for i, part in enumerate(parts)
+        ]
+    source = ''.join(parts)
+    open(fname, 'w', encoding='utf-8').write(source.strip() + '\n')
+PY
   done < <(find "$section_dir" -name '*.md' -not -path '*/_*' | sort)
 
   ls "${section_dir}likec4/"*.c4 > /dev/null 2>&1 \
