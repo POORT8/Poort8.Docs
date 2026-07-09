@@ -106,7 +106,7 @@ Content-Type: application/json
     }
   ],
   "orchestration": {
-    "flow": "gir.registrar@v1"
+    "flow": "dsgo.gir-supplier-delegation@v1"
   }
 }
 ```
