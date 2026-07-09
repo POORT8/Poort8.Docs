@@ -22,7 +22,7 @@ sequenceDiagram
     Keyper->>AR: Register policy + resource group
     Keyper->>App: Status: Approved
     Note over App: Requesting VBO and EAN Data
-    App->>AR: GET /api/resourcegroups (VBO + EAN identifiers)
+    App->>AR: GET /v1/api/resourcegroups (VBO + EAN identifiers)
     App->>SDS: Retrieve energy data using EAN
 ```
 

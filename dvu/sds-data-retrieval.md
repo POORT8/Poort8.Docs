@@ -15,7 +15,7 @@ sequenceDiagram
     participant SDS as Smart Data Solutions
     App->>DVU: POST /iSHARE/connect/token (client assertion)
     DVU->>App: Retrieve access token
-    App->>SDS: GET /api/resourcegroups (Access token + VBO + EAN identifiers)
+    App->>SDS: GET /v1/api/resourcegroups (Access token + VBO + EAN identifiers)
     SDS->>App: Retrieve data
 ```
 

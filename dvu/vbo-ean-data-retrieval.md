@@ -10,7 +10,7 @@ sequenceDiagram
     participant DVU as Datastelsel Verduurzaming Utiliteit
     App->>DVU: POST /iSHARE/connect/token (Client assertion)
     DVU->>App: Retrieve access token
-    App->>DVU: GET /api/resourcegroups (Access token + VBO + EAN identifiers)
+    App->>DVU: GET /v1/api/resourcegroups (Access token + VBO + EAN identifiers)
     DVU->>App: Retrieve data
 ```
 
@@ -70,7 +70,7 @@ Content-Type: application/x-www-form-urlencoded
 ## Retrieve VBO and EAN data
 
 ```http
-GET https://dvu-test.azurewebsites.net/api/resourcegroups?issuer=did:ishare:EU.NL.NTRNL-<YOUR_KVK>&vbo=<VBO_ID>&ean=<EAN_ID>
+GET https://dvu-test.azurewebsites.net/v1/api/resourcegroups?issuer=did:ishare:EU.NL.NTRNL-<YOUR_KVK>&vbo=<VBO_ID>&ean=<EAN_ID>
 Authorization: Bearer <ACCESS_TOKEN>
 ```
 
