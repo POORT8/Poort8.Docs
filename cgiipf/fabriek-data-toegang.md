@@ -23,7 +23,7 @@ sequenceDiagram
     rect rgb(240, 248, 255)
         Note over Fabriek,IPF: Autorisatie setup (eenmalige setup)
 
-        Fabriek->>IPF: POST /api/policies<br/>(registreer policy voor service provider)
+        Fabriek->>IPF: POST /v1/api/policies<br/>(registreer policy voor service provider)
         IPF-->>Fabriek: Policy geregistreerd
         Note over IPF: Policy opgeslagen in Authorization Registry
     end
@@ -34,7 +34,7 @@ sequenceDiagram
         SP->>App: "Haal productiedata op"
         App->>API: GET /productie/data
 
-        API->>IPF: GET /api/authorization/explained-enforce<br/>(check toestemming)
+        API->>IPF: GET /v1/api/authorization/explained-enforce<br/>(check toestemming)
         IPF-->>API: Toegang toegestaan + policy details
 
         API-->>App: Productiedata
@@ -65,7 +65,7 @@ De fabriek registreert policies in de Interplant Federation die bepalen welke se
 **NoodleBar policy registratie voorbeeld:**
 
 ```http
-POST https://cgiipf-preview.poort8.nl/api/policies
+POST https://cgiipf-preview.poort8.nl/v1/api/policies
 Authorization: Bearer <ACCESS_TOKEN>
 Content-Type: application/json
 ```
@@ -128,7 +128,7 @@ Voordat de fabriek API de data retourneert, controleert deze of de applicatie da
 **Generic NoodleBar explained-enforce voorbeeld:**
 
 ```http
-GET https://cgiipf-preview.poort8.nl/api/authorization/explained-enforce
+GET https://cgiipf-preview.poort8.nl/v1/api/authorization/explained-enforce
   ?subject=12345678
   &resource=[TBD - productie data resource ID]
   &action=[TBD - bijv. read of query]
