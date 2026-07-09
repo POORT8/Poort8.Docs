@@ -12,7 +12,10 @@
     - [Phase 3 — M2M Data Transfer](/gir/digitaal-onderhoudsboekje/m2m-maintenance-data-transfer.md)
 
 - **Datastekker**
-  - [Flow](/gir/datastekker-installateur-flow.md)
+  - [Introduction](/gir/datastekker/README.md)
+    - [Phase 1 — Approval Flow](/gir/datastekker/approval-flow.md)
+    - [Phase 2 — Token Acquisition](/gir/datastekker/token-acquisition.md)
+    - [Phase 3 — Authorization Check](/gir/datastekker/authorization-check.md)
 
 - **Registrar**
   - [Introduction](/gir/registrar/README.md)
