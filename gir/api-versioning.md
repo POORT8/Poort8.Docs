@@ -18,7 +18,7 @@ These endpoints currently support **v1**. Breaking changes to these endpoints wi
 GIR also uses standard NoodleBar endpoints for approval workflows and authorization checks:
 
 - `POST /v1/api/approval-links` — Request approval (Keyper)
-- `GET /api/authorization/explained-enforce` — Check authorization (NoodleBar AR)
+- `GET /v1/api/authorization/explained-enforce` — Check authorization (NoodleBar AR)
 
 These follow **NoodleBar's versioning**, which may differ from GIR's endpoint versions.
 
