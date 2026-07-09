@@ -17,6 +17,7 @@ The New Installation Service Company's software calls your platform to retrieve 
 ```likec4
 // view: dob_phase3
 specification {
+  // likec4:shared-spec
   element system
 }
 
