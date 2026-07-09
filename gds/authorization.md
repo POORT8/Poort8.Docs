@@ -31,7 +31,7 @@ views {
     charlie -> charlie 'Validate token & derive organization EUID'
     charlie -> kc 'Request token (client_credentials, scope=noodlebar-api)'
     kc -> charlie 'Access token'
-    charlie -> ar 'GET /api/authorization/explained-enforce + Bearer token'
+    charlie -> ar 'GET /v1/api/authorization/explained-enforce + Bearer token'
     ar -> charlie 'HTTP 200: {allowed: true/false, policies}'
     charlie -> david 'If allowed: 200 + data / If denied: 403'
   }
@@ -86,7 +86,7 @@ grant_type=client_credentials
 Call the endpoint with the access token from Step 1 to check whether a valid policy exists for the incoming request:
 
 ```http
-GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer={BUILDING_OWNER}&subject={DATA_CONSUMER}&serviceProvider={YOUR_ORG}&action=GET&resource={VBO_ID}&type=building&attribute=*&useCase=ishare
+GET https://gds-preview.poort8.nl/v1/api/authorization/explained-enforce?issuer={BUILDING_OWNER}&subject={DATA_CONSUMER}&serviceProvider={YOUR_ORG}&action=GET&resource={VBO_ID}&type=building&attribute=*&useCase=ishare
 Authorization: Bearer {token}
 ```
 
@@ -106,7 +106,7 @@ Authorization: Bearer {token}
 ### Example request
 
 ```http
-GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer=NLNHR.87654321&subject=NLNHR.12345678&serviceProvider=NLNHR.23456789&action=GET&resource=0363010000659001&type=building&attribute=*&useCase=ishare
+GET https://gds-preview.poort8.nl/v1/api/authorization/explained-enforce?issuer=NLNHR.87654321&subject=NLNHR.12345678&serviceProvider=NLNHR.23456789&action=GET&resource=0363010000659001&type=building&attribute=*&useCase=ishare
 Authorization: Bearer {token}
 ```
 
