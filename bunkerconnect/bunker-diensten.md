@@ -25,7 +25,7 @@ sequenceDiagram
     rect rgb(240, 248, 255)
         Note over Supplier,BC: Autorisatie setup (eenmalige setup)
 
-        Supplier->>BC: POST /api/policies<br/>(registreer policy voor app/schip)
+        Supplier->>BC: POST /v1/api/policies<br/>(registreer policy voor app/schip)
         BC-->>Supplier: Policy geregistreerd
         Note over BC: Policy opgeslagen in Authorization Registry
     end
@@ -36,7 +36,7 @@ sequenceDiagram
         Schip->>App: "Reserveer bunkerlevering"
         App->>API: POST /bunker/reserveringen
 
-        API->>BC: GET /api/authorization/explained-enforce<br/>(check toestemming)
+        API->>BC: GET /v1/api/authorization/explained-enforce<br/>(check toestemming)
         BC-->>API: Toegang toegestaan + policy details
 
         API-->>App: Reservering bevestigd
@@ -67,7 +67,7 @@ De bunker supplier registreert policies in BunkerConnect die bepalen welke apps 
 **NoodleBar policy registratie voorbeeld:**
 
 ```http
-POST https://bunkerconnect-preview.poort8.nl/api/policies
+POST https://bunkerconnect-preview.poort8.nl/v1/api/policies
 Authorization: Bearer <ACCESS_TOKEN>
 Content-Type: application/json
 ```
@@ -130,7 +130,7 @@ Voordat de supplier API de reservering bevestigt, controleert deze of de app daa
 **Generic NoodleBar explained-enforce voorbeeld:**
 
 ```http
-GET https://bunkerconnect-preview.poort8.nl/api/authorization/explained-enforce
+GET https://bunkerconnect-preview.poort8.nl/v1/api/authorization/explained-enforce
   ?subject=12345678
   &resource=[TBD - bunker dienst resource ID]
   &action=[TBD - bijv. reserve of order]
