@@ -2,6 +2,32 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-07-10
+
+**✨ Highlights:** The GIR registrar Keyper workflow is renamed to `dsgo.gir-supplier-delegation@v1`, a new Datastekker workflow is available for building installation data access, and approval links now auto-refresh on access instead of expiring after 7 days.
+
+### NoodleBar
+
+#### Added
+
+- `GET /v1/api/systems` responses now include a `url` field (nullable string) for each system, containing a link to the system's API documentation or reference page when available. [#1098](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1098)
+
+#### Fixed
+
+- `GET /v1/api/authorization/explained-enforce` now documents `400 Bad Request` in the OpenAPI reference. The endpoint was already returning `400` for invalid or missing parameter combinations; the spec now matches the runtime behavior. [#1057](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1057)
+- `PUT /v1/api/resourcegroups/{resourceGroupId}/resources/{resourceId}` and `DELETE /v1/api/resourcegroups/{resourceGroupId}/resources/{resourceId}` were returning `200 OK` at runtime while the spec documented `204 No Content`; both now return `204 No Content` as documented. The `PUT` endpoint also now documents `400 Bad Request` for use-case mismatch between the resource and its group. Clients that checked for `200` on these calls should update to expect `204`. [#1109](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1109)
+
+### Keyper
+
+#### Added
+
+- A new GIR Datastekker approval workflow `dsgo.gir-datastekker@v1` is now available for the GIR dataspace. Pass `dsgo.gir-datastekker@v1` as `orchestration.flow` in `POST /api/approval-links` to start a building installation data access approval flow via the Datastekker platform. [#1102](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1102)
+
+#### Changed
+
+- **BREAKING:** The GIR registrar approval workflow has been renamed from `gir.registrar@v1` to `dsgo.gir-supplier-delegation@v1`. Update the `orchestration.flow` value in `POST /api/approval-links` calls from `gir.registrar@v1` to `dsgo.gir-supplier-delegation@v1`. [#1104](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1104) [#1105](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1105)
+- Approval links now expire after 1 hour (previously 7 days). When an approver opens an expired link within 7 days of expiry, Keyper automatically creates a new link with the same configuration and sends a fresh notification. Integrations that display or act on `ExpiresInSeconds` or the calculated `expiresAt` timestamp in API responses will see the new shorter value. [#1097](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1097)
+
 ## 2026-07-03
 
 **✨ Highlights:** NoodleBar now provides catalog endpoints to list dataspace systems and reusable tag filters for API-driven discovery.
