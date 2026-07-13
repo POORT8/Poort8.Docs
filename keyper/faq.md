@@ -48,6 +48,14 @@ The `status` field returned by the Keyper API describes the state of the **appro
 
 > A status of `Approved` confirms that the approver accepted the request and Keyper has attempted to register the transactions (e.g., policies, organizations, resources). It does **not** guarantee that the resulting policy or resource is active and valid. Policy state is managed separately in the Authorization Registry of the relevant dataspace. Always verify the outcome in the target registry if your integration depends on the policy being effective.
 
+## How long is an approval link valid, and can an expired link be renewed?
+
+By default, an approval link is valid for **1 hour** after creation. If the approver has not responded within that time, the link's status changes to `Expired`.
+
+An expired link can still be renewed for up to **7 days** after it was created. Renewing a link creates a new, active approval link with the same transactions, requester, and approver, and sends a new notification to the approver. Once the 7-day window since creation has passed, the link can no longer be renewed and a new approval link must be created from scratch.
+
+Both the validity period and the renewal window are workflow-configurable and may differ per flow.
+
 ## How does authentication work?
 
 Keyper distinguishes between two kinds of authentication:
