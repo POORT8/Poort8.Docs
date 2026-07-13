@@ -76,12 +76,12 @@ On rejection, the link expires and a new request must be initiated.
 
 ### Step 3: Keyper registers the AccessRight in GIR
 
-On approval, Keyper registers two `AccessRight` policies in GIR on behalf of the building owner:
+On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on behalf of the building owner:
 
 ```json
 {
   "requester": {
-    "organizationId": "did:ishare:EU.NL.NTRNL-<NEW_INSTALLATION_SERVICE_COMPANY_KVK>"
+    "organizationId": "did:ishare:EU.NL.NTRNL-<NEW_INSTALLER_KVK>"
   },
   "approver": {
     "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>"
@@ -91,22 +91,12 @@ On approval, Keyper registers two `AccessRight` policies in GIR on behalf of the
   },
   "addPolicyTransactions": [
     {
-      "type": "GIRMaintenanceLog",
+      "useCase": "GIR",
+      "type": "vboID",
       "action": "read",
       "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
-      "subjectId": "did:ishare:EU.NL.NTRNL-<NEW_INSTALLATION_SERVICE_COMPANY_KVK>",
-      "serviceProvider": "*",
-      "resourceId": "<VBOID>",
-      "attribute": "*",
-      "notBefore": "<UNIX TIMESTAMP>",
-      "expiration": "<UNIX TIMESTAMP>"
-    },
-    {
-      "type": "GIRBasisdataMessage",
-      "action": "read",
-      "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
-      "subjectId": "did:ishare:EU.NL.NTRNL-<NEW_INSTALLATION_SERVICE_COMPANY_KVK>",
-      "serviceProvider": "did:ishare:EU.NL.NTRNL-<GIR_KVK>",
+      "subjectId": "did:ishare:EU.NL.NTRNL-<NEW_INSTALLER_KVK>",
+      "serviceProvider": "did:ishare:EU.NL.NTRNL-27248698",
       "resourceId": "<VBOID>",
       "attribute": "*",
       "notBefore": "<UNIX TIMESTAMP>",
@@ -121,7 +111,7 @@ On approval, Keyper registers two `AccessRight` policies in GIR on behalf of the
 
 > Multiple VBO-ids require one entry per VBO-id in `addPolicyTransactions`.
 
-> **NL/SfB scoping** *(planned)*: Access can be restricted to specific NL/SfB codes by replacing `"attribute": "*"` with an NL/SfB code (e.g. `"L"` for all mechanical, `"L1"` for HVAC). Both policy entries must use the same value. This is not yet supported and requires additional development.
+> **NL/SfB scoping** *(planned)*: Access can be restricted to specific NL/SfB codes by replacing `"attribute": "*"` with an NL/SfB code (e.g. `"L"` for all mechanical, `"L1"` for HVAC). This is not yet supported and requires additional development.
 
 🔗 [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
 
@@ -132,5 +122,5 @@ On approval, Keyper registers two `AccessRight` policies in GIR on behalf of the
 | Blocker | Description | Status |
 |---------|-------------|--------|
 | **`license` field value** | The license identifier to use in `addPolicyTransactions` has not been finalized. | Open |
-| **NL/SfB scoping via `attribute`** | Restricting access by NL/SfB code using the `attribute` field is not yet implemented. Applies to both `GIRMaintenanceLog` and `GIRBasisdataMessage`. | Open (dev task) |
+| **NL/SfB scoping via `attribute`** | Restricting access by NL/SfB code using the `attribute` field is not yet implemented. | Open (dev task) |
 
