@@ -58,7 +58,7 @@ PortlinQ ondersteunt twee primaire flow-types. Beide bouwen voort op de generiek
 
 Schippers kunnen authenticeren via hun applicatie, zodat ze met hun schip straks diensten kunnen gebruiken in havens.
 
-- [→ Walstroom Toegangsflow](walstroom-toegang.md) 🚧
+- [→ Walstroom Toegangsflow](walstroom-toegang.md)
 
 ### 2. Geofence Arrival en Departure Flow
 
@@ -84,7 +84,7 @@ De PortlinQ-infrastructuur is bereikbaar via:
 | **Diensten ontdekken op tag (consumer)** | [Tags bekijken en filteren](tags-bekijken-consumer.md) |
 | **Tokens valideren (provider)** | [Tokens valideren](access-tokens-valideren.md) |
 | **Autorisatie valideren (provider)** | [Autorisatie valideren](autorisatie.md) |
-| **Walstroom implementeren** 🚧 | [Walstroom Toegangsflow](walstroom-toegang.md) |
+| **Walstroom implementeren** | [Walstroom Toegangsflow](walstroom-toegang.md) |
 | **Geofence implementeren** | [Geofence Arrival Flow](geofence-arrival.md) |
 | **API referentie** | [PortlinQ API docs ➚](https://portlinq-preview.poort8.nl/scalar/v1) |
 | **Toegang goedkeuren (generiek)** | [Keyper ➚](../keyper/) |
