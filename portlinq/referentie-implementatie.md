@@ -147,7 +147,7 @@ Response: systemen getagd als `port`, elk met `organizationName` en `url`.
 Ardin selecteert Port of Twente. App-interne selectie op basis van stap 3.
 
 ### Stap 5 — Aanmeren selecteren + policy inschieten
-Ardin selecteert de aanmeer-/bezoekdienst van de haven (tag `visit`). Bij die selectie schiet de app de **policy** in: de MS Amare geeft Port of Twente toestemming om straks haar AIS-gegevens (geleverd door GetSturdy) te ontvangen. Issuer = de Amare (Ardin handelt via de app namens het schip).
+Ardin selecteert de aanmeer-/bezoekdienst van de haven (tag `visit`). Bij die selectie schiet de app de **policy** in: de MS Amare geeft Port of Twente toestemming om straks het arrival/departure-event (gedetecteerd door GetSturdy via AIS, gepusht naar de haven) te ontvangen. Issuer = de Amare (Ardin handelt via de app namens het schip).
 
 ```http
 GET https://portlinq-preview.poort8.nl/v1/api/systems?tag=visit&tag=port

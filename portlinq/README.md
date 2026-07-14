@@ -62,9 +62,9 @@ Schippers kunnen authenticeren via hun applicatie, zodat ze met hun schip straks
 
 ### 2. Geofence Arrival en Departure Flow
 
-Schippers kunnen via hun app, namens het schip, een haven binnenvaren en de haven toestemming geven om tijdelijk hun AIS-data in te zien.
+Schippers kunnen via hun app, namens het schip, een haven binnenvaren en de haven toestemming geven om het arrival- en departure-event bij het binnenvaren en verlaten van de haven te ontvangen.
 
-- [→ Geofence Arrival en Departure Flow](geofence-arrival.md) 🚧
+- [→ Geofence Arrival en Departure Flow](geofence-arrival.md)
 
 ## Toegang en omgeving
 
@@ -85,7 +85,7 @@ De PortlinQ-infrastructuur is bereikbaar via:
 | **Tokens valideren (provider)** | [Tokens valideren](access-tokens-valideren.md) |
 | **Autorisatie valideren (provider)** | [Autorisatie valideren](autorisatie.md) |
 | **Walstroom implementeren** 🚧 | [Walstroom Toegangsflow](walstroom-toegang.md) |
-| **Geofence implementeren** 🚧 | [Geofence Arrival Flow](geofence-arrival.md) |
+| **Geofence implementeren** | [Geofence Arrival Flow](geofence-arrival.md) |
 | **API referentie** | [PortlinQ API docs ➚](https://portlinq-preview.poort8.nl/scalar/v1) |
 | **Toegang goedkeuren (generiek)** | [Keyper ➚](../keyper/) |
 | **Datastelsel-context** | [Poort8-overzicht](/) |
