@@ -53,7 +53,7 @@ sequenceDiagram
     note over Provider,AR: Policy enforcement
     Provider->>Auth: Request access token for AR
     Auth-->>Provider: Token
-    Provider->>AR: GET /api/authorization/explained-enforce
+    Provider->>AR: GET /v1/api/authorization/explained-enforce
     AR-->>Provider: Enforce result (allowed + matching policies)
     end
 
@@ -103,7 +103,7 @@ GDS supports authorization at different resource levels. Your platform must chec
 To check authorization, call the explained enforce endpoint on the GDS Authorization Registry:
 
 ```http
-GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer=<BUILDING_OWNER_KVK>&subject=<DATA_SERVICE_CONSUMER_KVK>&serviceProvider=<YOUR_ORGANIZATION_KVK>&action=GET&resource=<VBO_ID>&type=building&attribute=*&useCase=ishare
+GET https://gds-preview.poort8.nl/v1/api/authorization/explained-enforce?issuer=<BUILDING_OWNER_KVK>&subject=<DATA_SERVICE_CONSUMER_KVK>&serviceProvider=<YOUR_ORGANIZATION_KVK>&action=GET&resource=<VBO_ID>&type=building&attribute=*&useCase=ishare
 Authorization: Bearer <ACCESS_TOKEN>
 ```
 
@@ -123,7 +123,7 @@ Authorization: Bearer <ACCESS_TOKEN>
 ### Example request with real values
 
 ```http
-GET https://gds-preview.poort8.nl/api/authorization/explained-enforce?issuer=NLNHR.87654321&subject=NLNHR.12345678&serviceProvider=NLNHR.23456789&action=GET&resource=0363010000659001&type=building&attribute=*&useCase=ishare
+GET https://gds-preview.poort8.nl/v1/api/authorization/explained-enforce?issuer=NLNHR.87654321&subject=NLNHR.12345678&serviceProvider=NLNHR.23456789&action=GET&resource=0363010000659001&type=building&attribute=*&useCase=ishare
 Authorization: Bearer <ACCESS_TOKEN>
 ```
 
@@ -234,7 +234,7 @@ Apply the [validation requirements](#validation-requirements) to the explained e
 |---------|-----|
 | Token endpoint | `https://poort8.eu.auth0.com/oauth/token` |
 | GDS Authorization Registry | `https://gds-preview.poort8.nl` |
-| Explained enforce endpoint | `https://gds-preview.poort8.nl/api/authorization/explained-enforce` |
+| Explained enforce endpoint | `https://gds-preview.poort8.nl/v1/api/authorization/explained-enforce` |
 
 > The test environment uses separate non-production resources. Use it for functional testing without affecting production data.
 

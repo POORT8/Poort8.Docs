@@ -20,7 +20,7 @@ sequenceDiagram
 
     Client->>Auth: Request access token (client credentials)
     Auth-->>Client: Bearer token
-    Client->>AR: GET /api/policies?issuerId={organizationId}
+    Client->>AR: GET /v1/api/policies?issuerId={organizationId}
     AR-->>Client: List of policies for that issuer
 
     note over Auth,AR: Pilot environment: noodlebar-preview.poort8.nl
@@ -81,12 +81,12 @@ The response contains a `access_token` (JWT bearer token) that you include in al
 
 Use the bearer token to retrieve policies for a specific issuer (data rights holder — typically the building owner who granted access).
 
-**Reference:** [NoodleBar API — GET /api/policies](https://noodlebar-preview.poort8.nl/scalar/#tag/policies/GET/api/policies) *(pilot environment)*
+**Reference:** [NoodleBar API — GET /v1/api/policies](https://noodlebar-preview.poort8.nl/scalar/#tag/policies/GET/v1/api/policies) *(pilot environment)*
 
 ### Example request
 
 ```http
-GET /api/policies?issuerId=NLNHR.87654321
+GET /v1/api/policies?issuerId=NLNHR.87654321
 Host: noodlebar-preview.poort8.nl
 Authorization: Bearer <access_token>
 ```
