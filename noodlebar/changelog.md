@@ -21,11 +21,11 @@ All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API
 
 #### Added
 
-- A new GIR Datastekker approval workflow `dsgo.gir-datastekker@v1` is now available for the GIR dataspace. Pass `dsgo.gir-datastekker@v1` as `orchestration.flow` in `POST /api/approval-links` to start a building installation data access approval flow via the Datastekker platform. [#1102](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1102)
+- A new GIR Datastekker approval workflow `dsgo.gir-datastekker@v1` is now available for the GIR dataspace. Pass `dsgo.gir-datastekker@v1` as `orchestration.flow` in `POST /v1/api/approval-links` to start a building installation data access approval flow via the Datastekker platform. [#1102](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1102)
 
 #### Changed
 
-- **BREAKING:** The GIR registrar approval workflow has been renamed from `gir.registrar@v1` to `dsgo.gir-supplier-delegation@v1`. Update the `orchestration.flow` value in `POST /api/approval-links` calls from `gir.registrar@v1` to `dsgo.gir-supplier-delegation@v1`. [#1104](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1104) [#1105](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1105)
+- **BREAKING:** The GIR registrar approval workflow has been renamed from `gir.registrar@v1` to `dsgo.gir-supplier-delegation@v1`. Update the `orchestration.flow` value in `POST /v1/api/approval-links` calls from `gir.registrar@v1` to `dsgo.gir-supplier-delegation@v1`. [#1104](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1104) [#1105](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1105)
 - Approval links now expire after 1 hour (previously 7 days). When an approver opens an expired link within 7 days of expiry, Keyper automatically creates a new link with the same configuration and sends a fresh notification. Integrations that display or act on `ExpiresInSeconds` or the calculated `expiresAt` timestamp in API responses will see the new shorter value. [#1097](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1097)
 
 ## 2026-07-03
@@ -101,7 +101,7 @@ All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API
 
 #### Changed
 
-- `POST /api/approval-links` now enforces non-empty values for `requester.name`, `addEmployeeToOrganizationTransactions[].employee.employeeId`, and `addEmployeeToOrganizationTransactions[].employee.useCase`; requests with null or empty values for these fields now fail validation. [#976](https://github.com/POORT8/Poort8.Dataspace.Private/pull/976)
+- `POST /v1/api/approval-links` now enforces non-empty values for `requester.name`, `addEmployeeToOrganizationTransactions[].employee.employeeId`, and `addEmployeeToOrganizationTransactions[].employee.useCase`; requests with null or empty values for these fields now fail validation. [#976](https://github.com/POORT8/Poort8.Dataspace.Private/pull/976)
 - The Keyper API authentication documentation now lists per-dataspace Keycloak token endpoints and keeps Auth0 documented as legacy migration support. [#976](https://github.com/POORT8/Poort8.Dataspace.Private/pull/976)
 
 ## 2026-06-04
@@ -184,7 +184,7 @@ This release contains several breaking changes for GIR API consumers. Update end
 
 #### Fixed
 
-- `GET /api/policies` now correctly returns policies owned by the requesting organization when called with a standard, non-delegated scope. Previously, ownership filtering could produce an empty or incorrect result set. [#833](https://github.com/POORT8/Poort8.Dataspace.Private/pull/833)
+- `GET /v1/api/policies` now correctly returns policies owned by the requesting organization when called with a standard, non-delegated scope. Previously, ownership filtering could produce an empty or incorrect result set. [#833](https://github.com/POORT8/Poort8.Dataspace.Private/pull/833)
 
 ## 2026-04-03
 
@@ -200,7 +200,7 @@ This release contains several breaking changes for GIR API consumers. Update end
 
 #### Added
 
-- A Dutch-language sensor optimization workflow `keyper.sensor-optimization@v1` is now available. Pass `keyper.sensor-optimization@v1` as `orchestration.flow` in `POST /api/approval-links`; unlike the default workflow, this flow does not require the approver to be a member of the requesting organization. Docs: [Keyper](../keyper/README.md). [#820](https://github.com/POORT8/Poort8.Dataspace.Private/pull/820)
+- A Dutch-language sensor optimization workflow `keyper.sensor-optimization@v1` is now available. Pass `keyper.sensor-optimization@v1` as `orchestration.flow` in `POST /v1/api/approval-links`; unlike the default workflow, this flow does not require the approver to be a member of the requesting organization. Docs: [Keyper](../keyper/README.md). [#820](https://github.com/POORT8/Poort8.Dataspace.Private/pull/820)
 
 ## 2026-03-27
 
@@ -216,7 +216,7 @@ This release contains several breaking changes for GIR API consumers. Update end
 
 #### Added
 
-- A generic English-language workflow `keyper.default@v1` is now available. Pass `keyper.default@v1` as `orchestration.flow` in `POST /api/approval-links` to use a standard dataspace approval flow without dataspace-specific copy. Docs: [Keyper](../keyper/README.md). [#817](https://github.com/POORT8/Poort8.Dataspace.Private/pull/817)
+- A generic English-language workflow `keyper.default@v1` is now available. Pass `keyper.default@v1` as `orchestration.flow` in `POST /v1/api/approval-links` to use a standard dataspace approval flow without dataspace-specific copy. Docs: [Keyper](../keyper/README.md). [#817](https://github.com/POORT8/Poort8.Dataspace.Private/pull/817)
 
 ## 2026-03-20
 
