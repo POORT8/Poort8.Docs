@@ -2,6 +2,16 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-07-14
+
+**✨ Highlights:** GIR API consumers can now filter building installation data by component ID when querying the GIRBasisdataMessage endpoint.
+
+### NoodleBar (GIR)
+
+#### Added
+
+- `GET /v1/api/GIRBasisdataMessage` now accepts an optional `componentID` query parameter to filter results to a specific component. [#1123](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1123)
+
 ## 2026-07-10
 
 **✨ Highlights:** The GIR registrar Keyper workflow is renamed to `dsgo.gir-supplier-delegation@v1`, a new Datastekker workflow is available for building installation data access, and approval links now auto-refresh on access instead of expiring after 7 days.
