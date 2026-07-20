@@ -84,7 +84,7 @@ Content-Type: application/json
   "reference": "<UNIQUE_REFERENCE>",
   "addPolicyTransactions": [
     {
-      "type": "<DICO:GIR-DATASTEKKER>",
+      "type": "GIRDatastekkerAccess",
       "action": "read",
       "license": "[PLACEHOLDER]",
       "issuedAt": "<UNIX_TIMESTAMP>",

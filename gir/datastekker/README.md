@@ -78,7 +78,7 @@ views {
 | `serviceProvider` | DID of Datastekker / 2BA | Required |
 | `resourceId` / `identifiers` | vboId (building level) or installationId (installation level). Consent at building level covers all its installations. | Required |
 | `notBefore` / `expiration` | Validity period of the granted access | Required |
-| `type` | Resource type identifier: `<DICO:GIR-DATASTEKKER>` | Required |
+| `type` | Resource type identifier: `GIRDatastekkerAccess` | Required |
 | `action` | Permitted action: `read` | Required |
 | `attribute` | `*` (wildcard); future: predefined dataset identifier — see [Open Question 4](#open-questions) | `*` |
 | `license` | License identifier for terms of use — see [Open Question 5](#open-questions) | `[PLACEHOLDER]` |

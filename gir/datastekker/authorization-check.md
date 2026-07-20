@@ -73,7 +73,7 @@ Content-Type: application/json
           {
             "target": {
               "resource": {
-                "type": "<DICO:GIR-DATASTEKKER>",
+                "type": "GIRDatastekkerAccess",
                 "identifiers": ["<INSTALLATION_ID>"],
                 "attributes": ["*"]
               },
@@ -115,7 +115,7 @@ GIR returns a `delegationEvidence` object:
           {
             "target": {
               "resource": {
-                "type": "<DICO:GIR-DATASTEKKER>",
+                "type": "GIRDatastekkerAccess",
                 "identifiers": ["<INSTALLATION_ID>"],
                 "attributes": ["*"]
               },

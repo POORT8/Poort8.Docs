@@ -91,7 +91,6 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
   },
   "addPolicyTransactions": [
     {
-      "useCase": "GIR",
       "type": "vboID",
       "action": "read",
       "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
@@ -104,7 +103,7 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
     }
   ],
   "orchestration": {
-    "flow": "dsgo.gir@v1"
+    "flow": "dsgo.gir-onderhoudsboekje@v1"
   }
 }
 ```
