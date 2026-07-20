@@ -56,7 +56,9 @@ sequenceDiagram
 
 ## Orchestration and Flow Control
 
-Keyper includes orchestration options that allow for customized control over the flow of the approval and transaction execution. These orchestration steps are optional and can be configured per approval link. Together, they support flexible workflows that span multiple users, systems, and approval stages. These include:
+Keyper includes orchestration options that allow for customized control over the flow of the approval and transaction execution. These orchestration steps are optional and can be configured per approval link. Together, they support flexible workflows that span multiple users, systems, and approval stages.
+
+Each approval link is created against one of several predefined **orchestration flows**. A flow determines which dataspace and transaction steps apply to the approval, so requesters select the flow that matches their scenario when creating an approval link. Available flows differ per dataspace instance; contact the Poort8 team to find out which flows apply to your integration.
 
 ### Available
 
@@ -84,15 +86,3 @@ Keyper is designed for modular, composable dataspaces like **NoodleBar**, where 
 The API supports structured JSON requests and handles both **human-to-machine (H2M)** and **machine-to-machine (M2M)** authentication. All API endpoints require a bearer token; see [Keyper API Authentication](api-authentication.md) for the supported token types (Keycloak per dataspace, with legacy Auth0 still supported) and how read/write access is evaluated.
 
 For sample payloads or implementation support, contact the Poort8 team or refer to the detailed endpoint documentation.
-
-## Policy, Resource Group, and Resource Use Cases
-
-Policies, resource groups, and resources submitted as part of an approval link all have an optional `useCase` field. When this field is left blank, Keyper automatically derives the use case from the `orchestration.flow` value by stripping the version suffix (everything before the `@`).
-
-For example, if `orchestration.flow` is `dataspace.default@v1`, every transaction with no explicit `useCase` will receive `dataspace.default` as its use case.
-
-This means you typically do not need to set `useCase` on individual policy, resource group, or resource transactions — just configure `orchestration.flow` to the correct flow and Keyper will handle the rest.
-
-If you do provide an explicit `useCase` on a transaction, it takes precedence over the derived value. For resource group transactions, each resource inherits the resource group's resolved `useCase` if no explicit value is set on the resource itself.
-
-How the use case string is then mapped to an authorization enforcement model is documented in the [NoodleBar Use Case Authorization Models](../noodlebar/12%20-%20Use%20Case%20Authorization%20Models.md) page.
