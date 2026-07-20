@@ -86,13 +86,11 @@ Authorization: Bearer <ACCESS_TOKEN>
 ```json
 {
   "resourceGroupId": "dvu:resource:871689260010498601",
-  "useCase": "DVU",
   "name": "871689260010498601",
   "description": "Verblijfsobject",
   "resources": [
     {
       "resourceId": "dvu:resource:0613010000206776",
-      "useCase": "DVU",
       "name": "0613010000206776",
       "description": "EAN"
     }
