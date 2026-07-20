@@ -2,7 +2,7 @@
 
 > **⚠️ Design document — not ready for implementation**
 >
-> Several open questions remain unresolved (see [Open Questions](#open-questions)), in particular componentId-to-installationId resolution and license conditions.
+> Several open questions remain unresolved (see [Open Questions](#open-questions)), in particular license conditions.
 
 Datastekker (developed by 2BA) retrieves performance data from installation manufacturers and translates it into uniform performance data using the Heatpump Common Ontology. To access this data, an installer needs explicit consent from the building owner. GIR manages that authorization.
 
@@ -52,7 +52,7 @@ views {
     inst -> ds 'Data request with componentId'
     ds -> gir 'Obtain DSGO bearer token'
     gir -> ds 'Bearer token'
-    ds -> gir 'Resolve componentId → installationId [TBD]'
+    ds -> gir 'GET GIRBasisdataMessage by componentID'
     gir -> ds 'GIRBasisdataMessage (installationId + manufacturer info)'
     ds -> gir 'Check delegation for installer + installationId'
     gir -> ds 'Delegation evidence (Permit or Deny)'
@@ -67,7 +67,9 @@ views {
 |-------|-------------|-----------|
 | [Phase 1 — Approval Flow](./approval-flow.md) | Building owner approves the installer via Keyper. Policy is registered in GIR. | Once per installer / building |
 | [Phase 2 — Token Acquisition](./token-acquisition.md) | Datastekker obtains a DSGO bearer token from GIR. | Per token expiry (3600 s) |
-| [Phase 3 — Authorization Check](./authorization-check.md) | Datastekker resolves the componentId, checks the delegation policy, and returns authorised data to the installer. | Every data request |
+| [Phase 3 — Authorization Check](./authorization-check.md) | Datastekker queries GIR by componentID, checks the delegation policy, and returns authorised data to the installer. | Every data request |
+
+> Note: Querying `GIRBasisdataMessage` by `componentID` may return non-unique results. Handling these edge cases is the responsibility of the data service provider.
 
 ## Policy parameters
 
@@ -80,33 +82,25 @@ views {
 | `notBefore` / `expiration` | Validity period of the granted access | Required |
 | `type` | Resource type identifier: `GIRDatastekkerAccess` | Required |
 | `action` | Permitted action: `read` | Required |
-| `attribute` | `*` (wildcard); future: predefined dataset identifier — see [Open Question 4](#open-questions) | `*` |
+| `attribute` | `*` (wildcard); future: predefined dataset identifier — see [Potential future extensions](#potential-future-extensions) | `*` |
 | `license` | License identifier for terms of use — see [Open Question 5](#open-questions) | `[PLACEHOLDER]` |
 
 ## Open questions
 
 The following points are unresolved and must be answered before the integration can be fully specified.
 
-**1. Legal versus technical boundary**
-The line between what is legal and what is technical is still unclear. It would be beneficial to document the legal framework separately before locking in technical choices.
-
-**2. Requirements on software parties versus installers**
-Why must a software party operating on behalf of an installer meet more requirements than an installer who has written their own software and acts directly? The basis for this distinction needs to be clarified.
-
-**3. Validation of the installer with the manufacturer**
-Should an installer also be validated by the installation manufacturer before being allowed to access data? One option is for Datastekker to forward the `delegationEvidence` it receives from GIR to manufacturers, so they can independently verify the authorization envelope and enforce their own access control without a separate authorization check.
-
-**4. Predefined data-element sets**
-Which fixed sets of data elements can be authorized? The definition of these sets is a prerequisite before the `attribute` field in policy and delegation requests can be filled in.
-
-**5. License conditions**
+**License conditions**
 Which license conditions apply to performance data? Relevant considerations: obligation to delete data after use, prohibition on re-use or onward sharing, GDPR requirements for buildings with occupants.
 
-**6. Attribute hierarchy in GIR *(optional)***
-Consent is granted at the level of a predefined data-element set. At runtime, Datastekker may need to evaluate access at individual data-element level. This could be supported by declaring an attribute hierarchy on GIR modelled on the Heatpump Common Ontology (SAREF-based). Open sub-points: Does GIR support attribute hierarchies today? How are sets mapped to ontology terms? What is the governance process for versioning?
+## Potential future extensions
 
-**7. ComponentId-to-installationId resolution**
-The installer provides a componentId (such as an SGTIN or serial number). GIR does not currently support filtering `GET /v1/api/GIRBasisdataMessage` by componentId. The mechanism for resolving a componentId to an installationId — for example via a new GIR endpoint, an external registry, or a mapping table maintained by 2BA — has not yet been specified.
+The following topics are not blockers for the current integration but may be considered in later iterations.
+
+**Predefined data-element sets**
+Which fixed sets of data elements can be authorized? The definition of these sets determines how the `attribute` field in policy and delegation requests can be used beyond `*`.
+
+**Attribute hierarchy in GIR *(optional)***
+Consent is granted at the level of a predefined data-element set. At runtime, Datastekker may need to evaluate access at individual data-element level. This could be supported by declaring an attribute hierarchy on GIR modelled on the Heatpump Common Ontology (SAREF-based). Questions include whether GIR supports attribute hierarchies today, how sets map to ontology terms, and how versioning governance would work.
 
 ---
 
