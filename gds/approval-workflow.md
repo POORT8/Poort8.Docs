@@ -171,7 +171,6 @@ Content-Type: application/json
   "reference": "SENSOR-OPT-2025-Q4-001",
   "addPolicyTransactions": [
     {
-      "useCase": "ishare",
       "license": "0005",
       "type": "building",
       "issuerId": "NLNHR.87654321",
