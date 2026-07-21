@@ -6,6 +6,7 @@
 
 - **Integration Guides**
   - [Transport Emissie Data Autorisatie](transport-emissie-data-autorisatie.md)
+  - [Policy inschieten als issuer](transport-emissie-data-policy.md)
 
 - **External Links**
   - [NoodleBar Docs](../noodlebar/)
