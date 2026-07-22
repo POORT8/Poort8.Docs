@@ -122,14 +122,14 @@ Een control plane app hoeft het ophalen van gebouwgegevens en de registratie bij
 Herleidt een VBO-ID (of adres) tot de bijbehorende aansluitingen: de EAN's en het producttype (elektriciteit, gas). Zo hoef je PDOK en het EAN-codeboek niet zelf te bevragen.
 
 ```http
-POST https://<gcs-host>/v1/location-context/by-vbo
+POST https://gcs-preview.poort8.nl/v1/location-context/by-vbo
 Authorization: Bearer <ACCESS_TOKEN>
 Content-Type: application/json
 
 { "vboIds": ["<VBO-ID>"] }
 ```
 
-De response geeft per VBO de gevonden **meters** (met `ean` en `product`). Zie de GCS API-documentatie voor het volledige schema.
+De response geeft per VBO de gevonden **meters** (met `ean` en `product`). Zie de [GCS API documentatie ➚](<https://gcs-preview.poort8.nl/scalar/v1>) voor het volledige schema.
 
 ### DVU Registratie Service (DRS)
 
