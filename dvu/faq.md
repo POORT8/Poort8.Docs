@@ -124,7 +124,7 @@ Alle velden moeten geldig en correct geformatteerd zijn.
 
 1. **Keyper maakt de link aan**
 2. **Goedkeuringsmail wordt verzonden** naar de goedkeurder (energiecontractant).
-3. **Goedkeurder klikt op de link** en wordt doorgestuurd naar de DVU metadata-app (voor single/bulk) of direct naar Keyper Approve (voor direct EAN).
+3. **Goedkeurder klikt op de link** en wordt doorgestuurd naar de DVU registratie app (voor single/bulk) of direct naar Keyper Approve (voor direct EAN).
 4. **Goedkeurder vult metadata in** (indien nodig) en beoordeelt het verzoek.
 5. **Goedkeurder authenticeert** via email en keurt goed/af.
 6. **Bij goedkeuring:** Policy wordt geregistreerd in DVU.
@@ -217,7 +217,7 @@ Dit hangt af van:
 - Controleer de expiratie-tijd van de approval link.
 
 ### Het gebouwadres wordt niet gevonden
-**Scenario:** DVU metadata-app kan het gebouw niet vinden.
+**Scenario:** DVU registratie app kan het gebouw niet vinden.
 
 **Mogelijke oorzaken:**
 1. Incorrect postcode-formaat.

@@ -18,7 +18,7 @@ sequenceDiagram
     App->>Keyper: POST /approval-links (single building)
     Keyper->>EC: Email with approval link
     EC->>Keyper: Open approval link
-    Keyper->CAR: Redirect to metadata app
+    Keyper->CAR: Redirect to registratie app
     EC->>CAR: Complete building details
     CAR->>Keyper: Redirect to approval page
     EC->>Keyper: Review & approve

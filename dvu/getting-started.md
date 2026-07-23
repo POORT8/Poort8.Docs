@@ -200,7 +200,7 @@ sequenceDiagram
     participant Keyper as Keyper API
     participant Email as Email System
     participant EC as Energy Contractor
-    participant DVU as DVU Metadata App
+    participant DVU as DVU registratie app
     participant AR as Authorization Registry
 
     You->>Keyper: POST /approval-links
@@ -210,7 +210,7 @@ sequenceDiagram
     
     Email->>EC: Email with approval link
     EC->>Keyper: Click approval link
-    Keyper->>DVU: Redirect to metadata app
+    Keyper->>DVU: Redirect to registratie app
     EC->>DVU: Fill in building details
     DVU->>Keyper: Redirect to approval page
     EC->>Keyper: Review & approve
@@ -266,7 +266,7 @@ The approver (`test.approver@example.com`) receives an email with:
 
 #### 2. Contractor reviews request
 When they click the link:
-1. Redirected to DVU metadata app
+1. Redirected to DVU registratie app
 2. Confirms/fills in building details (VBO-ID, EAN codes)
 3. Redirected to Keyper Approve
 4. Reviews the complete request
