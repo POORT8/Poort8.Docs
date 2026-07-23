@@ -24,7 +24,7 @@ sequenceDiagram
     participant Bob as Bob (Data-rechthebbende)
     participant David as David (Dataservice consumer)
     participant Keyper as Keyper
-    participant Meta as DVU Metadata app
+    participant Meta as DVU registratie app
     participant DVU as DVU AR
     participant Charlie as Charlie (Datadienst-aanbieder / SDS)
     participant MB as Meetbedrijf
@@ -34,7 +34,7 @@ sequenceDiagram
     David->>Keyper: Approval-aanvraag voor postcode en huisnummer + bearer token
     Keyper->>Bob: Goedkeuringslink (e-mail)
     Bob->>Keyper: Opent goedkeuringslink
-    Keyper->>Meta: Redirect naar DVU Metadata app (gebouwgegevens aanleveren)
+    Keyper->>Meta: Redirect naar DVU registratie app (gebouwgegevens aanleveren)
     Meta->>Bob: Formulier gebouwgegevens (VBO en EAN's automatisch opgehaald, meetbedrijf invullen)
     Bob->>Meta: Gebouwgegevens ingevuld
     Meta->>Keyper: Update van approval link met policies en resource groups
@@ -65,15 +65,15 @@ sequenceDiagram
 
 1. **Onboarden** — De dataservice consumer en datadienst-aanbieder worden geregistreerd in het DVU Participantenregister en krijgen Keycloak-credentials.
 2. **Toestemming aanvragen** — De dataservice consumer maakt via Keyper een goedkeuringsverzoek aan voor een gebouw op een postcode en huisnummer.
-3. **Gebouwgegevens aanleveren** — De data-rechthebbende wordt via Keyper doorgestuurd naar de DVU Metadata app. Het VBO en de bijbehorende EAN's worden automatisch opgehaald op basis van de postcode en het huisnummer; de data-rechthebbende vult alleen het meetbedrijf aan. De metadata app schrijft de policies en resource groups terug naar Keyper.
+3. **Gebouwgegevens aanleveren** — De data-rechthebbende wordt via Keyper doorgestuurd naar de DVU registratie app. Het VBO en de bijbehorende EAN's worden automatisch opgehaald op basis van de postcode en het huisnummer; de data-rechthebbende vult alleen het meetbedrijf aan. De registratie app schrijft de policies en resource groups terug naar Keyper.
 4. **Toestemming verlenen** — De data-rechthebbende keurt de aanvraag goed via eHerkenning. Keyper registreert policies en resource groups in het DVU AR.
-5. **Gebouw activeren bij datadienst-aanbieder** — Na goedkeuring stuurt Keyper een webhook naar de DVU Metadata app. De metadata app meldt het VBO, de EAN's en het meetbedrijf aan bij de datadienst-aanbieder, zodat die klaar is om dataverzoeken te verwerken.
+5. **Gebouw activeren bij datadienst-aanbieder** — Na goedkeuring stuurt Keyper een webhook naar de DVU registratie app. De registratie app meldt het VBO, de EAN's en het meetbedrijf aan bij de datadienst-aanbieder, zodat die klaar is om dataverzoeken te verwerken.
 6. **Datalevering** — Bij elk dataverzoek controleert de datadienst-aanbieder de policy via `explained-enforce` en levert vervolgens de energiedata uit.
 
 ## Deelnemers en rollen
 
 - **RVO** — dataspace-beheerder; verantwoordelijk voor governance en deelnemersregistratie.
-- **Poort8** — leverancier van de dataspace-componenten en -services (DVU AR en Metadata app, Participantenregister, Keyper).
+- **Poort8** — leverancier van de dataspace-componenten en -services (DVU AR en registratie app, Participantenregister, Keyper).
 - **Data-rechthebbenden** — gebouweigenaren die toestemming verlenen.
 - **Dataservice consumers** — applicaties die namens gebouweigenaren energiedata willen ophalen.
 - **Datadienst-aanbieders** — diensten die energiedata uitleveren (bv. SDS).

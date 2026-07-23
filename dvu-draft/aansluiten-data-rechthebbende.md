@@ -12,8 +12,8 @@ DVU ondersteunt twee varianten:
 
 In beide gevallen:
 
-1. Open je de goedkeuringslink. Keyper stuurt je door naar de **DVU Metadata app**, die automatisch het VBO en de bijbehorende EAN's ophaalt op basis van de postcode en het huisnummer. Je vult het meetbedrijf aan en bevestigt.
-2. De metadata app stuurt je terug naar Keyper. Je bekijkt de aanvraag (gebouw, EAN's, consumer, geldigheid) en klikt op goedkeuren of afwijzen.
+1. Open je de goedkeuringslink. Keyper stuurt je door naar de **DVU registratie app**, die automatisch het VBO en de bijbehorende EAN's ophaalt op basis van de postcode en het huisnummer. Je vult het meetbedrijf aan en bevestigt.
+2. De registratie app stuurt je terug naar Keyper. Je bekijkt de aanvraag (gebouw, EAN's, consumer, geldigheid) en klikt op goedkeuren of afwijzen.
 3. Je logt in met **eHerkenning** om je keuze te bevestigen. Bij goedkeuring registreert Keyper daarna de policy in het DVU AR.
 
 Bij goedkeuring registreert Keyper automatisch de bijbehorende policy in het DVU AR. Vanaf dat moment kan de datadienst-aanbieder energiedata uitleveren aan de aangewezen consumer.
@@ -27,7 +27,7 @@ Bij goedkeuring registreert Keyper automatisch de bijbehorende policy in het DVU
 
 ## Self-service (variant 1)
 
-Wanneer je zelf de toegang start, gebruik je de DVU-portal om de aanvraag in gang te zetten. Je vult een postcode en huisnummer in. Keyper stuurt je een goedkeuringslink. Daarna zijn de stappen identiek aan variant 2: metadata app opent automatisch het VBO en de EAN's, je vult het meetbedrijf aan, en je keurt de aanvraag goed en bevestigt daarna via eHerkenning.
+Wanneer je zelf de toegang start, gebruik je de DVU-portal om de aanvraag in gang te zetten. Je vult een postcode en huisnummer in. Keyper stuurt je een goedkeuringslink. Daarna zijn de stappen identiek aan variant 2: registratie app opent automatisch het VBO en de EAN's, je vult het meetbedrijf aan, en je keurt de aanvraag goed en bevestigt daarna via eHerkenning.
 
 ## Goedkeuringsflow (variant 2)
 
@@ -36,14 +36,14 @@ sequenceDiagram
     autonumber
     participant David as David (Dataservice consumer)
     participant Keyper as Keyper
-    participant Meta as DVU Metadata app
+    participant Meta as DVU registratie app
     participant Bob as Bob (Data-rechthebbende)
     participant DVU as DVU AR
 
     David->>Keyper: Approval-aanvraag met postcode + huisnummer
     Keyper->>Bob: E-mail met goedkeuringslink
     Bob->>Keyper: Opent goedkeuringslink
-    Keyper->>Meta: Redirect naar DVU Metadata app
+    Keyper->>Meta: Redirect naar DVU registratie app
     Meta->>Bob: Formulier gebouwgegevens (VBO + EAN's automatisch opgehaald, meetbedrijf invullen)
     Bob->>Meta: Gebouwgegevens ingevuld
     Meta->>Keyper: Redirect terug naar Keyper

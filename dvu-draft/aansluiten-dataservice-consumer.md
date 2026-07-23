@@ -77,7 +77,7 @@ Voor verzoeken aan de datadienst-aanbieder heb je later een apart token nodig me
 
 ## Stap 2: Goedkeuringsverzoek aanmaken via Keyper
 
-Maak een approval-link aan met flow `dvu.voeg-gebouw-toe@v1` (één gebouw) of `dvu.voeg-gebouwen-toe@v1` (meerdere gebouwen tegelijk). Je geeft geen policies of resource groups mee — die worden aangemaakt door de DVU Metadata app nadat de data-rechthebbende de link opent.
+Maak een approval-link aan met flow `dvu.voeg-gebouw-toe@v1` (één gebouw) of `dvu.voeg-gebouwen-toe@v1` (meerdere gebouwen tegelijk). Je geeft geen policies of resource groups mee — die worden aangemaakt door de DVU registratie app nadat de data-rechthebbende de link opent.
 
 De payload bevat het adres (postcode + huisnummer als één string) en `dataServiceConsumer`: het organisatie-ID van jouw eigen organisatie (de consumer die na goedkeuring de data mag ophalen).
 
