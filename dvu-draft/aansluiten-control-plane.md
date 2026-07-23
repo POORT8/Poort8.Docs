@@ -135,9 +135,9 @@ De response geeft per VBO de gevonden **meters** (met `ean` en `product`). Zie d
 
 Verzorgt de registratie bij DVU:
 
-- meldt elke aansluiting aan bij SDS (`POST /Meteringpoints/v2`);
-- genereert bij **grootverbruik** een bevestigings-PDF en mailt die naar SDS;
-- levert de lijst met actieve meetbedrijven (`GET /v1/metering-companies`) die je gebruikt om bij grootverbruik het meetbedrijf te laten kiezen.
+- meldt elke aansluiting aan bij SDS
+- genereert bij **grootverbruik** een bevestigings-PDF en mailt die naar SDS
+- levert de lijst met actieve meetbedrijven (`GET /v1/metering-companies`) die je gebruikt om bij grootverbruik het meetbedrijf te laten kiezen
 
 De DRS schrijft of leest het Autorisatieregister niet. Je geeft het VBO-ID en het `policyId` mee zodat de registratie te koppelen is aan de vastgelegde autorisatie. Het definitieve request-object wordt vastgelegd bij de DRS-implementatie; zie [Stap 8 — Registratie bij DVU afronden via DRS](#stap-8-registratie-bij-dvu-afronden-via-drs).
 
