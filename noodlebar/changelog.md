@@ -2,6 +2,37 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-07-24
+
+**✨ Highlights:** GIR authorization enforcement now uses the correct `dsgo.gir` use case key, fixing access control for installation data; Keyper gains a new GIR maintenance-data approval flow and TSL deployment support.
+
+### NoodleBar
+
+#### Fixed
+
+- The NoodleBar API reference now documents OAuth2 client credentials as the authentication scheme instead of a generic `Bearer` HTTP scheme. Consumers using OpenAPI-generated clients should regenerate to pick up the updated security definition. [#1131](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1131)
+
+### NoodleBar (GIR)
+
+#### Changed
+
+- **BREAKING:** GIR endpoints (`POST /v1/api/GIRBasisdataMessage`, `GET /v1/api/GIRBasisdataMessage`, `GET /v1/api/GIRBasisdataMessage/{guid}`) now enforce access against Authorization Registry policies with `useCase: "dsgo.gir"` (previously used `"GIR"`). Update any existing AR policies from `useCase: "GIR"` to `useCase: "dsgo.gir"`. [#1125](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1125)
+
+#### Fixed
+
+- `GET /v1/api/GIRBasisdataMessage` and `GET /v1/api/GIRBasisdataMessage/{guid}` no longer list `400 Bad Request` or `415 Unsupported Media Type` in the OpenAPI reference; these codes are not applicable to GET endpoints and were never returned at runtime. [#1158](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1158)
+
+### Keyper
+
+#### Added
+
+- A new GIR digital maintenance book approval workflow `dsgo.gir-onderhoudsboekje@v1` is now available for the GIR dataspace. Pass `dsgo.gir-onderhoudsboekje@v1` as `orchestration.flow` in `POST /v1/api/approval-links` to start a building installation and maintenance data access approval flow. [#1125](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1125)
+- Keyper is now available for **NoodleBar Topsector Logistiek** (`TSL`). Authenticate with `authority: https://auth.poort8.nl/realms/tsl` and `audience: keyper-api`. [#1139](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1139)
+
+#### Changed
+
+- `addPolicyTransactions` entries in the approval link request and response now use a dedicated `ApprovalLinkPolicy` schema instead of `PolicyCreateRequestDto`. Required fields (`subjectId`, `action`, `resourceId`) are unchanged. A new optional `policyId` field (nullable string) is included; Keyper populates it with the Authorization Registry policy ID after the approval is processed, making it visible in `GET /v1/api/approval-links/{id}` responses. Consumers using OpenAPI-generated clients should regenerate. [#1138](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1138) [#1140](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1140)
+
 ## 2026-07-14
 
 **✨ Highlights:** GIR API consumers can now filter building installation data by component ID when querying the GIRBasisdataMessage endpoint.
