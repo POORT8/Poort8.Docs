@@ -139,7 +139,7 @@ Verzorgt de registratie bij DVU:
 - genereert bij **grootverbruik** een bevestigings-PDF en mailt die naar SDS
 - levert de lijst met actieve meetbedrijven (`GET /v1/metering-companies`) die je gebruikt om bij grootverbruik het meetbedrijf te laten kiezen
 
-De DRS schrijft of leest het Autorisatieregister niet. Je geeft het VBO-ID en het `policyId` mee zodat de registratie te koppelen is aan de vastgelegde autorisatie. Het definitieve request-object wordt vastgelegd bij de DRS-implementatie; zie [Stap 8 — Registratie bij DVU afronden via DRS](#stap-8-registratie-bij-dvu-afronden-via-drs).
+De DRS schrijft of leest het Autorisatieregister niet. Je geeft het VBO-ID en het `policyId` mee zodat de registratie te koppelen is aan de vastgelegde autorisatie. Zie [Stap 8: Registratie bij DVU afronden via DRS](#stap-8-registratie-bij-dvu-afronden-via-drs) voor het volledige request- en responseschema.
 
 ## Tokens ophalen
 
@@ -197,7 +197,7 @@ De resource group gebruikt het VBO-ID als `resourceGroupId`. De individuele EAN-
 
 Voor `name` en `description` gelden geen vaste conventies. Gebruik leesbare waarden die het gebouw identificeren, zoals het VBO-ID, het officiële adres of de naam van het pand.
 
-## Stap 7 — Toegang registreren
+## Stap 7: Toegang registreren
 
 Met de gegevens uit de vorige stappen (VBO-ID, EAN's, verbruikstype en meetbedrijfkeuzes, en de goedkeuring van de data-rechthebbende) registreer je de toegang in het DVU Autorisatieregister.
 
@@ -267,33 +267,85 @@ Content-Type: application/json
 
 De response bevat het `policyId` van de aangemaakte policy. **Bewaar dit** — je hebt het nodig bij de registratie bij DVU (stap 8). Zie de [DVU API documentatie ➚](<https://dvu-preview.poort8.nl/scalar/v1>) voor het volledige schema.
 
-## Stap 8 — Registratie bij DVU afronden via DRS
+## Stap 8: Registratie bij DVU afronden via DRS
 
 Na het registreren van de policy en resource group (stap 7) rond je de registratie af via de **DVU Registratie Service (DRS)**. De DRS meldt de aansluiting(en) aan bij de datadienst-aanbieder en verzorgt waar nodig de aanvullende afhandeling, zoals een bevestigings-PDF bij grootverbruik.
+Het endpoint verwerkt een **batch** van registraties (één entry per VBO) in één aanroep en geeft per VBO een eigen status terug.
 
 ```http
-POST https://<drs-host>/v1/registrations
+POST https://drs-preview.poort8.nl/v1/registrations
 Authorization: Bearer <ACCESS_TOKEN>
 Content-Type: application/json
+Idempotency-Key: <UNIEKE_SLEUTEL>
 ```
 
-> **Let op:** onderstaand is een **functionele opsomming**; het definitieve request-schema wordt vastgelegd bij de implementatie van de DRS. Poort8 vult dit aan zodra dit bekend is.
+De `Idempotency-Key` header is **verplicht**: zonder deze header krijg je een `400 Bad Request`. Kies per batch één unieke waarde, bijvoorbeeld een UUID, en gebruik precies die waarde opnieuw als je diezelfde batch moet herhalen — bijvoorbeeld na een timeout of een `5xx`-fout. Zo voorkom je dat een herhaalde aanroep de registraties dubbel aanmeldt.
 
-- `issuerId`
-- `issuerEmail`
-- `dataServiceConsumerId`
-- `dataServiceProviderId`
-- `vboId`
-- EAN's, elk met energietype, meetbedrijf en grootverbruik/kleinverbruik
-- `policyId`
-- `notBefore`
-- `expiration`
+Wat een herhaalde aanroep oplevert, hangt af van de vorige aanroep met die sleutel:
 
-Het KVK-nummer en e-mailadres van de data-rechthebbende ken je al uit stap 1; het verbruikstype en (bij grootverbruik) het meetbedrijf per EAN uit stap 5.
+| Situatie | Gedrag |
+|-----|-----|
+| Zelfde sleutel, ongeacht het resultaat van de vorige aanroep (`registered` of `failed`) | Je krijgt tot 24 uur het oorspronkelijke antwoord terug. Er wordt niets opnieuw bij SDS geregistreerd en er gaat geen tweede bevestigings-PDF uit |
+| Nieuwe sleutel | De registraties worden opnieuw aangemeld, ook als de inhoud identiek is |
 
-> **Let op:** het VBO-ID en `policyId` koppelen de registratie aan de vastgelegde autorisatie. Bij grootverbruik is een meetbedrijf verplicht; gebruik een `id` uit `GET /v1/metering-companies` (stap 4).
+> **Let op:** Ook een batch met `failed`-resultaten wordt tot 24 uur onder dezelfde sleutel gecachet. Wil je de failed resultaten herstellen, maak dan een nieuwe batch aan met alleen deze (gerepareerde) objecten en gebruik een **nieuwe** `Idempotency-Key`.
 
-De DRS antwoordt per VBO met een status, zodat je precies ziet wat is gelukt en gericht kunt retryen.
+```json
+{
+  "registrations": [
+    {
+      "policyId": "<POLICY_ID>",
+      "verblijfsObjectId": "<VBO-ID>",
+      "dataServiceConsumerId": "did:ishare:EU.NL.NTRNL-<CONSUMER_KVK>",
+      "dataServiceProviderId": "did:ishare:EU.NL.NTRNL-55819206",
+      "issuingCompanyId": "did:ishare:EU.NL.NTRNL-<DATA_RECHTHEBBENDE_KVK>",
+      "issuingCompanyContactEmail": "<E-MAILADRES_DATA_RECHTHEBBENDE>",
+      "notBefore": <UNIX_TIMESTAMP_NOTBEFORE>,
+      "expiration": <UNIX_TIMESTAMP_EXPIRATION>,
+      "meteringPoints": [
+        {
+          "ean": "<EAN>",
+          "energyType": "electricity",
+          "isLargeScaleConsumption": true,
+          "meteringCompanyId": "<METERING_COMPANY_ID>"
+        }
+      ]
+    }
+  ]
+}
+```
+
+| Veld | Beschrijving |
+|-----|-----|
+| `policyId` | Het `policyId` uit stap 7 — koppelt de registratie aan de vastgelegde autorisatie. Moet uniek zijn binnen de `registrations`-batch van één aanroep |
+| `verblijfsObjectId` | Het VBO-ID uit stap 3, 16 cijfers |
+| `dataServiceConsumerId` | Zelfde waarde als `subjectId` uit stap 7 |
+| `dataServiceProviderId` | Vaste waarde: `did:ishare:EU.NL.NTRNL-55819206` (SDS) — een andere waarde levert status `skipped` op (zie hieronder) |
+| `issuingCompanyId` | Data-rechthebbende, zelfde waarde als `issuerId` uit stap 7 |
+| `issuingCompanyContactEmail` | E-mailadres van de data-rechthebbende, bekend uit stap 1 |
+| `notBefore` / `expiration` | Zelfde waarden als de policy uit stap 7 |
+| `meteringPoints[].ean` | EAN, 18 cijfers, uit stap 4 (GCS) |
+| `meteringPoints[].energyType` | `electricity` of `gas`, uit stap 4 (GCS) |
+| `meteringPoints[].isLargeScaleConsumption` | Grootverbruik ja/nee, uit stap 5 |
+| `meteringPoints[].meteringCompanyId` | **Verplicht bij grootverbruik** — een `id` uit `GET /v1/metering-companies` (stap 4); niet van toepassing bij kleinverbruik |
+
+Een `registrations`-array kan meerdere VBO's in één aanroep bevatten. De response geeft per policy een status terug:
+
+```json
+{
+  "results": [
+    { "policyId": "<POLICY_ID>", "status": "registered" }
+  ]
+}
+```
+
+| Status | Betekenis |
+|-----|-----|
+| `registered` | Geregistreerd bij SDS; bij grootverbruik wordt de bevestigings-PDF op de achtergrond gegenereerd en gemaild |
+| `failed` | Registratie bij SDS is mislukt (bijvoorbeeld een onbekende organisatie-`id`) — herstel de oorzaak en stuur de registratie opnieuw onder een **nieuwe** `Idempotency-Key`. Let op: een onbekend meetbedrijf-`id` levert geen `failed`-status op, maar wijst de hele batch al af met een `400 Bad Request` |
+| `skipped` | `dataServiceProviderId` was niet SDS, dus niet verwerkt — voor deze flow zou dit niet moeten voorkomen |
+
+Zie de [DRS API documentatie ➚](<https://drs-preview.poort8.nl/scalar/v1>) voor het volledige, canonieke schema (inclusief validatieregels).
 
 ## Data opvragen
 
@@ -321,6 +373,7 @@ De data-rechthebbende die toestemming heeft verleend heeft het recht om de bijbe
 | `403 Forbidden` | Onvoldoende rechten om policies of resource groups aan te maken | Controleer of de control plane app-registratie bij Poort8 is afgerond |
 | `400 Bad Request` | Verkeerde of ontbrekende velden | Controleer request parameters |
 | `409 Conflict` | Resource group bestaat al | Controleer of de registratie al eerder is uitgevoerd |
+| `429 Too Many Requests` | Rate limit overschreden (o.a. DRS) | Wacht en retry met backoff |
 
 ## Hulp nodig?
 
