@@ -72,7 +72,7 @@ Keyper sends the building owner an email with an approval link. The owner authen
 
 On rejection, the link expires and a new request must be initiated.
 
-🔗 [Toestemmingen App ➚](#) <!-- TODO: replace with actual URL -->
+🔗 Toestemmingen App URL to be confirmed before publication.
 
 ### Step 3: Keyper registers the AccessRight in GIR
 
@@ -122,4 +122,3 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
 |---------|-------------|--------|
 | **`license` field value** | The license identifier to use in `addPolicyTransactions` has not been finalized. | Open |
 | **NL/SfB scoping via `attribute`** | Restricting access by NL/SfB code using the `attribute` field is not yet implemented. | Open (dev task) |
-

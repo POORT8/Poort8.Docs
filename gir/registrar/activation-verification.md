@@ -34,21 +34,32 @@ views {
 | `Pending` | Registrar only |
 | `Active` | All parties with a matching read or write authorization |
 
+> Visibility is evaluated only against the exact calling identity's own policies (or self-authorship of the record). A related company acting on a registrar's behalf — even via a `SupplierDelegation`-style policy — will not see that registrar's records through delegation; see [Known blockers](#known-blockers) below.
+
 ## Common causes of records staying Pending
 
 - Owner has not yet approved the Keyper request.
 - Write targets a different VBO-ID than the approved policy.
 - Classification rules in the policy do not cover the submitted installation.
+- Submission made by a delegated or related party rather than the exact registrar identity named in the approved policy — see [Known blockers](#known-blockers) below.
 
 Verify that `resourceId`, organization identifiers, and `attribute` in the write request exactly match the approved policy.
 
 ## Technical Implementation
 
-Retrieve by installation ID to check status:
+Filter by installation ID to check status:
 
 ```http
-GET https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage/<INSTALLATION_ID>
+GET https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage?installationIDValue=<INSTALLATION_ID>
 Authorization: Bearer <ACCESS_TOKEN>
 ```
 
+Use `installationIDValue` to look up the record by its installation identifier. The single-record endpoint `GET /v1/api/GIRBasisdataMessage/{guid}` requires the GIR record GUID, not the installation ID.
+
 For filtered list retrieval, see [Retrieve Multiple Installations](../retrieve-installations.md) and [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
+
+## Known blockers
+
+| Blocker | Description | Status |
+|---------|-------------|--------|
+| **No delegated/multi-party visibility** | Listing and retrieving records only checks the calling identity's own read/write policies, plus a self-authorship fallback for the submitting registrar. A software platform or other related party querying on behalf of a registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](../digitaal-onderhoudsboekje/supplier-delegation.md) — will get an empty result instead of seeing that registrar's records. | Open (dev task) |

@@ -45,6 +45,7 @@ All parameters are optional. Combine them to narrow results. Omitting all parame
 | `registrarChamberOfCommerceNumber` | string | Filter by the KvK number of the registrar who created the records |
 | `installationIDValue` | string | Filter by the installation's own identifier value |
 | `energyConnectionID` | string | Filter by EAN energy connection ID |
+| `componentID` | string | Filter by a component identifier recorded inside the installation |
 
 ### Examples
 
@@ -61,6 +62,14 @@ curl "https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage?vboID=03440100001
 ```bash
 curl "https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage?vboID=0344010000126888&registrarChamberOfCommerceNumber=30276543" \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
+  -H "Accept: application/json"
+```
+
+**Filter by component ID:**
+
+```bash
+curl "https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage?componentID=COMP-001-ABC" \
+  -H "Authorization: ******" \
   -H "Accept: application/json"
 ```
 

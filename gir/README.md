@@ -61,7 +61,7 @@ sequenceDiagram
 GIR is available at:
 
 - **Preview:** https://gir-preview.poort8.nl/
-- **Production:** https://gir.poort8.nl/ [TBD — available after production deployment]
+- **Production:** TBD — available after production deployment
 
 All endpoints require a DSGO bearer token, obtained via `POST /connect/token`.
 
@@ -69,7 +69,7 @@ All endpoints require a DSGO bearer token, obtained via `POST /connect/token`.
 
 | What you need | Where to find it |
 |---------------|------------------|
-| **Understand the registrar flow** | [Registrar Integration Guide](/gir/registrar/README.md) |
+| **Understand the registrar flow** | [Registrar Integration Guide](registrar/README.md) |
 | **Understand the data consumer flow** | [Data Consumer Integration Guide](data-consumer-flow.md) |
 | **Obtain a DSGO token** | [Obtaining a DSGO Bearer Token](connect-token.md) |
 | **Register or update an installation** | [Post a GIRBasisdataMessage](insert-installation.md) |
@@ -83,6 +83,6 @@ All endpoints require a DSGO bearer token, obtained via `POST /connect/token`.
 
 - **[Ketenstandaard GIR API ➚](https://ketenstandaard.semantic-treehouse.nl/docs/api/GIR/)** — Complete DICO schema specification and data model
 - **[Ketenstandaarden Documentation about GIR ➚](https://ketenstandaard.semantic-treehouse.nl/docs/TNL/GIR/)** — GIR framework and context
-- **[DSGO Standards ➚](https://www.digigo.nu/wat-is-dsgo/)** — Authorization and data governance framework
+- **[DSGO Standards ➚](https://digigo-nu.gitbook.io/dsgo-developer-portal/)** — Authorization and data governance framework
 - **[API Versioning](api-versioning.md)** — How we version GIR-specific endpoints
 - **[Changelog](changelog.md)** — Breaking changes and updates

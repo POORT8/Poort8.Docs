@@ -44,6 +44,12 @@ The same endpoint handles create and update. Submitting the same installation ID
 
 For payload schema and field requirements, see [Register or Update an Installation](../insert-installation.md) and [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
 
+## Known blockers
+
+| Blocker | Description | Status |
+|---------|-------------|--------|
+| **No delegated/multi-party writes** | The write policy check matches the registrar identity declared in the request body (`registrarChamberOfCommerceNumber`) directly against the approved policy's subject. A software platform submitting on behalf of another (delegated) registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](../digitaal-onderhoudsboekje/supplier-delegation.md) — is not recognized. Only the exact registrar named in the approved policy results in `Active`; any other identity results in `Pending`, with no error returned. | Open (dev task) |
+
 ## Next
 
 [Activation Verification](./activation-verification.md)

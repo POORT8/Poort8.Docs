@@ -129,7 +129,7 @@ Example response now:
 }
 ```
 
-For details on the current API response schema, see [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1). ([#933](https://github.com/POORT8/Poort8.Dataspace.Private/pull/933))
+For details on the current API response schema, see [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
 
 ### Non-breaking Changes
 
@@ -155,4 +155,4 @@ Implementation guides:
 - [Retrieve a GIRBasisdataMessage by GUID](retrieve-installation.md) for single-item lookups
 - [Retrieve Multiple GIRBasisdataMessages](retrieve-installations.md) for filtered queries
 
-For general information about how we handle API versions and breaking changes, see the [API Versioning Policy](/api-versioning.md).
+For general information about how we handle API versions and breaking changes, see the [API Versioning Policy](api-versioning.md).
