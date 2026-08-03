@@ -83,7 +83,7 @@ Before making an approval request, gather the following information:
 - `email`: Email address where approval link will be sent
 - `organization`: Building owner's organization name
 - `organizationId`: Building owner's organization identifier in EUID format, for Dutch parties containing the KvK number (e.g., "NLNHR.87654321")
-  - How to get: Ask the building owner directly, or look up via [KvK Business Register](https://www.kvk.nl/english/)
+  - How to get: Ask the building owner directly, or look up via [KvK Business Register](https://www.kvk.nl/en/)
   - **Note**: This must be registered in the GDS Organization Registry. Contact Poort8 if you encounter organizations not yet registered.
 
 ### Dataspace information

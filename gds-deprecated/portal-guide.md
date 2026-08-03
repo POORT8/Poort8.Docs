@@ -95,7 +95,7 @@ Filter by `issuerId` to retrieve all policies issued by a specific organization 
 
 ### Policy definition
 
-For a full description of all policy fields and how they interact, see the [Policy Fields reference](provider-enforcement-guide?id=policy-fields).
+For a full description of all policy fields and how they interact, see the [Policy Fields reference](provider-enforcement-guide.md#policy-fields).
 
 ### Example response
 
