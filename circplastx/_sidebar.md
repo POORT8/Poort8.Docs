@@ -7,7 +7,7 @@
   - [Data Access Flow](data-access-flow.md)
 
 - **Technical Reference**
-  - [CircPlastX API documentation ➚](https://circplastx-preview.poort8.nl/scalar/v1)
+  - CircPlastX API documentation `[TBD — not yet available]`
   - [Keyper API documentation ➚](https://keyper-preview.poort8.nl/scalar/?api=v1)
 
 - **External Links**

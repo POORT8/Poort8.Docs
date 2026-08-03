@@ -89,8 +89,8 @@ Manufacturers combine raw material batch data with their own production data to 
 ## Access and Environment
 
 CircPlastX will be available at:
-- **Preview:** https://circplastx-preview.poort8.nl/ `[TBD — not yet deployed]`
-- **Production:** https://circplastx.poort8.nl/ `[TBD — not yet deployed]`
+- **Preview:** `[TBD — not yet deployed]`
+- **Production:** `[TBD — not yet deployed]`
 
 ## Getting Started
 
@@ -98,7 +98,7 @@ CircPlastX will be available at:
 |---------------|------------------|
 | **Understand the process** | [Read above](#how-it-works) |
 | **Start implementing** | [Data Access Flow](data-access-flow.md) |
-| **API reference** | [CircPlastX API docs ➚](https://circplastx-preview.poort8.nl/scalar/v1) `[TBD — not yet available]` |
+| **API reference** | CircPlastX API docs `[TBD — not yet available]` |
 | **Keyper (approval flow)** | [Keyper API docs ➚](https://keyper-preview.poort8.nl/scalar/?api=v1) |
 | **NoodleBar concepts** | [NoodleBar documentation](../noodlebar/) |
 

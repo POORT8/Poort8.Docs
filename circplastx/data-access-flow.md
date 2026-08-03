@@ -2,7 +2,7 @@
 
 This page describes the end-to-end flow for requesting and retrieving raw material batch data in CircPlastX. It covers both the one-time approval setup and the recurring data retrieval. Use this as an integration guide alongside the API documentation.
 
-🔗 **[CircPlastX API Docs ➚](https://circplastx-preview.poort8.nl/scalar/v1)** — Interactive endpoint testing `[TBD — not yet available]`
+🔗 **CircPlastX API Docs** — Interactive endpoint testing `[TBD — not yet available]`
 
 ## Overview
 
@@ -149,7 +149,7 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 The explained-enforce endpoint returns whether the request is allowed and which policy matched. The service provider uses this result to decide whether to return the data.
 
-See the [CircPlastX API docs ➚](https://circplastx-preview.poort8.nl/scalar/v1) for the full endpoint reference. `[TBD — not yet available]`
+See the CircPlastX API docs for the full endpoint reference. `[TBD — not yet available]`
 
 > **Instance-specific:** The values for `resource`, `action`, and `useCase` parameters depend on the instance configuration. `[TBD]`
 
@@ -185,6 +185,6 @@ All participant registration and identity verification is handled by consortium 
 ## Next Steps
 
 - Back to the [Introduction](README.md) for an overview
-- See the [CircPlastX API docs ➚](https://circplastx-preview.poort8.nl/scalar/v1) for endpoint details `[TBD — not yet available]`
+- See the CircPlastX API docs for endpoint details `[TBD — not yet available]`
 - See the [Keyper API docs ➚](https://keyper-preview.poort8.nl/scalar/?api=v1) for approval flow endpoints
 - See the [NoodleBar documentation](../noodlebar/) for background on OR, AR, and Keyper
