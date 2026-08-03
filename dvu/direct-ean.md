@@ -4,7 +4,7 @@ This guide explains how to request access to meter data directly by providing th
 
 ## Overview
 
-In the standard DVU flow ([Single Building Access](single-building.md) / [Bulk Building Access](bulk-building.md)), the DVU registratie app assembles policies based on address lookups. In the direct EAN flow, your application constructs the policy and resource group transactions and includes them in the approval link request. The energy contractor reviews and approves directly in Keyper without visiting CAR.
+In the standard DVU flow ([Single Building Access](single-building.md) / [Bulk Building Access](bulk-buildings.md)), the DVU registratie app assembles policies based on address lookups. In the direct EAN flow, your application constructs the policy and resource group transactions and includes them in the approval link request. The energy contractor reviews and approves directly in Keyper without visiting CAR.
 
 ## Sequence diagram
 
