@@ -187,7 +187,7 @@ Zie de [BunkerConnect API docs ➚](https://bunkerconnect-preview.poort8.nl/scal
 
 ## Foutafhandeling
 
-[TBD — Wordt aangevuld zodra de API-specificatie beschikbaar is. Zie de [BunkerConnect API docs ➚](https://bunkerconnect-preview.poort8.nl/scalar/v1) voor actuele foutcodes.]
+TBD — Wordt aangevuld zodra de API-specificatie beschikbaar is. Zie de [BunkerConnect API docs ➚](https://bunkerconnect-preview.poort8.nl/scalar/v1) voor actuele foutcodes.
 
 **Verwachte scenario's:**
 
@@ -202,8 +202,8 @@ Zie de [BunkerConnect API docs ➚](https://bunkerconnect-preview.poort8.nl/scal
 
 **Verwacht:**
 
-- Preview: `https://bunkerconnect-preview.poort8.nl` (huidige pilot fase)
-- Productie: `https://bunkerconnect.poort8.nl` (na succesvolle pilot validatie)
+- Preview: https://bunkerconnect-preview.poort8.nl/ (huidige pilot fase)
+- Productie: TBD — beschikbaar na succesvolle pilot validatie
 
 ## Volgende stappen
 

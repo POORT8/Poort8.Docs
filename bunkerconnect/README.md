@@ -41,7 +41,7 @@ sequenceDiagram
 
 BunkerConnect is bereikbaar via:
 - **Preview:** https://bunkerconnect-preview.poort8.nl/
-- **Productie:** https://bunkerconnect.poort8.nl/ [TBD — beschikbaar na productie-deployment]
+- **Productie:** TBD — beschikbaar na productie-deployment
 
 ## Aan de slag
 
