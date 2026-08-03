@@ -71,7 +71,7 @@ Schippers kunnen via hun app, namens het schip, een haven binnenvaren en de have
 De PortlinQ-infrastructuur is bereikbaar via:
 
 - **Preview:** https://portlinq-preview.poort8.nl/ (huidige living lab-fase)
-- **Productie:** https://portlinq.poort8.nl/ _(TBD — beschikbaar na productie-deployment)_
+- **Productie:** TBD — beschikbaar na productie-deployment
 
 ## Aan de slag
 
