@@ -163,7 +163,7 @@ All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API
 
 #### Changed
 
-- **BREAKING:** The `deletedAt` field has been removed from all GIR registration metadata responses. GIR now permanently removes records (hard delete) rather than marking them as deleted. Clients that rely on `deletedAt` to detect removed registrations should instead treat absent records as deleted. [#933](https://github.com/POORT8/Poort8.Dataspace.Private/pull/933)
+- **BREAKING:** The `deletedAt` field has been removed from all GIR registration metadata responses. GIR now permanently removes records (hard delete) rather than marking them as deleted. Clients that rely on `deletedAt` to detect removed registrations should instead treat absent records as deleted.
 
 ### Keyper
 
