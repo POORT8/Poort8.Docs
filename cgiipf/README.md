@@ -37,8 +37,8 @@ sequenceDiagram
 ## Toegang en omgeving
 
 De Interplant Federation is bereikbaar via:
-- **Preview:** https://cgiipf-preview.poort8.nl/
-- **Productie:** https://cgiipf.poort8.nl/ [TBD — beschikbaar na productie-deployment]
+- **Preview:** https://interplantfederation-preview.poort8.nl/
+- **Productie:** TBD — beschikbaar na productie-deployment
 
 ## Aan de slag
 
@@ -46,7 +46,7 @@ De Interplant Federation is bereikbaar via:
 |--------------------|-------------------|
 | **Proces begrijpen** | [Lees hierboven](#hoe-werkt-het) |
 | **Implementatie details** | [Fabriek Data Toegang](fabriek-data-toegang.md) |
-| **API referentie** | [Interplant Federation API docs ➚](https://cgiipf-preview.poort8.nl/scalar/v1) |
+| **API referentie** | [Interplant Federation API docs ➚](https://interplantfederation-preview.poort8.nl/scalar/v1) |
 | **NoodleBar concepten** | [NoodleBar documentatie](../noodlebar/) |
 
 ## Meer informatie

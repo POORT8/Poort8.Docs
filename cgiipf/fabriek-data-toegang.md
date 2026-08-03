@@ -2,7 +2,7 @@
 
 Service providers kunnen productie- en installatie-gegevens opvragen bij aangesloten fabrieken via hun applicatie. Deze flow beschrijft hoe fabrieken autorisaties instellen en hoe applicaties vervolgens data kunnen opvragen met real-time autorisatie verificatie.
 
-🔗 **[API Docs ➚](https://cgiipf-preview.poort8.nl/scalar/v1)** — Interactieve endpoint testing
+🔗 **[API Docs ➚](https://interplantfederation-preview.poort8.nl/scalar/v1)** — Interactieve endpoint testing
 
 ## Overzicht
 
@@ -52,7 +52,7 @@ sequenceDiagram
 
 | Wat je nodig hebt | Details |
 |--------------------|---------|
-| API toegang | [TBD — Auth0 client credentials, zie API docs ➚](https://cgiipf-preview.poort8.nl/scalar/v1) |
+| API toegang | [TBD — Auth0 client credentials, zie API docs ➚](https://interplantfederation-preview.poort8.nl/scalar/v1) |
 | Organisatie registratie | Je organisatie moet geregistreerd zijn in het Organization Registry |
 | Fabriek data API | De fabriek moet data beschikbaar stellen via een API voor service providers |
 
@@ -65,7 +65,7 @@ De fabriek registreert policies in de Interplant Federation die bepalen welke se
 **NoodleBar policy registratie voorbeeld:**
 
 ```http
-POST https://cgiipf-preview.poort8.nl/v1/api/policies
+POST https://interplantfederation-preview.poort8.nl/v1/api/policies
 Authorization: Bearer <ACCESS_TOKEN>
 Content-Type: application/json
 ```
@@ -119,7 +119,7 @@ De service provider gebruikt een applicatie om productie- en installatiegegevens
 
 De service provider gebruikt de applicatie om productiedata of installatie status op te vragen. De applicatie stuurt een data-aanvraag naar de fabriek API met details zoals gewenste datasets, tijdsperiode, en data-granulariteit.
 
-> ℹ️ De fabriek API endpoints zijn instance-specifiek en vallen buiten de Interplant Federation NoodleBar scope. Zie de [Interplant Federation API docs ➚](https://cgiipf-preview.poort8.nl/scalar/v1) voor beschikbare endpoints.
+> ℹ️ De fabriek API endpoints zijn instance-specifiek en vallen buiten de Interplant Federation NoodleBar scope. Zie de [Interplant Federation API docs ➚](https://interplantfederation-preview.poort8.nl/scalar/v1) voor beschikbare endpoints.
 
 ### Stap 4: Fabriek API controleert autorisatie via NoodleBar _(Poort8)_
 
@@ -128,7 +128,7 @@ Voordat de fabriek API de data retourneert, controleert deze of de applicatie da
 **Generic NoodleBar explained-enforce voorbeeld:**
 
 ```http
-GET https://cgiipf-preview.poort8.nl/v1/api/authorization/explained-enforce
+GET https://interplantfederation-preview.poort8.nl/v1/api/authorization/explained-enforce
   ?subject=12345678
   &resource=[TBD - productie data resource ID]
   &action=[TBD - bijv. read of query]
@@ -179,13 +179,13 @@ De NoodleBar controleert of er een geldige policy bestaat die de `subject` (appl
 
 Als `allowed` = `true`, mag de fabriek API de data retourneren. Als `false`, weigert de API het verzoek.
 
-Zie de [Interplant Federation API docs ➚](https://cgiipf-preview.poort8.nl/scalar/v1) voor de volledige endpoint referentie.
+Zie de [Interplant Federation API docs ➚](https://interplantfederation-preview.poort8.nl/scalar/v1) voor de volledige endpoint referentie.
 
 > **Instance-specifiek:** De waarden voor alle parameters worden bepaald tijdens de technische configuratie van de Interplant Federation. [TBD]
 
 ## Foutafhandeling
 
-[TBD — Wordt aangevuld zodra de API-specificatie beschikbaar is. Zie de [Interplant Federation API docs ➚](https://cgiipf-preview.poort8.nl/scalar/v1) voor actuele foutcodes.]
+TBD — Wordt aangevuld zodra de API-specificatie beschikbaar is. Zie de [Interplant Federation API docs ➚](https://interplantfederation-preview.poort8.nl/scalar/v1) voor actuele foutcodes.
 
 **Verwachte scenario's:**
 
@@ -200,13 +200,13 @@ Zie de [Interplant Federation API docs ➚](https://cgiipf-preview.poort8.nl/sca
 
 **Verwacht:**
 
-- Preview: `https://cgiipf-preview.poort8.nl` (huidige ontwikkelingsfase)
-- Productie: `https://cgiipf.poort8.nl` (na succesvolle validatie)
+- Preview: https://interplantfederation-preview.poort8.nl/ (huidige ontwikkelingsfase)
+- Productie: TBD — beschikbaar na succesvolle validatie
 
 ## Volgende stappen
 
 - Terug naar de [Introductie](README.md) voor een overzicht
-- Bekijk de [Interplant Federation API docs ➚](https://cgiipf-preview.poort8.nl/scalar/v1) voor endpoint details
+- Bekijk de [Interplant Federation API docs ➚](https://interplantfederation-preview.poort8.nl/scalar/v1) voor endpoint details
 - Zie de [NoodleBar documentatie](../noodlebar/) voor achtergrond over OR, AR en federatief datadelen
 
 ## Context: Industriële Data-uitwisseling
