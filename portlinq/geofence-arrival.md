@@ -75,6 +75,23 @@ GET /v1/api/authorization/explained-enforce
 
 - **Geofence-consent** — `POST /v1/api/policies` met `type: geo-fence`, `action: monitor`, issuer = het schip (eigenaar-EUID), subject = de haven, serviceProvider = de geofence-provider.
 
+> ℹ️ **Rolverdeling en tags.** De schippers-app legt namens het schip de consent-policy vast in de Authorization Registry (zolang er nog geen formeel scheepsregister is). Tags zoals `port` en `shorepower` zijn alleen bedoeld voor catalogusfiltering in NoodleBar en spelen geen rol in autorisatie of consent-checks.
+
+Voorbeeld request body (MS Amare → Port of Twente via Sturdy):
+
+```json
+{
+  "useCase": "portlinq",
+  "issuerId": "NLNHR.88837432",
+  "subjectId": "NLNHR.57518580",
+  "serviceProvider": "NLNHR.88429156",
+  "type": "geo-fence",
+  "action": "monitor",
+  "resourceId": "NLNHR.88837432",
+  "attribute": "*"
+}
+```
+
 ## Foutafhandeling
 
 Consent ontbreekt of is verlopen → `allowed: false`, geen event. Deelnemer niet gevonden → stop. Haven-endpoint onbereikbaar → retry met backoff.

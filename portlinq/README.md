@@ -73,6 +73,22 @@ De PortlinQ-infrastructuur is bereikbaar via:
 - **Preview:** https://portlinq-preview.poort8.nl/ (huidige living lab-fase)
 - **Productie:** TBD — beschikbaar na productie-deployment
 
+## Eerste werkende koppeling (happy path)
+
+Met deze vier calls kun je een eerste technische end-to-end check doen:
+
+Gebruik in technische requests altijd EUID-placeholders in de vorm `NLNHR.<KVK_...>` (bijvoorbeeld `NLNHR.<KVK_PORT_AUTHORITY>`); namen zoals "Port of Twente" zijn alleen functionele toelichting.
+
+1. **Token ophalen** (client credentials) via `https://auth.poort8.nl/realms/portlinq-preview/protocol/openid-connect/token`
+2. **Havens ophalen** via `GET /v1/api/systems?tag=port`
+3. **Geofence-consent vastleggen** via `POST /v1/api/policies` (`type: geo-fence`, `action: monitor`, `useCase: portlinq`)
+4. **Consent verifiëren** via `GET /v1/api/authorization/explained-enforce` met `issuer`, `subject`, `serviceProvider`, `resource`, `type`, `action`, `attribute`, `useCase` en check `allowed`
+
+Voor exacte requestvoorbeelden:
+- [Geofence Arrival en Departure Flow](geofence-arrival.md)
+- [Autorisatie valideren](autorisatie.md)
+- [API-toegang aanvragen](api-toegang-aanvragen.md)
+
 ## Aan de slag
 
 | Wat je nodig hebt | Waar je het vindt |
