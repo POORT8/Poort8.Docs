@@ -10,6 +10,7 @@
     - [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje/owner-authorization.md)
     - [Phase 2 — SupplierDelegation](digitaal-onderhoudsboekje/supplier-delegation.md)
     - [Phase 3 — M2M Data Transfer](digitaal-onderhoudsboekje/m2m-maintenance-data-transfer.md)
+    - [Phase 4 — Determine Previous Installers](digitaal-onderhoudsboekje/determine-previous-installers.md)
 
 - **Datastekker**
   - [Introduction](datastekker/README.md)
