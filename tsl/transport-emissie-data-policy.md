@@ -126,6 +126,14 @@ Een geslaagde aanmaak levert `201 Created` met de aangemaakte policy (inclusief 
 
 De data-rechthebbende die de policy heeft aangemaakt kan deze te allen tijde intrekken. Zie de [TSL API documentatie ➚](https://tsl.poort8.nl/scalar/v1) voor de endpoint-specificaties.
 
+### Policy verlengen of geldigheid aanpassen
+
+Gebruik `PUT /v1/api/policies/{id}/validity` om alleen de `notBefore` en/of `expiration` van een bestaande policy aan te passen, bijvoorbeeld om deze te verlengen. Dit endpoint raakt uitsluitend deze twee velden; alle overige velden van de policy blijven ongewijzigd. Stuur `{"notBefore": <unix-timestamp>}`, `{"expiration": <unix-timestamp>}`, of beide; minstens één van de twee is verplicht. Een veld kan alleen worden aangepast zolang de huidige waarde nog in de toekomst ligt, en de nieuwe waarde moet ook nu of later liggen.
+
+### Policy intrekken
+
+Gebruik `POST /v1/api/policies/{id}/revoke` om een policy direct in te trekken. Stuur `{"reason": "<reden van intrekken>"}`; `reason` is verplicht. Dit endpoint is alleen toegestaan zolang de huidige `expiration` van de policy nog in de toekomst ligt.
+
 ## Omgevingsgegevens
 
 | Service          | URL                                                               |
