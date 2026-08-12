@@ -1,6 +1,6 @@
 # Phase 1 — Keyper Approval
 
-> Part of the [Registrar Integration Guide](./README.md). Can be started simultaneously with [Token Acquisition](./token-acquisition.md).
+> Part of the [Registrar Integration Guide](registrar.md). Can be started simultaneously with [Token Acquisition](registrar-token-acquisition.md).
 
 | Actor | Role |
 |-------|------|
@@ -82,7 +82,7 @@ Authorization: Bearer <KEYPER_ACCESS_TOKEN>
 
 Status lifecycle: `Active` → `Approved`, `Rejected`, or `Expired`. On `Rejected` or `Expired`, create a new request with a new `reference`.
 
-> **Note:** The `status` field reflects the state of the **approval link**, not the state of the resulting write policy in GIR. A status of `Approved` means the installation owner accepted the request and Keyper has registered the policy — but you must still verify the installation write result separately (see [Activation Verification](./activation-verification.md)).
+> **Note:** The `status` field reflects the state of the **approval link**, not the state of the resulting write policy in GIR. A status of `Approved` means the installation owner accepted the request and Keyper has registered the policy — but you must still verify the installation write result separately (see [Activation Verification](registrar-activation-verification.md)).
 
 ### Attribute filtering
 
@@ -100,4 +100,4 @@ Multiple tokens are evaluated as OR. If no class token is present, classificatio
 
 ## Next
 
-[Token Acquisition](./token-acquisition.md)
+[Token Acquisition](registrar-token-acquisition.md)

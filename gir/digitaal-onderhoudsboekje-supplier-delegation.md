@@ -1,6 +1,6 @@
 # Phase 2 — SupplierDelegation
 
-> **Context**: This is Phase 2 of the [Digitaal Onderhoudsboekje flow](./README.md). It is only required if an Installation Service Company uses an external software supplier to call GIR data services on their behalf. This phase can be executed independently or simultaneously with Phase 1.
+> **Context**: This is Phase 2 of the [Digitaal Onderhoudsboekje flow](digitaal-onderhoudsboekje.md). It is only required if an Installation Service Company uses an external software supplier to call GIR data services on their behalf. This phase can be executed independently or simultaneously with Phase 1.
 
 ## Functional Overview
 
@@ -154,7 +154,7 @@ The New Installation Service Company can revoke a `SupplierDelegation` themselve
 
 ## Authorization check in Phase 3
 
-For the full authorization check flow, including how to handle the case where a software supplier calls on behalf of the New Installation Service Company, see [Step 3: Verify the AccessRight in GIR](https://docs.poort8.nl/#/gir/digitaal-onderhoudsboekje/m2m-maintenance-data-transfer?id=step-3-verify-the-accessright-in-gir).
+For the full authorization check flow, including how to handle the case where a software supplier calls on behalf of the New Installation Service Company, see [Step 3: Verify the AccessRight in GIR](https://docs.poort8.nl/#/gir/digitaal-onderhoudsboekje-m2m-maintenance-data-transfer?id=step-3-verify-the-accessright-in-gir).
 
 ## Known blockers
 

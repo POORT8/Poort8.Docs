@@ -1,6 +1,6 @@
 # Phase 4 — Activation Verification
 
-> Part of the [Registrar Integration Guide](./README.md). Applies when a record from [Submit Installation](./submit-installation.md) is stored as `Pending`.
+> Part of the [Registrar Integration Guide](registrar.md). Applies when a record from [Submit Installation](registrar-submit-installation.md) is stored as `Pending`.
 
 After the owner approval in Keyper completes, GIR automatically promotes matching `Pending` records to `Active`.
 
@@ -56,10 +56,10 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 Use `installationIDValue` to look up the record by its installation identifier. The single-record endpoint `GET /v1/api/GIRBasisdataMessage/{guid}` requires the GIR record GUID, not the installation ID.
 
-For filtered list retrieval, see [Retrieve Multiple Installations](../retrieve-installations.md) and [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
+For filtered list retrieval, see [Retrieve Multiple Installations](retrieve-installations.md) and [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
 
 ## Known blockers
 
 | Blocker | Description | Status |
 |---------|-------------|--------|
-| **No delegated/multi-party visibility** | Listing and retrieving records only checks the calling identity's own read/write policies, plus a self-authorship fallback for the submitting registrar. A software platform or other related party querying on behalf of a registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](../digitaal-onderhoudsboekje/supplier-delegation.md) — will get an empty result instead of seeing that registrar's records. | Open (dev task) |
+| **No delegated/multi-party visibility** | Listing and retrieving records only checks the calling identity's own read/write policies, plus a self-authorship fallback for the submitting registrar. A software platform or other related party querying on behalf of a registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje-supplier-delegation.md) — will get an empty result instead of seeing that registrar's records. | Open (dev task) |

@@ -1,6 +1,6 @@
 # Phase 2 — Token Acquisition
 
-> Part of the [Datastekker – Installer Access Flow](./README.md). This phase is repeated whenever the current token expires (every 3600 seconds).
+> Part of the [Datastekker – Installer Access Flow](datastekker.md). This phase is repeated whenever the current token expires (every 3600 seconds).
 
 Before querying GIR, Datastekker must obtain a DSGO bearer token. The token authenticates Datastekker as a DSGO participant; the delegation policy from Phase 1 authorizes the data access. Both are required.
 
@@ -38,7 +38,7 @@ views {
 
 ## Technical Implementation
 
-See [Obtaining a DSGO Token](../connect-token.md) for the full procedure and JWT construction details.
+See [Obtaining a DSGO Token](connect-token.md) for the full procedure and JWT construction details.
 
 The token is valid for 3600 seconds and can be reused across multiple GIR requests within that window.
 
@@ -49,4 +49,4 @@ The token is valid for 3600 seconds and can be reused across multiple GIR reques
 
 ## Next
 
-[Phase 3 — Authorization Check](./authorization-check.md)
+[Phase 3 — Authorization Check](datastekker-authorization-check.md)

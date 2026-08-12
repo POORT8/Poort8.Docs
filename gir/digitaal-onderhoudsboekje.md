@@ -60,9 +60,9 @@ views {
 
 | Phase | What happens |
 |-------|-------------|
-| [Phase 1 — Owner Authorization](./owner-authorization.md) | Building owner approves the New Installation Service Company via eHerkenning. Keyper registers the `AccessRight` in GIR. |
-| [Phase 2 — SupplierDelegation](./supplier-delegation.md) | New Installation Service Company delegates the `AccessRight` to their software platform. Keyper registers the `SupplierDelegation` in GIR. |
-| [Phase 3 — M2M Data Transfer](./m2m-maintenance-data-transfer.md) | New Installation Service Company's software retrieves maintenance data directly from the previous installation service company's software. Authorization is verified in GIR at request time by the previous installation service company's software. |
+| [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md) | Building owner approves the New Installation Service Company via eHerkenning. Keyper registers the `AccessRight` in GIR. |
+| [Phase 2 — SupplierDelegation](digitaal-onderhoudsboekje-supplier-delegation.md) | New Installation Service Company delegates the `AccessRight` to their software platform. Keyper registers the `SupplierDelegation` in GIR. |
+| [Phase 3 — M2M Data Transfer](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md) | New Installation Service Company's software retrieves maintenance data directly from the previous installation service company's software. Authorization is verified in GIR at request time by the previous installation service company's software. |
 
 ## DSGO authorization types
 

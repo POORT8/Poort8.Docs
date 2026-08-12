@@ -1,6 +1,6 @@
 # Phase 2 — Token Acquisition
 
-> Part of the [Registrar Integration Guide](./README.md). Can be started simultaneously with [Keyper Approval](./keyper-approval.md).
+> Part of the [Registrar Integration Guide](registrar.md). Can be started simultaneously with [Keyper Approval](registrar-keyper-approval.md).
 
 All GIR write requests require a DSGO bearer token. The token authenticates your application; the write policy (from Keyper Approval) authorizes the write. Both are required.
 
@@ -37,7 +37,7 @@ views {
 
 ## Technical Implementation
 
-See [Obtaining a DSGO Token](../connect-token.md) for the full procedure and JWT construction details.
+See [Obtaining a DSGO Token](connect-token.md) for the full procedure and JWT construction details.
 
 ## References
 
@@ -46,4 +46,4 @@ See [Obtaining a DSGO Token](../connect-token.md) for the full procedure and JWT
 
 ## Next
 
-[Submit Installation](./submit-installation.md)
+[Submit Installation](registrar-submit-installation.md)

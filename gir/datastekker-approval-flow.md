@@ -1,6 +1,6 @@
 # Phase 1 — Approval Flow
 
-> Part of the [Datastekker – Installer Access Flow](./README.md). This phase runs once per installer / building combination.
+> Part of the [Datastekker – Installer Access Flow](datastekker.md). This phase runs once per installer / building combination.
 
 The TechniekNederland form collects the access request and hands it off to Keyper. Keyper notifies the building owner, who authenticates and approves. On approval, Keyper automatically registers the policy in GIR — no further action is needed from the installer or TechniekNederland.
 
@@ -51,10 +51,10 @@ Before calling Keyper, TechniekNederland collects the following information:
 | Building owner KvK | KvK number of the owner who must approve |
 | Building owner email | Recipient of the Keyper approval link |
 | Validity period | Start and end date of the requested access |
-| Data-element set | Which performance data becomes accessible — see [Open Question 4](./README.md#open-questions) |
-| License conditions | Terms of use — see [Open Question 5](./README.md#open-questions) |
+| Data-element set | Which performance data becomes accessible — see [Open Question 4](datastekker.md#open-questions) |
+| License conditions | Terms of use — see [Open Question 5](datastekker.md#open-questions) |
 
-> ℹ️ The form may optionally query GIR first to display the installations registered at the given building. See [Retrieve Multiple Installations](../retrieve-installations.md).
+> ℹ️ The form may optionally query GIR first to display the installations registered at the given building. See [Retrieve Multiple Installations](retrieve-installations.md).
 
 ### Step 1 — Create the approval link in Keyper
 
@@ -121,4 +121,4 @@ If the building owner rejects, the link expires. TechniekNederland can initiate 
 
 ## Next
 
-[Phase 2 — Token Acquisition](./token-acquisition.md)
+[Phase 2 — Token Acquisition](datastekker-token-acquisition.md)

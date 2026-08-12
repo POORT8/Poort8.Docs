@@ -1,6 +1,6 @@
 # Phase 3 — M2M Maintenance Data Transfer
 
-> **Context**: This is Phase 3 of the [Digitaal Onderhoudsboekje flow](./README.md). It starts after Phase 1 (building owner authorized the New Installation Service Company via Keyper) and (optionally) Phase 2 (New Installation Service Company delegated to their software) have completed.
+> **Context**: This is Phase 3 of the [Digitaal Onderhoudsboekje flow](digitaal-onderhoudsboekje.md). It starts after Phase 1 (building owner authorized the New Installation Service Company via Keyper) and (optionally) Phase 2 (New Installation Service Company delegated to their software) have completed.
 >
 > **Audience**: Unlike Phases 1 and 2, which are addressed to the New Installation Service Company, this phase is addressed to **you as the data provider** — the platform that holds the maintenance data and must verify authorization before serving it.
 
@@ -53,7 +53,7 @@ views {
 
 ### Step 1: Receive the request from the New Installation Service Company's software
 
-The New Installation Service Company's software authenticates to your platform using the same DSGO client credentials flow described in [Obtaining a DSGO Bearer Token](../connect-token.md), then requests maintenance data:
+The New Installation Service Company's software authenticates to your platform using the same DSGO client credentials flow described in [Obtaining a DSGO Bearer Token](connect-token.md), then requests maintenance data:
 
 ```http
 GET <YOUR_ENDPOINT>/maintenance-data?installationId=<INSTALLATION_ID>
@@ -64,7 +64,7 @@ The `installationId` is the 16-digit BAG VBO-id (Verblijfsobjectidentificatie) i
 
 ### Step 2: Obtain a GIR access token
 
-Use the DSGO client credentials flow to get a bearer token from GIR. See [Obtaining a DSGO Bearer Token](../connect-token.md) for the full procedure.
+Use the DSGO client credentials flow to get a bearer token from GIR. See [Obtaining a DSGO Bearer Token](connect-token.md) for the full procedure.
 
 > The GIR access token is valid for 3600 seconds and can be reused across multiple requests within that window.
 

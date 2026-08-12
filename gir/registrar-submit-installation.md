@@ -1,6 +1,6 @@
 # Phase 3 — Submit Installation
 
-> Part of the [Registrar Integration Guide](./README.md). Requires a valid bearer token from [Token Acquisition](./token-acquisition.md). A write policy from [Keyper Approval](./keyper-approval.md) is needed for the record to become `Active`; without it the record is stored as `Pending`.
+> Part of the [Registrar Integration Guide](registrar.md). Requires a valid bearer token from [Token Acquisition](registrar-token-acquisition.md). A write policy from [Keyper Approval](registrar-keyper-approval.md) is needed for the record to become `Active`; without it the record is stored as `Pending`.
 
 | Actor | Role |
 |-------|------|
@@ -42,14 +42,14 @@ The same endpoint handles create and update. Submitting the same installation ID
 | Matching write policy exists | `201` / `200` | `Active` |
 | No matching write policy | `201` / `200` | `Pending` |
 
-For payload schema and field requirements, see [Register or Update an Installation](../insert-installation.md) and [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
+For payload schema and field requirements, see [Register or Update an Installation](insert-installation.md) and [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
 
 ## Known blockers
 
 | Blocker | Description | Status |
 |---------|-------------|--------|
-| **No delegated/multi-party writes** | The write policy check matches the registrar identity declared in the request body (`registrarChamberOfCommerceNumber`) directly against the approved policy's subject. A software platform submitting on behalf of another (delegated) registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](../digitaal-onderhoudsboekje/supplier-delegation.md) — is not recognized. Only the exact registrar named in the approved policy results in `Active`; any other identity results in `Pending`, with no error returned. | Open (dev task) |
+| **No delegated/multi-party writes** | The write policy check matches the registrar identity declared in the request body (`registrarChamberOfCommerceNumber`) directly against the approved policy's subject. A software platform submitting on behalf of another (delegated) registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje-supplier-delegation.md) — is not recognized. Only the exact registrar named in the approved policy results in `Active`; any other identity results in `Pending`, with no error returned. | Open (dev task) |
 
 ## Next
 
-[Activation Verification](./activation-verification.md)
+[Activation Verification](registrar-activation-verification.md)

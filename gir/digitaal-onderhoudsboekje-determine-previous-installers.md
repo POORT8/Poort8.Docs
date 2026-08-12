@@ -1,6 +1,6 @@
 # Phase 4 — Determine Previous Installers from GIR Metadata
 
-> **Context**: This is a substep within [Phase 1 — Owner Authorization](./owner-authorization.md). After the building owner is selected but before the approval request is submitted, the system must determine which installation companies previously registered data for this building, so the building owner can approve the transfer from a known previous installer.
+> **Context**: This is a substep within [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md). After the building owner is selected but before the approval request is submitted, the system must determine which installation companies previously registered data for this building, so the building owner can approve the transfer from a known previous installer.
 
 ## Overview
 
@@ -168,7 +168,7 @@ When testing this flow:
 5. **Verify** that the most recent `metadata.issuer` is issuer B
 6. **Confirm** the mechanism correctly identifies the current previous installer
 
-🔗 [Digitaal Onderhoudsboekje — Owner Authorization](./owner-authorization.md) · [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
+🔗 [Digitaal Onderhoudsboekje — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md) · [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
 
 ---
 

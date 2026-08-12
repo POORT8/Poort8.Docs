@@ -9,7 +9,7 @@ To successfully publish data to GIR, two conditions must be met:
 - Your organization must have an approved write policy for the target building.
 - Your application must call GIR with a valid DSGO bearer token.
 
-> **Note**: This guide describes a single-registrar model — the organization that submits and maintains data must itself hold the approved write policy. Delegating write or list access to another company (for example, a software platform acting on a registrar's behalf, similar to [Digitaal Onderhoudsboekje's SupplierDelegation](../digitaal-onderhoudsboekje/supplier-delegation.md)) is not currently supported for this flow — see the Known blockers sections in [Submit Installation](./submit-installation.md#known-blockers) and [Activation Verification](./activation-verification.md#known-blockers).
+> **Note**: This guide describes a single-registrar model — the organization that submits and maintains data must itself hold the approved write policy. Delegating write or list access to another company (for example, a software platform acting on a registrar's behalf, similar to [Digitaal Onderhoudsboekje's SupplierDelegation](digitaal-onderhoudsboekje-supplier-delegation.md)) is not currently supported for this flow — see the Known blockers sections in [Submit Installation](registrar-submit-installation.md#known-blockers) and [Activation Verification](registrar-activation-verification.md#known-blockers).
 
 ## Parties
 
@@ -61,10 +61,10 @@ views {
 
 | Phase | Goal | Result |
 |-------|------|--------|
-| [Phase 1 — Keyper Approval](./keyper-approval.md) | Obtain owner-approved write access for a building | Write policy becomes active in GIR |
-| [Phase 2 — Token Acquisition](./token-acquisition.md) | Authenticate your application to GIR | DSGO bearer token available |
-| [Phase 3 — Submit Installation](./submit-installation.md) | Create or update installation data | Record stored as `Active` or `Pending` |
-| [Phase 4 — Activation Verification](./activation-verification.md) | Verify post-approval visibility | Record transitions to `Active` when authorized |
+| [Phase 1 — Keyper Approval](registrar-keyper-approval.md) | Obtain owner-approved write access for a building | Write policy becomes active in GIR |
+| [Phase 2 — Token Acquisition](registrar-token-acquisition.md) | Authenticate your application to GIR | DSGO bearer token available |
+| [Phase 3 — Submit Installation](registrar-submit-installation.md) | Create or update installation data | Record stored as `Active` or `Pending` |
+| [Phase 4 — Activation Verification](registrar-activation-verification.md) | Verify post-approval visibility | Record transitions to `Active` when authorized |
 
 For repeated updates on the same building, Phase 1 usually does not need to be repeated until policy expiration or scope changes. Phase 2 is repeated whenever the current token expires.
 
@@ -92,13 +92,13 @@ Choose the path that fits your operational situation.
 
 Use this sequence for a new registrar integration:
 
-1. Create a Keyper approval-link request for the target VBO-ID — see [Keyper Approval](./keyper-approval.md).
+1. Create a Keyper approval-link request for the target VBO-ID — see [Keyper Approval](registrar-keyper-approval.md).
 2. Store the returned `id`, `reference`, `expiresAtUtc`, and initial `status`.
 3. Poll `GET /v1/api/approval-links/{id}` until status is final (`Approved`, `Rejected`, or `Expired`).
-4. If approved, obtain a DSGO bearer token — see [Token Acquisition](./token-acquisition.md).
-5. Submit the installation message — see [Submit Installation](./submit-installation.md).
+4. If approved, obtain a DSGO bearer token — see [Token Acquisition](registrar-token-acquisition.md).
+5. Submit the installation message — see [Submit Installation](registrar-submit-installation.md).
 6. Inspect `metadata.status` in the write response (`Active` or `Pending`).
-7. Verify outcome — see [Activation Verification](./activation-verification.md).
+7. Verify outcome — see [Activation Verification](registrar-activation-verification.md).
 8. On `Rejected` or `Expired`, create a new approval request with a new `reference`.
 
 ## Runtime decision matrix
@@ -129,5 +129,5 @@ Recommended alerts:
 
 ## Related guides
 
-- [../data-consumer-flow.md](../data-consumer-flow.md)
-- [../README.md](../README.md)
+- [data-consumer-flow.md](data-consumer-flow.md)
+- [README.md](README.md)

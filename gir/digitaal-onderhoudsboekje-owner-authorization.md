@@ -1,6 +1,6 @@
 # Phase 1 — Owner Authorization
 
-> **Context**: This is Phase 1 of the [Digitaal Onderhoudsboekje flow](./README.md). The New Installation Service Company initiates a request for the building owner to authorize the maintenance data transfer. Phase 1 and Phase 2 are independent of each other and can be initiated simultaneously.
+> **Context**: This is Phase 1 of the [Digitaal Onderhoudsboekje flow](digitaal-onderhoudsboekje.md). The New Installation Service Company initiates a request for the building owner to authorize the maintenance data transfer. Phase 1 and Phase 2 are independent of each other and can be initiated simultaneously.
 
 ## Functional Overview
 

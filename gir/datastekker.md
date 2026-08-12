@@ -65,9 +65,9 @@ views {
 
 | Phase | What happens | Frequency |
 |-------|-------------|-----------|
-| [Phase 1 — Approval Flow](./approval-flow.md) | Building owner approves the installer via Keyper. Policy is registered in GIR. | Once per installer / building |
-| [Phase 2 — Token Acquisition](./token-acquisition.md) | Datastekker obtains a DSGO bearer token from GIR. | Per token expiry (3600 s) |
-| [Phase 3 — Authorization Check](./authorization-check.md) | Datastekker queries GIR by componentID, checks the delegation policy, and returns authorised data to the installer. | Every data request |
+| [Phase 1 — Approval Flow](datastekker-approval-flow.md) | Building owner approves the installer via Keyper. Policy is registered in GIR. | Once per installer / building |
+| [Phase 2 — Token Acquisition](datastekker-token-acquisition.md) | Datastekker obtains a DSGO bearer token from GIR. | Per token expiry (3600 s) |
+| [Phase 3 — Authorization Check](datastekker-authorization-check.md) | Datastekker queries GIR by componentID, checks the delegation policy, and returns authorised data to the installer. | Every data request |
 
 > Note: Querying `GIRBasisdataMessage` by `componentID` may return non-unique results. Handling these edge cases is the responsibility of the data service provider.
 
@@ -106,7 +106,7 @@ Consent is granted at the level of a predefined data-element set. At runtime, Da
 
 ## Further reading
 
-- [Data-Consumer Flow](../data-consumer-flow.md)
-- [Retrieve Multiple Installations](../retrieve-installations.md)
+- [Data-Consumer Flow](data-consumer-flow.md)
+- [Retrieve Multiple Installations](retrieve-installations.md)
 - [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
 - [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)

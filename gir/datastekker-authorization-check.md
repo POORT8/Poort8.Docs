@@ -1,6 +1,6 @@
 # Phase 3 — Authorization Check
 
-> Part of the [Datastekker – Installer Access Flow](./README.md). Runs on every data request from an installer.
+> Part of the [Datastekker – Installer Access Flow](datastekker.md). Runs on every data request from an installer.
 
 For each data request, Datastekker queries GIR with the installer-provided componentId, checks the delegation policy in GIR, and returns authorised performance data.
 

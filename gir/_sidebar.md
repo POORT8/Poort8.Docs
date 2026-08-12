@@ -6,24 +6,24 @@
   - [Changelog](changelog.md)
 
 - **Digitaal Onderhoudsboekje**
-  - [Introduction](digitaal-onderhoudsboekje/README.md)
-    - [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje/owner-authorization.md)
-    - [Phase 2 — SupplierDelegation](digitaal-onderhoudsboekje/supplier-delegation.md)
-    - [Phase 3 — M2M Data Transfer](digitaal-onderhoudsboekje/m2m-maintenance-data-transfer.md)
-    - [Phase 4 — Determine Previous Installers](digitaal-onderhoudsboekje/determine-previous-installers.md)
+  - [Introduction](digitaal-onderhoudsboekje.md)
+    - [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md)
+    - [Phase 2 — SupplierDelegation](digitaal-onderhoudsboekje-supplier-delegation.md)
+    - [Phase 3 — M2M Data Transfer](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md)
+    - [Phase 4 — Determine Previous Installers](digitaal-onderhoudsboekje-determine-previous-installers.md)
 
 - **Datastekker**
-  - [Introduction](datastekker/README.md)
-    - [Phase 1 — Approval Flow](datastekker/approval-flow.md)
-    - [Phase 2 — Token Acquisition](datastekker/token-acquisition.md)
-    - [Phase 3 — Authorization Check](datastekker/authorization-check.md)
+  - [Introduction](datastekker.md)
+    - [Phase 1 — Approval Flow](datastekker-approval-flow.md)
+    - [Phase 2 — Token Acquisition](datastekker-token-acquisition.md)
+    - [Phase 3 — Authorization Check](datastekker-authorization-check.md)
 
 - **Registrar**
-  - [Introduction](registrar/README.md)
-    - [Phase 1 — Keyper Approval](registrar/keyper-approval.md)
-    - [Phase 2 — Token Acquisition](registrar/token-acquisition.md)
-    - [Phase 3 — Submit Installation](registrar/submit-installation.md)
-    - [Phase 4 — Activation Verification](registrar/activation-verification.md)
+  - [Introduction](registrar.md)
+    - [Phase 1 — Keyper Approval](registrar-keyper-approval.md)
+    - [Phase 2 — Token Acquisition](registrar-token-acquisition.md)
+    - [Phase 3 — Submit Installation](registrar-submit-installation.md)
+    - [Phase 4 — Activation Verification](registrar-activation-verification.md)
 
 - **Flow Overviews**
   - [Data-Consumer Flow](data-consumer-flow.md)
