@@ -64,7 +64,7 @@ Collected before handoff to Keyper:
 |-------|-------------|
 | Building owner email | Recipient of the approval link |
 | Validity period | Start and end date of the requested access |
-| NL/SfB filter | *(Planned)* Optional — restricts access to specific installation types (e.g. `L` for mechanical, `L1` for HVAC) |
+| NL/SfB filter | Optional — restricts access to specific NL/SfB classifications, e.g. `NLSfB-52.16` (see below) |
 
 ### Step 2: Keyper sends an approval link to the building owner
 
@@ -110,7 +110,7 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
 
 > Multiple VBO-ids require one entry per VBO-id in `addPolicyTransactions`.
 
-> **NL/SfB scoping** *(planned)*: Access can be restricted to specific NL/SfB codes by replacing `"attribute": "*"` with an NL/SfB code (e.g. `"L"` for all mechanical, `"L1"` for HVAC). This is not yet supported and requires additional development.
+> **NL/SfB scoping**: to restrict access to specific NL/SfB classifications, add a `rules` field to the transaction, e.g. `"rules": "Classificaties(NLSfB-52.16,NLSfB-52.20)"`. Multiple codes are OR-matched. `rules` and `attribute` are independent conditions — GIR checks the classification it has itself registered for each installation and matches it against `rules` regardless of the `attribute` value; the requester cannot set the classification directly. `attribute` has its own, separate use: setting it to a specific installation id (instead of `"*"`) restricts the policy to that one installation, with or without a `rules` filter — see [Authorization scope](digitaal-onderhoudsboekje.md#authorization-scope).
 
 🔗 [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
 
@@ -121,4 +121,3 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
 | Blocker | Description | Status |
 |---------|-------------|--------|
 | **`license` field value** | The license identifier to use in `addPolicyTransactions` has not been finalized. | Open |
-| **NL/SfB scoping via `attribute`** | Restricting access by NL/SfB code using the `attribute` field is not yet implemented. | Open (dev task) |

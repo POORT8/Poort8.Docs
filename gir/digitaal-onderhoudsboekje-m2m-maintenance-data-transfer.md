@@ -116,7 +116,7 @@ Check `delegationEvidence.policySets[0].policies[0].rules[0].effect` in the resp
 - `"Permit"` → proceed to serve data
 - `"Deny"` → return `403 Forbidden` to the caller
 
-> **NL/SfB scoping**: if authorization is scoped to a specific installation type, replace `"attributes": ["*"]` with the applicable NL/SfB code (e.g. `["L"]` for mechanical, `["L1"]` for HVAC).
+> **NL/SfB scoping**: if the underlying `AccessRight` was scoped to specific NL/SfB classifications (via `rules: "Classificaties(...)"`, see [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md)), GIR enforces that scope using its own registered classification for the installation.
 
 ### Step 4: Serve data or deny
 

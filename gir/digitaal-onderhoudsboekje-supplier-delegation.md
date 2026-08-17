@@ -135,6 +135,7 @@ On approval, Keyper registers one `SupplierDelegation` policy per selected data 
 - `action: "*"` covers all actions NI is authorized to perform on that type.
 - One policy entry per data service type (separate entries for `GIRBasisdataMessage` and `GIRMaintenanceLog`).
 - NI may have multiple active `SupplierDelegation` policies simultaneously — for example, different software suppliers per data type, or two suppliers in parallel during a migration.
+- A generic `SupplierDelegation` does not widen what the software supplier can see. It only says *who* may call on NI's behalf — the underlying `AccessRight` from Phase 1 remains the limiting factor, including any NL/SfB classification restriction (`rules: "Classificaties(...)"`) set on it.
 
 > The `SupplierDelegation` mechanism is defined in the [DSGO afsprakenstelsel ➚](https://afsprakenstelseldsgo.atlassian.net/wiki/spaces/dsgo/pages/1025933400).
 

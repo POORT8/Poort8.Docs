@@ -73,12 +73,18 @@ views {
 
 ## Authorization scope
 
-Access can be scoped at two levels, controlled by the `attribute` field in both the Keyper request and the GIR delegation check:
+`attribute` and `rules` are separate, independent conditions on the policy — both must pass, but neither depends on the other being set a particular way:
 
-| Scope | `attribute` value | Use case |
-|-------|-------------------|----------|
-| All installations in a building | `*` | Full portfolio transfer |
-| Specific installation type | NL/SfB code, e.g. `L` (mechanical) or `L1` (HVAC) | Partial transfer |
+| Field | Values | What it does |
+|-------|--------|---------------|
+| `attribute` | `"*"` (default), or a specific installation id | Matched per request against the installation id the caller is checking access for: `"*"` matches any installation, a specific id matches only that one |
+| `rules` | Absent (default), or `"Classificaties(<NLSfB-code>,...)"` | Absent means no classification restriction; otherwise GIR looks up the NL/SfB classification it has registered for the installation under check and matches it against the listed codes |
+
+The typical partial-transfer case — "any installation with classification 52.16 or 52.20" — keeps `attribute: "*"` and adds `rules: "Classificaties(NLSfB-52.16,NLSfB-52.20)"`. Restricting `attribute` to one specific installation id is a separate, narrower option that works with or without a classification `rules` filter.
+
+Either way, `attribute` never carries a classification value — the requester cannot influence the classification outcome by claiming a different one.
+
+> **What is an NL/SfB code?** NL/SfB is the standard classification for building and installation elements used across the Dutch construction sector. `NLSfB-<code>` here always refers to *table 1* of that standard (functional elements/installations) — e.g. `52.16` identifies heat pumps. GIR stores one such code per registered installation.
 
 ## Special cases
 

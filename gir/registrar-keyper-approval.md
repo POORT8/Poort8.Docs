@@ -86,13 +86,11 @@ Status lifecycle: `Active` → `Approved`, `Rejected`, or `Expired`. On `Rejecte
 
 ### Attribute filtering
 
-Set `attribute` to `*` for unrestricted write access, or use space-separated NLSFB tokens to limit scope:
+Set `attribute` to `*` for write access — the registrar can write any installation without restriction, since it is the registrar's own write that establishes the installation's classification in the first place. Classification-based scoping (via a policy's `rules` field) applies only to read access — see [Digitaal Onderhoudsboekje — Phase 1](digitaal-onderhoudsboekje-owner-authorization.md#step-3-keyper-registers-the-accessright-in-gir).
 
-```text
-gir:class:nlsfb_tabel1=52.16 gir:class:nlsfb_tabel1=52.20
-```
+### NL/SfB filtering
 
-Multiple tokens are evaluated as OR. If no class token is present, classification is unfiltered.
+NL/SfB is the standard classification for building and installation elements used across the Dutch construction sector. `NLSfB-<code>` refers to *table 1* of that standard (functional elements/installations) — e.g. `52.16` identifies heat pumps. GIR stores one such code per registered installation, and read-side `rules` scoping matches against it.
 
 ## References
 
