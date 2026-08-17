@@ -69,10 +69,6 @@ is also usable for `dsgo.gir` requests and vice versa. Use cases that require st
 mutual isolation must use distinct root prefixes (a new top-level entry in the mapping
 table above), not dotted variants of the same root.
 
-If you assumed sibling use cases within a family were isolated (for example when auditing
-existing policies), review those policies: they now authorize every sibling in the same
-family, not just the exact `useCase` they were created with.
-
 ## How Keyper Sets the Use Case
 
 When an approval link is created via Keyper, policy transactions may omit the `useCase` field. In that case, Keyper derives the use case automatically from the `orchestration.flow` value by stripping the version suffix:
