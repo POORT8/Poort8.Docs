@@ -29,7 +29,7 @@ If neither the full use case nor its family prefix is in the table, the registry
 | `keyper` | `ishare` |
 | `portlinq` | `ishare` |
 | `gds` | `ishare` |
-| `dvu` | `ishare` |
+| `dvu` | `isharescoped` |
 | `gir` | `isharerules` |
 | `dsgo` | `isharerules` |
 | `ishare` | `ishare` |
@@ -45,6 +45,33 @@ If neither the full use case nor its family prefix is in the table, the registry
 | `auto` | `ishare` |
 
 Any use case not in this table, and whose prefix is also not in the table, falls back to `default`.
+
+## Use Case Matching During Enforcement
+
+The family fallback above selects a **model**, but it also governs how policies are
+**matched** against enforce and explained-enforce requests. A stored policy's `useCase` and
+an incoming request's `useCase` are compared on their **family root** (the part before the
+first `.`), not as an exact string.
+
+This means a policy created for one sub-flow authorizes a request made under any sibling
+sub-flow in the same family, and an explained-enforce response can return a policy whose
+stored `useCase` differs from the requested one. For example, a policy stored with
+`useCase: "dsgo.gir-onderhoudsboekje"` also authorizes — and can be returned as the
+explaining policy for — a request enforced with `useCase: "dsgo.gir"`, `"dsgo.gir-datastekker"`,
+or any other `dsgo.*` value, because all of them share the root `dsgo`. The same applies to
+resource group and subject group membership: group membership recorded under one `dvu.*`
+sub-flow resolves requests from any other `dvu.*` sub-flow.
+
+**Security implication:** sub-flows sharing a family root are **not** isolated from each
+other for authorization purposes. Do not rely on the dotted suffix to separate access
+between sub-flows of the same use case family — a policy scoped to `dsgo.gir-datastekker`
+is also usable for `dsgo.gir` requests and vice versa. Use cases that require strict
+mutual isolation must use distinct root prefixes (a new top-level entry in the mapping
+table above), not dotted variants of the same root.
+
+If you assumed sibling use cases within a family were isolated (for example when auditing
+existing policies), review those policies: they now authorize every sibling in the same
+family, not just the exact `useCase` they were created with.
 
 ## How Keyper Sets the Use Case
 

@@ -59,3 +59,8 @@ current mappings and how a use case string resolves to a model.
 > Scoping only changes outcomes when a resource group actually contains resources owned by
 > more than one organization. For groups whose resources all belong to a single
 > organization, shared and issuer-scoped resolution behave identically.
+
+> Group membership is matched on the use case's **family root**, the same rule described in
+> [Use Case Matching During Enforcement](12%20-%20Use%20Case%20Authorization%20Models.md#use-case-matching-during-enforcement).
+> A group populated under one sub-flow (e.g. `dvu.voeg-gebouw-toe`) also resolves requests
+> from a sibling sub-flow in the same family (e.g. `dvu.voeg-gebouwen-toe`).
