@@ -2,7 +2,7 @@
 
 > 🚧 **Under construction**
 
-Referentie-implementatie van het havenbezoek- en walstroomproces in PortlinQ, met de concrete API-calls op basis van de PortlinQ API-spec (`portlinq-preview.poort8.nl`). Bedoeld zodat een developer de flow kan naspelen. Instance-specifieke waarden staan als `{PLACEHOLDER}` of `[TBD]` — die worden tijdens de technische configuratie ingevuld.
+Referentie-implementatie van het havenbezoek- en walstroomproces in PortlinQ, met de concrete API-calls op basis van de [PortlinQ API-spec](https://portlinq-preview.poort8.nl/scalar/). Bedoeld zodat een developer de flow kan naspelen. Instance-specifieke waarden staan als `{PLACEHOLDER}` of `[TBD]` — die worden tijdens de technische configuratie ingevuld.
 
 ## Overzicht
 
@@ -15,7 +15,7 @@ Wie doet mee: schipper **Ardin** op de **MS Amare**, die aanmeert bij de haven *
 
 Kernkeuzes (hoog over — technische uitwerking verderop):
 
-- Policy-issuer = de **MS Amare** (Ardin handelt via de app namens het schip).
+- Policy-issuer = de **eigenaarorganisatie van de MS Amare**; de **MS Amare** zelf is de policy-resource.
 - AIS/geofence-events gaan via **push** (GetSturdy → haven).
 - Diensten worden gevonden via **tags** (discovery).
 - Voor policy-create en service-calls gebruikt Connect4Shore een **schip-token**; voor AR-enforcement gebruikt GetSturdy een **aparte provider-app token** (NoodleBar API-toegang).
@@ -46,7 +46,7 @@ sequenceDiagram
     C4S->>PLQ: GET /v1/api/systems?tag=visit&tag=port
     PLQ-->>C4S: aanmeer-dienst
     Ardin->>C4S: selecteer aanmeren
-    C4S->>PLQ: POST /v1/api/policies (issuer=<EUID_VESSEL_OWNER>, subject=<EUID_PORT_AUTHORITY>, serviceProvider=<EUID_GEOFENCE_PROVIDER>)
+    C4S->>PLQ: POST /v1/api/policies (issuer=EUID_VESSEL_ORGANIZATION, resource=SCHIP_ID, subject=EUID_PORT_AUTHORITY, serviceProvider=EUID_GEOFENCE_PROVIDER)
     PLQ-->>C4S: policy aangemaakt
     C4S->>PLQ: GET /v1/api/systems?tag=shorepower&tag=port
     PLQ-->>C4S: walstroom-dienst (incl. url)
@@ -66,7 +66,7 @@ sequenceDiagram
     Note over Ardin,E2P: Use case 2 — authenticatie (walstroom)
     Ardin->>C4S: START
     C4S->>E2P: start walstroomkast (Bearer token)
-    E2P->>PLQ: token valideren (vertrouwde deelnemer?)
+    E2P->>PLQ: token valideren
     PLQ-->>E2P: geldig
     E2P-->>C4S: OK — kast AAN
     Ardin->>C4S: STOP
@@ -92,7 +92,7 @@ sequenceDiagram
 - **Base URL:** `https://portlinq-preview.poort8.nl`
 - **Auth:** deze flow gebruikt twee tokens:
   - `ACCESS_TOKEN_SHIP` voor Connect4Shore-calls namens de Amare (bijv. `systems`, `policies`, walstroom-calls)
-  - `ACCESS_TOKEN_PROVIDER` voor GetSturdy-calls naar de AR (`explained-enforce`), met een aparte provider-app met toegang tot de NoodleBar API
+  - `ACCESS_TOKEN_PROVIDER` voor GetSturdy-calls naar het AR (`explained-enforce`), met een aparte provider-app met toegang tot de NoodleBar API
 
 > \* Later op te pakken (zie Openstaande werkzaamheden — Scheepsregister): als alternatief op de directe client credentials van de Amare kan token exchange via een externe IdP (RFC 8693) worden ingezet, waarbij Connect4Shore namens het schip handelt.
 
@@ -100,7 +100,7 @@ sequenceDiagram
 
 | Partij | Persona | Rol | Identifier (placeholder) |
 | -- | -- | -- | -- |
-| MS Amare | Alice | Schipper / schip (deelnemer) | `<EUID_VESSEL_OWNER>` |
+| MS Amare | Alice | Schipper / schip (deelnemer) | `<EUID_VESSEL_ORGANIZATION>` (eigenaar), `<SCHIP_ID>` (bijv. ENI) |
 | Port of Twente | Bob | Haven / data rights holder | `<EUID_PORT_AUTHORITY>` |
 | Ease2pay | Charlie | Walstroom | `<EUID_SHOREPOWER_PROVIDER>` |
 | ShipLogic | Charlie | HMS + havengeldberekening | `<EUID_HMS_PROVIDER>` |
@@ -110,7 +110,7 @@ sequenceDiagram
 
 **Placeholder-conventie (technische requests):** gebruik EUID-waarden in het formaat `NLNHR.<KVK_NUMMER>`, bijvoorbeeld `NLNHR.<KVK_PORT_OF_TWENTE>`. Namen zoals "Port of Twente" zijn alleen leeshulp in de uitleg.
 
-Aanvullende instance-specifieke waarden: AIS-resource `<RESOURCE_ID_GEOFENCE>` `[TBD]`.
+De geofence-policy gebruikt `<SCHIP_ID>` als `resourceId`; dit is de identifier van het schip zelf, bijvoorbeeld een ENI.
 
 ## Voorbereiding (onboarding & registratie)
 
@@ -122,7 +122,7 @@ Eenmalig vooraf; hierop draait de uitvoering.
 
 **V2 — Systemen publiceren + taggen.** Diensten worden als systemen geregistreerd en getagd: aanmeren/scheepsbezoek → `visit`, havendienst → `port`, walstroom → `shorepower`, vaartuig → `vessel`. Elk systeem krijgt een `url`.
 
-**V3 — Ontvang-endpoint voor de events (push).** Omdat we voor het **push-model** kiezen (zie Overzicht → kernkeuzes), biedt de haven/ShipLogic een **ontvang-endpoint** aan waar GetSturdy het enter-/exit-event naartoe pusht, en registreert dat. De AIS-"resource" `<RESOURCE_ID_GEOFENCE>` is verder alleen een **logische identifier** waar de policy naar wijst — geen aparte dienst die GetSturdy hoeft te exposen.
+**V3 — Ontvang-endpoint voor de events (push).** Omdat we voor het **push-model** kiezen (zie Overzicht → kernkeuzes), biedt de haven/ShipLogic een **ontvang-endpoint** aan waar GetSturdy het enter-/exit-event naartoe pusht, en registreert dat. GetSturdy gebruikt de schipidentifier `<SCHIP_ID>` uit het AIS-event als `resource` in de autorisatie-check.
 
 **V4 — Havengeldtarieven** vastleggen in het HMS (ShipLogic).
 
@@ -170,12 +170,12 @@ Content-Type: application/json
 
 {
   "useCase": "portlinq",
-  "issuerId": "<EUID_VESSEL_OWNER>",
+  "issuerId": "<EUID_VESSEL_ORGANIZATION>",
   "subjectId": "<EUID_PORT_AUTHORITY>",
   "serviceProvider": "<EUID_GEOFENCE_PROVIDER>",
   "type": "geo-fence",
   "action": "monitor",
-  "resourceId": "<RESOURCE_ID_GEOFENCE>",
+  "resourceId": "<SCHIP_ID>",
   "attribute": "*",
   "expiration": <UNIX_TIMESTAMP>
 }
@@ -195,10 +195,10 @@ Geofence enter-event (gesimuleerd, D1). GetSturdy volgt de Amare (AIS is beschik
 
 ```http
 GET https://portlinq-preview.poort8.nl/v1/api/authorization/explained-enforce
-  ?issuer=<EUID_VESSEL_OWNER>
+  ?issuer=<EUID_VESSEL_ORGANIZATION>
   &subject=<EUID_PORT_AUTHORITY>
   &serviceProvider=<EUID_GEOFENCE_PROVIDER>
-  &resource=<RESOURCE_ID_GEOFENCE>
+  &resource=<SCHIP_ID>
   &type=geo-fence
   &action=monitor
   &attribute=*

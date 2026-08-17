@@ -11,7 +11,7 @@ Deze gids is voor **Charlie** — een data service provider die API's aanbiedt i
 | API geïmplementeerd | Je hebt een API die verzoeken kan ontvangen en tokens kan valideren |
 | NoodleBar API-toegang | Voor de autorisatie-check (zie [Autorisatie valideren](autorisatie.md)) heb je een **apart geregistreerde applicatie** met toegang tot de **NoodleBar API** nodig |
 
-> **Als data service provider heb je twee rollen.** Je registreert je eigen API zodat consumers hem kunnen vinden en toegang kunnen aanvragen. Om autorisatie op inkomende verzoeken te verifiëren, treed je daarnaast op als *consumer* van de PortlinQ Authorization Registry (in het portal de **NoodleBar API**). Dat vereist een aparte applicatie met goedgekeurde toegang tot de NoodleBar API. Zie [API-toegang aanvragen](api-toegang-aanvragen.md) voor de registratiestappen.
+> **Als data service provider heb je twee rollen.** Je registreert je eigen API zodat consumers hem kunnen vinden en toegang kunnen aanvragen. Om autorisatie op inkomende verzoeken te verifiëren, treed je daarnaast op als *consumer* van het PortlinQ Authorization Registry (in het portal de **NoodleBar API**). Dat vereist een aparte applicatie met goedgekeurde toegang tot de NoodleBar API. Zie [API-toegang aanvragen](api-toegang-aanvragen.md) voor de registratiestappen.
 
 ## Validatiestappen
 
@@ -45,7 +45,7 @@ Haal de sleutels op en cache ze bij het opstarten van je applicatie. De meeste J
 
 ## Token-claims
 
-Een gedecodeerd token van een PortlinQ-consumer:
+De gedecodeerde token payload van een PortlinQ-consumer:
 
 ```json
 {
@@ -67,8 +67,8 @@ Een gedecodeerd token van een PortlinQ-consumer:
 
 | Claim | Beschrijving |
 |-------|--------------|
-| `iss` | Token issuer — moet de PortlinQ Associatieregister (ASR) zijn |
-| `aud` | Doel-audience — moet de client ID van jouw API bevatten |
+| `iss` | Token issuer — moet het PortlinQ Associatieregister (ASR) zijn |
+| `aud` | Doel-audience — moet het client ID van jouw API bevatten |
 | `exp` | Vervaltijd (Unix timestamp) |
 | `client_id` | Client ID van de consumer-applicatie |
 | `organization` | Geverifieerde organisatie-identiteit van de consumer, met één of meer identifier-types |

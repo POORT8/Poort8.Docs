@@ -56,7 +56,7 @@ Na registratie toont het portal je **client credentials**:
 | `client_id` | Unieke identifier van je applicatie |
 | `client_secret` | De secret van je applicatie |
 
-> ⚠️ **Belangrijk:** de client secret wordt maar één keer getoond. Bewaar 'm veilig (bijv. in een secrets manager). Ben je 'm kwijt, dan moet je een nieuwe genereren.
+> ⚠️ **Belangrijk:** de client secret wordt maar één keer getoond. Bewaar 'm veilig (bijv. in een secrets manager).
 
 ## API registreren (Charlie)
 

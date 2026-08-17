@@ -1,6 +1,6 @@
 # Autorisatie valideren
 
-Deze gids is voor **Charlie** — een data service provider die wil verifiëren dat inkomende dataverzoeken geautoriseerd zijn voordat hij data levert. Hij beschrijft hoe je de PortlinQ Authorization Registry (AR) bevraagt om te controleren of een geldige policy bestaat.
+Deze gids is voor **Charlie** — een data service provider die wil verifiëren dat inkomende dataverzoeken geautoriseerd zijn voordat hij data levert. Hij beschrijft hoe je het PortlinQ Authorization Registry (AR) bevraagt om te controleren of een geldige policy bestaat.
 
 ## Wanneer gebruik je dit?
 
@@ -78,10 +78,10 @@ curl -G https://portlinq-preview.poort8.nl/v1/api/authorization/explained-enforc
 | Parameter | Beschrijving | Voorbeeld |
 |-----------|--------------|-----------|
 | `issuer` | Data-rechthebbende die toegang verleende (Bob), als EUID | `NLNHR.87654321` |
-| `subject` | Organisatie die data opvraagt (David), als EUID | `NLNHR.11223344` |
-| `serviceProvider` | Jouw organisatie (Charlie), als EUID | `NLNHR.23456789` |
+| `subject` | Organisatie die data opvraagt (David), als EUID, EUID die je uit de `organization`-claim van het inkomende token hebt afgeleid | `NLNHR.11223344` |
+| `serviceProvider` | EUID van jouw organisatie (Charlie), als degene die de dienst levert  | `NLNHR.23456789` |
 | `action` | Gevraagde actie | (use-case-specifiek) |
-| `resource` | Identifier van de resource | (use-case-specifiek) |
+| `resource` | Identifier van de bevraagde resource | (use-case-specifiek) |
 | `type` | Resource-type | (use-case-specifiek) |
 | `attribute` | Data-attributen | `*` |
 | `useCase` | Use case-model | (use-case-specifiek) |
@@ -133,9 +133,7 @@ curl -G https://portlinq-preview.poort8.nl/v1/api/authorization/explained-enforc
 | Check | Vereiste |
 |-------|----------|
 | **Allowed** | `allowed` moet `true` zijn |
-| **Subject-match** | `explainPolicies[].subjectId` moet overeenkomen met de EUID die je uit de `organization`-claim van het inkomende token hebt afgeleid |
-| **Service provider** | `explainPolicies[].serviceProvider` moet overeenkomen met jouw organisatie-EUID |
-| **Resource** | `explainPolicies[].resourceId` moet overeenkomen met de bevraagde resource |
+
 
 ### Aanbevolen statuscodes richting de consumer
 

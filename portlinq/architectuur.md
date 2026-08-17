@@ -4,7 +4,7 @@ Deze pagina legt uit hoe de PortlinQ-componenten samenwerken om soeverein, gecon
 
 ## Componenten
 
-PortlinQ bestaat uit drie kerncomponenten plus de OAuth-identityprovider:
+PortlinQ bestaat uit drie kerncomponenten.
 
 ### PortlinQ Associatieregister (ASR)
 
@@ -13,19 +13,18 @@ Het **Associatieregister (ASR)** is de bron van waarheid voor deelnemers en hun 
 - **Organisatie-identiteiten** — registratie, verificatie en goedkeuring
 - **Gebruikersaccounts** — credentials, e-mailverificatie en organisatie-lidmaatschap
 - **Applicatie-registraties** — OAuth-clients voor data service consumers (David)
-- **API-registraties** — servicedefinities voor data service providers (Charlie)
+- **API-registraties** — servicedefinities van data service providers (Charlie)
 - **Toegangsbeheer** — API-niveau toegangsverleningen tussen consumers en providers
 
 Het ASR fungeert als OAuth authorization server en geeft de JWT access tokens uit die consumers aan providers presenteren.
 
 ### PortlinQ Authorization Registry (AR)
 
-De **Authorization Registry** bewaart en handhaaft policies op dataniveau:
+Het **Authorization Registry** bewaart en handhaaft policies op dataniveau:
 
-- **Organization Registry** — overzicht van alle deelnemende organisaties
 - **Policy-opslag en -handhaving** — wie welke data mag benaderen
 
-Data service providers bevragen de AR bij elk dataverzoek om te verifiëren dat de consumer geautoriseerd is.
+Data service providers bevragen het AR bij elk dataverzoek om te verifiëren dat de consumer geautoriseerd is.
 
 ### PortlinQ Identity Provider (IDP)
 
@@ -65,7 +64,7 @@ Tokens zijn kortlevend en bevatten een `organization`-claim met de geverifieerde
 
 Authenticatie beantwoordt "wie ben je?" — autorisatie beantwoordt "wat mag je?".
 
-PortlinQ gebruikt een **policy-gebaseerd** model. Zelfs met een geldig token en API-toegang wordt een dataverzoek alleen ingewilligd als er een passende policy in de Authorization Registry bestaat.
+PortlinQ gebruikt een **policy-gebaseerd** model. Zelfs met een geldig token en API-toegang wordt een dataverzoek alleen ingewilligd als er een passende policy in het Authorization Registry bestaat.
 
 ```mermaid
 sequenceDiagram
@@ -94,7 +93,7 @@ PortlinQ scheidt API-niveau toegang van dataniveau autorisatie:
 
 | Laag | Wat het regelt | Wie beslist | Wanneer |
 |------|----------------|-------------|---------|
-| **API-toegang** | Mag David's app Charlie's API überhaupt aanroepen? | Charlie (via portal) | Bij onboarding |
+| **API-toegang** | Mag David's app Charlie's API überhaupt aanroepen? | Charlie (via portal) | Bij toestaan/afwijzen van access request |
 | **Data-autorisatie** | Mag David specifieke data benaderen? | Data-rechthebbende (Bob), via policy | Per resource, op verzoek |
 
 Beide lagen moeten vervuld zijn voordat data stroomt:

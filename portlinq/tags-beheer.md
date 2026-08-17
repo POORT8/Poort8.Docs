@@ -31,7 +31,7 @@ Op dit moment zijn de volgende tags beschikbaar:
 3. Hernoem of verwijder bestaande tags wanneer de taxonomie moet veranderen
 4. Open eventueel een systeem-detailpagina om een foutief toegewezen tag te verwijderen
 
-De lijst is dataspace-breed. Data Service Providers kunnen alleen tags toewijzen die al in deze lijst staan - zie [Tags toevoegen aan je diensten](tags-toevoegen-diensten.md).
+De lijst is dataspace-breed. Data Service Providers en -Consumers kunnen alleen tags toewijzen die al in deze lijst staan - zie [Tags toevoegen aan je diensten](tags-toevoegen-diensten.md).
 
 ## Richtlijnen voor tag-namen
 

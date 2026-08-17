@@ -2,7 +2,7 @@
 
 Haven-autoriteiten ontvangen automatisch arrival- en departure-events wanneer schepen een haven-zone binnenkomen of verlaten. Een geofence-provider (Charlie) detecteert schip-bewegingen via AIS en **pusht** de events naar de haven (Bob) — maar alleen als de PortlinQ Authorization Registry (AR) bevestigt dat het schip daar consent voor heeft gegeven. De schippers-app (David) legt die consent namens het schip (Alice) vast als policy in de AR. Tijdens runtime is de flow volledig machine-to-machine.
 
-> ℹ️ **Identifiers.** Organisaties zijn EUID's (`NLNHR.{kvkNummer}`); placeholders zoals `{havenbedrijf_id}` zijn dus EUID-waarden. Een zelfstandige schip-identifier (bijv. op basis van ENI) is nog niet vastgelegd — voor nu wordt een schip vertegenwoordigd door de EUID van de eigenaar-organisatie (`{schip_id}` is een placeholder). De **issuer van de consent is het schip/de eigenaar**, niet de schipper als persoon; de schipper bedient enkel de app.
+> ℹ️ **Identifiers.** Organisaties zijn EUID's (`NLNHR.{kvkNummer}`); placeholders zoals `{havenbedrijf_id}` en `{schip_organization_id}` zijn dus EUID-waarden. `{schip_id}` identificeert het schip zelf, bijvoorbeeld met een ENI. De **issuer van de consent is de eigenaar-organisatie** (`{schip_organization_id}`), niet de schipper als persoon; het schip is de resource (`{schip_id}`).
 
 > ℹ️ **AIS-toegang staat los van PortlinQ.** Dat de geofence-provider de AIS-gegevens van het schip mag ophalen, is een aparte, doorlopende toestemming die buiten PortlinQ is geregeld (bij de AIS-bron, bijv. EuRIS). PortlinQ regelt uitsluitend of de haven het arrival/departure-event mag ontvangen.
 
@@ -30,8 +30,9 @@ sequenceDiagram
     AR-->>David: Policy aangemaakt
     David-->>Alice: Consent geregistreerd
 ```
+* Tijdens de Living Lab Demo werken de schipper app(s) met credentials van de schepen om schip-scoped token te verkrijgen.
 
-De policy zegt: het schip (issuer) staat de haven (subject) toe om, via de geofence-provider, het binnenvaren/verlaten van díe haven te ontvangen.
+De policy zegt: de eigenaar-organisatie (issuer) staat de haven (subject) toe om, via de geofence-provider, arrival- en departure-events voor het schip (resource) te ontvangen.
 
 ## Runtime: automatische events (push, M2M)
 
@@ -60,7 +61,8 @@ Voordat de geofence-provider een event pusht, controleert die bij de PortlinQ Au
 ```
 GET /v1/api/authorization/explained-enforce
   subject={havenbedrijf_id}      # de haven die het event ontvangt
-  issuer={schip_id}              # het schip/eigenaar dat toestemming gaf
+  issuer={schip_organization_id} # de eigenaar-organisatie die toestemming gaf
+  resource={schip_id}            # het schip, bijvoorbeeld ENI
   serviceProvider={charlie_id}   # de geofence-provider
   type=geo-fence
   action=monitor
@@ -73,7 +75,7 @@ GET /v1/api/authorization/explained-enforce
 
 ## Policies
 
-- **Geofence-consent** — `POST /v1/api/policies` met `type: geo-fence`, `action: monitor`, issuer = het schip (eigenaar-EUID), subject = de haven, serviceProvider = de geofence-provider.
+- **Geofence-consent** — `POST /v1/api/policies` met `type: geo-fence`, `action: monitor`, issuer = de eigenaar-organisatie (EUID), resource = het schip (bijvoorbeeld ENI), subject = de haven en serviceProvider = de geofence-provider.
 
 > ℹ️ **Rolverdeling en tags.** De schippers-app legt namens het schip de consent-policy vast in de Authorization Registry (zolang er nog geen formeel scheepsregister is). Tags zoals `port` en `shorepower` zijn alleen bedoeld voor catalogusfiltering in NoodleBar en spelen geen rol in autorisatie of consent-checks.
 
@@ -82,16 +84,14 @@ Voorbeeld request body (MS Amare → Port of Twente via Sturdy):
 ```json
 {
   "useCase": "portlinq",
-  "issuerId": "NLNHR.88837432",
+  "issuerId": "NLNHR.<KVK_SCHEEPSEIGENAAR>",
   "subjectId": "NLNHR.57518580",
   "serviceProvider": "NLNHR.88429156",
   "type": "geo-fence",
   "action": "monitor",
-  "resourceId": "NLNHR.88837432",
+  "resourceId": "<ENI_SCHIP>",
   "attribute": "*"
 }
 ```
 
-## Foutafhandeling
 
-Consent ontbreekt of is verlopen → `allowed: false`, geen event. Deelnemer niet gevonden → stop. Haven-endpoint onbereikbaar → retry met backoff.

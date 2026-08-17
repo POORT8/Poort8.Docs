@@ -51,8 +51,7 @@ De app verkrijgt een **schip-scoped token** (met exploitant-context). Dit token 
 
 De app roept het start-endpoint van de walstroom-provider aan met het token. Charlie controleert:
 
-- dat het token geldig is (uitgegeven door een vertrouwde uitgever), en
-- dat de deelnemer actief is in het ASR.
+- dat het token geldig is (uitgegeven door een vertrouwde uitgever), dit garandeert dat de deelnemer actief is in het ASR
 
 ```
 GET /v1/api/organization-registry/{exploitant_id}/validate
@@ -67,6 +66,3 @@ Bij een geldig token en een actieve deelnemer zet Charlie de kast AAN en start d
 
 De app roept het stop-endpoint aan (zelfde token). Charlie zet de kast UIT en geeft het verbruik (kWh) terug, waarmee de app het overzicht kan tonen.
 
-## Foutafhandeling
-
-Ongeldig of ontbrekend token → `401/403`. Deelnemer niet actief in ASR → geweigerd. Walstroom-provider onbereikbaar → standaard HTTP foutafhandeling (retry, timeout).

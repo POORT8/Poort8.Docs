@@ -24,7 +24,7 @@ Na registratie toont het portal je **client credentials**:
 | `client_id` | Unieke identifier van je applicatie |
 | `client_secret` | De secret van je applicatie — **bewaar veilig** |
 
-> ⚠️ **Belangrijk:** de client secret wordt maar één keer getoond. Kopieer en bewaar 'm veilig. Ben je 'm kwijt, dan moet je een nieuwe genereren.
+> ⚠️ **Belangrijk:** de client secret wordt maar één keer getoond. Kopieer en bewaar 'm veilig.
 
 ## Stap 2 — Vraag API-toegang aan
 
@@ -33,7 +33,7 @@ Na registratie toont het portal je **client credentials**:
 3. Bekijk de API-documentatie (OpenAPI-spec) om de beschikbare endpoints te begrijpen
 4. Klik op **Request Access**
 
-Je aanvraag heeft nu status **Pending**. De API-eigenaar (Charlie) wordt genotificeerd en keurt goed of af.
+Je aanvraag heeft nu status **Pending**. De API-eigenaar (Charlie) ziet de aanvraag in de self-service portal en keurt goed of af.
 
 ## Stap 3 — Vraag een access token aan
 
@@ -53,7 +53,7 @@ curl -X POST https://auth.poort8.nl/realms/portlinq-preview/protocol/openid-conn
 | `grant_type` | `client_credentials` | Altijd deze waarde voor M2M-authenticatie |
 | `client_id` | Je applicatie-client-ID | Getoond in het portal na registratie |
 | `client_secret` | Je applicatie-client-secret | Getoond in het portal na registratie |
-| `scope` | De client ID van de doel-API | Te vinden in de catalogus in het portal |
+| `scope` | Het client ID van de doel-API | Te vinden in de catalogus in het portal |
 
 **Response:**
 
