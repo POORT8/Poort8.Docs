@@ -71,8 +71,6 @@ GET /v1/api/authorization/explained-enforce
 
 `explained-enforce` retourneert altijd HTTP 200; de uitkomst zit in `allowed`. Bij `allowed: false` stopt de provider de flow en wordt er geen event gepusht.
 
-> ℹ️ **useCase.** Deze flow gebruikt `useCase: "portlinq"`, dat in de Authorization Registry op het iSHARE-model wordt afgebeeld.
-
 ## Policies
 
 - **Geofence-consent** — `POST /v1/api/policies` met `type: geo-fence`, `action: monitor`, issuer = de eigenaar-organisatie (EUID), resource = het schip (bijvoorbeeld ENI), subject = de haven en serviceProvider = de geofence-provider.
