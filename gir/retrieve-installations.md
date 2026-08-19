@@ -86,7 +86,7 @@ Filtering and authorization are two separate steps. GIR first applies your query
 | Your organization's DID matches the **registrar** who originally created the record | The registrar who registered the installation |
 | A **SupplierDelegation** policy authorizes your organization to act for another organization that itself holds an active **read policy**, and you present a matching `delegation_evidence` header scoped to that read policy | Software supplier calling on behalf of an installer that has its own read policy (see [Supplier delegation](#supplier-delegation)) |
 
-> A **write policy** alone does not grant read access to a record — only a read policy, registrar identity, or delegated read access (see below) is checked here. Write policies govern the `POST /api/GIRBasisdataMessage` endpoint, not retrieval.
+> A **write policy** alone does not grant read access to a record — only a read policy, registrar identity, or delegated read access (see below) is checked here. Write policies govern the `POST /v1/api/GIRBasisdataMessage` endpoint, not retrieval.
 
 Records that do not pass authorization are silently excluded — they do not cause an error.
 
@@ -96,7 +96,7 @@ To set up a read policy for your organization, see [Data-Consumer Flow](data-con
 
 If your organization was not the caller who obtained the read policy for a record, but you have a `SupplierDelegation` from that organization (see [Phase 2 — SupplierDelegation](digitaal-onderhoudsboekje-supplier-delegation.md)), you can still retrieve their records:
 
-1. Call `POST /api/delegation` yourself (as the software supplier), with `policyIssuer` set to the installer's DID and `target.accessSubject` set to your own DID. Scope the request to the specific `vboID` and `installationID` you want to query, with `resource.type: "GIRBasisdataMessage"`, `actions: ["read"]`, and `environment.serviceProviders: ["did:ishare:EU.NL.NTRNL-27248698"]` (Techniek Nederland's DID — GIR rejects any other value). See [Step 3: Verify the AccessRight in GIR](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md#step-3-verify-the-accessright-in-gir) for the request shape.
+1. Call `POST /v1/api/delegation` yourself (as the software supplier), with `policyIssuer` set to the installer's DID and `target.accessSubject` set to your own DID. Scope the request to the specific `vboID` and `installationID` you want to query, with `resource.type: "GIRBasisdataMessage"`, `actions: ["read"]`, and `environment.serviceProviders: ["did:ishare:EU.NL.NTRNL-27248698"]` (Techniek Nederland's DID — GIR rejects any other value). See [Step 3: Verify the AccessRight in GIR](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md#step-3-verify-the-accessright-in-gir) for the request shape.
 2. Take the resulting `delegation_token` from the response and pass it as the `delegation_evidence` header on your `GET` request.
 3. GIR validates the token and checks that its scope (VBO-ID, installation ID, action, service provider) matches the record, then evaluates the **read policy** for the delegating installer instead of your own organization. The installer must have an active read policy for the same organization that granted them access in the first place — a write-only relationship is not enough.
 
