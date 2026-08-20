@@ -54,7 +54,7 @@ sequenceDiagram
 
 | Wat je nodig hebt | Details |
 |--------------------|---------|
-| API toegang | [TBD — Auth0 client credentials, zie API docs ➚](https://bunkerconnect-preview.poort8.nl/scalar/v1) |
+| API toegang | OAuth client credentials via Keycloak (`https://auth.poort8.nl/realms/bunkerconnect-preview/protocol/openid-connect/token`), zie [API docs ➚](https://bunkerconnect-preview.poort8.nl/scalar/v1) |
 | Organisatie registratie | Je organisatie moet geregistreerd zijn in het Organization Registry |
 | Supplier diensten infrastructuur | De bunker supplier moet diensten beschikbaar hebben en een API exposeren voor reserveringen |
 

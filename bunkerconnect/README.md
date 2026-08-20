@@ -48,6 +48,11 @@ BunkerConnect is bereikbaar via:
 | Wat je nodig hebt | Waar je het vindt |
 |--------------------|-------------------|
 | **Proces begrijpen** | [Lees hierboven](#hoe-werkt-het) |
+| **Architectuur en autorisatiemodel** | [Architectuur](architectuur.md) |
+| **Organisatie registreren** | [Organisatie Registratie](onboarding.md) |
+| **Applicatie registreren** | [Self-Service Portal](self-service-portal.md) |
+| **AR-toegang aanvragen (bunker suppliers)** | [AR-toegang aanvragen](api-toegang-aanvragen.md) |
+| **Tokens en autorisatie valideren** | [Tokens valideren](access-tokens-valideren.md) en [Autorisatie valideren](autorisatie.md) |
 | **Implementatie details** | [Bunker Diensten Toegang](bunker-diensten.md) |
 | **API referentie** | [BunkerConnect API docs ➚](https://bunkerconnect-preview.poort8.nl/scalar/v1) |
 | **NoodleBar concepten** | [NoodleBar documentatie](../noodlebar/) |
