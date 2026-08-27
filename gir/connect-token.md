@@ -10,9 +10,9 @@ All GIR data endpoints require a DSGO bearer token. This guide walks you through
 
 Request a fresh DSGO bearer token before calling any of these endpoints:
 
-- `GET /v1/api/GIRBasisdataMessage`
-- `GET /v1/api/GIRBasisdataMessage/{guid}`
-- `POST /v1/api/GIRBasisdataMessage`
+- `POST /api/gir/v0/gir-basisdata-messages/_search`
+- `GET /api/gir/v0/gir-basisdata-messages/{guid}`
+- `POST /api/gir/v0/gir-basisdata-messages`
 
 Tokens expire after **3600 seconds (1 hour)**. Request a new one before the current token expires.
 
@@ -38,7 +38,7 @@ sequenceDiagram
     SAT-->>GIR: Party found, membership active
     GIR->>GIR: Validate JWT signature, claims, and replay
     GIR-->>App: 200 OK — DSGO bearer token
-    App->>GIR: GET /v1/api/GIRBasisdataMessage?vboID=...<br/>Authorization: Bearer <access_token>
+    App->>GIR: POST /api/gir/v0/gir-basisdata-messages/_search {vboID}<br/>Authorization: Bearer <access_token>
 ```
 
 ## Step 1: Create a client assertion JWT
@@ -110,9 +110,12 @@ A successful response returns HTTP `200`:
 Add the `access_token` as a `Bearer` header in all subsequent GIR data calls:
 
 ```http
-GET https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage?vboID=0344010000126888
+POST https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
 Accept: application/json
+
+{ "vboID": "0344010000126888" }
 ```
 
 The token is valid for **3600 seconds**. When it expires, repeat Steps 1 and 2 to obtain a new one.

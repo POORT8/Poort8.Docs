@@ -50,11 +50,14 @@ Verify that `resourceId`, organization identifiers, and `attribute` in the write
 Filter by installation ID to check status:
 
 ```http
-GET https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage?installationIDValue=<INSTALLATION_ID>
+POST https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search
 Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: application/json
+
+{ "installationID": "<INSTALLATION_ID>" }
 ```
 
-Use `installationIDValue` to look up the record by its installation identifier. The single-record endpoint `GET /v1/api/GIRBasisdataMessage/{guid}` requires the GIR record GUID, not the installation ID.
+Use `installationID` to look up the record by its installation identifier. The single-record endpoint `GET /api/gir/v0/gir-basisdata-messages/{guid}` requires the GIR record GUID, not the installation ID.
 
 For filtered list retrieval, see [Retrieve Multiple Installations](retrieve-installations.md) and [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
 

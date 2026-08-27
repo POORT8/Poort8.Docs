@@ -162,14 +162,14 @@ sequenceDiagram
 
     rect rgb(144, 238, 144)
     note over App,GIR: Scenario 1: Known installation GUID
-    App->>GIR: GET /v1/api/GIRBasisdataMessage/{guid}
+    App->>GIR: GET /api/gir/v0/gir-basisdata-messages/{guid}
     GIR-->>App: Single record, 403, or 404
     end
     
     rect rgb(176, 196, 222)
     note over App,GIR: Scenario 2: Search by building or metadata
-    App->>GIR: GET /v1/api/GIRBasisdataMessage?...filters...
-    GIR-->>App: Authorized list, possibly empty
+    App->>GIR: POST /api/gir/v0/gir-basisdata-messages/_search {...filters...}
+    GIR-->>App: Authorized data, possibly empty
     end
 ```
 

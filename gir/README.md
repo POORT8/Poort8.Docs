@@ -43,10 +43,10 @@ sequenceDiagram
 
 1. **Setup: Request write approval** — A registrar asks the building owner for permission to submit installation data via Keyper.
 2. **Setup: Obtain DSGO token** — The registrar obtains a DSGO bearer token by authenticating with signed credentials to the GIR `/connect/token` endpoint.
-3. **Register installation data** — The registrar submits or updates installation metadata via `POST /GIRBasisdataMessage`. Records are stored as **Active** (if approved) or **Pending** (waiting for approval).
+3. **Register installation data** — The registrar submits or updates installation metadata via `POST /api/gir/v0/gir-basisdata-messages`. Records are stored as **Active** (if approved) or **Pending** (waiting for approval).
 4. **Setup: Request read approval** — Data consumers ask the building owner for permission to access installation data via Keyper.
 5. **Setup: Obtain DSGO token** — Data consumers obtain their own DSGO bearer token.
-6. **Retrieve installation data** — Data consumers query installations via `GET /GIRBasisdataMessage` or `GET /GIRBasisdataMessage/{guid}` and receive only records they are authorized to access.
+6. **Retrieve installation data** — Data consumers query installations via `POST /api/gir/v0/gir-basisdata-messages/_search` or `GET /api/gir/v0/gir-basisdata-messages/{guid}` and receive only records they are authorized to access. The legacy `/v1/api/GIRBasisdataMessages` routes have been removed; see the [Changelog](changelog.md).
 7. **Verification** — Installation records transition to **Active** after policy approval and are visible to all authorized parties.
 
 ## Data Transactions

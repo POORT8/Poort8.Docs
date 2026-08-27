@@ -29,7 +29,7 @@ views {
     variant sequence
 
     inst -> ds 'Data request with componentId'
-    ds -> gir 'GET /v1/api/GIRBasisdataMessage?componentID=<COMPONENT_ID>'
+    ds -> gir 'POST /api/gir/v0/gir-basisdata-messages/_search {componentIdValue}'
     gir -> ds 'GIRBasisdataMessage (installationId + manufacturer info)'
     ds -> gir 'POST /v1/api/delegation — check installer + installationId'
     gir -> ds 'Delegation evidence (Permit or Deny)'
@@ -40,17 +40,20 @@ views {
 
 ## Technical Implementation
 
-### Step 1 — Query GIR by componentID
+### Step 1 — Search GIR by componentIdValue
 
-Query GIR for `GIRBasisdataMessage` using the bearer token from Phase 2 and the installer-provided `componentID`. The response includes `installationBaseData.installationID` and `component[].productInformation.manufacturerName` used in the final response to the installer.
+Search GIR for `GIRBasisdataMessage` using the bearer token from Phase 2 and the installer-provided component id. The response includes `installationBaseData.installationID` and `component[].productInformation.manufacturerName` used in the final response to the installer.
 
 ```http
-GET https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage?componentID=<COMPONENT_ID>
+POST https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search
 Authorization: Bearer <DSGO_ACCESS_TOKEN>
+Content-Type: application/json
 Accept: application/json
+
+{ "componentIdValue": "<COMPONENT_ID>" }
 ```
 
-`componentID` queries may return non-unique results. Handling these edge cases is the responsibility of the data service provider.
+`componentIdValue` searches may return non-unique results. Handling these edge cases is the responsibility of the data service provider.
 
 ### Step 2 — Check the delegation policy in GIR
 

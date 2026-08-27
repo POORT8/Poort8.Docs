@@ -28,34 +28,42 @@ This step queries GIR for existing `GIRBasisdataMessage` registrations on the se
 Query the GIR endpoint for all `GIRBasisdataMessage` records matching the selected VBO-id:
 
 ```http
-GET https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessages?vboID=<VBO_ID>
+POST https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search
 Authorization: Bearer <DSGO_ACCESS_TOKEN>
+Content-Type: application/json
+
+{ "vboID": "<VBO_ID>" }
 ```
 
 Response:
 
 ```json
 {
-  "items": [
+  "data": [
     {
       "guid": "<GUID>",
-      "installationID": "<INSTALLATION_ID>",
-      "metadata": {
-        "issuer": "did:ishare:EU.NL.NTRNL-<PREVIOUS_INSTALLER_KVK>",
-        "createdAt": "2026-01-15T10:30:00Z",
-        "updatedAt": "2026-07-20T14:45:00Z",
-        "status": "Active"
-      },
+      "registrarChamberOfCommerceNumber": "<REGISTRAR_KVK>",
       "installationBaseData": {
+        "installationID": { "value": "<INSTALLATION_ID>", "type": "GUID" },
         "installationOwnerChamberOfCommerceNumber": "<OWNER_KVK>",
         "installationLocation": {
           "vboID": "<VBO_ID>"
         },
         "classifications": [...]
+      },
+      "metadata": {
+        "issuer": "did:ishare:EU.NL.NTRNL-<PREVIOUS_INSTALLER_KVK>",
+        "createdAt": "2026-01-15T10:30:00Z",
+        "updatedAt": "2026-07-20T14:45:00Z",
+        "status": "Active"
       }
-    },
-    ...
-  ]
+    }
+  ],
+  "meta": {
+    "nextCursor": null,
+    "limit": 100,
+    "totalItems": 1
+  }
 }
 ```
 

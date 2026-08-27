@@ -6,12 +6,13 @@ GIR is built on top of NoodleBar and uses two separate API versioning tracks.
 
 GIR's own endpoints are versioned independently:
 
-- `POST /v1/api/GIRBasisdataMessage` — Register or update installation data
-- `GET /v1/api/GIRBasisdataMessage` — Retrieve a list of installations
-- `GET /v1/api/GIRBasisdataMessage/{guid}` — Retrieve a single installation
+- `POST /api/gir/v0/gir-basisdata-messages` — Register or update installation data
+- `POST /api/gir/v0/gir-basisdata-messages/_search` — Retrieve a list of installations with filtering (search) options
+- `GET /api/gir/v0/gir-basisdata-messages/{guid}` — Retrieve a single installation
 - `POST /connect/token` — Obtain a DSGO bearer token
 
-These endpoints currently support **v1**. Breaking changes to these endpoints will increment their version number independently of NoodleBar.
+The DICO specification version (currently `v0.102`) is tracked separately from the endpoint version above and is not part of the URL.
+See the [Changelog](changelog.md) for breaking changes.
 
 ## NoodleBar Endpoints
 

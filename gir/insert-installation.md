@@ -1,4 +1,4 @@
-# Post a GIRBasisdataMessage (`POST /v1/api/GIRBasisdataMessage`)
+# Post a GIRBasisdataMessage (`POST /api/gir/v0/gir-basisdata-messages`)
 
 🔗 [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
 🔗 [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
@@ -27,7 +27,7 @@ sequenceDiagram
     participant Keyper as Keyper API
     participant Owner as Installation Owner
 
-    App->>GIR: POST /v1/api/GIRBasisdataMessage
+    App->>GIR: POST /api/gir/v0/gir-basisdata-messages
     GIR->>GIR: Validate DSGO token and payload
     GIR->>GIR: Check existing write authorization for registrar and VBO-ID
 
@@ -49,7 +49,7 @@ sequenceDiagram
 ## Request
 
 ```http
-POST https://gir-preview.poort8.nl/v1/api/GIRBasisdataMessage
+POST https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages
 Authorization: Bearer <ACCESS_TOKEN>
 Content-Type: application/json
 Accept: application/json
@@ -89,7 +89,6 @@ This example includes the minimum practical fields needed to pass the endpoint v
 		},
 		"component": [
 			{
-				"componentLineGUID": "c5e8f9a2-b7d4-4c1e-9f23-456789abcdef",
 				"productInformation": {
 					"etimClassification": {
 						"etimClassCode": "EC000123",
@@ -184,7 +183,6 @@ These are the most common reasons GIR rejects a POST request with `400 Bad Reque
 | `installationBaseData.installationLocation.installationLocationID` | If present, each `type` may only occur once |
 | `installationBaseData.installationInformation.energyConnectionID` | If present, must be exactly 18 characters |
 | `installationBaseData.component` | At least one component is required |
-| `component[].componentLineGUID` | Must be exactly 36 characters |
 | `component[].productInformation.etimClassification.etimClassCode` | Must match `EC` followed by 6 digits |
 
 Two validation details matter operationally:
