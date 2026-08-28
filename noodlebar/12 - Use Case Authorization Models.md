@@ -18,7 +18,7 @@ The registry resolves a use case string to an authorization model in two steps:
 1. **Exact match** — look up the full use case string (case-insensitive).
 2. **Family fallback** — if no exact match is found, take the part before the first `.` and look that up.
 
-This means a use case like `portlinq.default` resolves to `portlinq` → `ishare`, and `dsgo.gir` resolves to `dsgo` → `isharerules`. You can therefore add new use cases within an existing family without any configuration changes — the family entry covers them automatically.
+This means a use case like `portlinq.default` resolves to `portlinq` → `ishare`, and `dsgo.gir-registrar` resolves to `dsgo` → `isharerules`. You can therefore add new use cases within an existing family without any configuration changes — the family entry covers them automatically.
 
 If neither the full use case nor its family prefix is in the table, the registry defaults to `default`.
 
@@ -57,7 +57,7 @@ This means a policy created for one sub-flow authorizes a request made under any
 sub-flow in the same family, and an explained-enforce response can return a policy whose
 stored `useCase` differs from the requested one. For example, a policy stored with
 `useCase: "dsgo.gir-onderhoudsboekje"` also authorizes — and can be returned as the
-explaining policy for — a request enforced with `useCase: "dsgo.gir"`, `"dsgo.gir-datastekker"`,
+explaining policy for — a request enforced with `useCase: "dsgo.gir-registrar"`, `"dsgo.gir-datastekker"`,
 or any other `dsgo.*` value, because all of them share the root `dsgo`. The same applies to
 resource group and subject group membership: group membership recorded under one `dvu.*`
 sub-flow resolves requests from any other `dvu.*` sub-flow.
@@ -65,7 +65,7 @@ sub-flow resolves requests from any other `dvu.*` sub-flow.
 **Security implication:** sub-flows sharing a family root are **not** isolated from each
 other for authorization purposes. Do not rely on the dotted suffix to separate access
 between sub-flows of the same use case family — a policy scoped to `dsgo.gir-datastekker`
-is also usable for `dsgo.gir` requests and vice versa. Use cases that require strict
+is also usable for `dsgo.gir-registrar` requests and vice versa. Use cases that require strict
 mutual isolation must use distinct root prefixes (a new top-level entry in the mapping
 table above), not dotted variants of the same root.
 
