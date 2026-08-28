@@ -7,9 +7,12 @@
 Keyper coordinates approvals between a **requester** (who prepares a set of transactions) and an **approver** (who must authorize them on behalf of an organization). These transactions can include:
 
 - issuing access rights (e.g., iSHARE policies);
+- extending the validity of, or revoking, previously issued access rights;
 - adding employees to a dataspace organization;
 - registering an organization in official dataspace registries (like OR or AR);
 - registering resources or resource groups with attached metadata (e.g., endpoints, licenses, terms of use).
+
+An approval link can combine multiple transaction types in one request, for example issuing new access rights alongside extending or revoking existing ones.
 
 The flow is triggered by creating an **approval link**, which leads the user to a UI where they can inspect and approve the requested transactions, using an authentication method such as eHerkenning or email verification.
 

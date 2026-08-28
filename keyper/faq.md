@@ -18,9 +18,12 @@ Keyper coordinates approvals for dataspace transactions between a **requester** 
 Keyper can handle various dataspace transactions including:
 
 - Issuing access rights (e.g., iSHARE policies)
+- Extending the validity of, or revoking, previously issued access rights
 - Adding employees to dataspace organizations
 - Registering organizations in official dataspace registries (OR/AR)
 - Registering resources or resource groups with metadata
+
+A single approval link can combine multiple transaction types, such as issuing new access rights while extending or revoking existing ones.
 
 ## What orchestration features are available?
 
