@@ -85,6 +85,7 @@ Content-Type: application/json
     {
       "type": "GIRMaintenanceLog",
       "action": "*",
+      "license": "DSGO.0010",
       "issuerId": "did:ishare:EU.NL.NTRNL-<NI_KVK>",
       "subjectId": "did:ishare:EU.NL.NTRNL-<SW2_KVK>",
       "serviceProvider": "*",
@@ -96,6 +97,7 @@ Content-Type: application/json
     {
       "type": "GIRBasisdataMessage",
       "action": "*",
+      "license": "DSGO.0010",
       "issuerId": "did:ishare:EU.NL.NTRNL-<NI_KVK>",
       "subjectId": "did:ishare:EU.NL.NTRNL-<SW2_KVK>",
       "serviceProvider": "*",
@@ -119,7 +121,7 @@ On approval, Keyper registers one `SupplierDelegation` policy per selected data 
 {
   "type": "GIRMaintenanceLog",
   "action": "*",
-  "license": "[PLACEHOLDER]",
+  "license": "DSGO.0010",
   "issuedAt": "<UNIX TIMESTAMP>",
   "issuerId": "did:ishare:EU.NL.NTRNL-<NI KVK>",
   "subjectId": "did:ishare:EU.NL.NTRNL-<SW2 KVK>",
@@ -158,9 +160,3 @@ The New Installation Service Company can revoke a `SupplierDelegation` themselve
 For the full authorization check flow, including how to handle the case where a software supplier calls on behalf of the New Installation Service Company, see [Step 3: Verify the AccessRight in GIR](https://docs.poort8.nl/#/gir/digitaal-onderhoudsboekje-m2m-maintenance-data-transfer?id=step-3-verify-the-accessright-in-gir).
 
 > This describes the generic third-party data service pattern (e.g. `GIRMaintenanceLog`), where combined `AccessRight` + `SupplierDelegation` resolution is not yet implemented. For a software supplier retrieving **GIR's own** `GIRBasisdataMessage` records on behalf of an installer, GIR instead supports a `delegation_evidence` header on its `GET` endpoints today — see [Supplier delegation](retrieve-installations.md#supplier-delegation) in the retrieval docs.
-
-## Known blockers
-
-| Blocker | Description | Status |
-|---------|-------------|--------|
-| **`license` field value** | The license identifier to use has not been finalized. | Open |

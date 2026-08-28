@@ -59,7 +59,8 @@ Content-Type: application/json
     "addPolicyTransactions": [
         {
             "type": "GIRBasisdataMessage",
-            "action": "write",
+            "action": "can_write",
+            "license": "DSGO.0010",
             "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
             "subjectId": "did:ishare:EU.NL.NTRNL-<REGISTRAR_KVK>",
             "resourceId": "<BAG_VBO_ID_16_DIGITS>",
@@ -67,7 +68,7 @@ Content-Type: application/json
             "serviceProvider": "did:ishare:EU.NL.NTRNL-<GIR_ORG_ID>"
         }
     ],
-    "orchestration": { "flow": "dsgo.gir@v1" }
+    "orchestration": { "flow": "dsgo.gir-registrar@v1" }
 }
 ```
 

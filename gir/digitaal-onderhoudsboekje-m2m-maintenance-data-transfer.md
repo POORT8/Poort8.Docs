@@ -91,7 +91,7 @@ Content-Type: application/json
             "identifiers": ["<INSTALLATION_ID>"],
             "attributes": ["*"]
           },
-          "actions": ["read"],
+          "actions": ["can_read"],
           "environment": {
             "serviceProviders": ["did:ishare:EU.NL.NTRNL-<YOUR_KVK>"]
           }

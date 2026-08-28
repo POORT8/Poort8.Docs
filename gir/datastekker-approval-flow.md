@@ -51,8 +51,7 @@ Before calling Keyper, TechniekNederland collects the following information:
 | Building owner KvK | KvK number of the owner who must approve |
 | Building owner email | Recipient of the Keyper approval link |
 | Validity period | Start and end date of the requested access |
-| Data-element set | Which performance data becomes accessible — see [Open Question 4](datastekker.md#open-questions) |
-| License conditions | Terms of use — see [Open Question 5](datastekker.md#open-questions) |
+| Data-element set | Which performance data becomes accessible — see [Predefined data-element sets](datastekker.md#potential-future-extensions) |
 
 > ℹ️ The form may optionally query GIR first to display the installations registered at the given building. See [Retrieve Multiple Installations](retrieve-installations.md).
 
@@ -85,8 +84,8 @@ Content-Type: application/json
   "addPolicyTransactions": [
     {
       "type": "GIRDatastekkerAccess",
-      "action": "read",
-      "license": "[PLACEHOLDER]",
+      "action": "can_read",
+      "license": "DSGO.0010",
       "issuedAt": "<UNIX_TIMESTAMP>",
       "issuerId": "did:ishare:EU.NL.NTRNL-<BUILDING_OWNER_KVK>",
       "attribute": "*",

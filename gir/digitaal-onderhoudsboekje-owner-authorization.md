@@ -91,11 +91,12 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
   },
   "addPolicyTransactions": [
     {
-      "type": "vboID",
-      "action": "read",
+      "type": "GIRMaintenanceLog",
+      "action": "can_read",
+      "license": "DSGO.0010",
       "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
       "subjectId": "did:ishare:EU.NL.NTRNL-<NEW_INSTALLER_KVK>",
-      "serviceProvider": "did:ishare:EU.NL.NTRNL-27248698",
+      "serviceProvider": "*",
       "resourceId": "<VBOID>",
       "attribute": "*",
       "notBefore": "<UNIX TIMESTAMP>",
@@ -113,11 +114,3 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
 > **NL/SfB scoping**: to restrict access to specific NL/SfB classifications, add a `rules` field to the transaction, e.g. `"rules": "Classificaties(NLSfB-52.16,NLSfB-52.20)"`. Multiple codes are OR-matched. `rules` and `attribute` are independent conditions — GIR checks the classification it has itself registered for each installation and matches it against `rules` regardless of the `attribute` value; the requester cannot set the classification directly. `attribute` has its own, separate use: setting it to a specific installation id (instead of `"*"`) restricts the policy to that one installation, with or without a `rules` filter — see [Authorization scope](digitaal-onderhoudsboekje.md#authorization-scope).
 
 🔗 [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
-
----
-
-## Known blockers
-
-| Blocker | Description | Status |
-|---------|-------------|--------|
-| **`license` field value** | The license identifier to use in `addPolicyTransactions` has not been finalized. | Open |

@@ -80,7 +80,7 @@ Content-Type: application/json
                 "identifiers": ["<INSTALLATION_ID>"],
                 "attributes": ["*"]
               },
-              "actions": ["read"],
+              "actions": ["can_read"],
               "environment": {
                 "serviceProviders": ["did:ishare:EU.NL.NTRNL-<2BA_KVK>"]
               }
@@ -111,7 +111,7 @@ GIR returns a `delegationEvidence` object:
         "maxDelegationDepth": 0,
         "target": {
           "environment": {
-            "licenses": ["[PLACEHOLDER]"]
+            "licenses": ["DSGO.0010"]
           }
         },
         "policies": [
@@ -122,7 +122,7 @@ GIR returns a `delegationEvidence` object:
                 "identifiers": ["<INSTALLATION_ID>"],
                 "attributes": ["*"]
               },
-              "actions": ["read"],
+              "actions": ["can_read"],
               "environment": {
                 "serviceProviders": ["did:ishare:EU.NL.NTRNL-<2BA_KVK>"]
               }

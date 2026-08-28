@@ -1,8 +1,6 @@
 # Datastekker – Installer Access Flow
 
 > **⚠️ Design document — not ready for implementation**
->
-> Several open questions remain unresolved (see [Open Questions](#open-questions)), in particular license conditions.
 
 Datastekker (developed by 2BA) retrieves performance data from installation manufacturers and translates it into uniform performance data using the Heatpump Common Ontology. To access this data, an installer needs explicit consent from the building owner. GIR manages that authorization.
 
@@ -81,16 +79,9 @@ views {
 | `resourceId` / `identifiers` | vboId (building level) or installationId (installation level). Consent at building level covers all its installations. | Required |
 | `notBefore` / `expiration` | Validity period of the granted access | Required |
 | `type` | Resource type identifier: `GIRDatastekkerAccess` | Required |
-| `action` | Permitted action: `read` | Required |
+| `action` | Permitted action: `can_read` | Required |
 | `attribute` | `*` (wildcard); future: predefined dataset identifier — see [Potential future extensions](#potential-future-extensions) | `*` |
-| `license` | License identifier for terms of use — see [Open Question 5](#open-questions) | `[PLACEHOLDER]` |
-
-## Open questions
-
-The following points are unresolved and must be answered before the integration can be fully specified.
-
-**License conditions**
-Which license conditions apply to performance data? Relevant considerations: obligation to delete data after use, prohibition on re-use or onward sharing, GDPR requirements for buildings with occupants.
+| `license` | License identifier for terms of use | `DSGO.0010` |
 
 ## Potential future extensions
 
