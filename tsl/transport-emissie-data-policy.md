@@ -14,7 +14,7 @@ Voor applicaties van een **data-rechthebbende (issuer)** die:
 - een dataservice consumer willen machtigen voor een specifiek klantnummer;
 - de issuer van de policy zelf zijn — je machtigt namens je eigen organisatie.
 
-Deze gids beschrijft niet de Keyper approval-flow. De nadruk ligt op het standaardpad (aanmaken voor je eigen organisatie); delegated/trusted varianten worden hieronder alleen op hoofdlijnen benoemd.
+Deze pagina beschrijft alleen het standaardpad (aanmaken voor je eigen organisatie); delegated/trusted varianten worden hieronder alleen op hoofdlijnen benoemd. De Keyper approval-flow komt elders in de TSL-documentatie aan bod, zie [Transport Emissie Data via Keyper](transport-emissie-data-keyper.md).
 
 ## Rollen in deze usecase
 

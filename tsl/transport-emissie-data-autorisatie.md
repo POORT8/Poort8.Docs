@@ -14,7 +14,7 @@ Deze gids is voor datadienst-aanbieders die:
 - moeten verifiëren of een dataservice consumer geautoriseerd is om emissiedata voor een specifiek klantnummer op te halen;
 - het NoodleBar/TSL autorisatiepatroon willen implementeren via `explained-enforce`.
 
-De gids beschrijft niet hoe policies worden aangemaakt via Keyper of de approval-flow, en ook niet hoe BigMile intern emissies berekent.
+Deze pagina beschrijft alleen de autorisatiecontrole via `explained-enforce`. Het aanmaken van de policy en hoe BigMile intern emissies berekent, komen elders in de TSL-documentatie aan bod: zie [Transport Emissie Data via Keyper](transport-emissie-data-keyper.md) voor de Keyper approval-flow en [Policy inschieten als issuer](transport-emissie-data-policy.md) voor het rechtstreekse pad.
 
 ## Rollen in deze usecase
 
@@ -304,7 +304,7 @@ Voordat de enforcement-flow werkt, moet het volgende zijn ingericht:
 | Wegvervoerder geregistreerd in het Participantenregister met identity en klantnummercontext | Wegvervoerder / Poort8 |
 | VAA / GreenlinQ geregistreerd in het Participantenregister, inclusief app | VAA / Poort8 |
 | VAA heeft API-toegang aangevraagd tot de BigMile API | VAA via de catalogus |
-| Policy aangemaakt in het Autorisatieregister voor `transport-emissie-data`, resource = klantnummer | Approval-flow / Keyper |
+| Policy aangemaakt in het Autorisatieregister voor `transport-emissie-data`, resource = klantnummer | [Approval-flow / Keyper](transport-emissie-data-keyper.md) of [rechtstreeks via de API](transport-emissie-data-policy.md) |
 | Testdataset beschikbaar in BigMile | BigMile |
 | Testscenario zonder passende policy | BigMile / Poort8 |
 

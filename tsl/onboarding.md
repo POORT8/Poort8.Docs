@@ -342,4 +342,5 @@ Content-Type: application/json
 ## Gerelateerde pagina's
 
 - [Transport Emissie Data Autorisatie](transport-emissie-data-autorisatie.md) — Gedetailleerde implementatiegids voor de transport-emissie usecase
+- [Transport Emissie Data via Keyper](transport-emissie-data-keyper.md) — Toestemming vragen via een Keyper-goedkeuringslink in plaats van rechtstreeks via de API
 - [TSL API Documentatie ➚](https://tsl.poort8.nl/scalar/v1) — Interactieve API-referentie
