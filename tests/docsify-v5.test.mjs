@@ -10,16 +10,16 @@ const indexHtml = await readFile(
 
 function loadCodeRenderer() {
   const match = indexHtml.match(
-    /code: (function\(token\) \{[\s\S]*?\r?\n          \})\r?\n        \}/,
+    /code: ((?:async\s+)?function\(token\) \{[\s\S]*?\r?\n          \})\r?\n        \}/,
   );
 
   assert.ok(match, 'Docsify code renderer must use the v5 token signature');
   const mermaidCalls = [];
   const context = vm.createContext({
     mermaid: {
-      render(id, text) {
+      async render(id, text) {
         mermaidCalls.push({ id, text });
-        return `<svg>${text}</svg>`;
+        return { svg: `<svg>${text}</svg>` };
       },
     },
     num: 0,
@@ -68,7 +68,7 @@ test('preserves required navigation behavior', () => {
   );
 });
 
-test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', () => {
+test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', async () => {
   const { mermaidCalls, renderCode } = loadCodeRenderer();
   const context = {
     origin: {
@@ -77,21 +77,21 @@ test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', () => {
   };
 
   assert.equal(
-    renderCode.call(context, { text: 'flowchart LR; A-->B', lang: 'mermaid' }),
+    await renderCode.call(context, { text: 'flowchart LR; A-->B', lang: 'mermaid' }),
     '<div class="mermaid"><svg>flowchart LR; A-->B</svg></div>',
   );
   assert.deepEqual(mermaidCalls, [
     { id: 'mermaid-svg-0', text: 'flowchart LR; A-->B' },
   ]);
   assert.equal(
-    renderCode.call(context, {
+    await renderCode.call(context, {
       text: '// view: overview\nview overview {}',
       lang: 'likec4',
     }),
     '<likec4-view class="likec4-embed" view-id="overview" dynamic-variant="sequence"></likec4-view>',
   );
   assert.equal(
-    renderCode.call(context, { text: 'const answer = 42;', lang: 'js' }),
+    await renderCode.call(context, { text: 'const answer = 42;', lang: 'js' }),
     'fallback:const answer = 42;',
   );
 });
