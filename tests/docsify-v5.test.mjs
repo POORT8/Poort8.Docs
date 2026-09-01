@@ -115,7 +115,7 @@ test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', () => {
   // Mermaid source is emitted escaped and rendered later, from a placeholder.
   assert.equal(
     renderCode.call(context, { text: 'flowchart LR; A-->B', lang: 'mermaid' }),
-    '<pre class="mermaid">flowchart LR; A--&gt;B</pre>',
+    '<div class="mermaid-diagram"><button type="button" class="diagram-expand" aria-label="Open diagram in larger view">Expand</button><pre class="mermaid">flowchart LR; A--&gt;B</pre></div>',
   );
   assert.equal(
     renderCode.call(context, {
@@ -128,6 +128,17 @@ test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', () => {
     renderCode.call(context, { text: 'const answer = 42;', lang: 'js' }),
     'fallback:const answer = 42;',
   );
+});
+
+test('keeps LikeC4 embeds compact and provides a Mermaid pop-out', () => {
+  assert.match(
+    indexHtml,
+    /height:\s*clamp\(420px,\s*60vh,\s*640px\)/,
+  );
+  assert.doesNotMatch(indexHtml, /min-height:\s*720px/);
+  assert.match(indexHtml, /function installMermaidPopOuts\(\)/);
+  assert.match(indexHtml, /dialog\.showModal\(\)/);
+  assert.match(indexHtml, /className = 'diagram-popout'/);
 });
 
 test('renders every Mermaid placeholder with a unique id', () => {
@@ -185,6 +196,7 @@ test('renders Mermaid and loads LikeC4 bundles after each page load', () => {
 
   assert.ok(doneEach, 'plugin must register a doneEach hook');
   assert.match(doneEach[1], /renderMermaidDiagrams\(\);/);
+  assert.match(doneEach[1], /installMermaidPopOuts\(\);/);
   assert.match(doneEach[1], /loadBundleForRoute\(window\.location\.hash \|\| '\/'\);/);
   assert.match(doneEach[1], /applyLikeC4OverlayFix\(\);/);
 });
