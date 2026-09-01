@@ -21,8 +21,30 @@
   <div id="app"></div>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@9.3.0/dist/mermaid.min.js"></script>
   <script>
-    var num = 0;
+    var mermaidIndex = 0;
     mermaid.initialize({ startOnLoad: false });
+
+    function renderMermaidDiagrams() {
+      var nodes = document.querySelectorAll('.mermaid:not([data-processed])');
+      Array.prototype.forEach.call(nodes, function(node) {
+        var code = node.textContent.trim();
+        node.setAttribute('data-processed', 'true');
+
+        // Render each diagram ourselves instead of using mermaid.init(): the ids
+        // that init() generates come from Date.now(), so diagrams rendered in the
+        // same millisecond share an id. Mermaid's renderers look the SVG up by a
+        // document-wide id selector, which leaves every diagram but the first
+        // without its viewBox and sizing (it renders blank).
+        try {
+          mermaid.render('mermaid-svg-' + mermaidIndex++, code, function(svg) {
+            node.innerHTML = svg;
+          }, node);
+        } catch (err) {
+          // Keep a broken diagram from aborting the rest of the doneEach hook.
+          console.error('Mermaid render failed', err);
+        }
+      });
+    }
 
     function installLikeC4OverlayFix(host) {
       if (!host || host.dataset.p8Likec4Fixed === 'true') {
@@ -112,15 +134,15 @@
       },
       markdown: {
         renderer: {
-          code: async function(token) {
+          code: function(token) {
             var code = token.text;
             var lang = token.lang;
             if (lang === "mermaid") {
-              var rendered = await mermaid.render('mermaid-svg-' + num++, code);
-              var svg = rendered && typeof rendered === 'object' && typeof rendered.svg === 'string'
-                ? rendered.svg
-                : String(rendered);
-              return '<div class="mermaid">' + svg + '</div>';
+              var escapedCode = code
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+              return '<pre class="mermaid">' + escapedCode + '</pre>';
             }
             if (lang === "likec4") {
               // Allow explicit view selection via first-line directive: // view: <id>
@@ -130,12 +152,12 @@
                 viewId = directiveMatch[1];
               } else {
                 var autoMatch = code.match(/\bview\s+(\w+)/);
-                if (!autoMatch) return await this.origin.code.call(this, token);
+                if (!autoMatch) return this.origin.code.call(this, token);
                 viewId = autoMatch[1];
               }
               return '<likec4-view class="likec4-embed" view-id="' + viewId + '" dynamic-variant="sequence"></likec4-view>';
             }
-            return await this.origin.code.call(this, token);
+            return this.origin.code.call(this, token);
           }
         }
       },
@@ -162,6 +184,7 @@
           }
 
           hook.doneEach(function() {
+            renderMermaidDiagrams();
             loadBundleForRoute(window.location.hash || '/');
             applyLikeC4OverlayFix();
           });

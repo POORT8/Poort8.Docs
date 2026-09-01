@@ -9,25 +9,61 @@ const indexHtml = await readFile(
 );
 
 function loadCodeRenderer() {
+  // Docsify v5 compiles Markdown synchronously, so an `async` renderer resolves
+  // into the page as the string "[object Promise]". Pin the sync signature.
   const match = indexHtml.match(
-    /code:\s*((?:async\s+)?function\(token\)\s*\{[\s\S]*?\r?\n\s*\})\s*\}/,
+    /code:\s*(function\(token\)\s*\{[\s\S]*?\r?\n\s*\})\s*\}/,
   );
 
-  assert.ok(match, 'Docsify code renderer must use the v5 token signature');
-  const mermaidCalls = [];
-  const context = vm.createContext({
-    mermaid: {
-      async render(id, text) {
-        mermaidCalls.push({ id, text });
-        return { svg: `<svg>${text}</svg>` };
-      },
-    },
-    num: 0,
-  });
+  assert.ok(match, 'Docsify code renderer must use the sync v5 token signature');
 
   return {
-    mermaidCalls,
-    renderCode: vm.runInContext(`(${match[1]})`, context),
+    renderCode: vm.runInNewContext(`(${match[1]})`),
+  };
+}
+
+function loadMermaidRenderer(renderImpl) {
+  const match = indexHtml.match(
+    /(function renderMermaidDiagrams\(\) \{[\s\S]*?\r?\n {4}\})/,
+  );
+
+  assert.ok(match, 'index.html must define renderMermaidDiagrams()');
+
+  const nodes = [];
+  const renderCalls = [];
+  const context = vm.createContext({
+    Array,
+    mermaidIndex: 0,
+    console: { error() {} },
+    document: {
+      querySelectorAll: () =>
+        nodes.filter(node => !('data-processed' in node.attributes)),
+    },
+    mermaid: {
+      render(id, code, callback) {
+        renderCalls.push({ id, code });
+        renderImpl(id, code, callback);
+      },
+    },
+  });
+
+  vm.runInContext(match[1], context);
+
+  return {
+    renderCalls,
+    addNode(text) {
+      const node = {
+        textContent: text,
+        innerHTML: text,
+        attributes: {},
+        setAttribute(name, value) {
+          this.attributes[name] = value;
+        },
+      };
+      nodes.push(node);
+      return node;
+    },
+    render: () => vm.runInContext('renderMermaidDiagrams()', context),
   };
 }
 
@@ -68,30 +104,87 @@ test('preserves required navigation behavior', () => {
   );
 });
 
-test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', async () => {
-  const { mermaidCalls, renderCode } = loadCodeRenderer();
+test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', () => {
+  const { renderCode } = loadCodeRenderer();
   const context = {
     origin: {
       code: token => `fallback:${token.text}`,
     },
   };
 
+  // Mermaid source is emitted escaped and rendered later, from a placeholder.
   assert.equal(
-    await renderCode.call(context, { text: 'flowchart LR; A-->B', lang: 'mermaid' }),
-    '<div class="mermaid"><svg>flowchart LR; A-->B</svg></div>',
+    renderCode.call(context, { text: 'flowchart LR; A-->B', lang: 'mermaid' }),
+    '<pre class="mermaid">flowchart LR; A--&gt;B</pre>',
   );
-  assert.deepEqual(mermaidCalls, [
-    { id: 'mermaid-svg-0', text: 'flowchart LR; A-->B' },
-  ]);
   assert.equal(
-    await renderCode.call(context, {
+    renderCode.call(context, {
       text: '// view: overview\nview overview {}',
       lang: 'likec4',
     }),
     '<likec4-view class="likec4-embed" view-id="overview" dynamic-variant="sequence"></likec4-view>',
   );
   assert.equal(
-    await renderCode.call(context, { text: 'const answer = 42;', lang: 'js' }),
+    renderCode.call(context, { text: 'const answer = 42;', lang: 'js' }),
     'fallback:const answer = 42;',
   );
+});
+
+test('renders every Mermaid placeholder with a unique id', () => {
+  const renderer = loadMermaidRenderer((id, code, callback) => {
+    callback(`<svg id="${id}">${code}</svg>`);
+  });
+  const first = renderer.addNode('flowchart LR; A-->B');
+  const second = renderer.addNode('flowchart LR; C-->D');
+
+  renderer.render();
+
+  // Mermaid's renderers look their SVG up with a document-wide id selector, so
+  // reused ids leave every diagram but the first without a viewBox (blank).
+  assert.deepEqual(
+    renderer.renderCalls.map(call => call.id),
+    ['mermaid-svg-0', 'mermaid-svg-1'],
+  );
+  assert.deepEqual(
+    renderer.renderCalls.map(call => call.code),
+    ['flowchart LR; A-->B', 'flowchart LR; C-->D'],
+  );
+  assert.equal(first.innerHTML, '<svg id="mermaid-svg-0">flowchart LR; A-->B</svg>');
+  assert.equal(second.innerHTML, '<svg id="mermaid-svg-1">flowchart LR; C-->D</svg>');
+  assert.equal(first.attributes['data-processed'], 'true');
+
+  // Re-running after a route change must not re-render or reuse ids.
+  const third = renderer.addNode('flowchart LR; E-->F');
+  renderer.render();
+  assert.deepEqual(
+    renderer.renderCalls.map(call => call.id),
+    ['mermaid-svg-0', 'mermaid-svg-1', 'mermaid-svg-2'],
+  );
+  assert.equal(third.innerHTML, '<svg id="mermaid-svg-2">flowchart LR; E-->F</svg>');
+});
+
+test('keeps a failing Mermaid diagram from aborting the doneEach hook', () => {
+  const renderer = loadMermaidRenderer((id, code, callback) => {
+    if (code.includes('boom')) {
+      throw new Error('parse error');
+    }
+    callback(`<svg id="${id}">${code}</svg>`);
+  });
+  renderer.addNode('boom');
+  const good = renderer.addNode('flowchart LR; A-->B');
+
+  renderer.render();
+
+  assert.equal(good.innerHTML, '<svg id="mermaid-svg-1">flowchart LR; A-->B</svg>');
+});
+
+test('renders Mermaid and loads LikeC4 bundles after each page load', () => {
+  const doneEach = indexHtml.match(
+    /hook\.doneEach\(function\(\) \{([\s\S]*?)\r?\n {10}\}\);/,
+  );
+
+  assert.ok(doneEach, 'plugin must register a doneEach hook');
+  assert.match(doneEach[1], /renderMermaidDiagrams\(\);/);
+  assert.match(doneEach[1], /loadBundleForRoute\(window\.location\.hash \|\| '\/'\);/);
+  assert.match(doneEach[1], /applyLikeC4OverlayFix\(\);/);
 });
