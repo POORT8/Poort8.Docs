@@ -8,36 +8,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@5.0.0/dist/themes/core.min.css">
   <style>
+    /* Fallback height only: the real height is derived from the diagram's
+       aspect ratio once the LikeC4 web component has rendered. */
     likec4-view.likec4-embed {
       display: block;
       width: 100%;
-      height: clamp(420px, 60vh, 640px);
-      border: 1px solid #d7deea;
-      border-radius: 8px;
+      height: clamp(280px, 55vh, 640px);
+      background: var(--color-bg, #fff);
+      border: 1px solid var(--border-color, #d7deea);
+      border-radius: var(--border-radius, 6px);
       overflow: hidden;
     }
 
     .mermaid-diagram {
       position: relative;
+      margin: var(--margin-block, 1rem) 0;
+      padding: 0.5rem;
+      background: var(--color-bg, #fff);
+      border: 1px solid var(--border-color, #d7deea);
+      border-radius: var(--border-radius, 6px);
+    }
+
+    .mermaid-diagram .mermaid {
+      margin: 0;
+      padding: 0;
+      background: none;
+      border: 0;
+      overflow: visible;
+    }
+
+    .mermaid-diagram .mermaid svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
     }
 
     .diagram-expand {
-      display: block;
-      margin: 0 0 0.5rem auto;
-      padding: 0.35rem 0.7rem;
-      color: #fff;
-      background: #0066cc;
-      border: 0;
-      border-radius: 4px;
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35em;
+      padding: 0.25rem 0.5rem;
+      font-family: inherit;
+      font-size: var(--font-size-xs, 12px);
+      line-height: 1.4;
+      color: var(--color-mono-6, #4a5568);
+      background: var(--color-bg, #fff);
+      border: 1px solid var(--border-color, #d7deea);
+      border-radius: var(--border-radius, 6px);
       cursor: pointer;
+      opacity: 0.55;
+      transition: opacity var(--duration-fast, 150ms) ease,
+        color var(--duration-fast, 150ms) ease,
+        border-color var(--duration-fast, 150ms) ease;
+    }
+
+    .mermaid-diagram:hover .diagram-expand,
+    .diagram-expand:hover,
+    .diagram-expand:focus-visible {
+      opacity: 1;
+      color: var(--theme-color, #0b85d7);
+      border-color: var(--theme-color, #0b85d7);
+    }
+
+    .diagram-expand__icon {
+      font-size: 1.1em;
+      line-height: 1;
     }
 
     .diagram-popout {
+      display: none;
       width: min(96vw, 1400px);
       height: min(92vh, 900px);
       padding: 0;
+      color: var(--color-text, #333);
+      background: var(--color-bg, #fff);
       border: 0;
-      border-radius: 8px;
+      border-radius: var(--border-radius, 6px);
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
+    }
+
+    .diagram-popout[open] {
+      display: flex;
+      flex-direction: column;
     }
 
     .diagram-popout::backdrop {
@@ -46,32 +103,51 @@
 
     .diagram-popout__header {
       display: flex;
-      justify-content: flex-end;
-      padding: 0.5rem;
-      border-bottom: 1px solid #d7deea;
+      flex: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border-color, #d7deea);
+    }
+
+    .diagram-popout__title {
+      font-size: var(--font-size-s, 13px);
+      font-weight: 600;
+      color: var(--color-mono-6, #4a5568);
+    }
+
+    .diagram-popout__close {
+      position: static;
+      opacity: 1;
     }
 
     .diagram-popout__body {
-      display: grid;
-      height: calc(100% - 49px);
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
       padding: 1rem;
-      overflow: auto;
-      place-items: center;
+      overflow: hidden;
+      align-items: center;
+      justify-content: center;
     }
 
     .diagram-popout__body svg {
-      width: max(100%, 1000px);
-      height: auto;
+      display: block;
+      width: 100%;
+      height: 100%;
       max-width: none;
+      max-height: none;
     }
 
     @media (max-width: 768px) {
       likec4-view.likec4-embed {
-        height: clamp(360px, 65vh, 520px);
+        height: clamp(240px, 55vh, 520px);
       }
 
-      .diagram-popout__body svg {
-        width: max(100%, 720px);
+      .diagram-popout {
+        width: 96vw;
+        height: 92vh;
       }
     }
   </style>
@@ -105,6 +181,63 @@
       });
     }
 
+    function prepareDiagramSvg(svg) {
+      var clone = svg.cloneNode(true);
+
+      // Mermaid sizes its SVG with an inline `max-width` (and a `width="100%"`
+      // attribute), which keeps the pop-out copy at its original scale instead
+      // of filling the dialog. Drop those and let the viewBox drive the sizing.
+      clone.style.removeProperty('max-width');
+      clone.style.removeProperty('max-height');
+      clone.style.removeProperty('width');
+      clone.style.removeProperty('height');
+      clone.removeAttribute('width');
+      clone.removeAttribute('height');
+      if (!clone.getAttribute('preserveAspectRatio')) {
+        clone.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      }
+
+      return clone;
+    }
+
+    function openDiagramPopOut(svg) {
+      var dialog = document.createElement('dialog');
+      var header = document.createElement('div');
+      var title = document.createElement('span');
+      var closeButton = document.createElement('button');
+      var body = document.createElement('div');
+
+      dialog.className = 'diagram-popout';
+      dialog.setAttribute('aria-label', 'Expanded diagram');
+      header.className = 'diagram-popout__header';
+      title.className = 'diagram-popout__title';
+      title.textContent = 'Diagram';
+      body.className = 'diagram-popout__body';
+      closeButton.type = 'button';
+      closeButton.className = 'diagram-expand diagram-popout__close';
+      closeButton.innerHTML = '<span class="diagram-expand__icon" aria-hidden="true">&#10005;</span>Close';
+
+      header.appendChild(title);
+      header.appendChild(closeButton);
+      body.appendChild(prepareDiagramSvg(svg));
+      dialog.appendChild(header);
+      dialog.appendChild(body);
+      document.body.appendChild(dialog);
+
+      closeButton.addEventListener('click', function() {
+        dialog.close();
+      });
+      dialog.addEventListener('click', function(event) {
+        if (event.target === dialog) {
+          dialog.close();
+        }
+      });
+      dialog.addEventListener('close', function() {
+        dialog.remove();
+      });
+      dialog.showModal();
+    }
+
     function installMermaidPopOuts() {
       var diagrams = document.querySelectorAll('.mermaid-diagram:not([data-popout-ready])');
       Array.prototype.forEach.call(diagrams, function(container) {
@@ -121,40 +254,127 @@
             return;
           }
 
-          var dialog = document.createElement('dialog');
-          var header = document.createElement('div');
-          var closeButton = document.createElement('button');
-          var body = document.createElement('div');
-
-          dialog.className = 'diagram-popout';
-          dialog.setAttribute('aria-label', 'Expanded diagram');
-          header.className = 'diagram-popout__header';
-          body.className = 'diagram-popout__body';
-          closeButton.type = 'button';
-          closeButton.className = 'diagram-expand';
-          closeButton.textContent = 'Close';
-
-          header.appendChild(closeButton);
-          body.appendChild(svg.cloneNode(true));
-          dialog.appendChild(header);
-          dialog.appendChild(body);
-          document.body.appendChild(dialog);
-
-          closeButton.addEventListener('click', function() {
-            dialog.close();
-          });
-          dialog.addEventListener('click', function(event) {
-            if (event.target === dialog) {
-              dialog.close();
-            }
-          });
-          dialog.addEventListener('close', function() {
-            dialog.remove();
-          });
-          dialog.showModal();
+          openDiagramPopOut(svg);
         });
       });
     }
+
+    // LikeC4 fits its diagram into the element box and keeps the aspect ratio,
+    // so a fixed element height leaves a large empty band under wide diagrams.
+    // Measure the rendered diagram and size the embed to the diagram instead.
+    var LIKEC4_MIN_HEIGHT = 160;
+    var LIKEC4_MAX_HEIGHT = 720;
+    var LIKEC4_FIT_PADDING_X = 80;
+    var LIKEC4_FIT_PADDING_Y = 32;
+
+    function getLikeC4Viewport(host) {
+      var outerShadowRoot = host.shadowRoot;
+      var innerHost = outerShadowRoot && outerShadowRoot.querySelector('.likec4-view');
+      var innerShadowRoot = innerHost && innerHost.shadowRoot;
+      return innerShadowRoot && innerShadowRoot.querySelector('.react-flow__viewport');
+    }
+
+    function measureRenderedDiagram(viewport) {
+      var left = Infinity;
+      var top = Infinity;
+      var right = -Infinity;
+      var bottom = -Infinity;
+      // Direct children of the viewport are zero-sized wrappers, so measure the
+      // nodes, edges and edge labels that actually paint the diagram.
+      var parts = viewport.querySelectorAll(
+        '.react-flow__node, .react-flow__edge, .react-flow__edgelabel-renderer > *'
+      );
+
+      Array.prototype.forEach.call(parts, function(part) {
+        var rect = part.getBoundingClientRect();
+        if (!rect.width && !rect.height) {
+          return;
+        }
+        left = Math.min(left, rect.left);
+        top = Math.min(top, rect.top);
+        right = Math.max(right, rect.right);
+        bottom = Math.max(bottom, rect.bottom);
+      });
+
+      if (left === Infinity) {
+        return null;
+      }
+
+      return { width: right - left, height: bottom - top };
+    }
+
+    var likeC4FitToken = 0;
+
+    function fitLikeC4Embed(host, attempt, token) {
+      // A newer fit pass (route change or resize) supersedes this one.
+      if (!host.isConnected || attempt > 16 || host.dataset.p8FitToken !== token) {
+        return;
+      }
+
+      var viewport = getLikeC4Viewport(host);
+      var content = viewport && measureRenderedDiagram(viewport);
+      var hostWidth = host.clientWidth;
+
+      if (content && content.width && content.height && hostWidth) {
+        var available = Math.max(hostWidth - LIKEC4_FIT_PADDING_X, 1);
+        var target = Math.round(
+          Math.min(
+            LIKEC4_MAX_HEIGHT,
+            Math.max(
+              LIKEC4_MIN_HEIGHT,
+              available * (content.height / content.width) + LIKEC4_FIT_PADDING_Y
+            )
+          )
+        );
+
+        if (Math.abs(target - host.clientHeight) > 8) {
+          host.style.height = target + 'px';
+        }
+
+        host.dataset.p8FitWidth = String(hostWidth);
+      }
+
+      // LikeC4 animates the initial fit, so keep re-measuring for a moment:
+      // an early measurement can catch the diagram mid-transition.
+      window.setTimeout(function() {
+        fitLikeC4Embed(host, attempt + 1, token);
+      }, 150);
+    }
+
+    function fitLikeC4Embeds(force) {
+      var hosts = document.querySelectorAll('likec4-view.likec4-embed');
+      if (!hosts.length) {
+        return;
+      }
+
+      customElements.whenDefined('likec4-view').then(function() {
+        Array.prototype.forEach.call(hosts, function(host) {
+          if (!host.isConnected) {
+            return;
+          }
+          if (force) {
+            // Start from the CSS fallback height so LikeC4 re-fits the diagram
+            // to the new width before we measure it again.
+            host.style.removeProperty('height');
+            delete host.dataset.p8FitWidth;
+          } else if (host.dataset.p8FitWidth === String(host.clientWidth)) {
+            return;
+          }
+
+          var token = String(++likeC4FitToken);
+          host.dataset.p8FitToken = token;
+          fitLikeC4Embed(host, 0, token);
+        });
+      });
+    }
+
+    var likeC4ResizeTimer;
+    window.addEventListener('resize', function() {
+      window.clearTimeout(likeC4ResizeTimer);
+      likeC4ResizeTimer = window.setTimeout(function() {
+        fitLikeC4Embeds(true);
+      }, 200);
+    });
 
     function installLikeC4OverlayFix(host) {
       if (!host || host.dataset.p8Likec4Fixed === 'true') {
@@ -252,7 +472,7 @@
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
-              return '<div class="mermaid-diagram"><button type="button" class="diagram-expand" aria-label="Open diagram in larger view">Expand</button><pre class="mermaid">' + escapedCode + '</pre></div>';
+              return '<div class="mermaid-diagram"><button type="button" class="diagram-expand" aria-label="Open diagram in larger view"><span class="diagram-expand__icon" aria-hidden="true">&#10530;</span>Expand</button><pre class="mermaid">' + escapedCode + '</pre></div>';
             }
             if (lang === "likec4") {
               // Allow explicit view selection via first-line directive: // view: <id>
@@ -287,6 +507,8 @@
             if (!loadedBundles[section]) {
               import('./assets/js/' + section + '-components.js').then(function() {
                 loadedBundles[section] = true;
+                applyLikeC4OverlayFix();
+                fitLikeC4Embeds(true);
               }).catch(function() {
                 // No LikeC4 bundle for this section — that's fine
               });
@@ -298,6 +520,7 @@
             installMermaidPopOuts();
             loadBundleForRoute(window.location.hash || '/');
             applyLikeC4OverlayFix();
+            fitLikeC4Embeds(true);
           });
         }
       ]
