@@ -37,7 +37,7 @@ flowchart TD
     ApprovalDecision -->|Ja| CARAttempt
     
     %% Route 1 direct naar CAR
-    Route1 --> CARAttempt[CAR Automatisering Poging<br/>• Marktsegment bepalen 🚧<br/>• Aansluitgegevens ophalen 🚧<br/>• Autorisatie nieuwe dataproducten ⏳]
+    Route1 --> CARAttempt["CAR Automatisering Poging<br/>- Marktsegment bepalen (in ontwikkeling)<br/>- Aansluitgegevens ophalen (in ontwikkeling)<br/>- Autorisatie nieuwe dataproducten (pending)"]
     %% NIEUWE TAK (as-is): Route1 direct naar volledige handmatige invoer
     Route1 --> ManualFallback
 
@@ -50,7 +50,7 @@ flowchart TD
     
     %% CAR faal pad
     CARSuccess -->|Nee<br/>Fout/Incomplete| ManualChoice{Gebruiker keuze<br/>Manual Fallback}
-    CARSuccess -->|Automatische fout| ManualFallback[Volledige handmatige invoer ✅<br/><br/>NB. *Nieuwe KG dataproducten EDSN niet mogelijk*]
+    CARSuccess -->|Automatische fout| ManualFallback["Volledige handmatige invoer (operationeel)<br/><br/>NB. Nieuwe KG dataproducten EDSN niet mogelijk"]
     
     ManualChoice -->|Ja| ManualFallback
     ManualChoice -->|Retry| CARAttempt
@@ -60,7 +60,7 @@ flowchart TD
     ManualFallback --> KGFlowManual{Kleinverbruik<br/>of<br/>Grootverbruik?<br/>Manual bepaling}
     
     %% Kleinverbruik flows
-    KGFlow -->|Kleinverbruik| KGWithCAR[KG + CAR Automatisering<br/>Toegang tot 3 dataproducten via SDS:<br/>• Meterdata volgens P4-formaat<br/>• 24 maanden dagstanden<br/>• Standaard jaarverbruik]
+    KGFlow -->|Kleinverbruik| KGWithCAR["KG + CAR Automatisering<br/>Toegang tot 3 dataproducten via SDS:<br/>- Meterdata volgens P4-formaat<br/>- 24 maanden dagstanden<br/>- Standaard jaarverbruik"]
     KGFlowManual -->|Kleinverbruik| KGManual[KG Manual<br/>Alleen meterdata volgens P4-formaat]
     
     %% Grootverbruik flows  
@@ -71,7 +71,7 @@ flowchart TD
     %% Kleinverbruik naar SDS
     KGManual --> KGManualToSDS[Naar SDS voor toegang tot<br/>alleen meterdata volgens P4-formaat]
     
-    KGManualToSDS --> KGManualResult[Toegang tot alleen:<br/>• Meterdata volgens P4-formaat via SDS<br/><br/>Geen nieuwe dataproducten]
+    KGManualToSDS --> KGManualResult["Toegang tot alleen:<br/>- Meterdata volgens P4-formaat via SDS<br/><br/>Geen nieuwe dataproducten"]
     
     
     
@@ -79,21 +79,21 @@ flowchart TD
     GGManual --> GGManualInfo[Meetbedrijf + Contractant info<br/>volledig manueel ingevuld]
     
     %% Grootverbruik → PDF → SDS
-    GGWithCAR --> PDFGen[PDF genereren voor SDS<br/> ⏳ In geval route 2: KVK-change iSHARE noodzakelijk]
+    GGWithCAR --> PDFGen[PDF genereren voor SDS<br/>Pending: in geval route 2 is een KVK-change in iSHARE noodzakelijk]
     GGManualInfo --> PDFGen
     GGManualInfo --> SelectMeetbedrijven[Toegang tot SDS dataproducten via enkele meetbedrijven]
-    PDFGen --> SDS[PDF naar Smart Data Solutions<br/>🐛 Email bug]
+    PDFGen --> SDS[PDF naar Smart Data Solutions<br/>Bekende e-mailbug]
     SDS --> GGResult[Toegang tot SDS dataproducten via alle meetbedrijven]
 
     %% Groeperingen (🚧 in development)
-    subgraph Variant2["Toestemmingsaanvragen 🚧"]
+    subgraph Variant2["Toestemmingsaanvragen - in ontwikkeling"]
         Route2
         KeyperApproval
         ApprovalDecision
         ProcessEnd
     end
 
-    subgraph AsIs["Huidig DVU proces ✅"]
+    subgraph AsIs["Huidig DVU proces - operationeel"]
         Start
         Route1
         ManualFallback
@@ -105,7 +105,7 @@ flowchart TD
         GGManualInfo
         SelectMeetbedrijven
     end
-    subgraph DekkingMeetbedrijven["Dekking Meetbedrijven 🚧"]
+    subgraph DekkingMeetbedrijven["Dekking Meetbedrijven - in ontwikkeling"]
         PDFGen
         SDS
         GGResult
@@ -113,7 +113,7 @@ flowchart TD
         
     end
 
-    subgraph AutoCAR["Automatische CAR gegevens 🚧"]
+    subgraph AutoCAR["Automatische CAR gegevens - in ontwikkeling"]
         CARAttempt
         EDSNAuth
         CARSuccess
@@ -127,7 +127,7 @@ flowchart TD
     
     %% Status legenda
     subgraph Status[" Status Legenda"]
-        StatusItems["✅ Operationeel<br/>🚧 In ontwikkeling<br/>⏳ Pending met openstaande vragen<br/>🐛 Bug"]
+        StatusItems["Operationeel<br/>In ontwikkeling<br/>Pending met openstaande vragen<br/>Bug"]
     end
   
     

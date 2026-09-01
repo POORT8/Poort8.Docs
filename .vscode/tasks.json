@@ -4,7 +4,7 @@
     {
       "label": "Docsify: Serve",
       "type": "shell",
-      "command": "npx docsify-cli serve .",
+      "command": "npx --yes docsify-cli@5.0.0 serve .",
       "group": {
         "kind": "serve",
         "isDefault": true

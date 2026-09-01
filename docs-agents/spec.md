@@ -1,5 +1,5 @@
 # Poort8 Documentation Site — Developer Specification
-*Target environment: **GitHub Pages** · Generator: **Docsify 4.x** · Domain: **docs2.poort8.nl***
+*Target environment: **GitHub Pages** · Generator: **Docsify 5.x** · Domain: **docs2.poort8.nl***
 
 ---
 
@@ -43,7 +43,7 @@ GitHub Pages  →  docs2.poort8.nl
 
 | Decision | Rationale |
 |----------|-----------|
-| **Docsify 4.x** | Zero-build static site generator with runtime rendering. |
+| **Docsify 5.x** | Zero-build static site generator with runtime rendering. |
 | **Per-dataspace _sidebar.md** | Each dataspace controls its own navigation structure. |
 | **Docsify search** | Built-in full-text search, no external dependencies. |
 | **Direct file serving** | No Ruby/Jekyll build process — just serve static files. |
@@ -62,7 +62,7 @@ GitHub Pages  →  docs2.poort8.nl
   <meta charset="UTF-8">
   <title>Poort8 Documentation</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@5.0.0/dist/themes/core.min.css">
   <link rel="stylesheet" href="assets/css/custom.css">
 </head>
 <body>
@@ -70,15 +70,13 @@ GitHub Pages  →  docs2.poort8.nl
   <script>
     window.$docsify = {
       name: 'Poort8 Documentation',
-      repo: 'https://github.com/Poort8/Poort8.Docs',
       loadSidebar: true,
-      subMaxLevel: 3,
       search: 'auto',
       logo: 'assets/images/poort8-logo.svg'
     }
   </script>
-  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@5.0.0/dist/docsify.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@5.0.0/dist/plugins/search.min.js"></script>
 </body>
 </html>
 ```

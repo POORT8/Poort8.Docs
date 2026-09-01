@@ -6,8 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Poort8 Docs - Docs for Poort8 products and dataspaces.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@5.0.0/dist/themes/core.min.css">
   <style>
     likec4-view.likec4-embed {
       display: block;
@@ -20,7 +19,7 @@
 </head>
 <body>
   <div id="app"></div>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@9.3.0/dist/mermaid.min.js"></script>
   <script>
     var num = 0;
     mermaid.initialize({ startOnLoad: false });
@@ -102,10 +101,7 @@
 
     window.$docsify = {
       name: 'Poort8 Docs',
-      repo: '',
       loadSidebar: true,
-      subMaxLevel: 1,
-      auto2top: true,
       relativePath: true,
       alias: {
         // Minimal aliases for SPA navigation within Docsify
@@ -116,9 +112,15 @@
       },
       markdown: {
         renderer: {
-          code: function(code, lang) {
+          code: async function(token) {
+            var code = token.text;
+            var lang = token.lang;
             if (lang === "mermaid") {
-              return '<div class="mermaid">' + code + '</div>';
+              var rendered = await mermaid.render('mermaid-svg-' + num++, code);
+              var svg = rendered && typeof rendered === 'object' && typeof rendered.svg === 'string'
+                ? rendered.svg
+                : String(rendered);
+              return '<div class="mermaid">' + svg + '</div>';
             }
             if (lang === "likec4") {
               // Allow explicit view selection via first-line directive: // view: <id>
@@ -128,12 +130,12 @@
                 viewId = directiveMatch[1];
               } else {
                 var autoMatch = code.match(/\bview\s+(\w+)/);
-                if (!autoMatch) return this.origin.code.apply(this, arguments);
+                if (!autoMatch) return await this.origin.code.call(this, token);
                 viewId = autoMatch[1];
               }
               return '<likec4-view class="likec4-embed" view-id="' + viewId + '" dynamic-variant="sequence"></likec4-view>';
             }
-            return this.origin.code.apply(this, arguments);
+            return await this.origin.code.call(this, token);
           }
         }
       },
@@ -142,8 +144,10 @@
           var loadedBundles = {};
 
           function loadBundleForRoute(route) {
+            if (!document.querySelector('likec4-view')) return;
+
             // Derive the docs section from the Docsify hash (e.g. /#/noodlebar/page -> noodlebar)
-            // and attempt to load its bundle. Silently ignored if no bundle exists.
+            // and load the bundle generated for that section.
             var match = (route || '').match(/#\/?([^/?#]+)(?:\/|$)/);
             if (!match) return;
             var section = match[1];
@@ -158,7 +162,6 @@
           }
 
           hook.doneEach(function() {
-            mermaid.init(undefined, '.mermaid');
             loadBundleForRoute(window.location.hash || '/');
             applyLikeC4OverlayFix();
           });
@@ -166,7 +169,7 @@
       ]
     }
   </script>
-  <!-- Docsify v4 -->
-  <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
+  <!-- Docsify v5 -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@5.0.0/dist/docsify.min.js"></script>
 </body>
 </html>
