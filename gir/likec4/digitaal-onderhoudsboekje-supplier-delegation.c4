@@ -1,0 +1,21 @@
+// view: dob_phase2
+model {
+  digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_ni = actor 'New Installation Service Company'
+  digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_app = system 'TN GIR App'
+  digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_keyper = system 'Keyper'
+  digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_gir = system 'GIR'
+}
+
+views {
+  dynamic view dob_phase2 {
+    title 'Phase 2 — SupplierDelegation'
+    variant sequence
+
+    digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_ni -> digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_app 'Supply software supplier details'
+    digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_app -> digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_keyper 'SupplierDelegation request (NI as requester and approver)'
+    digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_app -> digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_ni 'Redirect to Keyper approval screen'
+    digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_ni -> digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_keyper 'Authenticate via eHerkenning and approve'
+    digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_keyper -> digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_gir 'Register SupplierDelegation (New Installation Service Company → NI software)'
+    digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_gir -> digitaal_onderhoudsboekje_supplier_delegation_supplier_delegation_ni 'Confirm'
+  }
+}

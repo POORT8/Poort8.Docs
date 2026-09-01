@@ -1,0 +1,19 @@
+// view: datastekker_approval_flow
+model {
+  datastekker_approval_flow_form = system 'TechniekNederland Form'
+  datastekker_approval_flow_keyper = system 'Keyper'
+  datastekker_approval_flow_owner = actor 'Building Owner'
+  datastekker_approval_flow_gir = system 'GIR'
+}
+
+views {
+  dynamic view datastekker_approval_flow {
+    title 'Phase 1 — Approval Flow'
+    variant sequence
+
+    datastekker_approval_flow_form -> datastekker_approval_flow_keyper 'POST /v1/api/approval-links (vboId, installer KvK, owner KvK, validity)'
+    datastekker_approval_flow_keyper -> datastekker_approval_flow_owner 'Approval link by email'
+    datastekker_approval_flow_owner -> datastekker_approval_flow_keyper 'Authenticate and approve'
+    datastekker_approval_flow_keyper -> datastekker_approval_flow_gir 'Register delegation policy (installer ↔ vboId)'
+  }
+}

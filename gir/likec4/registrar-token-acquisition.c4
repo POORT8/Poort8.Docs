@@ -1,0 +1,18 @@
+// view: registrar_token_acquisition
+model {
+  registrar_token_acquisition_app = actor 'Your Application'
+  registrar_token_acquisition_gir = system 'GIR'
+  registrar_token_acquisition_sat = system 'DSGO Participant Registry'
+}
+
+views {
+  dynamic view registrar_token_acquisition {
+    title 'Token Acquisition'
+    variant sequence
+
+    registrar_token_acquisition_app -> registrar_token_acquisition_gir 'POST /connect/token (signed JWT)'
+    registrar_token_acquisition_gir -> registrar_token_acquisition_sat 'Validate membership and certificate'
+    registrar_token_acquisition_sat -> registrar_token_acquisition_gir 'Membership active'
+    registrar_token_acquisition_gir -> registrar_token_acquisition_app 'access_token'
+  }
+}

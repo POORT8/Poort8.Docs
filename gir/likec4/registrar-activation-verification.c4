@@ -1,0 +1,15 @@
+// view: registrar_activation_verification
+model {
+  registrar_activation_verification_app = actor 'Your Application'
+  registrar_activation_verification_gir = system 'GIR'
+}
+
+views {
+  dynamic view registrar_activation_verification {
+    title 'Activation Verification'
+    variant sequence
+
+    registrar_activation_verification_app -> registrar_activation_verification_gir 'Retrieve installation'
+    registrar_activation_verification_gir -> registrar_activation_verification_app 'Record with Active or Pending status'
+  }
+}

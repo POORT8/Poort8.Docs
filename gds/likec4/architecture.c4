@@ -1,0 +1,34 @@
+// view: architecture_end_to_end
+model {
+    architecture_david = actor 'David\'s Platform'
+    architecture_kc = system 'GDS Participant Registry (Keycloak)'
+    architecture_keyper = system 'Keyper Approve'
+    architecture_bob = actor 'Building Owner (Bob)'
+    architecture_ar = system 'GDS Authorization Registry'
+    architecture_charlie = system 'Charlie\'s IoT Platform'
+}
+
+views {
+    dynamic view architecture_end_to_end {
+        title 'GDS End-to-End Flow'
+        variant sequence
+
+        architecture_david -> architecture_kc 'Request token for Keyper API'
+        architecture_kc -> architecture_david 'JWT access token'
+        architecture_david -> architecture_keyper 'POST /v1/api/approval-links'
+        architecture_keyper -> architecture_david '201 Created (approval link ID)'
+        architecture_keyper -> architecture_bob 'Email with approval link'
+        architecture_bob -> architecture_keyper 'Approves + enters verification code'
+        architecture_keyper -> architecture_ar 'Registers policies'
+        architecture_ar -> architecture_keyper 'Policies stored'
+
+        architecture_david -> architecture_kc 'Request token for provider API'
+        architecture_kc -> architecture_david 'JWT access token'
+        architecture_david -> architecture_charlie 'GET /data + Bearer token'
+        architecture_charlie -> architecture_kc 'Request token for NoodleBar API (client_credentials)'
+        architecture_kc -> architecture_charlie 'Access token'
+        architecture_charlie -> architecture_ar 'GET /v1/api/authorization/explained-enforce + Bearer token'
+        architecture_ar -> architecture_charlie 'HTTP 200: {allowed: true/false, policies}'
+        architecture_charlie -> architecture_david 'If allowed: 200 + data / If denied: 403'
+    }
+}

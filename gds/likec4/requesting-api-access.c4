@@ -1,0 +1,31 @@
+// view: requesting_api_access
+model {
+  requesting_api_access_david = actor 'David (Consumer)'
+  requesting_api_access_portal = system 'Self-Service Portal'
+  requesting_api_access_charlie = actor 'Charlie (Provider)'
+  requesting_api_access_gds = system 'GDS Participant Registry'
+  requesting_api_access_api = system 'Charlie\'s API'
+}
+
+views {
+  dynamic view requesting_api_access {
+    title 'Requesting API Access'
+    variant sequence
+
+    requesting_api_access_david -> requesting_api_access_portal 'Register application'
+    requesting_api_access_portal -> requesting_api_access_gds 'Create application client'
+    requesting_api_access_portal -> requesting_api_access_david 'Client credentials'
+
+    requesting_api_access_david -> requesting_api_access_portal 'Browse catalogue & request access'
+    requesting_api_access_portal -> requesting_api_access_charlie 'Access request notification'
+
+    requesting_api_access_charlie -> requesting_api_access_portal 'Approve access'
+    requesting_api_access_portal -> requesting_api_access_gds 'Assign API scope to application'
+
+    requesting_api_access_david -> requesting_api_access_gds 'Request token (client_credentials)'
+    requesting_api_access_gds -> requesting_api_access_david 'Access token (JWT)'
+
+    requesting_api_access_david -> requesting_api_access_api 'Call API with Bearer token'
+    requesting_api_access_api -> requesting_api_access_david 'API response'
+  }
+}

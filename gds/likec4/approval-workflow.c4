@@ -1,0 +1,26 @@
+// view: approval_workflow
+model {
+  approval_workflow_alice = actor 'Building Manager (Alice)'
+  approval_workflow_david = actor 'Your Platform'
+  approval_workflow_keyper = system 'Keyper Approve'
+  approval_workflow_bob = actor 'Building Owner (Bob)'
+  approval_workflow_ar = system 'GDS Authorization Registry'
+}
+
+views {
+  dynamic view approval_workflow {
+    title 'Keyper Approval Workflow'
+    variant sequence
+
+    approval_workflow_alice -> approval_workflow_david 'Requests access to building data'
+    approval_workflow_david -> approval_workflow_keyper 'POST /v1/api/approval-links'
+    approval_workflow_keyper -> approval_workflow_david '201 Created (approval link ID)'
+    approval_workflow_keyper -> approval_workflow_bob 'Email with approval link'
+    approval_workflow_bob -> approval_workflow_keyper 'Opens link, reviews request'
+    approval_workflow_bob -> approval_workflow_keyper 'Approves + enters verification code'
+    approval_workflow_keyper -> approval_workflow_ar 'Registers policies'
+    approval_workflow_ar -> approval_workflow_keyper 'Policies stored'
+    approval_workflow_david -> approval_workflow_keyper 'GET /v1/api/approval-links/{id}'
+    approval_workflow_keyper -> approval_workflow_david 'Status = Approved'
+  }
+}

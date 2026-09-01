@@ -1,0 +1,25 @@
+// view: validating_api_tokens
+model {
+  validating_api_tokens_david = actor 'David (Consumer)'
+  validating_api_tokens_gds = system 'GDS Participant Registry'
+  validating_api_tokens_api = system 'Charlie\'s API'
+  validating_api_tokens_jwks = system 'JWKS Endpoint'
+}
+
+views {
+  dynamic view validating_api_tokens {
+    title 'Validating API Tokens'
+    variant sequence
+
+    validating_api_tokens_api -> validating_api_tokens_jwks 'Fetch signing keys (on startup)'
+    validating_api_tokens_jwks -> validating_api_tokens_api 'Public keys (JWKS)'
+
+    validating_api_tokens_david -> validating_api_tokens_gds 'Request token (client_credentials)'
+    validating_api_tokens_gds -> validating_api_tokens_david 'Signed JWT access token'
+
+    validating_api_tokens_david -> validating_api_tokens_api 'API call + Authorization: Bearer {token}'
+    validating_api_tokens_api -> validating_api_tokens_api 'Verify signature, expiry, issuer, audience'
+    validating_api_tokens_api -> validating_api_tokens_api 'Derive the organization EUID from organization claim'
+    validating_api_tokens_api -> validating_api_tokens_david 'API response'
+  }
+}

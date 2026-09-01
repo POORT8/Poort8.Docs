@@ -1,0 +1,18 @@
+// view: datastekker_token_acquisition
+model {
+  datastekker_token_acquisition_ds = actor 'Datastekker (2BA)'
+  datastekker_token_acquisition_gir = system 'GIR'
+  datastekker_token_acquisition_sat = system 'DSGO Participant Registry'
+}
+
+views {
+  dynamic view datastekker_token_acquisition {
+    title 'Phase 2 — Token Acquisition'
+    variant sequence
+
+    datastekker_token_acquisition_ds -> datastekker_token_acquisition_gir 'POST /connect/token (signed JWT)'
+    datastekker_token_acquisition_gir -> datastekker_token_acquisition_sat 'Validate membership and certificate'
+    datastekker_token_acquisition_sat -> datastekker_token_acquisition_gir 'Membership active'
+    datastekker_token_acquisition_gir -> datastekker_token_acquisition_ds 'access_token'
+  }
+}

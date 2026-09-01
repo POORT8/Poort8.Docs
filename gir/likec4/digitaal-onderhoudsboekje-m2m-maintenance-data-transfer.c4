@@ -1,0 +1,20 @@
+// view: dob_phase3
+model {
+  digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_ni_software = system 'NI software'
+  digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_your_platform = system 'Your platform'
+  digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_gir = system 'GIR'
+}
+
+views {
+  dynamic view dob_phase3 {
+    title 'Phase 3 — M2M Maintenance Data Transfer'
+    variant sequence
+
+    digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_ni_software -> digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_your_platform 'Authenticate (eSeal) + request maintenance data'
+    digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_your_platform -> digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_gir 'Obtain access token'
+    digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_gir -> digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_your_platform 'Access token'
+    digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_your_platform -> digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_gir 'Verify AccessRight (owner → New Installation Service Company) for installationId'
+    digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_gir -> digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_your_platform 'Permit or Deny'
+    digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_your_platform -> digitaal_onderhoudsboekje_m2m_maintenance_data_transfer_ni_software 'Maintenance data or 403 Forbidden'
+  }
+}

@@ -1,0 +1,22 @@
+// view: authorization_enforcement
+model {
+  authorization_david = actor 'Data Consumer'
+  authorization_charlie = system 'Your IoT Platform'
+  authorization_kc = system 'GDS Participant Registry'
+  authorization_ar = system 'GDS Authorization Registry'
+}
+
+views {
+  dynamic view authorization_enforcement {
+    title 'Authorization Enforcement'
+    variant sequence
+
+    authorization_david -> authorization_charlie 'GET /buildings/{vboId} + Bearer token'
+    authorization_charlie -> authorization_charlie 'Validate token & derive organization EUID'
+    authorization_charlie -> authorization_kc 'Request token (client_credentials, scope=noodlebar-api)'
+    authorization_kc -> authorization_charlie 'Access token'
+    authorization_charlie -> authorization_ar 'GET /v1/api/authorization/explained-enforce + Bearer token'
+    authorization_ar -> authorization_charlie 'HTTP 200: {allowed: true/false, policies}'
+    authorization_charlie -> authorization_david 'If allowed: 200 + data / If denied: 403'
+  }
+}
