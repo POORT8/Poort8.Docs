@@ -2,6 +2,32 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-08-28
+
+**✨ Highlights:** Keyper approval links can now include policy revocations and validity updates alongside new policy grants, enabling richer consent workflows in a single approval step.
+
+### Keyper
+
+#### Added
+
+- `POST /v1/api/approval-links` and `GET /v1/api/approval-links/{id}` now support two new optional arrays in the request and response bodies: `policyRevokes` (revoke an existing Authorization Registry policy by ID and reason) and `policyValidityUpdates` (adjust the `notBefore` and/or `expiration` timestamps of an existing policy). Consumers can include these alongside the existing `addPolicyTransactions` to orchestrate revocations or renewals as part of a single approval flow. Clients using OpenAPI-generated code should regenerate. [#1217](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1217)
+
+## 2026-08-12
+
+**✨ Highlights:** Policies can now have their validity window adjusted after creation, and approval links can be partially updated without recreating them.
+
+### NoodleBar
+
+#### Added
+
+- `PUT /v1/api/policies/{id}/validity` overwrites the `NotBefore` and/or `Expiration` fields of an existing policy. At least one must be provided. A field can only be changed while its current value still lies in the future, and the new value must be now or later. No other policy field is touched. [#1201](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1201)
+
+### Keyper
+
+#### Added
+
+- `PUT /v1/api/approval-links/{id}` partially updates an approval link. Only the fields included in the request body are changed; omitted fields keep their existing value. Updates are only accepted while the approval link is in an updatable state for its configured orchestration flow. [#1201](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1201)
+
 ## 2026-07-24
 
 **✨ Highlights:** GIR authorization enforcement now uses the correct `dsgo.gir` use case key, fixing access control for installation data; Keyper gains a new GIR maintenance-data approval flow and TSL deployment support.
