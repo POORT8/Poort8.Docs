@@ -35,6 +35,10 @@ tmp/
 .env
 .env.*
 
+# LikeC4 build outputs
+assets/js/*-components.js
+*/likec4/
+
 # GitHub Copilot
 .github/copilot-instructions.md
 docs-agents/**/
