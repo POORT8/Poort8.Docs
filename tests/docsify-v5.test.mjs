@@ -10,7 +10,7 @@ const indexHtml = await readFile(
 
 function loadCodeRenderer() {
   const match = indexHtml.match(
-    /code: ((?:async\s+)?function\(token\) \{[\s\S]*?\r?\n          \})\r?\n        \}/,
+    /code:\s*((?:async\s+)?function\(token\)\s*\{[\s\S]*?\r?\n\s*\})\s*\}/,
   );
 
   assert.ok(match, 'Docsify code renderer must use the v5 token signature');

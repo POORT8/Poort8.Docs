@@ -60,9 +60,6 @@ jobs:
       # Test 3: Docsify regression suite
       - name: Run Docsify regression tests 🧪
         run: |
-          echo "Installing Docsify CLI..."
-          npm install --global docsify-cli@5.0.0 --ignore-scripts
-
           echo "Building LikeC4 bundles..."
           bash build-likec4.sh
 
