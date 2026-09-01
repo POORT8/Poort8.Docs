@@ -124,7 +124,7 @@ test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', () => {
   // Mermaid source is emitted escaped and rendered later, from a placeholder.
   assert.equal(
     renderCode.call(context, { text: 'flowchart LR; A-->B', lang: 'mermaid' }),
-    '<div class="mermaid-diagram"><button type="button" class="diagram-expand" aria-label="Open diagram in larger view">Expand</button><pre class="mermaid">flowchart LR; A--&gt;B</pre></div>',
+    '<div class="mermaid-diagram"><button type="button" class="diagram-expand" aria-label="Open diagram in larger view"><span class="diagram-expand__icon" aria-hidden="true">&#10530;</span>Expand</button><pre class="mermaid">flowchart LR; A--&gt;B</pre></div>',
   );
   assert.equal(
     renderCode.call(context, {
@@ -139,15 +139,66 @@ test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', () => {
   );
 });
 
-test('keeps LikeC4 embeds compact and provides a Mermaid pop-out', () => {
+test('sizes LikeC4 embeds to the rendered diagram', () => {
+  // A fixed embed height letterboxes wide diagrams, so the height is derived
+  // from the rendered diagram and refreshed when the container width changes.
+  assert.match(indexHtml, /function measureRenderedDiagram\(viewport\)/);
+  assert.match(indexHtml, /function fitLikeC4Embeds\(force\)/);
   assert.match(
     indexHtml,
-    /height:\s*clamp\(420px,\s*60vh,\s*640px\)/,
+    /\.react-flow__node, \.react-flow__edge, \.react-flow__edgelabel-renderer > \*/,
+  );
+  assert.match(indexHtml, /host\.style\.height = target \+ 'px';/);
+  assert.match(
+    indexHtml,
+    /window\.addEventListener\('resize', function\(\) \{/,
   );
   assert.doesNotMatch(indexHtml, /min-height:\s*720px/);
+});
+
+test('provides a Mermaid pop-out that fills the dialog', () => {
   assert.match(indexHtml, /function installMermaidPopOuts\(\)/);
   assert.match(indexHtml, /dialog\.showModal\(\)/);
   assert.match(indexHtml, /className = 'diagram-popout'/);
+  // The pop-out copy must scale with the dialog instead of keeping Mermaid's
+  // inline max-width, and the button must sit on the diagram, not above it.
+  assert.match(indexHtml, /function prepareDiagramSvg\(svg\)/);
+  assert.match(indexHtml, /\.diagram-expand \{[^}]*position: absolute;/);
+});
+
+test('strips Mermaid sizing hints from the pop-out copy', () => {
+  const match = indexHtml.match(
+    /(function prepareDiagramSvg\(svg\) \{[\s\S]*?\r?\n {4}\})/,
+  );
+
+  assert.ok(match, 'index.html must define prepareDiagramSvg()');
+
+  const clone = {
+    attributes: { width: '100%', height: '640' },
+    styles: { 'max-width': '1155px' },
+    style: {
+      removeProperty(name) {
+        delete clone.styles[name];
+      },
+    },
+    removeAttribute(name) {
+      delete clone.attributes[name];
+    },
+    getAttribute(name) {
+      return clone.attributes[name] ?? null;
+    },
+    setAttribute(name, value) {
+      clone.attributes[name] = value;
+    },
+  };
+  const prepare = vm.runInNewContext(`(${match[1]})`);
+  const result = prepare({ cloneNode: () => clone });
+
+  assert.equal(result, clone);
+  assert.deepEqual(clone.styles, {});
+  assert.equal(clone.attributes.width, undefined);
+  assert.equal(clone.attributes.height, undefined);
+  assert.equal(clone.attributes.preserveAspectRatio, 'xMidYMid meet');
 });
 
 test('renders every Mermaid placeholder with a unique id', () => {
@@ -208,4 +259,5 @@ test('renders Mermaid and loads LikeC4 bundles after each page load', () => {
   assert.match(doneEach[1], /installMermaidPopOuts\(\);/);
   assert.match(doneEach[1], /loadBundleForRoute\(window\.location\.hash \|\| '\/'\);/);
   assert.match(doneEach[1], /applyLikeC4OverlayFix\(\);/);
+  assert.match(doneEach[1], /fitLikeC4Embeds\(true\);/);
 });
