@@ -10,10 +10,69 @@
   <style>
     likec4-view.likec4-embed {
       display: block;
-      min-height: 720px;
+      width: 100%;
+      height: clamp(420px, 60vh, 640px);
       border: 1px solid #d7deea;
       border-radius: 8px;
       overflow: hidden;
+    }
+
+    .mermaid-diagram {
+      position: relative;
+    }
+
+    .diagram-expand {
+      display: block;
+      margin: 0 0 0.5rem auto;
+      padding: 0.35rem 0.7rem;
+      color: #fff;
+      background: #0066cc;
+      border: 0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .diagram-popout {
+      width: min(96vw, 1400px);
+      height: min(92vh, 900px);
+      padding: 0;
+      border: 0;
+      border-radius: 8px;
+    }
+
+    .diagram-popout::backdrop {
+      background: rgba(15, 23, 42, 0.72);
+    }
+
+    .diagram-popout__header {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0.5rem;
+      border-bottom: 1px solid #d7deea;
+    }
+
+    .diagram-popout__body {
+      display: grid;
+      height: calc(100% - 49px);
+      padding: 1rem;
+      overflow: auto;
+      place-items: center;
+    }
+
+    .diagram-popout__body svg {
+      width: max(100%, 1000px);
+      height: auto;
+      max-width: none;
+    }
+
+    @media (max-width: 768px) {
+      likec4-view.likec4-embed {
+        height: clamp(360px, 65vh, 520px);
+      }
+
+      .diagram-popout__body svg {
+        width: max(100%, 720px);
+      }
     }
   </style>
 </head>
@@ -43,6 +102,57 @@
           // Keep a broken diagram from aborting the rest of the doneEach hook.
           console.error('Mermaid render failed', err);
         }
+      });
+    }
+
+    function installMermaidPopOuts() {
+      var diagrams = document.querySelectorAll('.mermaid-diagram:not([data-popout-ready])');
+      Array.prototype.forEach.call(diagrams, function(container) {
+        var button = container.querySelector('.diagram-expand');
+        var diagram = container.querySelector('.mermaid');
+        if (!button || !diagram) {
+          return;
+        }
+
+        container.setAttribute('data-popout-ready', 'true');
+        button.addEventListener('click', function() {
+          var svg = diagram.querySelector('svg');
+          if (!svg) {
+            return;
+          }
+
+          var dialog = document.createElement('dialog');
+          var header = document.createElement('div');
+          var closeButton = document.createElement('button');
+          var body = document.createElement('div');
+
+          dialog.className = 'diagram-popout';
+          dialog.setAttribute('aria-label', 'Expanded diagram');
+          header.className = 'diagram-popout__header';
+          body.className = 'diagram-popout__body';
+          closeButton.type = 'button';
+          closeButton.className = 'diagram-expand';
+          closeButton.textContent = 'Close';
+
+          header.appendChild(closeButton);
+          body.appendChild(svg.cloneNode(true));
+          dialog.appendChild(header);
+          dialog.appendChild(body);
+          document.body.appendChild(dialog);
+
+          closeButton.addEventListener('click', function() {
+            dialog.close();
+          });
+          dialog.addEventListener('click', function(event) {
+            if (event.target === dialog) {
+              dialog.close();
+            }
+          });
+          dialog.addEventListener('close', function() {
+            dialog.remove();
+          });
+          dialog.showModal();
+        });
       });
     }
 
@@ -142,7 +252,7 @@
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
-              return '<pre class="mermaid">' + escapedCode + '</pre>';
+              return '<div class="mermaid-diagram"><button type="button" class="diagram-expand" aria-label="Open diagram in larger view">Expand</button><pre class="mermaid">' + escapedCode + '</pre></div>';
             }
             if (lang === "likec4") {
               // Allow explicit view selection via first-line directive: // view: <id>
@@ -185,6 +295,7 @@
 
           hook.doneEach(function() {
             renderMermaidDiagrams();
+            installMermaidPopOuts();
             loadBundleForRoute(window.location.hash || '/');
             applyLikeC4OverlayFix();
           });
