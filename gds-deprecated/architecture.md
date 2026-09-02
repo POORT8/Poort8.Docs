@@ -176,7 +176,7 @@ sequenceDiagram
     BM->>Platform: Wants sensor data for Building X
     Platform->>Auth: Request access token
     Auth-->>Platform: Token
-    Platform->>Keyper: POST /approval-links
+    Platform->>Keyper: POST /v1/api/approval-links
     Keyper-->>Platform: 201 Created (link ID)
     Keyper->>Owner: Email with approval link
     Owner->>Keyper: Approves request

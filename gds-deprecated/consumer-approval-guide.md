@@ -40,7 +40,7 @@ sequenceDiagram
 
     rect rgb(255,250,240)
     Alice->>Consumer: Initiates data access request
-    Consumer->>Keyper: POST /approval-links (with policies)
+    Consumer->>Keyper: POST /v1/api/approval-links (with policies)
     Keyper-->>Consumer: 201 Created (approval link ID)
     end
 
