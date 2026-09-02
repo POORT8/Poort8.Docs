@@ -242,7 +242,7 @@ Content-Type: application/json
 Poll the approval link status:
 
 ```http
-GET https://keyper-preview.poort8.nl/v1/api/approval-links/{APPROVAL_LINK_ID}
+GET https://keyper-preview.poort8.nl/v1/api/approval-links/{id}
 Authorization: Bearer <ACCESS_TOKEN>
 ```
 
