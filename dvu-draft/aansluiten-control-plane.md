@@ -175,8 +175,8 @@ DVU hanteert vaste waarden voor een aantal policy-velden. Een control plane app 
 | Veld | Waarde | Toelichting |
 |-----|-----|-----|
 | `useCase` | `dvu` | Use case-identifier |
-| `type` | `VBO-EAN` | Resource type (combi VBO + EAN's) |
-| `action` | `GET` | Toegestane actie |
+| `type` | `KV-GV` | Resource type |
+| `action` | `can_read` | Toegestane actie |
 | `license` | `iSHARE.0002` | iSHARE-licentie |
 | `attribute` | `*` | Alle data-attributen |
 | `serviceProvider` | `did:ishare:EU.NL.NTRNL-55819206` | Datadienst-aanbieder (SDS) |
@@ -255,9 +255,9 @@ Content-Type: application/json
   "issuerId": "did:ishare:EU.NL.NTRNL-<DATA_RECHTHEBBENDE_KVK>",
   "subjectId": "did:ishare:EU.NL.NTRNL-<CONSUMER_KVK>",
   "serviceProvider": "did:ishare:EU.NL.NTRNL-55819206",
-  "action": "GET",
+  "action": "can_read",
   "resourceId": "<VBO-ID>",
-  "type": "VBO-EAN",
+  "type": "KV-GV",
   "attribute": "*",
   "license": "iSHARE.0002",
   "notBefore": <UNIX_TIMESTAMP_NOTBEFORE>,

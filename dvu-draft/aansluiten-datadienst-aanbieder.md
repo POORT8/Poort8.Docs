@@ -74,8 +74,8 @@ De DVU Approval-flow beschrijft hoe een policy wordt aangemaakt namens de data-r
 
 | Veld | Beschrijving | Voorbeeld |
 | -- | -- | -- |
-| `type` | Resource type — `VBO-EAN` (combi VBO + EANs) | `VBO-EAN` |
-| `action` | Toegestane actie | `GET` |
+| `type` | Resource type — `KV-GV` | `KV-GV` |
+| `action` | Toegestane actie | `can_read` |
 | `license` | iSHARE licentie | `iSHARE.0002` |
 | `useCase` | Use case | `dvu` |
 | `issuerId` | Data-rechthebbende (Bob, gebouweigenaar) | `did:ishare:EU.NL.NTRNL-12345678` |
@@ -178,9 +178,9 @@ GET https://dvu-preview.poort8.nl/v1/api/authorization/explained-enforce
   ?issuer=did:ishare:EU.NL.NTRNL-12345678
   &subject=did:ishare:EU.NL.NTRNL-87654321
   &serviceProvider=did:ishare:EU.NL.NTRNL-55819206
-  &action=GET
+  &action=can_read
   &resource=871687119500493829
-  &type=VBO-EAN
+  &type=KV-GV
   &useCase=dvu
 Authorization: Bearer {sds_token}
 ```
@@ -192,9 +192,9 @@ Authorization: Bearer {sds_token}
 | `issuer` | iSHARE ID van de data-rechthebbende (Bob), bekend in interne administratie van SDS behorende bij het EAN | `did:ishare:EU.NL.NTRNL-12345678` |
 | `subject` | iSHARE ID van de dataservice consumer (David), uit de gevalideerde `organization`-claim van het bearer token (zie [§ Stap 1](#stap-1-token-validatie-inkomend-verzoek-van-david)) | `did:ishare:EU.NL.NTRNL-87654321` |
 | `serviceProvider` | iSHARE ID van SDS zelf (Charlie) | `did:ishare:EU.NL.NTRNL-55819206` |
-| `action` | Gevraagde actie | `GET` |
+| `action` | Gevraagde actie | `can_read` |
 | `resource` | EAN uit de call van David | `871687119500493829` |
-| `type` | Resource type | `VBO-EAN` |
+| `type` | Resource type | `KV-GV` |
 | `useCase` | Use case | `dvu` |
 
 ## Stap 4: Explained-enforce response
@@ -214,9 +214,9 @@ Authorization: Bearer {sds_token}
       "issuerId": "did:ishare:EU.NL.NTRNL-12345678",
       "subjectId": "did:ishare:EU.NL.NTRNL-87654321",
       "serviceProvider": "did:ishare:EU.NL.NTRNL-55819206",
-      "action": "GET",
+      "action": "can_read",
       "resourceId": "871687119500493829",
-      "type": "VBO-EAN",
+      "type": "KV-GV",
       "attribute": "*",
       "license": "iSHARE.0002",
       "rules": null,

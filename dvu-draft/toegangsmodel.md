@@ -35,8 +35,8 @@ Een DVU-policy autoriseert een specifieke combinatie van issuer (data-rechthebbe
 
 | Veld | Beschrijving | Voorbeeld |
 |------|--------------|-----------|
-| `type` | Resource type — `VBO-EAN` (combi VBO + EANs) | `VBO-EAN` |
-| `action` | Toegestane actie | `GET` |
+| `type` | Resource type — `KV-GV` | `KV-GV` |
+| `action` | Toegestane actie | `can_read` |
 | `license` | iSHARE-licentie | `iSHARE.0002` |
 | `useCase` | Use case-identifier | `dvu` |
 | `issuerId` | Data-rechthebbende (Bob) | `did:ishare:EU.NL.NTRNL-12345678` |
