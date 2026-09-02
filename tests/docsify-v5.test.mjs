@@ -22,11 +22,13 @@ function loadCodeRenderer() {
         return { svg: `<svg>${text}</svg>` };
       },
     },
+    mermaidSources: {},
     num: 0,
   });
 
   return {
     mermaidCalls,
+    mermaidSources: context.mermaidSources,
     renderCode: vm.runInContext(`(${match[1]})`, context),
   };
 }
@@ -69,7 +71,7 @@ test('preserves required navigation behavior', () => {
 });
 
 test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', async () => {
-  const { mermaidCalls, renderCode } = loadCodeRenderer();
+  const { mermaidCalls, mermaidSources, renderCode } = loadCodeRenderer();
   const context = {
     origin: {
       code: token => `fallback:${token.text}`,
@@ -78,11 +80,10 @@ test('renders Mermaid and LikeC4 tokens with the Docsify v5 API', async () => {
 
   assert.equal(
     await renderCode.call(context, { text: 'flowchart LR; A-->B', lang: 'mermaid' }),
-    '<div class="mermaid"><svg>flowchart LR; A-->B</svg></div>',
+    '<div class="mermaid" data-mermaid-id="mermaid-svg-0"></div>',
   );
-  assert.deepEqual(mermaidCalls, [
-    { id: 'mermaid-svg-0', text: 'flowchart LR; A-->B' },
-  ]);
+  assert.deepEqual(mermaidCalls, []);
+  assert.equal(mermaidSources['mermaid-svg-0'], 'flowchart LR; A-->B');
   assert.equal(
     await renderCode.call(context, {
       text: '// view: overview\nview overview {}',

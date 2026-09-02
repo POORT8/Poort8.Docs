@@ -7,6 +7,7 @@
   <meta name="description" content="Poort8 Docs - Docs for Poort8 products and dataspaces.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@5.0.0/dist/themes/core.min.css">
+  <link rel="stylesheet" href="assets/css/custom.css">
   <style>
     likec4-view.likec4-embed {
       display: block;
@@ -22,6 +23,7 @@
   <script src="https://cdn.jsdelivr.net/npm/mermaid@9.3.0/dist/mermaid.min.js"></script>
   <script>
     var num = 0;
+    var mermaidSources = {};
     mermaid.initialize({ startOnLoad: false });
 
     function installLikeC4OverlayFix(host) {
@@ -112,15 +114,13 @@
       },
       markdown: {
         renderer: {
-          code: async function(token) {
+          code: function(token) {
             var code = token.text;
             var lang = token.lang;
             if (lang === "mermaid") {
-              var rendered = await mermaid.render('mermaid-svg-' + num++, code);
-              var svg = rendered && typeof rendered === 'object' && typeof rendered.svg === 'string'
-                ? rendered.svg
-                : String(rendered);
-              return '<div class="mermaid">' + svg + '</div>';
+              var mermaidId = 'mermaid-svg-' + num++;
+              mermaidSources[mermaidId] = code;
+              return '<div class="mermaid" data-mermaid-id="' + mermaidId + '"></div>';
             }
             if (lang === "likec4") {
               // Allow explicit view selection via first-line directive: // view: <id>
@@ -130,12 +130,12 @@
                 viewId = directiveMatch[1];
               } else {
                 var autoMatch = code.match(/\bview\s+(\w+)/);
-                if (!autoMatch) return await this.origin.code.call(this, token);
+                if (!autoMatch) return this.origin.code.call(this, token);
                 viewId = autoMatch[1];
               }
               return '<likec4-view class="likec4-embed" view-id="' + viewId + '" dynamic-variant="sequence"></likec4-view>';
             }
-            return await this.origin.code.call(this, token);
+            return this.origin.code.call(this, token);
           }
         }
       },
@@ -162,6 +162,15 @@
           }
 
           hook.doneEach(function() {
+            document.querySelectorAll('[data-mermaid-id]').forEach(function(container) {
+              var mermaidId = container.getAttribute('data-mermaid-id');
+              var source = mermaidSources[mermaidId];
+              if (!source || container.dataset.mermaidRendered === 'true') return;
+              container.dataset.mermaidRendered = 'true';
+              mermaid.render(mermaidId, source, function(svg) {
+                container.innerHTML = svg;
+              });
+            });
             loadBundleForRoute(window.location.hash || '/');
             applyLikeC4OverlayFix();
           });

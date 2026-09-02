@@ -3,7 +3,7 @@
 
 :root {
   --theme-color: #0066cc;           /* Poort8 primary */
-  --theme-color-secondary: #004499;  /* Poort8 secondary */
+  --content-max-width: 1200px;
 }
 
 /* Sidebar styling with proper border */
@@ -13,18 +13,7 @@
 
 /* Content max-width constraint for better readability */
 .content {
-  max-width: 1040px;
-}
-
-/* Responsive design improvements */
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-300px);
-  }
-  
-  .sidebar.open {
-    transform: translateX(0);
-  }
+  max-width: var(--content-max-width);
 }
 
 /* Logo styling in header */
