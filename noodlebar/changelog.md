@@ -179,7 +179,7 @@ All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API
 
 #### Added
 
-- Core API endpoints are now available at versioned `/v1/api/` paths: `GET /v1/api/authorization/enforce`, `GET /v1/api/authorization/explained-enforce`, `GET|POST|PUT /v1/api/policies`, `GET|DELETE /v1/api/policies/{id}`, `GET|POST|PUT /v1/api/resourcegroups`, `GET|DELETE /v1/api/resourcegroups/{id}`, `POST /v1/api/resourcegroups/{resourceGroupId}/resources`, `PUT|DELETE /v1/api/resourcegroups/{resourceGroupId}/resources/{resourceId}`, `GET|POST|PUT /v1/api/resources`, and `GET|DELETE /v1/api/resources/{id}`. Unversioned `/api/` routes remain active for 90 days; migrate to `/v1/api/` routes as soon as possible. [#965](https://github.com/POORT8/Poort8.Dataspace.Private/pull/965)
+- Core API endpoints are now available at versioned `/v1/api/` paths: `GET /v1/api/authorization/enforce`, `GET /v1/api/authorization/explained-enforce`, `GET|POST|PUT /v1/api/policies`, `GET|DELETE /v1/api/policies/{id}`, `GET|POST|PUT /v1/api/resourcegroups`, `GET|DELETE /v1/api/resourcegroups/{id}`, `POST /v1/api/resourcegroups/{resourceGroupId}/resources`, `PUT|DELETE /v1/api/resourcegroups/{resourceGroupId}/resources/{resourceId}`, `GET|POST|PUT /v1/api/resources`, and `GET|DELETE /v1/api/resources/{id}`. The announced 90-day deprecation window for unversioned `/api/` routes ends on **2026-09-02**; migrate to `/v1/api/` routes as soon as possible. [#965](https://github.com/POORT8/Poort8.Dataspace.Private/pull/965)
 
 #### Fixed
 

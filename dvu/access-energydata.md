@@ -1,8 +1,3 @@
----
-title: DVU Machine-to-Machine Toegang
-description: Business & technische context voor M2M toegang tot energieverbruiksdata binnen DVU
----
-
 # Machine-to-Machine Toegang tot Energiedata (DVU)
 
 Deze pagina biedt een zakelijke én technische introductie voor het implementeren van geautoriseerde machine-to-machine (M2M) toegang tot energieverbruiksdata binnen DVU.

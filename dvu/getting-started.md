@@ -203,7 +203,7 @@ sequenceDiagram
     participant DVU as DVU registratie app
     participant AR as Authorization Registry
 
-    You->>Keyper: POST /approval-links
+    You->>Keyper: POST /v1/api/approval-links
     Keyper->>Keyper: Validate request
     Keyper->>Email: Send approval link
     Keyper->>You: Return link details (Active)
