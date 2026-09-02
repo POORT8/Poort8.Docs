@@ -16,7 +16,7 @@ sequenceDiagram
     participant AR as DVU Authorization Register
     participant SDS as Smart Data Solutions
     Note over App: Requesting Approval
-    App->>Keyper: POST /approval-links (with policy + resource group)
+    App->>Keyper: POST /v1/api/approval-links (with policy + resource group)
     Keyper->>EC: Email with approval link
     EC->>Keyper: Open link, review & approve
     Keyper->>AR: Register policy + resource group

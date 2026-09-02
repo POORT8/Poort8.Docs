@@ -15,7 +15,7 @@ sequenceDiagram
     participant EC as Energy Contractor
     participant CAR as Central Aansluit Register
     participant AR as DVU Authorization Register
-    App->>Keyper: POST /approval-links (bulk buildings)
+    App->>Keyper: POST /v1/api/approval-links (bulk buildings)
     Keyper->>EC: Email with approval link
     EC->>Keyper: Open approval link
     Keyper->>CAR: Redirect to CAR (bulk)
@@ -117,4 +117,3 @@ Format each address as `"<postal code> <house number>"` (e.g., `"3013 AK 45"`). 
 After approval, retrieve each building's VBO identifier and associated EAN codes via the DVU API — see Retrieving VBO and EAN Data (vbo-ean-data-retrieval.md).
 
 For requesting access to a single building, see Single Building Access (single-building.md).
-

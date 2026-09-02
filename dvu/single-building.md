@@ -15,7 +15,7 @@ sequenceDiagram
     participant EC as Energy Contractor
     participant CAR as Central Aansluit Register
     participant AR as DVU Authorization Register
-    App->>Keyper: POST /approval-links (single building)
+    App->>Keyper: POST /v1/api/approval-links (single building)
     Keyper->>EC: Email with approval link
     EC->>Keyper: Open approval link
     Keyper->CAR: Redirect to registratie app
