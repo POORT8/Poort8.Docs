@@ -73,9 +73,14 @@ Content-Type: application/json
 
 {
   "requester": {
+    "name": "<NEW INSTALLATION SERVICE COMPANY CONTACT>",
+    "email": "<NI_EMAIL>",
+    "organization": "<NEW INSTALLATION SERVICE COMPANY>",
     "organizationId": "did:ishare:EU.NL.NTRNL-<NI_KVK>"
   },
   "approver": {
+    "email": "<NI_APPROVER_EMAIL>",
+    "organization": "<NEW INSTALLATION SERVICE COMPANY>",
     "organizationId": "did:ishare:EU.NL.NTRNL-<NI_KVK>"
   },
   "dataspace": {

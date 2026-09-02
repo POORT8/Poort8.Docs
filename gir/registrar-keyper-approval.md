@@ -52,8 +52,18 @@ Content-Type: application/json
 
 ```json
 {
-    "requester": { "organizationId": "did:ishare:EU.NL.NTRNL-<REGISTRAR_KVK>" },
-    "approver": { "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>", "email": "<OWNER_EMAIL>" },
+    "requester": {
+        "name": "<REGISTRAR_NAME>",
+        "email": "<REGISTRAR_EMAIL>",
+        "organization": "<REGISTRAR_ORGANIZATION>",
+        "organizationId": "did:ishare:EU.NL.NTRNL-<REGISTRAR_KVK>"
+    },
+    "approver": {
+        "name": "<OWNER_NAME>",
+        "email": "<OWNER_EMAIL>",
+        "organization": "<OWNER_ORGANIZATION>",
+        "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>"
+    },
     "dataspace": { "baseUrl": "https://gir-preview.poort8.nl" },
     "reference": "<YOUR_REFERENCE>",
     "addPolicyTransactions": [
@@ -77,7 +87,7 @@ Store the returned `id` for status polling.
 ### Step 2 — Poll for approval status
 
 ```http
-GET https://keyper-preview.poort8.nl/v1/api/approval-links/<APPROVAL_LINK_ID>
+GET https://keyper-preview.poort8.nl/v1/api/approval-links/{id}
 Authorization: Bearer <KEYPER_ACCESS_TOKEN>
 ```
 
