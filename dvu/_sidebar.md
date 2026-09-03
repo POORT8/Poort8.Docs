@@ -1,27 +1,25 @@
 - [← Terug naar Poort8 Overzicht](/)
 
-- **DVU basis**
-  - [Intro](README.md)
-  - [Overzicht & Kernconcepten](overview.md)
-  - [Toegangsmodel](access-model.md)
-  - [Dataproducten](data-products.md)
+- **Aan de slag**
+  - [Introductie](README.md)
+  - [Onboarding & registratie](onboarding.md)
 
-- **Implementation guides**
-  - [Getting Started](getting-started.md)
-  - [Single Building Access](single-building.md)
-  - [Bulk Building Access](bulk-buildings.md)
-  - [Direct EAN Access](direct-ean.md)
-  - [Retrieving VBO and EAN Data via DVU](vbo-ean-data-retrieval.md)
-  - [Energy data retrieval from Smart Data Solutions (SDS) via DVU](sds-data-retrieval.md)
-  - [Aansluiten als Datadienstaanbieder](data-service-provider.md)
-  
-- **Ondersteuning & referentie**
+- **Concepten**
+  - [Toegangsmodel](toegangsmodel.md)
+  - [Dataproducten](dataproducten.md)
+
+- **Implementatiegidsen**
+  - [Aansluiten als data-rechthebbende](aansluiten-data-rechthebbende.md)
+  - [Aansluiten als dataservice consumer](aansluiten-dataservice-consumer.md)
+  - [Aansluiten als datadienst-aanbieder](aansluiten-datadienst-aanbieder.md)
+  - [Aansluiten als control plane app](aansluiten-control-plane.md)
+
+- **Ondersteuning**
   - [FAQ](faq.md)
-  - [Woordenlijst](glossary.md)
 
-- **Business context M2M**
-  - [M2M Toegang Energiedata](access-energydata.md)
+- **Technische referentie**
+  - [DVU API documentatie ➚](https://dvu-preview.poort8.nl/scalar/v1)
+  - [Keyper API documentatie ➚](https://keyper-preview.poort8.nl/scalar/v1)
 
-- **Aanvullende bronnen**
-  - [Keyper Documentatie](../keyper/)
-  - [NoodleBar Documentatie](../noodlebar/)
+- **Externe links**
+  - [NoodleBar documentatie](../noodlebar/)
