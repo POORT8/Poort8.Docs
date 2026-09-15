@@ -87,6 +87,7 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
     "organizationId": "did:ishare:EU.NL.NTRNL-<NEW_INSTALLER_KVK>"
   },
   "approver": {
+    "name": "<BUILDING OWNER NAME>",
     "email": "<BUILDING OWNER EMAIL>",
     "organization": "<BUILDING OWNER ORGANISATION>",
     "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>"
@@ -96,16 +97,8 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
   },
   "addPolicyTransactions": [
     {
-      "type": "GIRMaintenanceLog",
-      "action": "can_read",
-      "license": "DSGO.0010",
-      "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
       "subjectId": "did:ishare:EU.NL.NTRNL-<NEW_INSTALLER_KVK>",
-      "serviceProvider": "*",
-      "resourceId": "<VBOID>",
-      "attribute": "*",
-      "notBefore": "<UNIX TIMESTAMP>",
-      "expiration": "<UNIX TIMESTAMP>"
+      "resourceId": "<BAG_VBO_ID_16_DIGITS>"
     }
   ],
   "orchestration": {
@@ -115,6 +108,8 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
 ```
 
 > Multiple VBO-ids require one entry per VBO-id in `addPolicyTransactions`.
+
+> Keyper supplies these policy values: `issuerId` = `approver.organizationId`, `type` = `GIRMaintenanceLog`, `action` = `can_read`, `license` = `DSGO.0010`, and `useCase` = `dsgo.gir-onderhoudsboekje`. `serviceProvider` is optional and defaults to `*`, since the requester does not always know in advance which service provider holds the data; when supplied, it must be a valid iSHARE organization ID. `attribute` is optional and defaults to `*`. `notBefore` and `expiration` are optional Unix timestamps in seconds; if omitted, Keyper defaults them to `now` and `now` + 1 year respectively. `issuedAt` is set when the policy is approved and must not be supplied. Supplying a different fixed value returns `400 Bad Request`.
 
 > **NL/SfB scoping**: to restrict access to specific NL/SfB classifications, add a `rules` field to the transaction, e.g. `"rules": "Classificaties(NLSfB-52.16,NLSfB-52.20)"`. Multiple codes are OR-matched. `rules` and `attribute` are independent conditions — GIR checks the classification it has itself registered for each installation and matches it against `rules` regardless of the `attribute` value; the requester cannot set the classification directly. `attribute` has its own, separate use: setting it to a specific installation id (instead of `"*"`) restricts the policy to that one installation, with or without a `rules` filter — see [Authorization scope](digitaal-onderhoudsboekje.md#authorization-scope).
 

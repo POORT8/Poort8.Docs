@@ -75,13 +75,9 @@ views {
 |-----------|-------------|--------|
 | `issuerId` | DID of the building owner (policy issuer) | Required |
 | `subjectId` | DID of the installer (access subject) | Required |
-| `serviceProvider` | DID of Datastekker / 2BA | Required |
-| `resourceId` / `identifiers` | vboId (building level) or installationId (installation level). Consent at building level covers all its installations. | Required |
-| `notBefore` / `expiration` | Validity period of the granted access | Required |
-| `type` | Resource type identifier: `GIRDatastekkerAccess` | Required |
-| `action` | Permitted action: `can_read` | Required |
-| `attribute` | `*` (wildcard); future: predefined dataset identifier — see [Potential future extensions](#potential-future-extensions) | `*` |
-| `license` | License identifier for terms of use | `DSGO.0010` |
+| `resourceId` / `identifiers` | 16-digit BAG VBO-id (building level). Consent at building level covers all its installations. | Required |
+| `notBefore` / `expiration` | Validity period of the granted access | Optional — defaults to `now` / `now` + 1 year |
+| `attribute` | `*` (wildcard); future: predefined dataset identifier — see [Potential future extensions](#potential-future-extensions) | Optional — defaults to `*` |
 
 ## Potential future extensions
 

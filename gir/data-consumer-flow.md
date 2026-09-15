@@ -86,6 +86,7 @@ After owner approval completes:
 
 ### Implementation references
 
+- [Phase 1 — Approval Flow](data-consumer-approval-flow.md)
 - [../keyper/README.md](../keyper/README.md)
 - [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
 

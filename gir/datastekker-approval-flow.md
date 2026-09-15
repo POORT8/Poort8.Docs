@@ -80,20 +80,10 @@ Content-Type: application/json
   "dataspace": {
     "baseUrl": "https://gir-preview.poort8.nl"
   },
-  "reference": "<UNIQUE_REFERENCE>",
   "addPolicyTransactions": [
     {
-      "type": "GIRDatastekkerAccess",
-      "action": "can_read",
-      "license": "DSGO.0010",
-      "issuedAt": "<UNIX_TIMESTAMP>",
-      "issuerId": "did:ishare:EU.NL.NTRNL-<BUILDING_OWNER_KVK>",
-      "attribute": "*",
-      "notBefore": "<UNIX_TIMESTAMP>",
       "subjectId": "did:ishare:EU.NL.NTRNL-<INSTALLER_KVK>",
-      "expiration": "<UNIX_TIMESTAMP>",
-      "resourceId": "<VBOID>",
-      "serviceProvider": "did:ishare:EU.NL.NTRNL-<2BA_KVK>"
+      "resourceId": "<BAG_VBO_ID_16_DIGITS>"
     }
   ],
   "orchestration": {
@@ -101,6 +91,8 @@ Content-Type: application/json
   }
 }
 ```
+
+Keyper supplies these policy values: `issuerId` = `approver.organizationId`, `type` = `GIRDatastekker`, `action` = `can_read`, `serviceProvider` = `did:ishare:EU.NL.NTRNL-17162509` (2BA), `license` = `DSGO.0010`, and `useCase` = `dsgo.gir-datastekker`. `attribute` is optional and defaults to `*`. `notBefore` and `expiration` are optional Unix timestamps in seconds; if omitted, Keyper defaults them to `now` and `now` + 1 year respectively. `issuedAt` is set when the policy is approved and must not be supplied. Supplying a different flow-owned value returns `400 Bad Request`.
 
 Store the returned `id` to poll for approval status if needed.
 
@@ -112,7 +104,7 @@ After the approval link is created:
 2. **The building owner authenticates** (for example via eHerkenning) and reviews the request — which building, which installer, which data, for how long — then approves or rejects.
 3. **On approval, Keyper registers the policy in GIR.** The policy is immediately active; Datastekker can enforce it on every subsequent data request.
 
-If the building owner rejects, the link expires. TechniekNederland can initiate a new request with a new `reference`.
+If the building owner rejects, the link expires. TechniekNederland can initiate a new request.
 
 ## References
 

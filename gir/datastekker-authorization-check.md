@@ -76,13 +76,13 @@ Content-Type: application/json
           {
             "target": {
               "resource": {
-                "type": "GIRDatastekkerAccess",
-                "identifiers": ["<INSTALLATION_ID>"],
+                "type": "GIRDatastekker",
+                "identifiers": ["<VBOID>"],
                 "attributes": ["*"]
               },
               "actions": ["can_read"],
               "environment": {
-                "serviceProviders": ["did:ishare:EU.NL.NTRNL-<2BA_KVK>"]
+                "serviceProviders": ["did:ishare:EU.NL.NTRNL-17162509"]
               }
             }
           }
@@ -118,13 +118,13 @@ GIR returns a `delegationEvidence` object:
           {
             "target": {
               "resource": {
-                "type": "GIRDatastekkerAccess",
-                "identifiers": ["<INSTALLATION_ID>"],
+                "type": "GIRDatastekker",
+                "identifiers": ["<VBOID>"],
                 "attributes": ["*"]
               },
               "actions": ["can_read"],
               "environment": {
-                "serviceProviders": ["did:ishare:EU.NL.NTRNL-<2BA_KVK>"]
+                "serviceProviders": ["did:ishare:EU.NL.NTRNL-17162509"]
               }
             },
             "rules": [

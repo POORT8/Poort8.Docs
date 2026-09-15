@@ -25,8 +25,9 @@
     - [Phase 3 — Submit Installation](registrar-submit-installation.md)
     - [Phase 4 — Activation Verification](registrar-activation-verification.md)
 
-- **Flow Overviews**
-  - [Data-Consumer Flow](data-consumer-flow.md)
+- **Data Consumer**
+  - [Introduction](data-consumer-flow.md)
+    - [Phase 1 — Approval Flow](data-consumer-approval-flow.md)
 
 - **Endpoint Integration Guides**
   - [Obtaining a DSGO Token](connect-token.md)

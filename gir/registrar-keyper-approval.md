@@ -40,7 +40,7 @@ views {
 
 ### Step 1 — Create approval link
 
-The `resourceId`, owner `issuerId`, and registrar `subjectId` must exactly match what you will use in the GIR write request, or records will remain `Pending`.
+The `resourceId` and registrar `subjectId` must exactly match what you will use in the GIR write request, or records will remain `Pending`. Keyper derives the policy's `issuerId` from `approver.organizationId`.
 
 For full request and response schema, see [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1).
 
@@ -65,22 +65,17 @@ Content-Type: application/json
         "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>"
     },
     "dataspace": { "baseUrl": "https://gir-preview.poort8.nl" },
-    "reference": "<YOUR_REFERENCE>",
     "addPolicyTransactions": [
         {
-            "type": "GIRBasisdataMessage",
-            "action": "can_write",
-            "license": "DSGO.0010",
-            "issuerId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>",
             "subjectId": "did:ishare:EU.NL.NTRNL-<REGISTRAR_KVK>",
-            "resourceId": "<BAG_VBO_ID_16_DIGITS>",
-            "attribute": "*",
-            "serviceProvider": "did:ishare:EU.NL.NTRNL-<GIR_ORG_ID>"
+            "resourceId": "<BAG_VBO_ID_16_DIGITS>"
         }
     ],
     "orchestration": { "flow": "dsgo.gir-registrar@v1" }
 }
 ```
+
+Keyper supplies these policy values: `issuerId` = `approver.organizationId`, `type` = `GIRBasisdataMessage`, `action` = `can_write`, `serviceProvider` = `did:ishare:EU.NL.NTRNL-76660680`, `attribute` = `*`, `license` = `DSGO.0010`, and `useCase` = `dsgo.gir-registrar`. `notBefore` and `expiration` are optional Unix timestamps in seconds; if omitted, Keyper defaults them to `now` and `now` + 1 year respectively. `issuedAt` is set when the policy is approved and must not be supplied. Supplying a different flow-owned value returns `400 Bad Request`.
 
 Store the returned `id` for status polling.
 
@@ -91,13 +86,13 @@ GET https://keyper-preview.poort8.nl/v1/api/approval-links/{id}
 Authorization: Bearer <KEYPER_ACCESS_TOKEN>
 ```
 
-Status lifecycle: `Active` → `Approved`, `Rejected`, or `Expired`. On `Rejected` or `Expired`, create a new request with a new `reference`.
+Status lifecycle: `Active` → `Approved`, `Rejected`, or `Expired`. On `Rejected` or `Expired`, create a new request.
 
 > **Note:** The `status` field reflects the state of the **approval link**, not the state of the resulting write policy in GIR. A status of `Approved` means the installation owner accepted the request and Keyper has registered the policy — but you must still verify the installation write result separately (see [Activation Verification](registrar-activation-verification.md)).
 
-### Attribute filtering
+### Classification scoping
 
-Set `attribute` to `*` for write access — the registrar can write any installation without restriction, since it is the registrar's own write that establishes the installation's classification in the first place. Classification-based scoping (via a policy's `rules` field) applies only to read access — see [Digitaal Onderhoudsboekje — Phase 1](digitaal-onderhoudsboekje-owner-authorization.md#step-3-keyper-registers-the-accessright-in-gir).
+Write access is never scoped by classification — the registrar can write any installation without restriction, since it is the registrar's own write that establishes the installation's classification in the first place. Classification-based scoping (via a policy's `rules` field) applies only to read access — see [Digitaal Onderhoudsboekje — Phase 1](digitaal-onderhoudsboekje-owner-authorization.md#step-3-keyper-registers-the-accessright-in-gir).
 
 ### NL/SfB filtering
 
