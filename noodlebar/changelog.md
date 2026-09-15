@@ -2,6 +2,24 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-09-14
+
+**Highlights:** Approval-link requests now distinguish client-owned values from values supplied by Keyper. GIR flows additionally derive their flow-owned policy fields and apply consistent defaults.
+
+### Keyper
+
+#### Changed
+
+- All Keyper approval-link flows now derive `issuerId` from `approver.organizationId` when it is omitted and set `issuedAt` when the policy is approved. **BREAKING:** clients must omit `issuedAt`; a conflicting `issuerId` is rejected with `400 Bad Request`. When changing an approval link's approver, resubmit its policies with the new issuer or explicitly clear them.
+- The GIR registrar, consumer, maintenance-book, and Datastekker flows now supply their own `type`, `action`, `license`, `useCase`, and flow-specific service provider. `notBefore` defaults to the current time and `expiration` to one calendar year later.
+- **BREAKING:** GIR flow-owned values that conflict with the selected `orchestration.flow` are now rejected with `400 Bad Request` instead of being silently overwritten. Existing integrations should remove flow-owned fields from their approval-link requests. [#1318](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1318)
+- Existing GIR approval links created with policy values that conflict with the new flow contract cannot be partially updated while retaining those policies. Resubmit compliant `addPolicyTransactions`, explicitly clear them when another transaction remains, or create a new approval link. Existing links whose stored `issuerId` differs from `approver.organizationId` are also blocked from issuing policies and should be recreated.
+- The Keyper OpenAPI schema now marks `issuedAt` as read-only and makes flow-dependent `action` and derived `issuerId` optional. Regenerate generated clients after upgrading.
+
+#### Added
+
+- Added the `dsgo.gir-consumer@v1` approval flow for requesting read access to `GIRBasisdataMessage` resources.
+
 ## 2026-09-08
 
 **✨ Highlights:** Keyper approval-link writes now reject empty transaction payloads, and the NoodleBar API reference now points to the configured Keycloak realm and scope instead of test values.
