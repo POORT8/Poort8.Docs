@@ -2,6 +2,17 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-09-16
+
+**Highlights:** The systems catalog now identifies the offering organization with a stable, machine-readable id, and can be filtered by organization.
+
+### NoodleBar
+
+#### Added
+
+- `GET /v1/api/systems` responses now include `organizationId` for every API and app. This is the same identifier the organization registry publishes as `id`, so a catalog entry can be linked to an organization without matching on name. [#1333](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1333)
+- `GET /v1/api/systems` now accepts the optional `organizationId` and `organizationName` query parameters. They combine with the existing `type` and `tag` filters using AND semantics. An organization filter that matches nothing returns an empty list, and blank values are rejected with `400 Bad Request`. Prefer `organizationId`, because organization names are neither unique nor stable. [#1333](https://github.com/POORT8/Poort8.Dataspace.Private/pull/1333)
+
 ## 2026-09-14
 
 **Highlights:** Approval-link requests now distinguish client-owned values from values supplied by Keyper. GIR flows additionally derive their flow-owned policy fields and apply consistent defaults.

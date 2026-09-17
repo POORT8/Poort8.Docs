@@ -10,7 +10,7 @@ Tags are used to keep APIs and apps discoverable and consistent across the catal
 |---|---|
 | Administrator | Manage the global tag list (create, rename, delete), maintain naming consistency, and remove selected tags from a system |
 | Organization | Assign existing tags to owned APIs and apps, and remove tags from owned APIs and apps |
-| Catalog user | Filter APIs and apps by one or more tags in the catalog UI, and query the catalog API with tag filters |
+| Catalog user | Filter APIs and apps by one or more tags in the catalog UI, and query the catalog API with tag, system type, and organization filters |
 
 ## Administrator Workflow
 
@@ -47,7 +47,7 @@ This supports precise discovery when many APIs and apps are available.
 
 For endpoint definitions, request/response models, and examples, use the Systems API reference in Scalar: [Systems API (Scalar) ➚](https://noodlebar-preview.poort8.nl/scalar/#tag/systems).
 
-Catalog filtering supports one or more tag filters, including combinations with system type filtering.
+Catalog filtering supports one or more tag filters, combined with system type and organization filtering. Organizations can be filtered by their name and identifier.
 
 ## Notes
 
