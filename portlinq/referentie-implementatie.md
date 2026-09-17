@@ -151,16 +151,16 @@ Response: `ACCESS_TOKEN_SHIP` (JWT). Deze gaat mee als `Authorization: Bearer` i
 GET https://portlinq-preview.poort8.nl/v1/api/systems?tag=port
 Authorization: Bearer <ACCESS_TOKEN_SHIP>
 ```
-Response: systemen getagd als `port`, elk met `organizationName` en `url`.
+Response: systemen getagd als `port`, elk met `organizationId`, `organizationName` en `url`.
 
 ### Stap 4 — Haven selecteren
 Ardin selecteert Port of Twente. App-interne selectie op basis van stap 3.
 
 ### Stap 5 — Aanmeren selecteren + policy inschieten
-Ardin selecteert de aanmeer-/bezoekdienst van de haven (tag `visit`). Bij die selectie schiet de app de **policy** in: de MS Amare geeft Port of Twente toestemming om straks het arrival/departure-event (gedetecteerd door GetSturdy via AIS, gepusht naar de haven) te ontvangen. Issuer = de Amare (Ardin handelt via de app namens het schip).
+Ardin selecteert de aanmeer-/bezoekdienst van de haven (tag `visit`, en de organizationId van de geselecteerde haven). Bij die selectie schiet de app de **policy** in: de MS Amare geeft Port of Twente toestemming om straks het arrival/departure-event (gedetecteerd door GetSturdy via AIS, gepusht naar de haven) te ontvangen. Issuer = de Amare (Ardin handelt via de app namens het schip).
 
 ```http
-GET https://portlinq-preview.poort8.nl/v1/api/systems?tag=visit&tag=port
+GET https://portlinq-preview.poort8.nl/v1/api/systems?tag=visit&organizationId=<EUID_PORT_AUTHORITY>
 Authorization: Bearer <ACCESS_TOKEN_SHIP>
 ```
 ```http
@@ -185,10 +185,10 @@ Content-Type: application/json
 Als het schip in de buurt is, selecteert Ardin de walstroom-dienst.
 
 ```http
-GET https://portlinq-preview.poort8.nl/v1/api/systems?tag=shorepower&tag=port
+GET https://portlinq-preview.poort8.nl/v1/api/systems?tag=shorepower&organizationId=<EUID_PORT_AUTHORITY>
 Authorization: Bearer <ACCESS_TOKEN_SHIP>
 ```
-Response: walstroom-dienst(en) van de haven, met de `url` van Ease2pay om aan te roepen.
+Response: walstroom-dienst(en) van de geselecteerde haven, met de `url` van Ease2pay om aan te roepen.
 
 ### Stap 7 — Binnenvaren: autorisatie (use case 1)
 Geofence enter-event (gesimuleerd, D1). GetSturdy volgt de Amare (AIS is beschikbaar via de EuRIS-toestemming — zie afhankelijkheden) en controleert bij PortlinQ of de haven het binnenvaren mag ontvangen:
