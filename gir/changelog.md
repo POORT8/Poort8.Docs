@@ -2,6 +2,10 @@
 
 This page documents customer-visible changes to GIR-specific API endpoints.
 
+## New `GET /capabilities` endpoint
+
+GIR now implements the DSGO `GET /capabilities` endpoint. Without an access token it lists the public services; with a DSGO bearer token it also lists the restricted delegation and GIRBasisdataMessage services. The response is a signed `capabilitiesToken` by default, or the token payload as plain JSON with `?format=json`. See [Discovering GIR Capabilities](capabilities.md).
+
 ## Legacy `/v1/api/GIRBasisdataMessages(s)` routes removed
 
 The `/v1/api/GIRBasisdataMessages` and `/v1/api/GIRBasisdataMessages/{guid}` routes have been **removed**. This supersedes the earlier `v0.102` announcement below, which stated these routes would keep working, unchanged, during a deprecation window — that plan changed: the legacy routes are now gone outright, with no redirect.
