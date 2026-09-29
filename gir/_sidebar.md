@@ -32,6 +32,7 @@
 - **Endpoint Integration Guides**
   - [Obtaining a DSGO Token](connect-token.md)
   - [Discovering Capabilities](capabilities.md)
+  - [Discovering Data Services](dataservices.md)
   - [Register or Update an Installation](insert-installation.md)
   - [Retrieve an Installation](retrieve-installation.md)
   - [Retrieve Multiple Installations](retrieve-installations.md)

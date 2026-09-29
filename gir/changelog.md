@@ -2,6 +2,10 @@
 
 This page documents customer-visible changes to GIR-specific API endpoints.
 
+## New `GET /dataServices` endpoint
+
+GIR now implements the DSGO `GET /dataServices` endpoint. With a DSGO bearer token it returns a `dataServiceInfo` object for each GIRBasisdataMessage endpoint, describing its access rights, license, costs and service levels. The response is a signed `dataServicesToken` by default, or the token payload as plain JSON with `?format=json`. `GET /capabilities` now also lists `data-services` as a restricted service. See [Discovering GIR Data Services](dataservices.md).
+
 ## New `GET /capabilities` endpoint
 
 GIR now implements the DSGO `GET /capabilities` endpoint. Without an access token it lists the public services; with a DSGO bearer token it also lists the restricted delegation and GIRBasisdataMessage services. The response is a signed `capabilitiesToken` by default, or the token payload as plain JSON with `?format=json`. See [Discovering GIR Capabilities](capabilities.md).

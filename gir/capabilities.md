@@ -19,6 +19,7 @@ GIR lists these services:
 | Capabilities | `GET /capabilities` | Public | `framework-defined` |
 | Access token | `POST /connect/token` | Public | `framework-defined` |
 | Delegation | `POST /v1/api/delegation` | Restricted | `framework-defined` |
+| Data services | `GET /dataServices` | Restricted | `framework-defined` |
 | Register GIRBasisdataMessage | `POST /api/gir/v0/gir-basisdata-messages` | Restricted | `dataspace-defined` |
 | Search GIRBasisdataMessages | `POST /api/gir/v0/gir-basisdata-messages/_search` | Restricted | `dataspace-defined` |
 | Retrieve GIRBasisdataMessage | `GET /api/gir/v0/gir-basisdata-messages/{guid}` | Restricted | `dataspace-defined` |
@@ -110,7 +111,7 @@ GIR signs the `capabilitiesToken` with `RS256` and includes its certificate chai
         },
         "methods": ["GET"],
         "aal": "QSeal",
-        "conformsTo": ["https://afsprakenstelseldsgo.atlassian.net/wiki/spaces/dsgo/pages/976065692/capabilities"]
+        "conformsTo": ["https://nl-digigo.github.io/DGSO-OAS/#tag/Central-Participant-Registry/operation/getCapabilities"]
       }
     ],
     "restrictedServices": [
