@@ -87,7 +87,6 @@ On approval, Keyper registers one `AccessRight` policy per VBO-id in GIR on beha
     "organizationId": "did:ishare:EU.NL.NTRNL-<NEW_INSTALLER_KVK>"
   },
   "approver": {
-    "name": "<BUILDING OWNER NAME>",
     "email": "<BUILDING OWNER EMAIL>",
     "organization": "<BUILDING OWNER ORGANISATION>",
     "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>"

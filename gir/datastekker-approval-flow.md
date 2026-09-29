@@ -72,7 +72,6 @@ Content-Type: application/json
     "organizationId": "did:ishare:EU.NL.NTRNL-<INSTALLER_KVK>"
   },
   "approver": {
-    "name": "<BUILDING OWNER NAME>",
     "email": "<BUILDING OWNER EMAIL>",
     "organization": "<BUILDING OWNER ORGANISATION>",
     "organizationId": "did:ishare:EU.NL.NTRNL-<BUILDING_OWNER_KVK>"

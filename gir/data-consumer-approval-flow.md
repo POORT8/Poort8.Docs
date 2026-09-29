@@ -59,7 +59,6 @@ Content-Type: application/json
         "organizationId": "did:ishare:EU.NL.NTRNL-<DATA_SERVICE_CONSUMER_KVK>"
     },
     "approver": {
-        "name": "<OWNER_NAME>",
         "email": "<OWNER_EMAIL>",
         "organization": "<OWNER_ORGANIZATION>",
         "organizationId": "did:ishare:EU.NL.NTRNL-<OWNER_KVK>"
