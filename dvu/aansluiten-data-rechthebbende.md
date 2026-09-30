@@ -71,7 +71,7 @@ Bij goedkeuring registreert Keyper een policy met onder andere:
 - **Subject** – de dataservice consumer die toegang krijgt
 - **Service provider** – de datadienst-aanbieder die de data uitlevert
 - **Resource** – het gebouw (VBO) en de bijbehorende EAN's
-- **Geldigheid** – een einddatum/`expiration`
+- **Geldigheid** – een einddatum/`expiration`, zoals opgegeven door de aanvrager; zonder opgave is dat vijf jaar na het aanmaken van de aanvraag
 
 Zie [Toegangsmodel – Policy-structuur](toegangsmodel.md#policy-structuur) voor de volledige policy-velden.
 

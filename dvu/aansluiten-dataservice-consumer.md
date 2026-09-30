@@ -94,6 +94,16 @@ De payload bevat het adres (postcode + huisnummer als één string) en `dataServ
 
 Je kunt optioneel een `description` meegeven op de approval-link. De inhoud hiervan wordt getoond aan de data-rechthebbende bij het goedkeuren, onder het kopje "Wat kan `<dataServiceConsumer>` doen?". Gebruik dit veld om toe te lichten waarvoor de data-toegang gebruikt gaat worden — dit helpt de data-rechthebbende om een geïnformeerde keuze te maken.
 
+Je kunt daarnaast optioneel `policyExpiration` meegeven in de `payload` om zelf de einddatum van de policies te bepalen. De waarde is een Unix timestamp in seconden (een getal, geen string) en geldt voor alle policies die uit de approval-link voortkomen. Laat je het veld weg, dan krijgen de policies een geldigheid tot vijf jaar na het aanmaken van de approval-link. Is de waarde geen geheel getal tussen `1` en `253402300799`, dan wijst Keyper het verzoek direct af met `400 Bad Request`.
+
+```json
+{
+  "address": "1341 BA 1",
+  "dataServiceConsumer": "did:ishare:EU.NL.NTRNL-<YOUR_KVK_NUMBER>",
+  "policyExpiration": 1893456000
+}
+```
+
 ```http
 POST https://keyper-preview.poort8.nl/v1/api/approval-links
 Authorization: Bearer <ACCESS_TOKEN>

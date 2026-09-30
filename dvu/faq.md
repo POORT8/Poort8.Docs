@@ -19,7 +19,7 @@ Dat hangt af van de API die je wilt aanroepen. Gebruik `keyper-api` voor de Keyp
 De data-rechthebbende (gebouweigenaar) via Keyper, met eHerkenning-authenticatie.
 
 **Hoe lang is een policy geldig?**
-Dat bepaalt de DVU registratie app bij het aanmaken van de policies en resource groups. Het veld `expiration` in de policy bevat de einddatum als Unix timestamp.
+De aanvrager kan de einddatum optioneel opgeven via `policyExpiration` in de payload van de approval-link (zie [Aansluiten als dataservice consumer – Stap 2](aansluiten-dataservice-consumer.md#stap-2-goedkeuringsverzoek-aanmaken-via-keyper)). Zonder opgave is een policy geldig tot vijf jaar na het aanmaken van de approval-link. Het veld `expiration` in de policy bevat de einddatum als Unix timestamp.
 
 **Waar vind ik de API-referentie?**
 - [DVU API docs ➚](https://dvu-preview.poort8.nl/scalar/v1)
