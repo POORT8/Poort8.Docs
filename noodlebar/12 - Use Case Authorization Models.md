@@ -28,7 +28,6 @@ If neither the full use case nor its family prefix is in the table, the registry
 |---------------------------|---------------------|
 | `keyper` | `ishare` |
 | `portlinq` | `ishare` |
-| `gds` | `ishare` |
 | `dvu` | `isharescoped` |
 | `gir` | `isharerules` |
 | `dsgo` | `isharerules` |
