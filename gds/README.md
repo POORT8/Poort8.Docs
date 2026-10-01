@@ -63,8 +63,8 @@ API access grants the ability to call an API. Data authorization determines whic
 
 | Environment | URL |
 |-------------|-----|
-| Self-Service Portal | [gds-preview.poort8.nl/portal ➚](https://gds-preview.poort8.nl/portal) |
-| GDS API documentation | [gds-preview.poort8.nl/scalar ➚](https://gds-preview.poort8.nl/scalar/) |
+| Self-Service Portal | gds-preview.poort8.nl/portal |
+| GDS API documentation | gds-preview.poort8.nl/scalar |
 | Keyper (approval workflow) | [keyper-preview.poort8.nl ➚](https://keyper-preview.poort8.nl/) |
 
 ## Choose your path

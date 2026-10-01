@@ -189,4 +189,3 @@ Putting it all together — a simplified enforcement flow:
 
 - [Validating API Tokens](validating-api-tokens.md) — Token validation (prerequisite)
 - [Keyper Approval Workflow](approval-workflow.md) — How policies get registered
-- [GDS API documentation ➚](https://gds-preview.poort8.nl/scalar/) — Interactive API reference

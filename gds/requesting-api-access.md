@@ -7,7 +7,7 @@ This guide is for **David** — a data service consumer who wants to call APIs r
 | Requirement | Description |
 |-------------|-------------|
 | Organization registered | Your organization is registered and approved in the GDS Participant Registry |
-| User account active | You have an active account on the [Self-Service Portal](https://gds-preview.poort8.nl/portal) |
+| User account active | You have an active account on the Self-Service Portal |
 | Target API known | You know which API you want to integrate with |
 
 ## Overview
@@ -53,7 +53,7 @@ views {
 
 ## Step 1 — Register your application
 
-1. Log in to the [Self-Service Portal](https://gds-preview.poort8.nl/portal)
+1. Log in to the Self-Service Portal
 2. Navigate to **Systems** → **Register Application**
 3. Fill in application details (name, description)
 4. Submit the registration

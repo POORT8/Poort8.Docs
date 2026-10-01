@@ -2,7 +2,7 @@
 
 The GDS Self-Service Portal allows participants to manage their organization, register systems, browse the API catalogue, and manage access.
 
-**URL:** [gds-preview.poort8.nl/portal ➚](https://gds-preview.poort8.nl/portal)
+**URL:** gds-preview.poort8.nl/portal
 
 ## Organization onboarding and approval
 

@@ -19,7 +19,7 @@ This guide is for **David** — a data service consumer who needs to request bui
 
 Keyper is registered as an API in the GDS Self-Service Portal, just like any other system. Before you can call the Keyper API, your application needs access to it.
 
-1. Log in to the [Self-Service Portal](https://gds-preview.poort8.nl/portal)
+1. Log in to the Self-Service Portal
 2. Navigate to the **Catalogue** and search for **Keyper**
 3. Click **Request Access**
 

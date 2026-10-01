@@ -14,7 +14,7 @@ flowchart LR
 
 ## Self-service registration
 
-Any user can register their organization through the [Self-Service Portal](https://gds-preview.poort8.nl/portal). The registering user:
+Any user can register their organization through the Self-Service Portal. The registering user:
 
 1. **Provides organization details** — KvK number, organization name
 2. **Provides user details** — name, email, and phone number

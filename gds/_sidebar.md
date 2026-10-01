@@ -16,10 +16,6 @@
   - [Validating API Tokens](validating-api-tokens.md)
   - [Authorization Enforcement](authorization.md)
 
-- **Environments**
-  - [Self-Service Portal ➚](https://gds-preview.poort8.nl/portal)
-
 - **External Links**
-  - [GDS API documentation ➚](https://gds-preview.poort8.nl/scalar/)
   - [Keyper API documentation ➚](https://keyper-preview.poort8.nl/scalar/?api=v1)
   - [NoodleBar Docs](../noodlebar/)
