@@ -2,6 +2,10 @@
 
 This page documents customer-visible changes to GIR-specific API endpoints.
 
+## Error responses now follow the DICO standard (v0.102)
+
+`400`/`401`/`403`/`404`/`409`/`415`/`500`/`501` responses from the GIRBasisdataMessage endpoints are now `application/problem+json` per RFC 9457, in line with the DICO specification.
+
 ## New `GET /dataServices` endpoint
 
 GIR now implements the DSGO `GET /dataServices` endpoint. With a DSGO bearer token it returns a `dataServiceInfo` object for each GIRBasisdataMessage endpoint, describing its access rights, license, costs and service levels. The response is a signed `dataServicesToken` by default, or the token payload as plain JSON with `?format=json`. `GET /capabilities` now also lists `data-services` as a restricted service. See [Discovering GIR Data Services](dataservices.md).
