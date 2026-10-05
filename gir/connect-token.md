@@ -23,6 +23,7 @@ Before you can call this endpoint your organization must meet the following cond
 1. **DSGO membership** — Your organization must be registered in the DSGO participant registry with an active `dataspaceMembership` claim for `EU.DS.NL.DSGO`. Contact DSGO to obtain membership.
 2. **An RSA key pair** — You need a private key to sign the client assertion JWT. The corresponding certificate chain must be recognized by the DSGO participant registry.
 3. **Your organization DID** — Format: `did:ishare:EU.NL.NTRNL-<KVK>`, where `<KVK>` is your 8-digit Dutch Chamber of Commerce (KvK) number.
+4. **An active GIR license** — Your organization's `client_id` (KvK-based DID) must have an active GIR license at Techniek Nederland. GIR checks this on every token request. Contact Techniek Nederland to obtain or renew a license.
 
 ## How it works
 
@@ -31,12 +32,15 @@ sequenceDiagram
     participant App as Your Application
     participant GIR as GIR API
     participant SAT as DSGO Participant Registry
+    participant TN as Techniek Nederland (license check)
 
     App->>App: Create signed JWT client assertion
     App->>GIR: POST /connect/token<br/>(form-urlencoded)
     GIR->>SAT: Validate party membership for client_id
     SAT-->>GIR: Party found, membership active
     GIR->>GIR: Validate JWT signature, claims, and replay
+    GIR->>TN: Check GIR license for client_id
+    TN-->>GIR: is_licensed: true
     GIR-->>App: 200 OK — DSGO bearer token
     App->>GIR: POST /api/gir/v0/gir-basisdata-messages/_search {vboID}<br/>Authorization: Bearer <access_token>
 ```
@@ -126,6 +130,8 @@ The token is valid for **3600 seconds**. When it expires, repeat Steps 1 and 2 t
 |-------------|---------|-------|
 | `400 Bad Request` | `Invalid client_assertion.` | JWT signature invalid, claims incorrect, party not found in DSGO participant registry, no active `dataspaceMembership` for `EU.DS.NL.DSGO`, assertion already used, or certificate chain rejected |
 | `400 Bad Request` | Validation error on `grant_type`, `scope`, or `client_assertion_type` | One of the fixed parameters has an incorrect value |
+| `400 Bad Request` | `Organization does not have an active GIR license.` | Your organization's `client_id` does not have an active GIR license at Techniek Nederland. Contact Techniek Nederland to obtain or renew a GIR license. |
+| `400 Bad Request` | `Could not verify GIR license.` | The GIR license check at Techniek Nederland could not be completed (e.g. temporarily unreachable). Retry the token request. |
 
 GIR returns a generic `Invalid client_assertion.` message for all JWT-related failures to avoid leaking validation details. Use the [Common issues](#common-issues) table to narrow down the cause.
 
