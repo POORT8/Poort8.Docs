@@ -48,7 +48,7 @@ For payload schema and field requirements, see [Register or Update an Installati
 
 | Blocker | Description | Status |
 |---------|-------------|--------|
-| **No delegated/multi-party writes** | The write policy check matches the registrar identity declared in the request body (`registrarChamberOfCommerceNumber`) directly against the approved policy's subject. A software platform submitting on behalf of another (delegated) registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje-supplier-delegation.md) — is not recognized. Only the exact registrar named in the approved policy results in `Active`; any other identity results in `Pending`, with no error returned. | Open (dev task) |
+| **No delegated/multi-party writes** | The write policy check matches the registrar identity declared in the request body (`registrarChamberOfCommerceNumber`) directly against the approved policy's subject. A Software Supplier submitting on behalf of another (delegated) registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje-supplier-delegation.md) — is not recognized. Only the exact registrar named in the approved policy results in `Active`; any other identity results in `Pending`, with no error returned. | Open (dev task) |
 
 ## Next
 

@@ -2,13 +2,13 @@
 
 > Part of the [Datastekker – Installer Access Flow](datastekker.md). Runs on every data request from an installer.
 
-For each data request, Datastekker queries GIR with the installer-provided componentId, checks the delegation policy in GIR, and returns authorised performance data.
+For each data request, Datastekker queries GIR with the installer-provided componentId, checks the `AccessRight` policy in GIR, and returns authorised performance data.
 
 | Actor | Role |
 |-------|------|
 | **Installer** | Sends a data request with a componentId to Datastekker. |
 | **Datastekker (2BA)** | Queries GIR by componentID, verifies authorization in GIR, and returns data. |
-| **GIR** | Evaluates the delegation policy and returns delegation evidence. |
+| **GIR** | Evaluates the `AccessRight` policy and returns delegation evidence. |
 
 ```likec4
 // view: datastekker_authorization_check
@@ -32,7 +32,7 @@ views {
     ds -> gir 'POST /api/gir/v0/gir-basisdata-messages/_search {componentIdValue}'
     gir -> ds 'GIRBasisdataMessage (installationId + manufacturer info)'
     ds -> gir 'POST /v1/api/delegation — check installer + installationId'
-    gir -> ds 'Delegation evidence (Permit or Deny)'
+    gir -> ds 'Permit or Deny'
     ds -> inst 'Authorised performance data'
   }
 }
@@ -55,7 +55,7 @@ Accept: application/json
 
 `componentIdValue` searches may return non-unique results. Handling these edge cases is the responsibility of the data service provider.
 
-### Step 2 — Check the delegation policy in GIR
+### Step 2 — Check the `AccessRight` policy in GIR
 
 ```http
 POST https://gir-preview.poort8.nl/v1/api/delegation

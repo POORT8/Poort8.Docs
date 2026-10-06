@@ -22,7 +22,7 @@ specification {
 }
 
 model {
-  ni = actor 'New Installation Service Company'
+  new_installer = actor 'New Installation Service Company'
   app = system 'TN GIR App'
   keyper = system 'Keyper'
   owner = actor 'Building Owner'
@@ -34,13 +34,13 @@ views {
     title 'Phase 1 — Owner Authorization'
     variant sequence
 
-    ni -> app 'Submit request (owner, building, scope, validity)'
+    new_installer -> app 'Submit request (owner, building, scope, validity)'
     app -> keyper 'Approval request'
     keyper -> owner 'Approval link by email'
     owner -> keyper 'Authenticate via eHerkenning and approve'
     keyper -> gir 'Register AccessRight policy (owner → New Installation Service Company)'
     keyper -> app 'Confirmation'
-    app -> ni 'Confirmation'
+    app -> new_installer 'Confirmation'
   }
 }
 ```

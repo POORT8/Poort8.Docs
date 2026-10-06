@@ -15,7 +15,7 @@ This guide describes how an installer requests access through a form on the Tech
 | TechniekNederland | — | Hosts the form through which the access request is initiated. |
 | Datastekker (2BA) | Data service provider | Retrieves installation data from manufacturers and exposes it via an API. |
 | Keyper *(Poort8)* | — | Orchestrates the approval flow via eHerkenning. Registers the policy in GIR on approval. |
-| GIR | Authorization registry | Stores and enforces the delegation policies at every data request. |
+| GIR | Authorization registry | Stores and enforces the `AccessRight` policies at every data request. |
 
 ## End-to-end flow
 
@@ -52,8 +52,8 @@ views {
     gir -> ds 'Bearer token'
     ds -> gir 'GET GIRBasisdataMessage by componentID'
     gir -> ds 'GIRBasisdataMessage (installationId + manufacturer info)'
-    ds -> gir 'Check delegation for installer + installationId'
-    gir -> ds 'Delegation evidence (Permit or Deny)'
+    ds -> gir 'Verify AccessRight for installer + installationId'
+    gir -> ds 'Permit or Deny'
     ds -> inst 'Authorised performance data'
   }
 }
@@ -65,7 +65,7 @@ views {
 |-------|-------------|-----------|
 | [Phase 1 — Approval Flow](datastekker-approval-flow.md) | Building owner approves the installer via Keyper. Policy is registered in GIR. | Once per installer / building |
 | [Phase 2 — Token Acquisition](datastekker-token-acquisition.md) | Datastekker obtains a DSGO bearer token from GIR. | Per token expiry (3600 s) |
-| [Phase 3 — Authorization Check](datastekker-authorization-check.md) | Datastekker queries GIR by componentID, checks the delegation policy, and returns authorised data to the installer. | Every data request |
+| [Phase 3 — Authorization Check](datastekker-authorization-check.md) | Datastekker queries GIR by componentID, checks the `AccessRight` policy, and returns authorised data to the installer. | Every data request |
 
 > Note: Querying `GIRBasisdataMessage` by `componentID` may return non-unique results. Handling these edge cases is the responsibility of the data service provider.
 

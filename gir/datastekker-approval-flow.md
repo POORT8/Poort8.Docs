@@ -9,7 +9,7 @@ The TechniekNederland form collects the access request and hands it off to Keype
 | **TechniekNederland Form** | Collects request data and calls Keyper. |
 | **Keyper** | Orchestrates the approval flow. Registers the policy in GIR on approval. |
 | **Building owner** | Approves or rejects the request. |
-| **GIR** | Stores the resulting delegation policy. |
+| **GIR** | Stores the resulting `AccessRight` policy. |
 
 ```likec4
 // view: datastekker_approval_flow
@@ -33,7 +33,7 @@ views {
     form -> keyper 'POST /v1/api/approval-links (vboId, installer KvK, owner KvK, validity)'
     keyper -> owner 'Approval link by email'
     owner -> keyper 'Authenticate and approve'
-    keyper -> gir 'Register delegation policy (installer ↔ vboId)'
+    keyper -> gir 'Register AccessRight policy (installer ↔ vboId)'
   }
 }
 ```

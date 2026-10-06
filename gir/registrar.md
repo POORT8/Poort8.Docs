@@ -9,7 +9,7 @@ To successfully publish data to GIR, two conditions must be met:
 - Your organization must have an approved write policy for the target building.
 - Your application must call GIR with a valid DSGO bearer token.
 
-> **Note**: This guide describes a single-registrar model — the organization that submits and maintains data must itself hold the approved write policy. Delegating write or list access to another company (for example, a software platform acting on a registrar's behalf, similar to [Digitaal Onderhoudsboekje's SupplierDelegation](digitaal-onderhoudsboekje-supplier-delegation.md)) is not currently supported for this flow — see the Known blockers sections in [Submit Installation](registrar-submit-installation.md#known-blockers) and [Activation Verification](registrar-activation-verification.md#known-blockers).
+> **Note**: This guide describes a single-registrar model — the organization that submits and maintains data must itself hold the approved write policy. Delegating write or list access to another company (for example, a Software Supplier acting on a registrar's behalf, similar to [Digitaal Onderhoudsboekje's SupplierDelegation](digitaal-onderhoudsboekje-supplier-delegation.md)) is not currently supported for this flow — see the Known blockers sections in [Submit Installation](registrar-submit-installation.md#known-blockers) and [Activation Verification](registrar-activation-verification.md#known-blockers).
 
 ## Parties
 

@@ -2,7 +2,7 @@
 
 > Part of the [Datastekker – Installer Access Flow](datastekker.md). This phase is repeated whenever the current token expires (every 3600 seconds).
 
-Before querying GIR, Datastekker must obtain a DSGO bearer token. The token authenticates Datastekker as a DSGO participant; the delegation policy from Phase 1 authorizes the data access. Both are required.
+Before querying GIR, Datastekker must obtain a DSGO bearer token. The token authenticates Datastekker as a DSGO participant; the AccessRight policy from Phase 1 authorizes the data access. Both are required.
 
 | Actor | Role |
 |-------|------|

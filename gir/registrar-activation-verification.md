@@ -65,4 +65,4 @@ For filtered list retrieval, see [Retrieve Multiple Installations](retrieve-inst
 
 | Blocker | Description | Status |
 |---------|-------------|--------|
-| **No delegated/multi-party visibility** | Listing and retrieving records only checks the calling identity's own read/write policies, plus a self-authorship fallback for the submitting registrar. A software platform or other related party querying on behalf of a registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje-supplier-delegation.md) — will get an empty result instead of seeing that registrar's records. | Open (dev task) |
+| **No delegated/multi-party visibility** | Listing and retrieving records only checks the calling identity's own read/write policies, plus a self-authorship fallback for the submitting registrar. A Software Supplier or other related party querying on behalf of a registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje-supplier-delegation.md) — will get an empty result instead of seeing that registrar's records. | Open (dev task) |
