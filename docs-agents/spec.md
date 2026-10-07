@@ -72,7 +72,7 @@ GitHub Pages  →  docs2.poort8.nl
       name: 'Poort8 Documentation',
       loadSidebar: true,
       search: 'auto',
-      logo: 'assets/images/poort8-logo.svg'
+      logo: 'assets/images/poort8-logo.png'
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify@5.0.0/dist/docsify.min.js"></script>
@@ -124,7 +124,7 @@ dataspaces/dvu/
 
 | Item | Implementation |
 |------|----------------|
-| **Logo** | `assets/images/poort8-logo.svg` (placeholder until supplied). |
+| **Logo** | `assets/images/poort8-logo.png` (horizontal "POORT8 · The Dataspace Company" logo). |
 | **Colors** | Override Docsify CSS vars in `assets/css/custom.css` (`--theme-color`, etc.). |
 | **Layout tweaks** | CSS: responsive sidebar, max-width constraints, search styling. |
 | **Dark-mode** | Not in scope (light-theme only). |
@@ -132,7 +132,7 @@ dataspaces/dvu/
 **Custom CSS example (`assets/css/custom.css`):**
 ```css
 :root {
-  --theme-color: #0066cc;           /* Poort8 primary */
+  --theme-color: #0a7fb3;           /* Poort8 primary */
   --theme-color-secondary: #004499;  /* Poort8 secondary */
 }
 
@@ -196,7 +196,7 @@ dataspaces/dvu/
 - [ ] Add global `_sidebar.md` with dataspace navigation.
 - [ ] Create `dataspaces/` directory structure.
 - [ ] Add per-dataspace `_sidebar.md` files.
-- [ ] Place logo SVG & define brand colors in `assets/css/custom.css`.
+- [ ] Place logo & define brand colors in `assets/css/custom.css`.
 - [ ] Configure GitHub Pages to serve from `main` branch root.
 - [ ] Set CNAME to `docs2.poort8.nl`.
 - [ ] Test navigation, search, and responsive design.

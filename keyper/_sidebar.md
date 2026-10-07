@@ -1,6 +1,6 @@
 - [← Back to Poort8 Overview](/)
 
 - **Getting Started**
-  - [Introduction](README.md)
+  - [Introduction](./)
   - [API Authentication](api-authentication.md)
   - [FAQ](faq.md)

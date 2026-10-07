@@ -1,39 +1,223 @@
-/* Poort8 Documentation - Custom CSS */
-/* Implements spec.md section 4 - Styling & Theming */
+/* Poort8 Docs: theme for the Docsify v5 core theme.
+   Fonts are loaded in index.html. */
 
 :root {
-  --theme-color: #0066cc;           /* Poort8 primary */
-  --content-max-width: 1200px;
+  /* Brand (poort8.nl) */
+  --theme-color : #0a7fb3;
+  --color-text  : #3d4a5b;
+  --strong-color: #232a5c;
+  --heading-color: #232a5c;
+
+  /* Typography */
+  --font-family     : 'IBM Plex Sans', system-ui, sans-serif;
+  --font-family-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-size       : 16px;
+  --font-weight     : 400;
+  --line-height     : 1.7;
+
+  /* Layout */
+  --content-max-width: 80ch;
+  --border-color     : #e3e9f1;
+  --border-radius    : 8px;
+
+  /* Sidebar */
+  --sidebar-width                  : 256px;
+  --sidebar-name-font-family       : 'Poppins', sans-serif;
+  --sidebar-link-color             : #3d4a5b;
+  --sidebar-link-color-active      : var(--link-color);
+  --sidebar-group-title-color      : var(--strong-color);
+  --sidebar-group-title-font-weight: 600;
+
+  /* Search field */
+  --form-element-bg          : #f6f8fb;
+  --form-element-border-color: #c9d2df;
+
+  /* Links: a slightly darker brand blue, because #0a7fb3 on white is 4.47:1
+     (WCAG AA needs 4.5:1 for text). Borders and accents keep --theme-color. */
+  --link-color      : #0976a8;
+  --link-color-hover: var(--strong-color);
+
+  /* Inline code */
+  --code-bg   : #eef1f5;
+  --code-color: var(--strong-color);
+
+  /* Code blocks (Prism tokens) */
+  --codeblock-bg         : #1f2552;
+  --codeblock-color      : #dfe3f5;
+  --codeblock-comment    : #8a93c2;
+  --codeblock-function   : #7fcdf5;
+  --codeblock-important  : #ff9a7a;
+  --codeblock-keyword    : #7fcdf5;
+  --codeblock-operator   : #f5b971;
+  --codeblock-property   : #f5b971;
+  --codeblock-punctuation: #aab1d8;
+  --codeblock-selector   : #a8dba0; /* strings */
+  --codeblock-tag        : #7fcdf5;
+  --codeblock-variable   : #f5b971;
+
+  /* Plain blockquotes: the "> **Note…**" pattern */
+  --blockquote-border-color: var(--theme-color);
+  --blockquote-border-width: 0 0 0 4px;
+  --blockquote-color       : var(--color-text);
+  --blockquote-padding     : 0 0 0 1.25em;
+
+  /* Tables */
+  --table-row-alt-bg: #fafbfd;
 }
 
-/* Sidebar styling with proper border */
-.sidebar {
-  border-right: 1px solid #eee;
+/* [!NOTE] callouts in the poort8.nl style (other types keep core colours) */
+.callout.note {
+  --callout-bg          : #f2f7fb;
+  --callout-border-color: var(--theme-color);
+  --callout-border-width: 2px;
 }
 
-/* Content max-width constraint for better readability */
-.content {
-  max-width: var(--content-max-width);
+/* ---- Custom declarations (no theme property exists for these) ---- */
+
+/* Poppins headings */
+.markdown-section :is(h1, h2, h3, h4) {
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: -0.01em;
+}
+.markdown-section h1 { font-weight: 700; }
+
+/* Logo above the search field (the search plugin inserts itself first) */
+.sidebar { display: flex; flex-direction: column; }
+.sidebar > * { flex-shrink: 0; }
+.sidebar > .app-name { order: -1; }
+.app-name img { max-height: 40px; width: auto; }
+
+/* Fences without a language (e.g. URLs) get no "markup" label */
+.markdown-section pre[data-lang="markup"]::after { content: none; }
+
+/* Active page = navy pill; active heading (subMaxLevel) = blue text.
+   The :only-child selector outranks core's rule that clears the background
+   of a page link without sub-headings. */
+.sidebar .sidebar-nav li.active > a:not(.section-link),
+.sidebar .sidebar-nav li.active > a.page-link:only-child {
+  background: var(--strong-color);
+  color: #fff;
+  border-radius: 6px;
+  padding-inline: 10px;
+}
+.sidebar .app-sub-sidebar li.active > a {
+  color: var(--link-color);
+  font-weight: 500;
 }
 
-/* Logo styling in header */
-.app-name img {
-  max-height: 40px;
-  width: auto;
+/* Optional HTTP method tags in _sidebar.md: [`POST` /connect/token](x.md ':class=post') */
+.sidebar a code {
+  margin-right: 6px;
+  padding: 0;
+  background: none;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+.sidebar a.post code { color: #a14a06; }
+.sidebar a.get code  { color: #2f7d43; }
+
+/* Tables */
+.markdown-section thead th {
+  background: #f6f8fb;
+  color: var(--strong-color);
+  font-weight: 600;
+}
+.markdown-section td > strong:only-child { color: var(--strong-color); }
+
+/* Screenshots */
+.markdown-section img {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
 }
 
-/* Search styling improvements */
-.search {
-  margin-bottom: 20px;
+/* "Edit this page on GitHub" line added by the plugin in index.html */
+.page-meta {
+  display: flex;
+  justify-content: flex-end;
+  font-size: var(--font-size-s);
+  color: var(--color-mono-7); /* mono-6 is 3.79:1 on white */
+}
+.page-meta a {
+  color: inherit;
+  text-decoration-color: var(--border-color);
+  text-decoration-thickness: 1px;
+}
+.page-meta a:hover { color: var(--link-color); text-decoration-color: currentColor; }
+
+/* Previous / Next (docsify-pagination). The doubled class outranks the
+   plugin's own rules, which fade the previous link to 30% opacity. */
+.docsify-pagination-container {
+  gap: 1rem;
+  margin-top: 3em;
+  border-top: 1px solid var(--border-color);
+}
+.docsify-pagination-container .pagination-item.pagination-item {
+  flex: 1 1 0;
+  min-width: 0;
+  margin-top: 1.5em;
+}
+.docsify-pagination-container .pagination-item.pagination-item a :is(.pagination-item-label, .pagination-item-title, .pagination-item-subtitle) {
+  opacity: 1;
+}
+.docsify-pagination-container .pagination-item-label {
+  color: var(--color-mono-7);
+  font-size: var(--font-size-s);
+}
+.docsify-pagination-container .pagination-item-title {
+  margin-top: 0.25em;
+  color: var(--strong-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.15em;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.docsify-pagination-container .pagination-item-subtitle {
+  color: var(--color-mono-7);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.04em;
+}
+.docsify-pagination-container .pagination-item.pagination-item a:hover .pagination-item-title {
+  color: var(--link-color);
+  text-decoration: none;
 }
 
-.search input {
-  border: 1px solid #ddd;
+/* Copy button (docsify-copy-code) on the navy code blocks */
+.markdown-section pre .docsify-copy-code-button {
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.3em 0.75em;
   border-radius: 4px;
-  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--codeblock-color);
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
 }
+.markdown-section pre .docsify-copy-code-button:hover {
+  background: var(--link-color);
+  color: #fff;
+}
+.markdown-section pre .docsify-copy-code-button:focus-visible {
+  opacity: 1;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.markdown-section pre .docsify-copy-code-button > :is(.error, .success) {
+  border-radius: 4px;
+}
+/* The language label sits where the button appears */
+.markdown-section pre[data-lang]:is(:hover, :focus-within)::after { opacity: 0; }
 
-.search input:focus {
-  outline: none;
-  border-color: var(--theme-color);
+/* Mermaid "Source" panel (see the code renderer in index.html) */
+.mermaid-diagram .diagram-actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  display: flex;
+  gap: 6px;
+}
+.mermaid-diagram .diagram-actions .diagram-expand { position: static; }
+.mermaid-diagram .mermaid-source {
+  margin: 0.5rem -0.5rem -0.5rem;
+  border-radius: 0 0 var(--border-radius) var(--border-radius) !important;
 }

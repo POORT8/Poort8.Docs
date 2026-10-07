@@ -7,6 +7,9 @@
   <meta name="description" content="Poort8 Docs - Docs for Poort8 products and dataspaces.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@5.0.0/dist/themes/core.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/custom.css">
   <style>
     /* Fallback height only: the real height is derived from the diagram's
@@ -24,7 +27,8 @@
     .mermaid-diagram {
       position: relative;
       margin: var(--margin-block, 1rem) 0;
-      padding: 0.5rem;
+      /* Top padding keeps the Source/Expand buttons clear of the diagram. */
+      padding: 2.75rem 0.5rem 0.5rem;
       background: var(--color-bg, #fff);
       border: 1px solid var(--border-color, #d7deea);
       border-radius: var(--border-radius, 6px);
@@ -72,8 +76,8 @@
     .diagram-expand:hover,
     .diagram-expand:focus-visible {
       opacity: 1;
-      color: var(--theme-color, #0b85d7);
-      border-color: var(--theme-color, #0b85d7);
+      color: var(--theme-color, #0a7fb3);
+      border-color: var(--theme-color, #0a7fb3);
     }
 
     .diagram-expand__icon {
@@ -153,12 +157,30 @@
     }
   </style>
 </head>
-<body>
+<body class="sidebar-group-underline">
   <div id="app"></div>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@9.3.0/dist/mermaid.min.js"></script>
   <script>
     var mermaidIndex = 0;
-    mermaid.initialize({ startOnLoad: false });
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        fontFamily: "'IBM Plex Sans', sans-serif",
+        fontSize: '14px',
+        // sequence diagrams
+        actorBkg: '#232a5c', actorBorder: '#232a5c', actorTextColor: '#ffffff',
+        actorLineColor: '#d7deea', signalColor: '#0a7fb3', signalTextColor: '#232a5c',
+        sequenceNumberColor: '#ffffff',
+        labelBoxBkgColor: '#f2f7fb', labelBoxBorderColor: '#0a7fb3',
+        labelTextColor: '#232a5c', loopTextColor: '#232a5c',
+        noteBkgColor: '#fff8e1', noteBorderColor: '#e0b84c', noteTextColor: '#4a3410',
+        // flowcharts and other diagram types
+        primaryColor: '#e8f3fa', primaryBorderColor: '#0a7fb3',
+        primaryTextColor: '#232a5c', lineColor: '#0a7fb3', edgeLabelBackground: '#ffffff'
+      },
+      sequence: { mirrorActors: false }
+    });
 
     function renderMermaidDiagrams() {
       var nodes = document.querySelectorAll('.mermaid:not([data-processed])');
@@ -242,13 +264,23 @@
     function installMermaidPopOuts() {
       var diagrams = document.querySelectorAll('.mermaid-diagram:not([data-popout-ready])');
       Array.prototype.forEach.call(diagrams, function(container) {
-        var button = container.querySelector('.diagram-expand');
+        var button = container.querySelector('.diagram-expand:not(.diagram-source)');
         var diagram = container.querySelector('.mermaid');
         if (!button || !diagram) {
           return;
         }
 
         container.setAttribute('data-popout-ready', 'true');
+
+        var src = container.querySelector('.diagram-source');
+        var srcPre = container.querySelector('.mermaid-source');
+        if (src && srcPre) {
+          src.addEventListener('click', function() {
+            srcPre.hidden = !srcPre.hidden;
+            src.setAttribute('aria-expanded', String(!srcPre.hidden));
+          });
+        }
+
         button.addEventListener('click', function() {
           var svg = diagram.querySelector('svg');
           if (!svg) {
@@ -454,8 +486,30 @@
 
     window.$docsify = {
       name: 'Poort8 Docs',
+      logo: 'assets/images/poort8-logo.png',
       loadSidebar: true,
       relativePath: true,
+      subMaxLevel: 2,
+      auto2top: true,
+      notFoundPage: true,
+      // Plugins use the first key found in the current path, so the Dutch
+      // sections must come before '/'.
+      search: {
+        paths: 'auto',
+        depth: 3,
+        placeholder: { '/dvu/': 'Zoeken', '/dvu-draft/': 'Zoeken', '/': 'Search' },
+        noData: { '/dvu/': 'Geen resultaten', '/dvu-draft/': 'Geen resultaten', '/': 'No results' }
+      },
+      copyCode: {
+        buttonText: { '/dvu/': 'Kopiëren', '/dvu-draft/': 'Kopiëren', '/': 'Copy' },
+        successText: { '/dvu/': 'Gekopieerd', '/dvu-draft/': 'Gekopieerd', '/': 'Copied' }
+      },
+      pagination: {
+        previousText: { '/dvu/': 'Vorige', '/dvu-draft/': 'Vorige', '/': 'Previous' },
+        nextText: { '/dvu/': 'Volgende', '/dvu-draft/': 'Volgende', '/': 'Next' },
+        crossChapter: true,
+        crossChapterText: true
+      },
       alias: {
         // Minimal aliases for SPA navigation within Docsify
         '/keyper/implementations/dvu/': '/dvu/',
@@ -473,7 +527,11 @@
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
-              return '<div class="mermaid-diagram"><button type="button" class="diagram-expand" aria-label="Open diagram in larger view"><span class="diagram-expand__icon" aria-hidden="true">&#10530;</span>Expand</button><pre class="mermaid">' + escapedCode + '</pre></div>';
+              return '<div class="mermaid-diagram"><div class="diagram-actions">' +
+                '<button type="button" class="diagram-expand diagram-source" aria-expanded="false">&lt;/&gt; Source</button>' +
+                '<button type="button" class="diagram-expand" aria-label="Open diagram in larger view"><span class="diagram-expand__icon" aria-hidden="true">&#10530;</span>Expand</button>' +
+                '</div><pre class="mermaid">' + escapedCode + '</pre>' +
+                '<pre class="mermaid-source" data-lang="mermaid" hidden><code class="lang-mermaid">' + escapedCode + '</code></pre></div>';
             }
             if (lang === "likec4") {
               // Allow explicit view selection via first-line directive: // view: <id>
@@ -493,6 +551,19 @@
         }
       },
       plugins: [
+        function(hook, vm) {
+          hook.beforeEach(function(md) {
+            // On a failed fetch Docsify renders "# 404 - ..." instead of a
+            // file, so there is nothing to edit.
+            var response = vm.route.response;
+            if (!md || (response && !response.ok)) {
+              return md;
+            }
+            var url = 'https://github.com/POORT8/Poort8.Docs/blob/main/' + vm.route.file;
+            var label = /^\/dvu(-draft)?\//.test(vm.route.path) ? 'Bewerk deze pagina op GitHub' : 'Edit this page on GitHub';
+            return md + '\n\n<div class="page-meta"><a href="' + url + '" target="_blank" rel="noopener">' + label + '</a></div>';
+          });
+        },
         function(hook) {
           var loadedBundles = {};
 
@@ -529,5 +600,15 @@
   </script>
   <!-- Docsify v5 -->
   <script src="https://cdn.jsdelivr.net/npm/docsify@5.0.0/dist/docsify.min.js"></script>
+  <!-- Prism languages beyond the bundled markup/css/clike/javascript -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-http.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-csharp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@5.0.0/dist/plugins/search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
 </body>
 </html>

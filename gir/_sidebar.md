@@ -1,7 +1,7 @@
 - [← Back to Poort8 Overview](/)
 
 - **GIR**
-  - [Introduction](README.md)
+  - [Introduction](./)
   - [API Versioning](api-versioning.md)
   - [Changelog](changelog.md)
 

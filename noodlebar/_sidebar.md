@@ -1,7 +1,7 @@
 - [← Back to Poort8 Overview](/)
 
 - **Getting Started**
-  - [Introduction](README.md)
+  - [Introduction](./)
   - [How We Build Dataspaces](how-we-build-dataspaces.md)
   - [Authentication In Dataspaces](authentication-in-dataspaces.md)
   - [Dataspace Concepts](02%20-%20Dataspace%20Concepts.md)
