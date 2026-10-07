@@ -1,7 +1,7 @@
 - [← Back to Poort8 Overview](/)
 
 - **Getting Started**
-  - [Functional Overview](README.md)
+  - [Functional Overview](./)
 
 - **Implementation Guides**
   - [Requesting API Access (David)](requesting-api-access.md)
