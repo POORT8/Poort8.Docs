@@ -11,6 +11,10 @@ const customCss = await readFile(
   new URL('../assets/css/custom.css', import.meta.url),
   'utf8',
 );
+const favicon = await readFile(
+  new URL('../favicon.svg', import.meta.url),
+  'utf8',
+);
 const gitignore = await readFile(
   new URL('../.gitignore', import.meta.url),
   'utf8',
@@ -90,6 +94,14 @@ test('loads the pinned Docsify v5 core assets', () => {
     /https:\/\/cdn\.jsdelivr\.net\/npm\/mermaid@9\.3\.0\/dist\/mermaid\.min\.js/,
   );
   assert.doesNotMatch(indexHtml, /mermaid\.min\.css/);
+});
+
+test('loads the site favicon', () => {
+  assert.match(
+    indexHtml,
+    /<link rel="icon" type="image\/svg\+xml" href="favicon\.svg">/,
+  );
+  assert.match(favicon, /<svg[^>]*viewBox="0 0 32 32"/);
 });
 
 test('inline scripts are valid JavaScript', () => {
