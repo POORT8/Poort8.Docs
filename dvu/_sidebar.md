@@ -1,7 +1,7 @@
 - [← Terug naar Poort8 Overzicht](/)
 
 - **Aan de slag**
-  - [Introductie](./)
+  - [Introductie](README.md)
   - [Onboarding & registratie](onboarding.md)
 
 - **Concepten**
