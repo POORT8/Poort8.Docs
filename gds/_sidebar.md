@@ -1,7 +1,7 @@
 - [← Back to Poort8 Overview](/)
 
 - **Getting Started**
-  - [Introduction](./)
+  - [Introduction](README.md)
   - [Architecture](architecture.md)
 
 - **Participant Onboarding**
