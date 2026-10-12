@@ -1,7 +1,7 @@
 - [← Back to Poort8 Overview](/)
 
 - **Getting Started**
-  - [Introductie](README.md)
+  - [Introductie](./)
 
 - **Integration Guides**
   - [Fabriek Data Toegang](fabriek-data-toegang.md)
