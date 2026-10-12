@@ -133,15 +133,12 @@ GET https://interplantfederation-preview.poort8.nl/v1/api/authorization/explaine
   &resource=[TBD - productie data resource ID]
   &action=[TBD - bijv. read of query]
   &useCase=[TBD - instance specifiek]
-  &issuer=87654321
-  &serviceProvider=87654321
-  &type=[TBD - instance specifiek]
-  &attribute=*
-  &context={}
 Authorization: Bearer <ACCESS_TOKEN>
 ```
 
 De NoodleBar controleert of er een geldige policy bestaat die de `subject` (applicatie/service provider organisatie) toegang geeft tot de `resource` (productie data) voor de gevraagde `action`.
+
+> **Let op:** De Interplant Federation gebruikt het standaard autorisatiemodel. De parameters `issuer`, `serviceProvider`, `type`, `attribute` en `context` worden bij `explained-enforce` niet ondersteund. Een verzoek met een van deze parameters wordt afgewezen met `400 Bad Request` voordat de autorisatie wordt geëvalueerd. Verwijder deze parameters uit bestaande integraties.
 
 **Response (Permit):**
 
@@ -191,6 +188,7 @@ TBD — Wordt aangevuld zodra de API-specificatie beschikbaar is. Zie de [Interp
 
 - **Policy verlopen**: NoodleBar `explained-enforce` retourneert `Deny`; fabriek moet policy verlengen
 - **Geen policy**: NoodleBar `explained-enforce` retourneert `Deny`; fabriek moet eerst policy registreren
+- **Niet-ondersteunde parameter**: NoodleBar `explained-enforce` retourneert `400 Bad Request` als `issuer`, `serviceProvider`, `type`, `attribute` of `context` wordt meegestuurd
 - **Fabriek API onbereikbaar**: Standaard HTTP foutafhandeling (retry-mechanisme, timeout)
 - **Data niet beschikbaar**: Fabriek API business logic (niet Interplant Federation)
 
