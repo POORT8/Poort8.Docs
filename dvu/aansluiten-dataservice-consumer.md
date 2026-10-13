@@ -68,7 +68,7 @@ sequenceDiagram
 | Organisatie + app geregistreerd en goedgekeurd in DVU Participantenregister | Zie [Onboarding](onboarding.md) |
 | API-toegang tot de datadienst-aanbieder API en Keyper | Via de catalogus in de portal, zie [Onboarding – Stap 4](onboarding.md) |
 | Keycloak `client_id` + `client_secret` | Wordt bij het registreren van de app uitgegeven |
-| Akkoord van de gebouweigenaar | Per gebouw, via Keyper |
+| Akkoord van de gebouweigenaar | Per gebouw, via Keyper. Voordat de gebouweigenaar kan goedkeuren, verklaart die met een vinkje de rechtmatige datarechthebbende te zijn en bevoegd te zijn om toestemming te geven. |
 
 ## Stap 1: Token ophalen voor Keyper
 
