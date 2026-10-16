@@ -138,7 +138,7 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 De NoodleBar controleert of er een geldige policy bestaat die de `subject` (applicatie/service provider organisatie) toegang geeft tot de `resource` (productie data) voor de gevraagde `action`.
 
-> **Let op:** De Interplant Federation gebruikt het standaard autorisatiemodel. De parameters `issuer`, `serviceProvider`, `type`, `attribute` en `context` worden bij `explained-enforce` niet ondersteund. Een verzoek met een van deze parameters wordt afgewezen met `400 Bad Request` voordat de autorisatie wordt geëvalueerd. Verwijder deze parameters uit bestaande integraties.
+> **Let op:** De Interplant Federation gebruikt het standaard autorisatiemodel. De parameters `serviceProvider`, `type`, `attribute` en `context` worden bij `explained-enforce` niet ondersteund. Een verzoek met een van deze parameters wordt afgewezen met `400 Bad Request` voordat de autorisatie wordt geëvalueerd. De parameter `issuer` wordt tijdelijk nog geaccepteerd en genegeerd; dit wordt in de toekomst ook afgewezen. Verwijder deze parameters uit bestaande integraties.
 
 **Response (Permit):**
 
@@ -188,7 +188,7 @@ TBD — Wordt aangevuld zodra de API-specificatie beschikbaar is. Zie de [Interp
 
 - **Policy verlopen**: NoodleBar `explained-enforce` retourneert `Deny`; fabriek moet policy verlengen
 - **Geen policy**: NoodleBar `explained-enforce` retourneert `Deny`; fabriek moet eerst policy registreren
-- **Niet-ondersteunde parameter**: NoodleBar `explained-enforce` retourneert `400 Bad Request` als `issuer`, `serviceProvider`, `type`, `attribute` of `context` wordt meegestuurd
+- **Niet-ondersteunde parameter**: NoodleBar `explained-enforce` retourneert `400 Bad Request` als `serviceProvider`, `type`, `attribute` of `context` wordt meegestuurd (`issuer` wordt tijdelijk nog genegeerd)
 - **Fabriek API onbereikbaar**: Standaard HTTP foutafhandeling (retry-mechanisme, timeout)
 - **Data niet beschikbaar**: Fabriek API business logic (niet Interplant Federation)
 
