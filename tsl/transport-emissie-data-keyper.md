@@ -87,7 +87,7 @@ Content-Type: application/json
 | Veld | Beschrijving |
 | --- | --- |
 | `approver.organizationId` | EUID van de wegvervoerder (Bob) die de toestemming moet geven |
-| `dataspace.baseUrl` | TSL Autorisatieregister-URL |
+| `dataspace.baseUrl` | TSL Autorisatieregister-URL; moet overeenkomen met de dataspace-URL van de flow, anders geeft Keyper `400 Bad Request` |
 | `addPolicyTransactions[].resourceId` | Klantnummer van de teler |
 | `addPolicyTransactions[].type` | Altijd `transport-emissie-data` voor deze usecase |
 | `orchestration.flow` | Altijd `tsl.default@v1` |
