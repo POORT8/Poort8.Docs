@@ -11,7 +11,7 @@ The New Installation Service Company submits a request via the TN GIR App. Keype
 | **New Installation Service Company** | Initiates the request. Receives confirmation after approval. |
 | **TN GIR App** | Collects request data and hands off to Keyper. Holds no credentials of its own. |
 | **Keyper** | Orchestrates the approval flow via eHerkenning. Registers the policy in GIR on approval. |
-| **Building owner** | Approves or rejects the request via eHerkenning. |
+| **Building owner** | Approves or rejects the request via eHerkenning. Before approving, the owner must tick two declarations on the Keyper approval screen: one about ownership of the building units, and one about responsibility and liability for use of the shared data. |
 | **GIR** | Stores the resulting `AccessRight` policy. |
 
 ```likec4
