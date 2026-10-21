@@ -425,3 +425,15 @@ test('renders Mermaid and loads LikeC4 bundles after each page load', () => {
   assert.match(doneEach[1], /applyLikeC4OverlayFix\(\);/);
   assert.match(doneEach[1], /fitLikeC4Embeds\(true\);/);
 });
+
+test('mounts flow players from their scene file after each page load', async () => {
+  const plugin = indexHtml.match(/\/\/ <div data-flow-player=[\s\S]*?\r?\n {8}\}\r?\n {6}\]/);
+
+  assert.ok(plugin, 'index.html must register the flow player plugin');
+  assert.match(plugin[0], /hook\.beforeEach\(function\(md\) \{/);
+  assert.match(plugin[0], /import\('\.\/assets\/js\/flow-player\.js'\)/);
+  assert.match(plugin[0], /player\.mountFlowPlayer\(node, data, markdown, section\)/);
+
+  const flowPlayer = await readFile(new URL('../assets/js/flow-player.js', import.meta.url), 'utf8');
+  assert.match(flowPlayer, /^export async function mountFlowPlayer\(container, scene, markdown, section\)/m);
+});

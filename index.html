@@ -595,6 +595,38 @@
             applyLikeC4OverlayFix();
             fitLikeC4Embeds(true);
           });
+        },
+        function(hook, vm) {
+          // <div data-flow-player="media/<page>.scene.json"></div> becomes an interactive
+          // flow player, built from that scene file and the page's Mermaid sequence diagram.
+          var pageMarkdown = '';
+
+          hook.beforeEach(function(md) {
+            pageMarkdown = md || '';
+            return md;
+          });
+
+          hook.doneEach(function() {
+            var nodes = document.querySelectorAll('[data-flow-player]');
+            if (!nodes.length) return;
+            var dir = (vm.route.file || '').replace(/[^/]*$/, '');
+            var section = dir.split('/')[0];
+            var markdown = pageMarkdown;
+            import('./assets/js/flow-player.js').then(function(player) {
+              nodes.forEach(function(node) {
+                var scene = node.getAttribute('data-flow-player');
+                if (!/^[\w-]+(\/[\w.-]+)*\.json$/.test(scene) || scene.indexOf('..') !== -1) return;
+                fetch(dir + scene).then(function(response) {
+                  if (!response.ok) throw new Error(scene + ': HTTP ' + response.status);
+                  return response.json();
+                }).then(function(data) {
+                  return player.mountFlowPlayer(node, data, markdown, section);
+                }).catch(function(error) {
+                  console.error('P8.err flow player:', error);
+                });
+              });
+            });
+          });
         }
       ]
     }
