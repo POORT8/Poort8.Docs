@@ -63,6 +63,8 @@ Keyper includes orchestration options that allow for customized control over the
 
 Each approval link is created against one of several predefined **orchestration flows**. A flow determines which dataspace and transaction steps apply to the approval, so requesters select the flow that matches their scenario when creating an approval link. Available flows differ per dataspace instance; contact the Poort8 team to find out which flows apply to your integration.
 
+The selected flow must belong to the caller's dataspace. This requirement applies when creating a link and when reading or updating an existing link, including links owned by the caller. If an update replaces the flow, the replacement must remain in the caller's dataspace. Dataspace mismatches are rejected with `403 Forbidden`; see [Keyper API Authentication](api-authentication.md) for the access rules.
+
 Because the flow determines the dataspace, `dataspace.baseUrl` in a create or update request must match the base URL of that dataspace (a trailing slash and letter case are ignored). Otherwise Keyper rejects the request with `400 Bad Request`. Approval link responses always return the dataspace base URL of the flow.
 
 ### Available

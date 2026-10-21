@@ -19,7 +19,9 @@ Keyper uses separate read and write policies on the API endpoints:
 | Read approval links | `GET /v1/api/approval-links/{id}` | Read |
 | Create or update approval links | `POST /v1/api/approval-links`, `PUT /v1/api/approval-links/{id}` | Write |
 
-For Keycloak bearer tokens, a valid token for the configured Keyper API audience with a resolvable organization can satisfy the Keyper API read and write policies. Access to an individual approval link is then checked separately against the caller organization and trusted-client configuration.
+For Keycloak bearer tokens, a valid token for the configured Keyper API audience with a resolvable organization can satisfy the Keyper API read and write policies. Access to an individual approval link is then checked separately against the caller's dataspace, organization, and trusted-client configuration.
+
+When creating an approval link, select an orchestration flow in the caller's dataspace. Keyper rejects a flow from another dataspace with `403 Forbidden`.
 
 ## Approval Link Ownership
 
@@ -29,7 +31,9 @@ For normal API clients, access is owner-scoped:
 
 1. The API token identifies the caller organization.
 2. Keyper looks up the approval link by ID in that caller's partition.
-3. The caller can read or update the approval link only when it belongs to that caller.
+3. The caller can read or update the approval link only when it belongs to that caller and its orchestration flow belongs to the caller's dataspace.
+
+Ownership does not bypass the dataspace requirement. A dataspace mismatch returns `403 Forbidden`. If an update replaces the orchestration flow, the replacement flow must also belong to the caller's dataspace; a flow from another dataspace is rejected with `403 Forbidden`.
 
 If an approval link exists but belongs to another caller, a normal client cannot access it by using only the approval link ID.
 
@@ -54,7 +58,7 @@ Approval link endpoints can return the following access-related responses:
 | Response | Meaning |
 | --- | --- |
 | `401 Unauthorized` | The bearer token is missing, invalid, expired, or not accepted by the configured identity provider. |
-| `403 Forbidden` | The token is valid, but the caller is not allowed to access or update the specific approval link. |
+| `403 Forbidden` | The token is valid, but the caller is not allowed to access or update the approval link, or the caller's dataspace does not match the orchestration flow's dataspace when creating, reading, or updating a link. |
 | `404 Not Found` | The approval link was not found for the caller, or a trusted lookup did not find a matching approval link. |
 
 ## Integration Checklist
