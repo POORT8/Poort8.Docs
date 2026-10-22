@@ -11,9 +11,11 @@ const customCss = await readFile(
   new URL('../assets/css/custom.css', import.meta.url),
   'utf8',
 );
-const favicon = await readFile(
-  new URL('../favicon.svg', import.meta.url),
-  'utf8',
+const faviconSizes = [32, 180, 512];
+const favicons = await Promise.all(
+  faviconSizes.map((size) =>
+    readFile(new URL(`../favicon-${size}.png`, import.meta.url)),
+  ),
 );
 const gitignore = await readFile(
   new URL('../.gitignore', import.meta.url),
@@ -96,12 +98,26 @@ test('loads the pinned Docsify v5 core assets', () => {
   assert.doesNotMatch(indexHtml, /mermaid\.min\.css/);
 });
 
-test('loads the site favicon', () => {
+test('loads the site favicon set', () => {
   assert.match(
     indexHtml,
-    /<link rel="icon" type="image\/svg\+xml" href="favicon\.svg">/,
+    /<link rel="icon" type="image\/png" sizes="32x32" href="favicon-32\.png">/,
   );
-  assert.match(favicon, /<svg[^>]*viewBox="0 0 32 32"/);
+  assert.match(
+    indexHtml,
+    /<link rel="icon" type="image\/png" sizes="512x512" href="favicon-512\.png">/,
+  );
+  assert.match(
+    indexHtml,
+    /<link rel="apple-touch-icon" sizes="180x180" href="favicon-180\.png">/,
+  );
+  assert.doesNotMatch(indexHtml, /favicon\.svg/);
+  favicons.forEach((png, i) => {
+    // PNG signature, then the IHDR width and height (big-endian at 16 and 20)
+    assert.equal(png.subarray(1, 4).toString('latin1'), 'PNG');
+    assert.equal(png.readUInt32BE(16), faviconSizes[i]);
+    assert.equal(png.readUInt32BE(20), faviconSizes[i]);
+  });
 });
 
 test('inline scripts are valid JavaScript', () => {
