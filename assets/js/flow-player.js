@@ -105,6 +105,8 @@ function mount(container, svg, SCENE, prefix) {
   function el(name, attrs = {}, parent = svg, text) {
     const node = document.createElementNS(NS, name);
     for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    // Page stylesheets that size svg text override a font-size attribute, but not an inline style.
+    if (attrs['font-size']) node.style.fontSize = `${attrs['font-size']}px`;
     if (text !== undefined) node.textContent = text;
     parent.appendChild(node);
     return node;
@@ -592,7 +594,7 @@ function parseSequenceDiagram(source) {
   };
 
   for (const raw of source.split('\n')) {
-    const line = raw.trim();
+    const line = raw.trim().replace(/\s*<br\s*\/?>\s*/gi, ' ');
     if (!line || line.startsWith('%%') || line === 'sequenceDiagram' || line === 'autonumber') continue;
 
     const participant = line.match(/^(participant|actor)\s+([\w-]+)(?:\s+as\s+(.+))?$/);
