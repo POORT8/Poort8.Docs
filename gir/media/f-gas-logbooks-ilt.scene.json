@@ -1,0 +1,31 @@
+{
+  "page": "../f-gas-logbooks-ilt.md",
+  "lang": "en",
+  "badge": "Design draft · GIR",
+  "title": "F-gas logbooks for ILT",
+  "subtitle": "How the inspectorate gets access, with the building owner's consent",
+  "illustration": { "type": "building", "tags": ["F-gas", "F-gas", "F-gas"] },
+  "participants": {
+    "ILT": { "role": "Data service consumer" },
+    "Keyper": { "role": "Orchestrates approval" },
+    "Owner": { "name": "Building owner", "role": "Rights holder" },
+    "GIR": { "role": "Register and AR" },
+    "SAT": { "name": "DSGO registry", "role": "Participant check" },
+    "SW": { "role": "Data service provider" }
+  },
+  "phases": [
+    { "frequency": "Once per building, until the policy expires" },
+    { "frequency": "Each time the token expires" },
+    { "frequency": "Per inspection" },
+    { "title": "Retrieve logbook", "frequency": "Per installation" }
+  ],
+  "annotations": [
+    { "phase": 1, "after": 5, "type": "card", "at": "SAT", "title": "AccessRight in GIR",
+      "lines": ["Issuer: building owner · Subject: ILT", "Resource: VBO-ID · Rules: F-gas installations"] },
+    { "phase": 2, "after": 4, "type": "chip", "at": "ILT", "text": "Token" }
+  ],
+  "closing": {
+    "badge": "Design draft · not ready for implementation",
+    "lines": ["Consent lives in GIR.", "Logbooks stay with the installer."]
+  }
+}

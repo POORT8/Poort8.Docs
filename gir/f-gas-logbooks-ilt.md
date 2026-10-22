@@ -19,6 +19,8 @@ The flow follows the same pattern as the other GIR data consumers: owner approva
 
 ## End-to-end flow
 
+<div data-flow-player="media/f-gas-logbooks-ilt.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     autonumber
