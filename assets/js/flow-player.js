@@ -9,9 +9,11 @@ const NS = 'http://www.w3.org/2000/svg';
 const STRINGS = {
   en: { phase: 'Phase', party: ['party', 'parties'], phaseWord: ['phase', 'phases'], openPoint: 'Open point',
         play: 'Play', pause: 'Pause', prev: 'Previous step', next: 'Next step', position: 'Position', intro: 'Intro', step: 'Step',
+        speed: 'Speed', rates: ['0.5×', '1×', '1.5×'], expand: 'Full screen', close: 'Close',
         numbers: ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'] },
   nl: { phase: 'Fase', party: ['partij', 'partijen'], phaseWord: ['fase', 'fases'], openPoint: 'Open punt',
         play: 'Afspelen', pause: 'Pauzeren', prev: 'Vorige stap', next: 'Volgende stap', position: 'Positie', intro: 'Intro', step: 'Stap',
+        speed: 'Snelheid', rates: ['0,5×', '1×', '1,5×'], expand: 'Volledig scherm', close: 'Sluiten',
         numbers: ['nul', 'één', 'twee', 'drie', 'vier', 'vijf', 'zes', 'zeven', 'acht', 'negen', 'tien', 'elf', 'twaalf'] },
 };
 let instances = 0;
@@ -42,6 +44,15 @@ const STYLE = `
 .flow .bar [data-role="play"] { width: 48px; background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .flow .bar input[type=range] { flex: 1 1 160px; min-width: 0; accent-color: var(--arrow); }
 .flow .bar .time { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 6.5em; text-align: right; }
+.flow .bar .speed { display: flex; gap: 4px; }
+.flow .bar .speed button { width: auto; padding: 0 8px; font-size: 13px; }
+.flow .bar .speed button[aria-pressed="true"] { background: var(--hl); border-color: var(--hl-border); font-weight: 600; }
+.flow.expanded {
+  position: fixed; inset: 0; z-index: 1000; margin: 0; max-width: none; overflow: auto; background: var(--bg);
+  grid-template-columns: min(100%, calc((100vh - 190px) * 16 / 9)); justify-content: center; align-content: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px))
+    max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
 .flow .phases { display: flex; gap: 8px; flex-wrap: wrap; }
 .flow .phases button { font-size: 13px; padding: 5px 10px; }
 .flow .phases button[aria-current="step"] { background: var(--hl); border-color: var(--hl-border); font-weight: 600; }
@@ -76,6 +87,8 @@ const TEMPLATE = `
     <button data-role="next" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
     <input data-role="scrub" type="range" min="0" max="1" step="0.01" value="0">
     <span class="time" data-role="time">0:00 / 0:00</span>
+    <span class="speed" data-role="speed" role="group"></span>
+    <button data-role="expand" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path data-role="expand-icon" d="M4 4h6v2H6v4H4zM14 4h6v6h-2V6h-4zM4 14h2v4h4v2H4zM18 14h2v6h-6v-2h4z"/></svg></button>
   </div>
   <div class="phases" data-role="phases"></div>
 </div>
@@ -473,6 +486,39 @@ function mount(container, svg, SCENE, prefix) {
       return { ...c, b };
     });
 
+    // Playback speed: the rate scales real time to animation time.
+    let rate = 1;
+    const rates = [0.5, 1, 1.5].map((r, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = S.rates[i];
+      b.setAttribute('aria-pressed', String(r === rate));
+      b.addEventListener('click', () => {
+        rate = r;
+        for (const x of rates) x.b.setAttribute('aria-pressed', String(x.r === rate));
+      });
+      $('speed').appendChild(b);
+      return { r, b };
+    });
+    $('speed').setAttribute('aria-label', S.speed);
+
+    // Full screen overlay: the player covers the page until closed with the button or Escape.
+    const expand = $('expand');
+    function setExpanded(on, focus = true) {
+      container.classList.toggle('expanded', on);
+      document.documentElement.style.overflow = on ? 'hidden' : '';
+      expand.setAttribute('aria-label', on ? S.close : S.expand);
+      expand.setAttribute('aria-pressed', String(on));
+      $('expand-icon').setAttribute('d', on
+        ? 'M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4z'
+        : 'M4 4h6v2H6v4H4zM14 4h6v6h-2V6h-4zM4 14h2v4h4v2H4zM18 14h2v6h-6v-2h4z');
+      if (focus) container.focus();
+    }
+    expand.addEventListener('click', () => setExpanded(!container.classList.contains('expanded')));
+    // Navigating to another page removes the player; give the page its scrolling back.
+    addEventListener('hashchange', () => { if (container.classList.contains('expanded')) setExpanded(false, false); });
+    setExpanded(false, false);
+
     let t = stops[0].t, playing = false, target = null, last = 0;
     const current = () => stops.reduce((i, s, j) => (s.t <= t + 0.01 ? j : i), 0);
 
@@ -492,7 +538,7 @@ function mount(container, svg, SCENE, prefix) {
     }
     function frame(now) {
       if (!playing) return;
-      t = Math.min(t + (now - last) / 1000, target ?? duration);
+      t = Math.min(t + ((now - last) / 1000) * rate, target ?? duration);
       last = now;
       if (t >= (target ?? duration)) playing = false;
       show();
@@ -529,6 +575,7 @@ function mount(container, svg, SCENE, prefix) {
       if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
       else if (e.key === ' ' && !(e.target instanceof HTMLButtonElement)) { e.preventDefault(); play.click(); }
+      else if (e.key === 'Escape' && container.classList.contains('expanded')) { e.preventDefault(); setExpanded(false); }
     });
     show();
   }
