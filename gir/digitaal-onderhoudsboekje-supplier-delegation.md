@@ -152,6 +152,8 @@ After approval, the New Installation Service Company informs their Software Supp
 
 The New Installation Service Company can revoke a `SupplierDelegation` themselves via the Keyper Manager portal. No involvement of the building owner is required.
 
+In GIR Preview, Keyper Manager sign-in uses eHerkenning. Sign in with eHerkenning on behalf of the New Installation Service Company; Keyper Manager derives the organization from the KvK number in the eHerkenning session. See [How does authentication work?](../keyper/faq.md#how-does-authentication-work) in the Keyper FAQ.
+
 🔗 [Keyper Manager ➚](https://keyper-preview.poort8.nl/)
 
 ---
