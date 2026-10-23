@@ -1,0 +1,41 @@
+{
+  "page": "../fabriek-data-toegang.md",
+  "lang": "nl",
+  "badge": "Interplant Federation",
+  "title": "Fabriek data toegang",
+  "subtitle": "Hoe service providers productiedata opvragen met toestemming van de fabriek",
+  "participants": {
+    "SP": {
+      "role": "Gebruiker"
+    },
+    "App": {
+      "name": "Applicatie",
+      "role": "Service provider"
+    },
+    "Fabriek": {
+      "name": "Fabriek",
+      "role": "Data owner"
+    },
+    "IPF": {
+      "name": "Interplant Federation",
+      "role": "NoodleBar"
+    },
+    "API": {
+      "role": "Dataservice"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Per fabriek"
+    },
+    {
+      "frequency": "Per dataverzoek"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "De fabriek bepaalt de toegang.",
+      "Elk dataverzoek wordt gecontroleerd."
+    ]
+  }
+}

@@ -12,6 +12,8 @@ De fabriek data toegangsflow combineert **eenmalige autorisatie setup** door de 
 
 ## Sequence Diagram
 
+<div data-flow-player="media/fabriek-data-toegang.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant SP as Service Provider
