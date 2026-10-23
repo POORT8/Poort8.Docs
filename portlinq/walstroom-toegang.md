@@ -19,6 +19,8 @@ Schippers nemen walstroom (shore power) af via hun gekozen app. Anders dan bij h
 
 ## Sequence Diagram
 
+<div data-flow-player="media/walstroom-toegang.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     actor Alice as Alice (Schipper)

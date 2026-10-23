@@ -8,6 +8,8 @@ Tokenvalidatie (zie [Tokens valideren](access-tokens-valideren.md)) bevestigt de
 
 ## Procesoverzicht
 
+<div data-flow-player="media/autorisatie.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     autonumber

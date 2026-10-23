@@ -1,0 +1,34 @@
+{
+  "page": "../walstroom-toegang.md",
+  "lang": "nl",
+  "badge": "PortlinQ",
+  "title": "Walstroom toegang",
+  "subtitle": "Hoe een schipper walstroom start en stopt via de app",
+  "participants": {
+    "Alice": {
+      "role": "Schipper"
+    },
+    "David": {
+      "role": "Schippers-app"
+    },
+    "ASR": {
+      "name": "PortlinQ ASR",
+      "role": "Deelnemer-check"
+    },
+    "Charlie": {
+      "role": "Walstroom-provider"
+    }
+  },
+  "phases": [
+    {
+      "title": "Walstroom starten en stoppen",
+      "frequency": "Per sessie"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Geen policy nodig.",
+      "Een geldig token van een actieve deelnemer is genoeg."
+    ]
+  }
+}

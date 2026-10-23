@@ -36,6 +36,8 @@ De policy zegt: de eigenaar-organisatie (issuer) staat de haven (subject) toe om
 
 ## Runtime: automatische events (push, M2M)
 
+<div data-flow-player="media/geofence-arrival.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant Charlie as Charlie (Geofence-provider)

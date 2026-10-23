@@ -1,0 +1,32 @@
+{
+  "page": "../geofence-arrival.md",
+  "lang": "nl",
+  "badge": "PortlinQ",
+  "diagram": 1,
+  "title": "Geofence aankomst en vertrek",
+  "subtitle": "Hoe de haven automatisch events krijgt als een schip de zone in- of uitvaart",
+  "participants": {
+    "Charlie": {
+      "role": "Geofence-provider"
+    },
+    "AR": {
+      "name": "PortlinQ AR",
+      "role": "Controleert consent"
+    },
+    "Bob": {
+      "role": "Haven-autoriteit"
+    }
+  },
+  "phases": [
+    {
+      "title": "Automatische events",
+      "frequency": "Per havenbezoek"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Alleen met consent van het schip.",
+      "Charlie pusht, de haven factureert."
+    ]
+  }
+}

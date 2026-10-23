@@ -1,0 +1,37 @@
+{
+  "page": "../autorisatie.md",
+  "lang": "nl",
+  "badge": "PortlinQ",
+  "title": "Autorisatie valideren",
+  "subtitle": "Hoe Charlie controleert of een dataverzoek van David geautoriseerd is",
+  "participants": {
+    "David": {
+      "name": "David",
+      "role": "Applicatie"
+    },
+    "Charlie": {
+      "name": "Charlie",
+      "role": "Data service provider"
+    },
+    "KC": {
+      "name": "Associatieregister",
+      "role": "Keycloak"
+    },
+    "AR": {
+      "name": "Authorization Registry",
+      "role": "Policies"
+    }
+  },
+  "phases": [
+    {
+      "title": "Dataverzoek controleren",
+      "frequency": "Per verzoek"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Eerst het token, dan explained-enforce.",
+      "Bij allowed = false volgt een 403."
+    ]
+  }
+}
