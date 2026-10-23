@@ -14,6 +14,8 @@ De bunker diensten flow combineert **eenmalige autorisatie setup** door de data-
 
 ## Sequence Diagram
 
+<div data-flow-player="media/bunker-diensten.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant Schip as Scheepsoperator

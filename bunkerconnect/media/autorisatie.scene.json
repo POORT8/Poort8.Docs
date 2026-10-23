@@ -1,0 +1,37 @@
+{
+  "page": "../autorisatie.md",
+  "lang": "nl",
+  "badge": "BunkerConnect",
+  "title": "Autorisatie valideren",
+  "subtitle": "Hoe een bunker supplier controleert of een aanvraag geautoriseerd is",
+  "participants": {
+    "Schip": {
+      "name": "Scheepsoperator / app",
+      "role": "Afnemer"
+    },
+    "SupplierApi": {
+      "name": "Supplier API",
+      "role": "Bunker supplier"
+    },
+    "KC": {
+      "name": "Organization Registry",
+      "role": "Keycloak"
+    },
+    "AR": {
+      "name": "Authorization Registry",
+      "role": "BunkerConnect"
+    }
+  },
+  "phases": [
+    {
+      "title": "Aanvraag controleren",
+      "frequency": "Per aanvraag"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Eerst een token, dan explained-enforce.",
+      "Lever alleen bij allowed = true."
+    ]
+  }
+}

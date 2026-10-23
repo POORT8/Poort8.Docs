@@ -1,0 +1,40 @@
+{
+  "page": "../bunker-diensten.md",
+  "lang": "nl",
+  "badge": "BunkerConnect",
+  "title": "Bunker diensten",
+  "subtitle": "Hoe een bunker app bunkerleveringen afneemt met toestemming van de supplier",
+  "participants": {
+    "Schip": {
+      "role": "Afnemer"
+    },
+    "App": {
+      "role": "App van de operator"
+    },
+    "Supplier": {
+      "name": "Bunker Supplier",
+      "role": "Data owner"
+    },
+    "BC": {
+      "name": "BunkerConnect",
+      "role": "NoodleBar"
+    },
+    "API": {
+      "role": "Bunkerdienst"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Per supplier"
+    },
+    {
+      "frequency": "Per reservering"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "De supplier bepaalt de toegang.",
+      "BunkerConnect controleert elke aanvraag."
+    ]
+  }
+}

@@ -8,6 +8,8 @@ Als je jouw eigen bunkerdiensten-API beveiligt met NoodleBar-tokens, bevestigt t
 
 ## Procesoverzicht
 
+<div data-flow-player="media/autorisatie.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     autonumber
