@@ -1,0 +1,48 @@
+{
+  "page": "../data-access-flow.md",
+  "lang": "en",
+  "badge": "CircPlastX",
+  "title": "Raw material data access",
+  "subtitle": "How a manufacturer gets batch data with the producer's approval",
+  "participants": {
+    "MfgApp": {
+      "name": "Manufacturer app",
+      "role": "Data service consumer"
+    },
+    "Keyper": {
+      "role": "Orchestrates approval"
+    },
+    "RawMatProducer": {
+      "name": "Raw material producer",
+      "role": "Rights holder"
+    },
+    "CircPlastX": {
+      "role": "NoodleBar"
+    },
+    "DAWEX": {
+      "role": "Participant check"
+    },
+    "DataService": {
+      "name": "Batch data service",
+      "role": "Data service provider"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Per producer"
+    },
+    {
+      "title": "Participant verification",
+      "frequency": "Interface TBD"
+    },
+    {
+      "frequency": "Per data request"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "The producer approves once.",
+      "Every request is checked against the policy."
+    ]
+  }
+}

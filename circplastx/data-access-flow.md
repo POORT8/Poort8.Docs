@@ -17,6 +17,8 @@ Everything else (the raw material data service, the manufacturer's application, 
 
 ## Sequence Diagram
 
+<div data-flow-player="media/data-access-flow.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant MfgApp as Manufacturer Application
