@@ -21,6 +21,8 @@ This page focuses on orchestration between systems. For payloads, parameters, an
 
 ## End-to-End Orchestration
 
+<div data-flow-player="media/data-consumer-flow.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant App as Your Application

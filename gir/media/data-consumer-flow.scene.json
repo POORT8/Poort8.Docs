@@ -1,0 +1,36 @@
+{
+  "page": "../data-consumer-flow.md",
+  "lang": "en",
+  "badge": "GIR",
+  "title": "Data consumer flow",
+  "subtitle": "How an application reads installation data from GIR",
+  "participants": {
+    "App": {
+      "name": "Your application",
+      "role": "Data service consumer"
+    },
+    "Keyper": {
+      "name": "Keyper",
+      "role": "Orchestrates approval"
+    },
+    "Owner": {
+      "name": "Installation owner",
+      "role": "Rights holder"
+    },
+    "GIR": {
+      "role": "Register and AR"
+    }
+  },
+  "phases": [
+    {
+      "title": "Policy, token and data",
+      "frequency": "Per VBO-ID"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "First a read policy, then a token.",
+      "GIR returns only authorized data."
+    ]
+  }
+}
