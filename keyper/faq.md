@@ -61,9 +61,10 @@ Both the validity period and the renewal window are workflow-configurable and ma
 
 ## How does authentication work?
 
-Keyper distinguishes between two kinds of authentication:
+Keyper distinguishes between three kinds of authentication:
 
 - **Approver authentication** — used by the end user who approves a request through the approval link UI. Supported methods include **eHerkenning** (for Dutch organizations) and **email verification**.
+- **Keyper Manager sign-in** — used by organizations that manage their policies and resources in the Keyper Manager portal. Users sign in through the Keycloak login of the selected dataspace. For dataspaces with eHerkenning sign-in enabled (currently GIR Preview), Keyper Manager sends the user directly to **eHerkenning**. The organization the user acts for is then derived from the KvK number in the eHerkenning session; sign-in is refused if the session does not contain exactly one KvK number. In all cases the organization must be active in the dataspace's participant registry.
 - **API authentication** — used by machine-to-machine clients calling the Keyper API. All API endpoints require a bearer token. Keycloak tokens (per dataspace) are the default; existing Auth0 tokens remain supported as a legacy fallback. See [Keyper API Authentication](api-authentication.md) for details on supported token types, read/write access, and trusted clients.
 
 The API supports both human-to-machine (H2M) and machine-to-machine (M2M) integration patterns.
