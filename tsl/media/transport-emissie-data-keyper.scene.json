@@ -1,0 +1,36 @@
+{
+  "page": "../transport-emissie-data-keyper.md",
+  "lang": "nl",
+  "badge": "TSL",
+  "title": "Emissiedata via Keyper",
+  "subtitle": "Hoe GreenlinQ via Keyper toestemming vraagt aan een wegvervoerder",
+  "participants": {
+    "David": {
+      "name": "GreenlinQ / VAA",
+      "role": "Dataservice consumer"
+    },
+    "Keyper": {
+      "name": "Keyper Approve",
+      "role": "Regelt de goedkeuring"
+    },
+    "Bob": {
+      "name": "Bob",
+      "role": "Wegvervoerder"
+    },
+    "AR": {
+      "role": "Policies"
+    }
+  },
+  "phases": [
+    {
+      "title": "Goedkeuring aanvragen",
+      "frequency": "Per klantnummer"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Bob keurt goed via een link.",
+      "Keyper registreert de policy."
+    ]
+  }
+}

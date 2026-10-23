@@ -1,0 +1,29 @@
+{
+  "page": "../transport-emissie-data-policy.md",
+  "lang": "nl",
+  "badge": "TSL",
+  "title": "Policy inschieten als issuer",
+  "subtitle": "Hoe een issuer zelf een policy registreert in het TSL-register",
+  "participants": {
+    "Bob": {
+      "role": "Greenpack, issuer"
+    },
+    "Auth": {
+      "role": "Tokens"
+    },
+    "AR": {
+      "role": "Policies"
+    }
+  },
+  "phases": [
+    {
+      "title": "Policy registreren"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Eén token, één POST.",
+      "Daarna staat de policy in het register."
+    ]
+  }
+}

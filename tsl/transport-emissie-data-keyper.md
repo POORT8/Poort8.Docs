@@ -22,6 +22,8 @@ Voor de algemene werking van Keyper (wat een approval link is, hoe authenticatie
 
 ## Overzicht
 
+<div data-flow-player="media/transport-emissie-data-keyper.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant David as GreenlinQ / VAA

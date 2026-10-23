@@ -38,6 +38,8 @@ Wanneer BigMile een dataverzoek verwerkt voor een specifiek klantnummer namens e
 5. **Bevraag het Autorisatieregister**: roep `explained-enforce` aan met issuer, subject, serviceProvider, action, resource, type en useCase.
 6. **Lever uit of weiger**: bij `allowed: true` levert BigMile de emissiedataset aan David. Anders retourneert BigMile `403 Forbidden`.
 
+<div data-flow-player="media/transport-emissie-data-autorisatie.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     autonumber

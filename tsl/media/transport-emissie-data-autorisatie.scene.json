@@ -1,0 +1,39 @@
+{
+  "page": "../transport-emissie-data-autorisatie.md",
+  "lang": "nl",
+  "badge": "TSL",
+  "title": "Transport emissiedata autorisatie",
+  "subtitle": "Hoe BigMile controleert of GreenlinQ emissiedata mag ophalen",
+  "participants": {
+    "David": {
+      "role": "VAA / GreenlinQ"
+    },
+    "Charlie": {
+      "role": "BigMile"
+    },
+    "Auth": {
+      "role": "Tokens"
+    },
+    "AR": {
+      "role": "Policies"
+    }
+  },
+  "phases": [
+    {
+      "title": "Dataverzoek ontvangen",
+      "frequency": "Per verzoek"
+    },
+    {
+      "title": "Autorisatiecontrole"
+    },
+    {
+      "title": "Data leveren of weigeren"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Koppel het klantnummer aan de issuer.",
+      "Lever alleen als het register het toestaat."
+    ]
+  }
+}

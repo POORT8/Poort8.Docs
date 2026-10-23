@@ -29,6 +29,8 @@ De EUID is opgebouwd als `NLNHR.<KVK-nummer>`. Het klantnummer van de teler is r
 
 ## Procesoverzicht
 
+<div data-flow-player="media/transport-emissie-data-policy.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     autonumber
