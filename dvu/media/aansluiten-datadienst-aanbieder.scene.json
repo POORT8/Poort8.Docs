@@ -1,0 +1,42 @@
+{
+  "page": "../aansluiten-datadienst-aanbieder.md",
+  "lang": "nl",
+  "badge": "DVU",
+  "title": "Autorisatie voor datadienst-aanbieders",
+  "subtitle": "Hoe Charlie controleert of David data mag ophalen namens Bob",
+  "participants": {
+    "David": {
+      "role": "Dataservice consumer"
+    },
+    "Charlie": {
+      "role": "SDS, datadienst-aanbieder"
+    },
+    "Auth": {
+      "role": "Tokens"
+    },
+    "AR": {
+      "role": "Policies"
+    },
+    "MB": {
+      "role": "Levert meetdata"
+    }
+  },
+  "phases": [
+    {
+      "title": "Dataverzoek ontvangen",
+      "frequency": "Per verzoek"
+    },
+    {
+      "title": "Autorisatie controleren"
+    },
+    {
+      "title": "Data leveren of weigeren"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Valideer eerst het token.",
+      "Lever alleen als het register het toestaat."
+    ]
+  }
+}

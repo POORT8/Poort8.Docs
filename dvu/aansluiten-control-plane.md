@@ -37,6 +37,8 @@ Wie als control plane app policies inschiet, neemt daarmee de control-plane-vera
 
 Onderstaand staat een voorbeeld van een procesoverzicht. De timing van stap 2 (Deelnemer-check) is vrij te kiezen nadat stap 1 (Authenticeren) is afgerond en vóór stap 7; stap 1 moet daarnaast vóór stap 6 gebeuren.
 
+<div data-flow-player="media/aansluiten-control-plane.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     autonumber

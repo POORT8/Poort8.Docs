@@ -35,6 +35,8 @@ Wanneer SDS een dataverzoek verwerkt voor een specifieke EAN namens een data-rec
 5. **Valideer de response**: verifieer dat het verzoek is toegestaan en dat de gevonden policy past bij het dataverzoek.
 6. **Lever uit of weiger**: bij autorisatie haalt SDS de data op bij het meetbedrijf en levert deze aan David. Anders retourneert SDS `403 Forbidden`.
 
+<div data-flow-player="media/aansluiten-datadienst-aanbieder.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     autonumber

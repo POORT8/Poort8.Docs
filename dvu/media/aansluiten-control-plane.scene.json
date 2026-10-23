@@ -1,0 +1,59 @@
+{
+  "page": "../aansluiten-control-plane.md",
+  "lang": "nl",
+  "badge": "DVU",
+  "title": "Aansluiten als control plane app",
+  "subtitle": "Hoe een app zonder Keyper de toegangsverlening zelf regelt",
+  "participants": {
+    "Owner": {
+      "role": "Gebouweigenaar"
+    },
+    "App": {
+      "role": "Eigen toegangsverlening"
+    },
+    "GCS": {
+      "role": "Gebouw- en meterdata"
+    },
+    "DRS": {
+      "role": "Registraties"
+    },
+    "PR": {
+      "role": "Deelnemer-check"
+    },
+    "DVU": {
+      "role": "Policies"
+    }
+  },
+  "phases": [
+    {
+      "title": "Authenticeren"
+    },
+    {
+      "title": "Deelnemer-check"
+    },
+    {
+      "title": "Gebouw kiezen"
+    },
+    {
+      "title": "Gegevens ophalen"
+    },
+    {
+      "title": "Verbruikstype"
+    },
+    {
+      "title": "Goedkeuring"
+    },
+    {
+      "title": "Toegang registreren"
+    },
+    {
+      "title": "Afronden"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "De app regelt de toestemming zelf.",
+      "Policies en resource groups staan in het DVU-register."
+    ]
+  }
+}

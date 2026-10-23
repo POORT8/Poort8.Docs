@@ -31,6 +31,8 @@ Wanneer je zelf de toegang start, gebruik je de DVU-portal om de aanvraag in gan
 
 ## Goedkeuringsflow (variant 2)
 
+<div data-flow-player="media/aansluiten-data-rechthebbende.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     autonumber

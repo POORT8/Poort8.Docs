@@ -1,0 +1,37 @@
+{
+  "page": "../aansluiten-data-rechthebbende.md",
+  "lang": "nl",
+  "badge": "DVU",
+  "title": "Toestemming geven",
+  "subtitle": "Hoe een gebouweigenaar energiedata laat delen via Keyper",
+  "participants": {
+    "David": {
+      "role": "Dataservice consumer"
+    },
+    "Keyper": {
+      "role": "Regelt de goedkeuring"
+    },
+    "Meta": {
+      "role": "Gebouwgegevens"
+    },
+    "Bob": {
+      "role": "Data-rechthebbende"
+    },
+    "DVU": {
+      "name": "DVU Autorisatieregister",
+      "role": "Legt de policy vast"
+    }
+  },
+  "phases": [
+    {
+      "title": "Goedkeuringsflow",
+      "frequency": "Per aanvraag"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Bob beslist, ingelogd met eHerkenning.",
+      "Bij akkoord staat de policy in het DVU-register."
+    ]
+  }
+}

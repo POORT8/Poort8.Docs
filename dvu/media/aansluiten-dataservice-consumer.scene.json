@@ -1,0 +1,42 @@
+{
+  "page": "../aansluiten-dataservice-consumer.md",
+  "lang": "nl",
+  "badge": "DVU",
+  "title": "Aansluiten als dataservice consumer",
+  "subtitle": "Hoe een app via Keyper toegang vraagt en daarna energiedata ophaalt",
+  "participants": {
+    "App": {
+      "role": "Dataservice consumer"
+    },
+    "Auth": {
+      "role": "Tokens"
+    },
+    "Keyper": {
+      "role": "Regelt de goedkeuring"
+    },
+    "Owner": {
+      "role": "Gebouweigenaar"
+    },
+    "SDS": {
+      "role": "Datadienst-aanbieder"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Per gebouw"
+    },
+    {
+      "frequency": "Wanneer de eigenaar wil"
+    },
+    {
+      "title": "Status volgen en data opvragen",
+      "frequency": "Periodiek"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Keyper regelt de toestemming.",
+      "Daarna haal je data op bij de datadienst."
+    ]
+  }
+}

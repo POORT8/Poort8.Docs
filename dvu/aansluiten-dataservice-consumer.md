@@ -25,6 +25,8 @@ Voor applicaties die:
 
 ## Procesoverzicht
 
+<div data-flow-player="media/aansluiten-dataservice-consumer.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     autonumber
