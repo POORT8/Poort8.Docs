@@ -1,0 +1,34 @@
+{
+  "page": "../validating-api-tokens.md",
+  "lang": "en",
+  "badge": "NoodleBar",
+  "title": "Validating API access tokens",
+  "subtitle": "How a data service provider checks incoming bearer tokens",
+  "participants": {
+    "David": {
+      "role": "Data service consumer"
+    },
+    "ASR": {
+      "role": "Issues tokens"
+    },
+    "API": {
+      "role": "Data service provider"
+    },
+    "JWKS": {
+      "name": "JWKS endpoint",
+      "role": "Signing keys"
+    }
+  },
+  "phases": [
+    {
+      "title": "Fetch keys, validate every call",
+      "frequency": "Per API call"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Cache the signing keys.",
+      "Check signature, expiry, issuer and audience."
+    ]
+  }
+}

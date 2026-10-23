@@ -16,6 +16,8 @@ Before you begin, ensure the following:
 
 ## Overview
 
+<div data-flow-player="media/validating-api-tokens.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant David as David (Consumer)
