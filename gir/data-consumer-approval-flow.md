@@ -97,6 +97,8 @@ Status lifecycle: `Active` → `Approved`, `Rejected`, or `Expired`. On `Rejecte
 
 NL/SfB is the standard classification for building and installation elements used across the Dutch construction sector. `NLSfB-<code>` refers to *table 1* of that standard (functional elements/installations) — e.g. `52.16` identifies heat pumps. A future change ([NB-1748](https://linear.app/poort8/issue/NB-1748/nlsfb-filtering-wijziging-naar-attribute-notatie)) will let requesters pass NL/SfB codes directly via `attribute` claim notation, e.g. `gir:class:nlsfb_tabel1=52.16 gir:class:nlsfb_tabel1=52.20`.
 
+> Using a Software Supplier to retrieve data on your behalf? The read policy stays in your organization's name; you additionally register a [Supplier Delegation](supplier-delegation.md) once.
+
 ## References
 
 - [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)

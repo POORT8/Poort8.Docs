@@ -1,6 +1,8 @@
 # Phase 2 — SupplierDelegation
 
-> **Context**: This is Phase 2 of the [Digitaal Onderhoudsboekje flow](digitaal-onderhoudsboekje.md). It is only required if a New Installation Service Company uses an external Software Supplier to call GIR data services on their behalf. This phase can be executed independently or simultaneously with Phase 1.
+> **Context**: This is Phase 2 of the [Digitaal Onderhoudsboekje flow](digitaal-onderhoudsboekje.md). It is only required if a New Installation Service Company uses an external Software Supplier to call data services on their behalf. This phase can be executed independently or simultaneously with Phase 1.
+>
+> This page applies the generic [Supplier Delegation](supplier-delegation.md) pattern to Digitaal Onderhoudsboekje. See that page for how the Software Supplier fetches and presents delegation evidence and how the data service provider validates it.
 
 ## Functional Overview
 
@@ -146,7 +148,9 @@ On approval, Keyper registers one `SupplierDelegation` policy per selected data 
 
 ### Step 2: Inform the Software Supplier
 
-After approval, the New Installation Service Company informs their Software Supplier of the delegation. The Software Supplier also needs the relevant VBO-id(s) from the New Installation Service Company for business context (which buildings to query), but this is separate from the delegation itself — the `SupplierDelegation` already covers all buildings and customers of the New Installation Service Company for the delegated type.
+After approval, the New Installation Service Company informs their Software Supplier of the delegation and shares the relevant VBO-id(s) for business context (which buildings to query). The `SupplierDelegation` itself already covers all buildings and customers of the New Installation Service Company for the delegated type.
+
+For every request to the previous installation service company's software, the Software Supplier fetches delegation evidence from GIR and sends it in the `delegation_evidence` header — see [Supplier Delegation — Step 2](supplier-delegation.md#step-2-the-software-supplier-fetches-delegation-evidence) and [Step 3](supplier-delegation.md#step-3-send-the-data-service-request-with-the-evidence). Use `type: "GIRMaintenanceLog"`, `actions: ["can_read"]`, the VBO-id as identifier, and the previous platform's DID as service provider.
 
 ### Step 3: Revoke a SupplierDelegation
 
@@ -160,6 +164,4 @@ In GIR Preview, Keyper Manager sign-in uses eHerkenning. Sign in with eHerkennin
 
 ## Authorization check in Phase 3
 
-For the full authorization check flow, including how to handle the case where a Software Supplier calls on behalf of the New Installation Service Company, see [Step 3: Verify the AccessRight in GIR](https://docs.poort8.nl/#/gir/digitaal-onderhoudsboekje-m2m-maintenance-data-transfer?id=step-3-verify-the-accessright-in-gir).
-
-> This describes the generic third-party data service pattern (e.g. `GIRMaintenanceLog`), where combined `AccessRight` + `SupplierDelegation` resolution is not yet implemented. For a Software Supplier retrieving **GIR's own** `GIRBasisdataMessage` records on behalf of an installer, GIR instead supports a `delegation_evidence` header on its `GET` endpoints today — see [Supplier delegation](retrieve-installations.md#supplier-delegation) in the retrieval docs.
+The previous installation service company's software validates the delegation evidence and then checks the `AccessRight` of the New Installation Service Company — see [Phase 3, Step 3](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md#step-3-verify-authorization-in-gir).

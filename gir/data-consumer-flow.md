@@ -188,6 +188,10 @@ In practice this means:
 
 For list retrieval, unauthorized matches are silently excluded. For single-record retrieval, an existing record can still result in `403 Forbidden`.
 
+## Optional: let a Software Supplier retrieve data for you
+
+If your organization uses a Software Supplier to call GIR, register a [Supplier Delegation](supplier-delegation.md) once (type `GIRBasisdataMessage`). The Software Supplier then fetches delegation evidence from GIR per installation and sends it in the `delegation_evidence` header on the retrieval request. GIR evaluates **your** read policy for that installation.
+
 ## What happens when the flow is incomplete
 
 The most common operational issue is that one part of the flow has completed and another has not.

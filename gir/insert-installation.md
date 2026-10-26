@@ -190,6 +190,26 @@ Two validation details matter operationally:
 - `vboID` is validated against the Kadaster BAG API, so a structurally valid value can still be rejected when the building is unknown.
 - Optional objects such as `productInformation`, `datapoolInformation`, and enum-backed fields still have required child fields when present in the schema. Use GIR Scalar for the complete contract.
 
+## Submit on behalf of another registrar (Software Supplier)
+
+A Software Supplier may submit installations on behalf of a registrar only if the registrar has authorized it with a [Supplier Delegation](supplier-delegation.md) (DSGO Delegaties, option 3):
+
+1. **Once:** the registrar registers a Supplier Delegation for the Software Supplier with type `GIRBasisdataMessage` and action `can_write` (or `*`) — see [Supplier Delegation — Step 1](supplier-delegation.md#step-1-register-the-supplierdelegation).
+2. **Per submission:** the Software Supplier requests delegation evidence from GIR — see [Supplier Delegation — Step 2](supplier-delegation.md#step-2-the-software-supplier-fetches-delegation-evidence) — with `policyIssuer` = the registrar's DID, `target.accessSubject` = its own DID, `type` = `GIRBasisdataMessage`, `identifiers` = the installation's `vboID`, `attributes` = its `installationID.value`, `actions` = `can_write`, and `serviceProviders` = `did:ishare:EU.NL.NTRNL-76660680`.
+3. The Software Supplier submits with its own DSGO bearer token, the registrar's KvK number in `registrarChamberOfCommerceNumber`, and the `delegation_token` in the `delegation_evidence` header:
+
+   ```http
+   POST https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages
+   Authorization: Bearer <SOFTWARE_SUPPLIER_ACCESS_TOKEN>
+   Content-Type: application/json
+   delegation_evidence: <DELEGATION_TOKEN>
+   ```
+
+4. GIR validates the evidence (signature, validity, `accessSubject` equals the caller, `Permit`, scope) and then checks the **registrar's** write policy. The record becomes `Active` or `Pending` exactly as if the registrar had submitted it.
+5. If the caller is not the registrar in `registrarChamberOfCommerceNumber` and presents no valid delegation evidence, GIR rejects the submission with `403 Forbidden`.
+
+> **⚠️ Upcoming change** — This section describes the intended behaviour; GIR does not enforce it yet. Today, GIR does not accept a `delegation_evidence` header on `POST /api/gir/v0/gir-basisdata-messages` and does not compare the caller with `registrarChamberOfCommerceNumber`: it checks the write policy of the registrar named in the body, whoever submits. Once the change is live, a submission on behalf of another registrar without valid delegation evidence is rejected with `403 Forbidden`. Planned date: [TBD]. If your software submits on behalf of registrars today, set up a [Supplier Delegation](supplier-delegation.md) per registrar now.
+
 ## Status codes
 
 | Status | Meaning |
@@ -198,7 +218,7 @@ Two validation details matter operationally:
 | `200 OK` | An existing installation record was updated |
 | `400 Bad Request` | The JSON body failed validation |
 | `401 Unauthorized` | Missing or invalid DSGO bearer token |
-| `403 Forbidden` | Authenticated caller is not allowed to use the endpoint |
+| `403 Forbidden` | Authenticated caller is not allowed to use the endpoint, or (upcoming, see above) submits on behalf of another registrar without valid delegation evidence |
 | `415 Unsupported Media Type` | Request is not sent as JSON |
 
 ## API reference

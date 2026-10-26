@@ -50,8 +50,11 @@ views {
     new_installer -> keyper 'Approve via eHerkenning'
     keyper -> gir 'Register SupplierDelegation (New Installation Service Company → Software Supplier)'
     new_installer -> software_supplier 'Delegation details + VBO-id(s)'
-    software_supplier -> prev_software 'Authenticate + request maintenance data'
-    prev_software -> gir 'Verify AccessRight'
+    software_supplier -> gir 'Fetch SupplierDelegation evidence'
+    gir -> software_supplier 'delegation_token'
+    software_supplier -> prev_software 'Authenticate + request maintenance data (delegation_evidence header)'
+    prev_software -> prev_software 'Validate delegation evidence'
+    prev_software -> gir 'Verify AccessRight (owner → New Installation Service Company)'
     gir -> prev_software 'Permit'
     prev_software -> software_supplier 'Maintenance data'
   }
@@ -62,14 +65,14 @@ views {
 |-------|-------------|
 | [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md) | Building owner approves the New Installation Service Company via eHerkenning. Keyper registers the `AccessRight` in GIR. |
 | [Phase 2 — SupplierDelegation](digitaal-onderhoudsboekje-supplier-delegation.md) | New Installation Service Company delegates the `AccessRight` to their Software Supplier. Keyper registers the `SupplierDelegation` in GIR. |
-| [Phase 3 — M2M Data Transfer](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md) | Software Supplier retrieves maintenance data directly from the previous installation service company's software. Authorization is verified in GIR at request time by the previous installation service company's software. |
+| [Phase 3 — M2M Data Transfer](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md) | Software Supplier retrieves maintenance data directly from the previous installation service company's software, presenting delegation evidence from GIR. The previous installation service company's software validates the evidence and verifies the `AccessRight` in GIR at request time. |
 
 ## DSGO authorization types
 
 | Type | Meaning |
 |------|---------|
 | `AccessRight` | The building owner (rights holder) authorizes the New Installation Service Company (legal consumer) to access a data service. Created in Phase 1. |
-| `SupplierDelegation` | The New Installation Service Company authorizes their Software Supplier (authorized party) to act on their behalf. Created in Phase 2. |
+| `SupplierDelegation` | The New Installation Service Company authorizes their Software Supplier (authorized party) to act on their behalf. Optional; created in Phase 2. See [Supplier Delegation](supplier-delegation.md). |
 
 ## Authorization scope
 

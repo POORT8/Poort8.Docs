@@ -2,6 +2,14 @@
 
 This page documents customer-visible changes to GIR-specific API endpoints.
 
+## Supplier delegation documented for all flows
+
+Supplier delegation is now documented as an optional step for every GIR flow, following option 3 of DSGO Delegaties: the Software Supplier fetches delegation evidence from GIR (`POST /v1/api/delegation`) and sends it in the `delegation_evidence` header. See [Supplier Delegation](supplier-delegation.md).
+
+### ⚠️ Upcoming: submitting on behalf of another registrar requires a Supplier Delegation
+
+`POST /api/gir/v0/gir-basisdata-messages` will require the caller to be the registrar in `registrarChamberOfCommerceNumber`, or to present delegation evidence (action `can_write`) from that registrar in the `delegation_evidence` header. Submissions on behalf of another registrar without valid evidence will be rejected with `403 Forbidden`. This is not enforced yet; planned date [TBD]. See [Submit on behalf of another registrar](insert-installation.md#submit-on-behalf-of-another-registrar-software-supplier).
+
 ## Error responses now follow the DICO standard (v0.102)
 
 `400`/`401`/`403`/`404`/`409`/`415`/`500`/`501` responses from the GIRBasisdataMessage endpoints are now `application/problem+json` per RFC 9457, in line with the DICO specification.

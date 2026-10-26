@@ -11,6 +11,7 @@ This guide describes how an installer requests access through a form on the Tech
 | Party | DSGO role | Description |
 |-------|-----------|-------------|
 | Installer | Data service consumer | Installation company requesting access to performance data for buildings they maintain. |
+| Software Supplier *(optional)* | Authorized data service consumer | Calls Datastekker on behalf of the installer, using a `SupplierDelegation` — see [Supplier Delegation](supplier-delegation.md). |
 | Building owner | Data service rights holder | Approves the access request; has authority over the installations in the building. |
 | TechniekNederland | — | Hosts the form through which the access request is initiated. |
 | Datastekker (2BA) | Data service provider | Retrieves installation data from manufacturers and exposes it via an API. |
@@ -68,6 +69,10 @@ views {
 | [Phase 3 — Authorization Check](datastekker-authorization-check.md) | Datastekker queries GIR by componentID, checks the `AccessRight` policy, and returns authorised data to the installer. | Every data request |
 
 > Note: Querying `GIRBasisdataMessage` by `componentID` may return non-unique results. Handling these edge cases is the responsibility of the data service provider.
+
+## Optional: Software Supplier acting for the installer
+
+An installer may let its Software Supplier call Datastekker on its behalf. The installer registers a `SupplierDelegation` of type `GIRDatastekker` in GIR once; the Software Supplier then fetches delegation evidence from GIR and sends it in the `delegation_evidence` header with each request. Datastekker validates the evidence and checks the installer's `AccessRight` as usual. See [Supplier Delegation](supplier-delegation.md) and [Phase 3 — Authorization Check](datastekker-authorization-check.md).
 
 ## Policy parameters
 

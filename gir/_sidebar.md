@@ -4,6 +4,7 @@
   - [Introduction](./)
   - [API Versioning](api-versioning.md)
   - [Changelog](changelog.md)
+  - [Supplier Delegation (optional)](supplier-delegation.md)
 
 - **Digitaal Onderhoudsboekje**
   - [Introduction](digitaal-onderhoudsboekje.md)

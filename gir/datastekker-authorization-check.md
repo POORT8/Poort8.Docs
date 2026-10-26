@@ -2,11 +2,11 @@
 
 > Part of the [Datastekker – Installer Access Flow](datastekker.md). Runs on every data request from an installer.
 
-For each data request, Datastekker queries GIR with the installer-provided componentId, checks the `AccessRight` policy in GIR, and returns authorised performance data.
+For each data request, Datastekker queries GIR with the installer-provided componentId, checks the `AccessRight` policy in GIR, and returns authorised performance data. If the request comes from a Software Supplier acting for the installer, Datastekker first validates the delegation evidence in the `delegation_evidence` header.
 
 | Actor | Role |
 |-------|------|
-| **Installer** | Sends a data request with a componentId to Datastekker. |
+| **Installer** (or its Software Supplier) | Sends a data request with a componentId to Datastekker. A Software Supplier adds the `delegation_evidence` header. |
 | **Datastekker (2BA)** | Queries GIR by componentID, verifies authorization in GIR, and returns data. |
 | **GIR** | Evaluates the `AccessRight` policy and returns delegation evidence. |
 
@@ -28,7 +28,8 @@ views {
     title 'Phase 3 — Authorization Check'
     variant sequence
 
-    inst -> ds 'Data request with componentId'
+    inst -> ds 'Data request with componentId (+ delegation_evidence if Software Supplier)'
+    ds -> ds 'Validate delegation evidence (Software Supplier only)'
     ds -> gir 'POST /api/gir/v0/gir-basisdata-messages/_search {componentIdValue}'
     gir -> ds 'GIRBasisdataMessage (installationId + manufacturer info)'
     ds -> gir 'POST /v1/api/delegation — check installer + installationId'
@@ -55,7 +56,13 @@ Accept: application/json
 
 `componentIdValue` searches may return non-unique results. Handling these edge cases is the responsibility of the data service provider.
 
+### Optional — Validate delegation evidence from a Software Supplier
+
+When the caller is a Software Supplier, the request carries a `delegation_evidence` header. Validate it as described in [Supplier Delegation — Step 4](supplier-delegation.md#step-4-the-data-service-provider-validates-the-evidence): signature by GIR, expiry, `accessSubject` equals the caller, `Permit`, type `GIRDatastekker`, action `can_read`, and `did:ishare:EU.NL.NTRNL-17162509` as service provider. The installer is the evidence's `policyIssuer`; use that DID as `<INSTALLER_KVK>` in Step 2. Without valid evidence, a caller that is not itself the installer gets an authorization error.
+
 ### Step 2 — Check the `AccessRight` policy in GIR
+
+`accessSubject` is always the installer — the caller itself, or the `policyIssuer` of the validated delegation evidence when a Software Supplier calls.
 
 ```http
 POST https://gir-preview.poort8.nl/v1/api/delegation

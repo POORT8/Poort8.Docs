@@ -44,11 +44,11 @@ The same endpoint handles create and update. Submitting the same installation ID
 
 For payload schema and field requirements, see [Register or Update an Installation](insert-installation.md) and [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
 
-## Known blockers
+## Submitting on behalf of another registrar
 
-| Blocker | Description | Status |
-|---------|-------------|--------|
-| **No delegated/multi-party writes** | The write policy check matches the registrar identity declared in the request body (`registrarChamberOfCommerceNumber`) directly against the approved policy's subject. A Software Supplier submitting on behalf of another (delegated) registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje-supplier-delegation.md) — is not recognized. Only the exact registrar named in the approved policy results in `Active`; any other identity results in `Pending`, with no error returned. | Open (dev task) |
+Submit installations with your own DSGO token and your own KvK number in `registrarChamberOfCommerceNumber`. A Software Supplier may submit on behalf of a registrar only with a [Supplier Delegation](supplier-delegation.md) from that registrar, presenting delegation evidence (action `can_write`) in the `delegation_evidence` header. GIR then checks the registrar's write policy; without valid evidence the submission is rejected with `403 Forbidden`. See [Submit on behalf of another registrar](insert-installation.md#submit-on-behalf-of-another-registrar-software-supplier) for the steps.
+
+> **⚠️ Upcoming change** — This section describes the intended behaviour; GIR does not enforce it yet. Today, GIR does not accept a `delegation_evidence` header on `POST /api/gir/v0/gir-basisdata-messages` and does not compare the caller with `registrarChamberOfCommerceNumber`: it checks the write policy of the registrar named in the body, whoever submits. Once the change is live, a submission on behalf of another registrar without valid delegation evidence is rejected with `403 Forbidden`. Planned date: [TBD]. If your software submits on behalf of registrars today, set up a [Supplier Delegation](supplier-delegation.md) per registrar now.
 
 ## Next
 

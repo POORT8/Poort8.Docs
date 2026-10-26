@@ -105,6 +105,8 @@ After the approval link is created:
 
 If the building owner rejects, the link expires. TechniekNederland can initiate a new request.
 
+> If the installer uses a Software Supplier to call Datastekker, the installer additionally registers a `SupplierDelegation` of type `GIRDatastekker` once — see [Supplier Delegation](supplier-delegation.md#step-1-register-the-supplierdelegation). The building owner is not involved in that step.
+
 ## References
 
 - [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)

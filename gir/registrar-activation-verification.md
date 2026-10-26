@@ -34,14 +34,16 @@ views {
 | `Pending` | Registrar only |
 | `Active` | All parties with a matching read or write authorization |
 
-> Visibility is evaluated only against the exact calling identity's own policies (or self-authorship of the record). A related company acting on a registrar's behalf — even via a `SupplierDelegation`-style policy — will not see that registrar's records through delegation; see [Known blockers](#known-blockers) below.
+### Software Supplier access
+
+A Software Supplier can retrieve a registrar's records through a [Supplier Delegation](supplier-delegation.md): it fetches delegation evidence from GIR for one installation and sends it in the `delegation_evidence` header (see [Supplier Delegation — Step 2](supplier-delegation.md#step-2-the-software-supplier-fetches-delegation-evidence)). GIR then evaluates the registrar's **read** policy. Being the record's registrar is not enough: the registrar needs its own read policy for the building, otherwise the Software Supplier gets an empty result (or `403` for a single record).
 
 ## Common causes of records staying Pending
 
 - Owner has not yet approved the Keyper request.
 - Write targets a different VBO-ID than the approved policy.
 - Classification rules in the policy do not cover the submitted installation.
-- Submission made by a delegated or related party rather than the exact registrar identity named in the approved policy — see [Known blockers](#known-blockers) below.
+- Submission made by a Software Supplier with its own KvK number in `registrarChamberOfCommerceNumber` instead of the registrar's. Use the registrar's KvK number and delegation evidence — see [Submit on behalf of another registrar](insert-installation.md#submit-on-behalf-of-another-registrar-software-supplier).
 
 Verify that `resourceId`, organization identifiers, and `attribute` in the write request exactly match the approved policy.
 
@@ -60,9 +62,3 @@ Content-Type: application/json
 Use `installationID` to look up the record by its installation identifier. The single-record endpoint `GET /api/gir/v0/gir-basisdata-messages/{guid}` requires the GIR record GUID, not the installation ID.
 
 For filtered list retrieval, see [Retrieve Multiple Installations](retrieve-installations.md) and [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
-
-## Known blockers
-
-| Blocker | Description | Status |
-|---------|-------------|--------|
-| **No delegated/multi-party visibility** | Listing and retrieving records only checks the calling identity's own read/write policies, plus a self-authorship fallback for the submitting registrar. A Software Supplier or other related party querying on behalf of a registrar — even via a `SupplierDelegation`-style policy as used in [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje-supplier-delegation.md) — will get an empty result instead of seeing that registrar's records. | Open (dev task) |
