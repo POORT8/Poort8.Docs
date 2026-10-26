@@ -50,12 +50,26 @@ All fields are optional and combine with AND. Omitting all fields returns every 
 | `componentIdValue` | string | Filter by a component identifier recorded inside the installation |
 | `componentIdType` | string | Optional, only valid together with `componentIdValue`: restricts the match to a specific component ID type (`SGTIN`, `SerialNumber`) |
 
+### Pagination
+
+The search endpoint uses cursor pagination after filtering and authorization. `limit` is optional, defaults to `100`, and must be between `1` and `1000`. Use the `nextCursor` value from a response as the `cursor` query parameter for the next page.
+
+Use the `nextCursor` value from the response as the `cursor` query parameter for the next request, while sending the same JSON filters. When `nextCursor` is `null`, the last page has been reached. `totalItems` is the total number of authorized matches for the search, not the number of items in the current page.
+
+```http
+POST https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search?limit=100&cursor=<NEXT_CURSOR>
+Authorization: ******
+Content-Type: application/json
+Accept: application/json
+delegation_evidence: <DELEGATION_TOKEN>
+```
+
 ### Examples
 
 **Filter by VBO-ID (most common):**
 
 ```bash
-curl -X POST "https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search" \
+curl -X POST "https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search?limit=100" \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
@@ -65,7 +79,7 @@ curl -X POST "https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_s
 **Combine filters:**
 
 ```bash
-curl -X POST "https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search" \
+curl -X POST "https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search?limit=100" \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
@@ -75,7 +89,7 @@ curl -X POST "https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_s
 **Filter by component ID:**
 
 ```bash
-curl -X POST "https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search" \
+curl -X POST "https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search?limit=100" \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
@@ -98,7 +112,7 @@ To set up a read policy for your organization, see [Data-Consumer Flow](data-con
 
 ## Response
 
-A successful `200` response returns a `data`/`meta` envelope. `data` is an array of `GIRBasisdataMessage` objects (`[]` if no authorized matches are found). `meta.nextCursor` is always `null` and `meta.limit`/`meta.totalItems` reflect the actual result count, since cursor/limit pagination is not implemented — every matching, authorized record is returned in a single response:
+A successful `200` response returns a `data`/`meta` envelope. `data` is an array of at most `limit` `GIRBasisdataMessage` objects (`[]` if no authorized matches are found). `meta.nextCursor` contains the cursor for the next page when more results are available, and is `null` on the last page. `meta.totalItems` is the total number of authorized matches:
 
 ```json
 {
@@ -129,7 +143,7 @@ A successful `200` response returns a `data`/`meta` envelope. `data` is an array
     }
   ],
   "meta": {
-    "nextCursor": null,
+    "nextCursor": "<NEXT_CURSOR>",
     "limit": 100,
     "totalItems": 1
   }
@@ -147,16 +161,16 @@ A successful `200` response returns a `data`/`meta` envelope. `data` is an array
 | `data[].metadata.createdAt` | When the record was first created |
 | `data[].metadata.updatedAt` | When the record was last updated, or `null` if never updated |
 | `data[].metadata.status` | `Active` or `Pending` — only `Active` installations are returned |
-| `meta.nextCursor` | Always `null` in this version — cursor-based pagination is not implemented |
-| `meta.limit` | Not the requested page size (there isn't one); reflects `data.Count` rounded up to the next multiple of 100 |
-| `meta.totalItems` | Number of items in `data` |
+| `meta.nextCursor` | Cursor for the next page, or `null` when this is the last page |
+| `meta.limit` | Requested page size, defaulting to `100` |
+| `meta.totalItems` | Total number of authorized matches for the search |
 
 ## Status codes
 
 | Status | Meaning | Action |
 |--------|---------|--------|
 | `200 OK` | Request successful; `data` may be empty if no authorized matches exist | — |
-| `400 Bad Request` | Invalid request body, e.g. `componentIdType` provided without `componentIdValue` | Check the body against the [body filters](#body-filters) table |
+| `400 Bad Request` | Invalid request body or pagination parameter, e.g. `componentIdType` provided without `componentIdValue`, `limit` outside `1`-`1000`, or an invalid `cursor` | Check the body against the [body filters](#body-filters) table and the [pagination](#pagination) rules |
 | `401 Unauthorized` | Missing or expired DSGO bearer token | Obtain a new token — see [Obtaining a DSGO Bearer Token](connect-token.md) |
 
 ## Common questions

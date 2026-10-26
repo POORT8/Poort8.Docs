@@ -53,7 +53,7 @@ An update (`PATCH`) route was not implemented for these primary routes.
 ### What's new on the primary routes
 
 - **Search via POST**: `POST /api/gir/v0/gir-basisdata-messages/_search` takes filter criteria in the JSON body instead of query parameters.
-- **`data`/`meta` response envelope**: `_search` now returns `{ "data": [...], "meta": {...} }` instead of a bare array. `meta.nextCursor` is always `null` and `meta.limit`/`meta.totalItems` reflect the actual result count, since cursor/limit pagination is not implemented — see [Search GIRBasisdataMessages](retrieve-installations.md#response).
+- **`data`/`meta` response envelope**: `_search` now returns `{ "data": [...], "meta": {...} }` instead of a bare array. The response supports cursor pagination through `meta.nextCursor` and the `cursor`/`limit` query parameters; see [Search GIRBasisdataMessages](retrieve-installations.md#pagination).
 - **`installationID` filter is now an object**: instead of a single `installationIDValue` string, the `_search` body takes `installationID: { value, type }`; both fields must match.
 
 | Filter field | Legacy `GET` list endpoint | `_search` endpoint |
