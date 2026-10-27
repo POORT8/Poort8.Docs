@@ -40,6 +40,7 @@ If neither the full use case nor its family prefix is in the table, the registry
 | `co2emissiesperperiode` | `ishare` |
 | `uitbesteedtransport` | `ishare` |
 | `binnenvaart` | `ishare` |
+| `kwr-digilab` | `ishare` |
 | `unspecified` | `ishare` |
 | `auto` | `ishare` |
 
@@ -70,14 +71,14 @@ table above), not dotted variants of the same root.
 
 ## How Keyper Sets the Use Case
 
-When an approval link is created via Keyper, policy transactions may omit the `useCase` field. In that case, Keyper derives the use case automatically from the `orchestration.flow` value by stripping the version suffix:
+When an approval link is created via Keyper, accepted policy transactions use the use case of the `orchestration.flow`, which is the flow ID without the version suffix:
 
 ```
 orchestration.flow = "portlinq.default@v1"
-→ derived useCase  = "portlinq.default"
+→ policy useCase   = "portlinq.default"
 → authorization model = "ishare"  (via family "portlinq")
 ```
 
-If `useCase` is provided explicitly on a policy transaction, that value takes precedence.
+A `useCase` supplied on a policy transaction is subject to the flow's validation. Some flows reject a conflicting value; for accepted transactions, Keyper sets the use case to the flow's use case.
 
-See the [Keyper documentation](../keyper/README.md#policy-use-cases) for more details on approval link flows.
+See the [Keyper documentation](../keyper/README.md) for more details on approval link flows.
