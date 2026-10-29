@@ -1,0 +1,12 @@
+{
+  "name": "poort8-docs",
+  "private": true,
+  "overrides": {
+    "vite": {
+      "rolldown": "1.2.15"
+    }
+  },
+  "devDependencies": {
+    "likec4": "1.56.0"
+  }
+}

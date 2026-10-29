@@ -10,6 +10,12 @@ set -euo pipefail
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$repo_dir"
 
+# Keep build dependencies locked and outside the repository uploaded to Pages.
+build_dir="$(mktemp -d)"
+trap 'rm -rf "$build_dir"' EXIT
+cp package.json package-lock.json "$build_dir/"
+npm ci --prefix "$build_dir" --include=dev --no-audit --no-fund
+
 mkdir -p assets/js
 sections_built=0
 
@@ -107,7 +113,7 @@ PY
   ls "$likec4_dir/"*.c4 > /dev/null 2>&1 \
     || { echo "ERROR: no .c4 files extracted for section '$section'" >&2; exit 1; }
 
-  npx --yes likec4@1.56.0 codegen webcomponent \
+  "$build_dir/node_modules/.bin/likec4" codegen webcomponent \
     --outfile "assets/js/${section}-components.js" \
     "$likec4_dir"
 
