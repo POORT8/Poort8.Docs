@@ -4,9 +4,25 @@ The `datasetaccess` authorization model checks whether a requesting organization
 a valid grant from a dataset's publisher for that specific dataset. Both usable stored
 dataset facts and a matching grant are required.
 
-> **Current availability:** authorization support at registry level only. This model
-> is not yet connected to the HTTP explained-enforce endpoint. It does not provide
-> catalogue storage, catalogue management APIs or DCAT ingestion.
+> **Current availability:** authorization support through the existing
+> `GET /v1/api/authorization/explained-enforce` endpoint with `useCase=datasetaccess`.
+> This does not provide catalogue storage, catalogue management APIs or DCAT ingestion.
+
+## Checking Access
+
+Send the requesting `subject`, concrete dataset `resource` and `action`, with the
+`serviceProvider`, `type` and `attribute` appropriate to the grant. These iSHARE-shaped
+fields are accepted for `datasetaccess`; `context` is not supported. An optional
+`issuer` value cannot override the publisher stored with the dataset.
+
+A valid request returns HTTP 200. A matching publisher grant produces `allowed=true`
+and the matching grant in `explainPolicies`. Without a matching grant, including when
+the grant issuer differs from the stored publisher, the response is `allowed=false`
+with an empty `explainPolicies` list. Invalid requests, such as a missing required
+field or an unsupported `context`, return HTTP 400 instead.
+
+For query parameters and response definitions, see the
+[Authorization API (Scalar) ➚](https://noodlebar-preview.poort8.nl/scalar/#tag/authorization).
 
 ## Representing a Dataset
 
