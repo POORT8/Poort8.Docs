@@ -2,6 +2,26 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-10-26
+
+**Highlights:** Keyper approval links are now bound to the dataspace of their orchestration flow, GIR approval pages ask for two explicit declarations and show the Techniek Nederland and DSGO logos, and Keyper Manager in GIR Preview signs users in with eHerkenning.
+
+### Keyper
+
+#### Changed
+
+- **BREAKING:** `POST /v1/api/approval-links`, `GET /v1/api/approval-links/{id}`, and `PUT /v1/api/approval-links/{id}` now require the orchestration flow to belong to the caller's dataspace. A mismatch returns `403 Forbidden`, also for approval links the caller owns. When an update replaces the flow, the new flow must also belong to the caller's dataspace. See [Keyper API Authentication](../keyper/api-authentication.md).
+- **BREAKING:** `dataspace.baseUrl` in create and update requests must now match the base URL of the dataspace that belongs to the orchestration flow. Trailing slashes and letter case are ignored; other mismatches return `400 Bad Request`. Approval-link responses always return the flow's dataspace base URL, and Keyper registers approved policies in that dataspace.
+- The approval-link endpoints in the Keyper OpenAPI reference now describe their `401`, `403`, and `404` responses, including the dataspace mismatch case.
+- GIR registrar, consumer, Datastekker, and maintenance-book (Digitaal Onderhoudsboekje) approval pages now require the approver to tick two declarations before approving: one confirming ownership of the listed building units, or the right to act for the owner, and one about responsibility for the use of the shared data or the registered installation data.
+- GIR approval pages now show the Techniek Nederland and DSGO logos in the header.
+- The data-rights-holder declaration on DVU approval pages has clearer wording about the legal consequences of requesting or sharing data without the right to do so.
+- In GIR Preview, Keyper Manager sign-in now sends users directly to eHerkenning. The organization is derived from the KvK number in the eHerkenning session; sign-in is refused if the session does not contain exactly one KvK number, and the organization must be active in the participant registry. See the [Keyper FAQ](../keyper/faq.md#how-does-authentication-work).
+
+#### Fixed
+
+- Approval-request emails now link to the Keyper Manager of the environment that sent the request when explaining how to manage or revoke given permissions, instead of always linking to the preview environment.
+
 ## 2026-10-16
 
 **Highlights:** GIR APIs gained DSGO discovery endpoints plus clearer version and error contracts, and DVU approval flows now give users more control over policy validity, address matching, consent confirmation, and selected EAN connections.
