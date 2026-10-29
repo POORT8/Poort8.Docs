@@ -10,6 +10,13 @@ Every policy stored in the Authorization Registry has a `useCase` field. This fi
 | `ishare` | Full iSHARE-compliant enforcement. Requires `serviceProvider`, `type`, `attribute`, and `license`. |
 | `isharerules` | Extends `ishare` with custom rule enforcement (used for e.g. GIR building classifications). |
 | `isharescoped` | Like `ishare`, but resolves resource groups **issuer-scoped**: a policy only reaches the resources owned by its own issuer. See [Resource Group Scoping](13%20-%20Resource%20Group%20Scoping.md). |
+| `datasetaccess` | Generic publisher-authorized access to concrete dataset IDs. Currently registry-level only. |
+
+`datasetaccess` requires usable stored dataset facts and a valid grant from the stored
+publisher for the concrete dataset ID. It is currently available at registry level
+only, not yet through the HTTP explained-enforce endpoint.
+See [Dataset Access](15%20-%20Dataset%20Access.md) for the dataset representation and
+grant requirements.
 
 ## Use Case to Model Mapping
 
@@ -34,6 +41,7 @@ If neither the full use case nor its family prefix is in the table, the registry
 | `ishare` | `ishare` |
 | `isharerules` | `isharerules` |
 | `isharescoped` | `isharescoped` |
+| `datasetaccess` | `datasetaccess` |
 | `hwct` | `default` |
 | `efti` | `ishare` |
 | `inlandcontainerdata` | `ishare` |
