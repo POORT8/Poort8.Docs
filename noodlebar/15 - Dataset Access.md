@@ -12,14 +12,15 @@ dataset facts and a matching grant are required.
 
 Send the requesting `subject`, concrete dataset `resource` and `action`, with the
 `serviceProvider`, `type` and `attribute` appropriate to the grant. These iSHARE-shaped
-fields are accepted for `datasetaccess`; `context` is not supported. An optional
-`issuer` value cannot override the publisher stored with the dataset.
+fields are accepted for `datasetaccess`; `context` is not supported. Omit `issuer`
+from the request; a non-empty `issuer` is not applicable and returns HTTP 400. The
+stored dataset publisher determines issuer authority.
 
 A valid request returns HTTP 200. A matching publisher grant produces `allowed=true`
 and the matching grant in `explainPolicies`. Without a matching grant, including when
 the grant issuer differs from the stored publisher, the response is `allowed=false`
 with an empty `explainPolicies` list. Invalid requests, such as a missing required
-field or an unsupported `context`, return HTTP 400 instead.
+field, a non-empty `issuer` or an unsupported `context`, return HTTP 400 instead.
 
 For query parameters and response definitions, see the
 [Authorization API (Scalar) ➚](https://noodlebar-preview.poort8.nl/scalar/#tag/authorization).
