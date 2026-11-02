@@ -60,8 +60,5 @@ jobs:
       # Test 3: Docsify regression suite
       - name: Run Docsify regression tests 🧪
         run: |
-          echo "Building LikeC4 bundles..."
-          bash build-likec4.sh
-
           echo "Running Docsify v5 regression tests..."
           node --test tests/docsify-v5.test.mjs
