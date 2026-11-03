@@ -1,0 +1,37 @@
+{
+  "page": "../requesting-api-access.md",
+  "lang": "en",
+  "badge": "NoodleBar",
+  "title": "Requesting API access",
+  "subtitle": "How David registers an application and gets access to an API",
+  "participants": {
+    "david": {
+      "name": "David",
+      "role": "Data service consumer"
+    },
+    "portal": {
+      "role": "Registration and catalogue"
+    },
+    "charlie": {
+      "name": "Charlie",
+      "role": "Data service provider"
+    },
+    "asr": {
+      "role": "Clients and tokens"
+    },
+    "api": {
+      "role": "Data service"
+    }
+  },
+  "phases": [
+    {
+      "title": "Register, request access, call the API"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Charlie approves access once.",
+      "David calls the API with a token."
+    ]
+  }
+}

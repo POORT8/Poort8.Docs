@@ -16,43 +16,27 @@ Before you begin, ensure the following:
 
 ## Overview
 
-```likec4
-specification {
-  element actor
-  element system
-}
+<div data-flow-player="media/requesting-api-access.scene.json"></div>
 
-model {
-  david = actor 'David (Consumer)'
-  portal = system 'Self-Service Portal'
-  charlie = actor 'Charlie (Provider)'
-  asr = system 'Association Registry'
-  api = system "Charlie's API"
-}
-
-views {
-  dynamic view requesting_api_access {
-    title 'Requesting API access'
-    variant sequence
-
-    david -> portal '1. Register application'
-    portal -> asr 'Create APP client'
-    asr -> portal 'Client registered'
-    portal -> david 'Client credentials'
-
-    david -> portal '2. Browse catalogue and request access'
-    portal -> charlie 'Access request notification'
-
-    charlie -> portal '3. Approve access'
-    portal -> asr 'Assign API scope to APP'
-
-    david -> asr '4. Request token (client_credentials)'
-    asr -> david 'Access token'
-
-    david -> api '5. Call API with Bearer token'
-    api -> david 'API response'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant david as David (Consumer)
+    participant portal as Self-Service Portal
+    participant charlie as Charlie (Provider)
+    participant asr as Association Registry
+    participant api as Charlie's API
+    david->>portal: 1. Register application
+    portal->>asr: Create APP client
+    asr->>portal: Client registered
+    portal->>david: Client credentials
+    david->>portal: 2. Browse catalogue and request access
+    portal->>charlie: Access request notification
+    charlie->>portal: 3. Approve access
+    portal->>asr: Assign API scope to APP
+    david->>asr: 4. Request token (client_credentials)
+    asr->>david: Access token
+    david->>api: 5. Call API with Bearer token
+    api->>david: API response
 ```
 
 ## Step 1 — Register Your Application
