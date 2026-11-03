@@ -8,34 +8,21 @@ Token validation (see [Validating API Tokens](validating-api-tokens.md)) confirm
 
 ## Process overview
 
-```likec4
-// view: authorization_enforcement
-specification {
-  element actor
-  element system
-}
+<div data-flow-player="media/authorization.scene.json"></div>
 
-model {
-  david = actor 'Data Consumer'
-  charlie = system 'Your IoT Platform'
-  kc = system 'GDS Participant Registry'
-  ar = system 'GDS Authorization Registry'
-}
-
-views {
-  dynamic view authorization_enforcement {
-    title 'Authorization Enforcement'
-    variant sequence
-
-    david -> charlie 'GET /buildings/{vboId} + Bearer token'
-    charlie -> charlie 'Validate token & derive organization EUID'
-    charlie -> kc 'Request token (client_credentials, scope=noodlebar-api)'
-    kc -> charlie 'Access token'
-    charlie -> ar 'GET /v1/api/authorization/explained-enforce + Bearer token'
-    ar -> charlie 'HTTP 200: {allowed: true/false, policies}'
-    charlie -> david 'If allowed: 200 + data / If denied: 403'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant david as Data Consumer
+    participant charlie as Your IoT Platform
+    participant kc as GDS Participant Registry
+    participant ar as GDS Authorization Registry
+    david->>charlie: GET /buildings/{vboId} + Bearer token
+    charlie->>charlie: Validate token & derive organization EUID
+    charlie->>kc: Request token (client_credentials, scope=noodlebar-api)
+    kc->>charlie: Access token
+    charlie->>ar: GET /v1/api/authorization/explained-enforce + Bearer token
+    ar->>charlie: HTTP 200: {allowed: true/false, policies}
+    charlie->>david: If allowed: 200 + data / If denied: 403
 ```
 
 ## Policy model

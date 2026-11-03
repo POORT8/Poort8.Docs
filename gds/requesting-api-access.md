@@ -12,43 +12,26 @@ This guide is for **David** — a data service consumer who wants to call APIs r
 
 ## Overview
 
-```likec4
-// view: requesting_api_access
-specification {
-  element actor
-  element system
-}
+<div data-flow-player="media/requesting-api-access.scene.json"></div>
 
-model {
-  david = actor 'David (Consumer)'
-  portal = system 'Self-Service Portal'
-  charlie = actor 'Charlie (Provider)'
-  gds = system 'GDS Participant Registry'
-  api = system 'Charlie\'s API'
-}
-
-views {
-  dynamic view requesting_api_access {
-    title 'Requesting API Access'
-    variant sequence
-
-    david -> portal 'Register application'
-    portal -> gds 'Create application client'
-    portal -> david 'Client credentials'
-
-    david -> portal 'Browse catalogue & request access'
-    portal -> charlie 'Access request notification'
-
-    charlie -> portal 'Approve access'
-    portal -> gds 'Assign API scope to application'
-
-    david -> gds 'Request token (client_credentials)'
-    gds -> david 'Access token (JWT)'
-
-    david -> api 'Call API with Bearer token'
-    api -> david 'API response'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant david as David (Consumer)
+    participant portal as Self-Service Portal
+    participant charlie as Charlie (Provider)
+    participant gds as GDS Participant Registry
+    participant api as Charlie's API
+    david->>portal: Register application
+    portal->>gds: Create application client
+    portal->>david: Client credentials
+    david->>portal: Browse catalogue & request access
+    portal->>charlie: Access request notification
+    charlie->>portal: Approve access
+    portal->>gds: Assign API scope to application
+    david->>gds: Request token (client_credentials)
+    gds->>david: Access token (JWT)
+    david->>api: Call API with Bearer token
+    api->>david: API response
 ```
 
 ## Step 1 — Register your application

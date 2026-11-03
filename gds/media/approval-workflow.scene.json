@@ -1,0 +1,39 @@
+{
+  "page": "../approval-workflow.md",
+  "lang": "en",
+  "badge": "GDS",
+  "title": "Keyper approval workflow",
+  "subtitle": "How a platform asks a building owner for access to building data",
+  "participants": {
+    "alice": {
+      "name": "Alice",
+      "role": "Building manager"
+    },
+    "david": {
+      "role": "Data service consumer"
+    },
+    "keyper": {
+      "role": "Orchestrates approval"
+    },
+    "bob": {
+      "name": "Bob",
+      "role": "Building owner"
+    },
+    "ar": {
+      "name": "GDS Authorization Registry",
+      "role": "Stores policies"
+    }
+  },
+  "phases": [
+    {
+      "title": "Request and approve access",
+      "frequency": "Per approval request"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Bob approves with a verification code.",
+      "Keyper registers the policies."
+    ]
+  }
+}

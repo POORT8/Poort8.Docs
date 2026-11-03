@@ -1,0 +1,34 @@
+{
+  "page": "../authorization.md",
+  "lang": "en",
+  "badge": "GDS",
+  "title": "Authorization enforcement",
+  "subtitle": "How Charlie checks that a data request is authorized",
+  "participants": {
+    "david": {
+      "role": "Data service consumer"
+    },
+    "charlie": {
+      "role": "Data service provider"
+    },
+    "kc": {
+      "role": "Tokens"
+    },
+    "ar": {
+      "name": "GDS Authorization Registry",
+      "role": "Policies"
+    }
+  },
+  "phases": [
+    {
+      "title": "Check the request",
+      "frequency": "Per request"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "First a token, then explained-enforce.",
+      "Deliver only when allowed."
+    ]
+  }
+}

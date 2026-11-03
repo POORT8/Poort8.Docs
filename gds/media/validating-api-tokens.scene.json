@@ -1,0 +1,36 @@
+{
+  "page": "../validating-api-tokens.md",
+  "lang": "en",
+  "badge": "GDS",
+  "title": "Validating API tokens",
+  "subtitle": "How Charlie validates the access tokens that consumers present",
+  "participants": {
+    "david": {
+      "name": "David",
+      "role": "Data service consumer"
+    },
+    "gds": {
+      "name": "GDS Participant Registry",
+      "role": "Issues tokens"
+    },
+    "api": {
+      "role": "Data service provider"
+    },
+    "jwks": {
+      "name": "JWKS endpoint",
+      "role": "Signing keys"
+    }
+  },
+  "phases": [
+    {
+      "title": "Fetch keys, validate every call",
+      "frequency": "Per API call"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "Cache the signing keys.",
+      "Check signature, expiry, issuer and audience."
+    ]
+  }
+}

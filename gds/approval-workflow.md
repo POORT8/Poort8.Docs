@@ -29,38 +29,25 @@ Your request will have status **Pending** until approved.
 
 ## Overview
 
-```likec4
-// view: approval_workflow
-specification {
-  element actor
-  element system
-}
+<div data-flow-player="media/approval-workflow.scene.json"></div>
 
-model {
-  alice = actor 'Building Manager (Alice)'
-  david = actor 'Your Platform'
-  keyper = system 'Keyper Approve'
-  bob = actor 'Building Owner (Bob)'
-  ar = system 'GDS Authorization Registry'
-}
-
-views {
-  dynamic view approval_workflow {
-    title 'Keyper Approval Workflow'
-    variant sequence
-
-    alice -> david 'Requests access to building data'
-    david -> keyper 'POST /v1/api/approval-links'
-    keyper -> david '201 Created (approval link ID)'
-    keyper -> bob 'Email with approval link'
-    bob -> keyper 'Opens link, reviews request'
-    bob -> keyper 'Approves + enters verification code'
-    keyper -> ar 'Registers policies'
-    ar -> keyper 'Policies stored'
-    david -> keyper 'GET /v1/api/approval-links/{id}'
-    keyper -> david 'Status = Approved'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant alice as Building Manager (Alice)
+    participant david as Your Platform
+    participant keyper as Keyper Approve
+    participant bob as Building Owner (Bob)
+    participant ar as GDS Authorization Registry
+    alice->>david: Requests access to building data
+    david->>keyper: POST /v1/api/approval-links
+    keyper->>david: 201 Created (approval link ID)
+    keyper->>bob: Email with approval link
+    bob->>keyper: Opens link, reviews request
+    bob->>keyper: Approves + enters verification code
+    keyper->>ar: Registers policies
+    ar->>keyper: Policies stored
+    david->>keyper: GET /v1/api/approval-links/{id}
+    keyper->>david: Status = Approved
 ```
 
 ## Step 1 — Authenticate with Keyper

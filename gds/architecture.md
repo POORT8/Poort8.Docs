@@ -6,46 +6,38 @@ This guide explains how the GDS components work together to enable sovereign bui
 
 This sequence shows the end-to-end interaction order in two phases: first approval and policy registration, then data access with policy enforcement.
 
-```likec4
-// view: architecture_end_to_end
-specification {
-    element actor
-    element system
-}
+```mermaid
+sequenceDiagram
+    participant david as David's Platform
+    participant kc as GDS Participant Registry (Keycloak)
+    participant keyper as Keyper Approve
+    participant bob as Building Owner (Bob)
+    participant ar as GDS Authorization Registry
+    participant charlie as Charlie's IoT Platform
 
-model {
-    david = actor 'David\'s Platform'
-    kc = system 'GDS Participant Registry (Keycloak)'
-    keyper = system 'Keyper Approve'
-    bob = actor 'Building Owner (Bob)'
-    ar = system 'GDS Authorization Registry'
-    charlie = system 'Charlie\'s IoT Platform'
-}
+    rect rgb(230, 240, 255)
+    note over david,charlie: Phase 1 – Approval
+    david->>kc: Request token for Keyper API
+    kc->>david: JWT access token
+    david->>keyper: POST /v1/api/approval-links
+    keyper->>david: 201 Created (approval link ID)
+    keyper->>bob: Email with approval link
+    bob->>keyper: Approves + enters verification code
+    keyper->>ar: Registers policies
+    ar->>keyper: Policies stored
+    end
 
-views {
-    dynamic view architecture_end_to_end {
-        title 'GDS End-to-End Flow'
-        variant sequence
-
-        david -> kc 'Request token for Keyper API'
-        kc -> david 'JWT access token'
-        david -> keyper 'POST /v1/api/approval-links'
-        keyper -> david '201 Created (approval link ID)'
-        keyper -> bob 'Email with approval link'
-        bob -> keyper 'Approves + enters verification code'
-        keyper -> ar 'Registers policies'
-        ar -> keyper 'Policies stored'
-
-        david -> kc 'Request token for provider API'
-        kc -> david 'JWT access token'
-        david -> charlie 'GET /data + Bearer token'
-        charlie -> kc 'Request token for NoodleBar API (client_credentials)'
-        kc -> charlie 'Access token'
-        charlie -> ar 'GET /v1/api/authorization/explained-enforce + Bearer token'
-        ar -> charlie 'HTTP 200: {allowed: true/false, policies}'
-        charlie -> david 'If allowed: 200 + data / If denied: 403'
-    }
-}
+    rect rgb(235, 250, 235)
+    note over david,charlie: Phase 2 – Data access
+    david->>kc: Request token for provider API
+    kc->>david: JWT access token
+    david->>charlie: GET /data + Bearer token
+    charlie->>kc: Request token for NoodleBar API (client_credentials)
+    kc->>charlie: Access token
+    charlie->>ar: GET /v1/api/authorization/explained-enforce + Bearer token
+    ar->>charlie: HTTP 200: {allowed: true/false, policies}
+    charlie->>david: If allowed: 200 + data / If denied: 403
+    end
 ```
 
 ### GDS Participant Registry

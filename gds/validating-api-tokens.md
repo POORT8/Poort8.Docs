@@ -15,37 +15,22 @@ This guide is for **Charlie** — a data service provider who exposes APIs in th
 
 ## Overview
 
-```likec4
-// view: validating_api_tokens
-specification {
-  element actor
-  element system
-}
+<div data-flow-player="media/validating-api-tokens.scene.json"></div>
 
-model {
-  david = actor 'David (Consumer)'
-  gds = system 'GDS Participant Registry'
-  api = system 'Charlie\'s API'
-  jwks = system 'JWKS Endpoint'
-}
-
-views {
-  dynamic view validating_api_tokens {
-    title 'Validating API Tokens'
-    variant sequence
-
-    api -> jwks 'Fetch signing keys (on startup)'
-    jwks -> api 'Public keys (JWKS)'
-
-    david -> gds 'Request token (client_credentials)'
-    gds -> david 'Signed JWT access token'
-
-    david -> api 'API call + Authorization: Bearer {token}'
-    api -> api 'Verify signature, expiry, issuer, audience'
-    api -> api 'Derive the organization EUID from organization claim'
-    api -> david 'API response'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant david as David (Consumer)
+    participant gds as GDS Participant Registry
+    participant api as Charlie's API
+    participant jwks as JWKS Endpoint
+    api->>jwks: Fetch signing keys (on startup)
+    jwks->>api: Public keys (JWKS)
+    david->>gds: Request token (client_credentials)
+    gds->>david: Signed JWT access token
+    david->>api: API call + Authorization: Bearer {token}
+    api->>api: Verify signature, expiry, issuer, audience
+    api->>api: Derive the organization EUID from organization claim
+    api->>david: API response
 ```
 
 ## Validation steps
