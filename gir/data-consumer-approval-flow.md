@@ -9,31 +9,16 @@
 | **Installation owner** | Approves or rejects the request. Before approving, the owner must tick two declarations on the Keyper approval screen: one about ownership of the building units, and one about responsibility and liability for use of the shared data. |
 | **GIR** | Stores the resulting read policy. |
 
-```likec4
-// view: data_consumer_approval_flow
-specification {
-  element actor
-  element system
-}
-
-model {
-  app = actor 'Your Application'
-  keyper = system 'Keyper'
-  owner = actor 'Installation Owner'
-  gir = system 'GIR'
-}
-
-views {
-  dynamic view data_consumer_approval_flow {
-    title 'Approval Flow'
-    variant sequence
-
-    app -> keyper 'Create approval link'
-    keyper -> owner 'Send approval request'
-    owner -> keyper 'Authenticate and approve'
-    keyper -> gir 'Register read policy'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant app as Your Application
+    participant keyper as Keyper
+    participant owner as Installation Owner
+    participant gir as GIR
+    app->>keyper: Create approval link
+    keyper->>owner: Send approval request
+    owner->>keyper: Authenticate and approve
+    keyper->>gir: Register read policy
 ```
 
 ## Technical Implementation

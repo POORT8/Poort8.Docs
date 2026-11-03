@@ -1,0 +1,44 @@
+{
+  "page": "../registrar.md",
+  "lang": "en",
+  "badge": "GIR",
+  "title": "Registrar flow",
+  "subtitle": "How an application registers installations in GIR",
+  "participants": {
+    "app": {
+      "name": "Your application",
+      "role": "Registrar"
+    },
+    "keyper": {
+      "role": "Orchestrates approval"
+    },
+    "owner": {
+      "name": "Installation owner",
+      "role": "Rights holder"
+    },
+    "gir": {
+      "role": "Register and AR"
+    },
+    "sat": {
+      "name": "DSGO registry",
+      "role": "Participant check"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Per VBO-ID"
+    },
+    {
+      "frequency": "Each time the token expires"
+    },
+    {
+      "frequency": "Per installation"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "First a write policy, then a token.",
+      "GIR stores the installation as Active or Pending."
+    ]
+  }
+}

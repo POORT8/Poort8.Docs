@@ -1,0 +1,47 @@
+{
+  "page": "../datastekker.md",
+  "lang": "en",
+  "badge": "GIR",
+  "title": "Datastekker",
+  "subtitle": "How an installer gets performance data of an installation via 2BA",
+  "participants": {
+    "form": {
+      "name": "TechniekNederland form",
+      "role": "Starts the request"
+    },
+    "keyper": {
+      "role": "Orchestrates approval"
+    },
+    "owner": {
+      "name": "Building owner",
+      "role": "Rights holder"
+    },
+    "gir": {
+      "role": "Register and AR"
+    },
+    "ds": {
+      "name": "Datastekker",
+      "role": "2BA, data service provider"
+    },
+    "inst": {
+      "role": "Data service consumer"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Per building"
+    },
+    {
+      "frequency": "Each time the token expires"
+    },
+    {
+      "frequency": "Per data request"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "The owner approves once.",
+      "Datastekker checks GIR on every request."
+    ]
+  }
+}

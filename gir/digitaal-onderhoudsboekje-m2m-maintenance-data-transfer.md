@@ -14,33 +14,18 @@ The New Installation Service Company's software (or its Software Supplier) calls
 | **Your platform** | Data provider. Verifies authorization and serves data. |
 | **GIR** | Authorization registry. Evaluates the `AccessRight` at request time. |
 
-```likec4
-// view: dob_phase3
-specification {
-  element actor
-  element system
-}
-
-model {
-  new_installer_software = system 'New Installation Service Company (or its Software Supplier)'
-  your_platform = system 'Your platform'
-  gir = system 'GIR'
-}
-
-views {
-  dynamic view dob_phase3 {
-    title 'Phase 3 — M2M Maintenance Data Transfer'
-    variant sequence
-
-    new_installer_software -> your_platform 'Authenticate (eSeal) + request maintenance data (+ delegation_evidence if Software Supplier)'
-    your_platform -> your_platform 'Validate delegation evidence (Software Supplier only)'
-    your_platform -> gir 'Obtain access token'
-    gir -> your_platform 'Access token'
-    your_platform -> gir 'Verify AccessRight (owner → New Installation Service Company) for installationId'
-    gir -> your_platform 'Permit or Deny'
-    your_platform -> new_installer_software 'Maintenance data or 403 Forbidden'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant new_installer_software as New Installation Service Company (or its Software Supplier)
+    participant your_platform as Your platform
+    participant gir as GIR
+    new_installer_software->>your_platform: Authenticate (eSeal) + request maintenance data (+ delegation_evidence if Software Supplier)
+    your_platform->>your_platform: Validate delegation evidence (Software Supplier only)
+    your_platform->>gir: Obtain access token
+    gir->>your_platform: Access token
+    your_platform->>gir: Verify AccessRight (owner → New Installation Service Company) for installationId
+    gir->>your_platform: Permit or Deny
+    your_platform->>new_installer_software: Maintenance data or 403 Forbidden
 ```
 
 ## Technical Implementation

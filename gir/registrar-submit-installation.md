@@ -7,30 +7,15 @@
 | **Your application** | Submits the installation payload with the bearer token. |
 | **GIR** | Validates token, schema, and write policy. Returns resulting status. |
 
-```likec4
-// view: registrar_step3
-specification {
-  element actor
-  element system
-}
-
-model {
-  app = actor 'Your Application'
-  gir = system 'GIR'
-}
-
-views {
-  dynamic view registrar_step3 {
-    title 'Step 3 — Submit Installation'
-    variant sequence
-
-    app -> gir 'POST installation payload with bearer token'
-    gir -> gir 'Validate token'
-    gir -> gir 'Validate schema and domain constraints'
-    gir -> gir 'Check write policy for registrar and VBO-ID'
-    gir -> app 'Record stored as Active or Pending'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant app as Your Application
+    participant gir as GIR
+    app->>gir: POST installation payload with bearer token
+    gir->>gir: Validate token
+    gir->>gir: Validate schema and domain constraints
+    gir->>gir: Check write policy for registrar and VBO-ID
+    gir->>app: Record stored as Active or Pending
 ```
 
 ## Technical Implementation

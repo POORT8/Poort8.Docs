@@ -18,37 +18,24 @@ Supplier delegation is optional in every GIR flow. GIR implements it as option 3
 
 ## How it works
 
-```likec4
-// view: supplier_delegation
-specification {
-  element actor
-  element system
-}
+<div data-flow-player="media/supplier-delegation.scene.json"></div>
 
-model {
-  sd_org = actor 'Your organization'
-  sd_supplier = system 'Software Supplier'
-  sd_keyper = system 'Keyper'
-  sd_gir = system 'GIR (authorization registry)'
-  sd_provider = system 'Data service provider'
-}
-
-views {
-  dynamic view supplier_delegation {
-    title 'Supplier Delegation'
-    variant sequence
-
-    sd_org -> sd_keyper 'Request and self-approve SupplierDelegation (once)'
-    sd_keyper -> sd_gir 'Register SupplierDelegation (your organization → Software Supplier)'
-    sd_supplier -> sd_gir 'POST /v1/api/delegation (per request)'
-    sd_gir -> sd_supplier 'delegation_token'
-    sd_supplier -> sd_provider 'Data service request + delegation_evidence header'
-    sd_provider -> sd_provider 'Validate delegation evidence'
-    sd_provider -> sd_gir 'Check access right of your organization'
-    sd_gir -> sd_provider 'Permit or Deny'
-    sd_provider -> sd_supplier 'Data or 403 Forbidden'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant sd_org as Your organization
+    participant sd_supplier as Software Supplier
+    participant sd_keyper as Keyper
+    participant sd_gir as GIR (authorization registry)
+    participant sd_provider as Data service provider
+    sd_org->>sd_keyper: Request and self-approve SupplierDelegation (once)
+    sd_keyper->>sd_gir: Register SupplierDelegation (your organization → Software Supplier)
+    sd_supplier->>sd_gir: POST /v1/api/delegation (per request)
+    sd_gir->>sd_supplier: delegation_token
+    sd_supplier->>sd_provider: Data service request + delegation_evidence header
+    sd_provider->>sd_provider: Validate delegation evidence
+    sd_provider->>sd_gir: Check access right of your organization
+    sd_gir->>sd_provider: Permit or Deny
+    sd_provider->>sd_supplier: Data or 403 Forbidden
 ```
 
 ## Support per flow

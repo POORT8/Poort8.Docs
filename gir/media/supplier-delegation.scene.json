@@ -1,0 +1,37 @@
+{
+  "page": "../supplier-delegation.md",
+  "lang": "en",
+  "badge": "GIR",
+  "title": "Supplier delegation",
+  "subtitle": "How a software supplier calls data services on behalf of an organization",
+  "participants": {
+    "sd_org": {
+      "role": "Legal data service consumer"
+    },
+    "sd_supplier": {
+      "role": "Authorized data service consumer"
+    },
+    "sd_keyper": {
+      "name": "Keyper",
+      "role": "Orchestrates approval"
+    },
+    "sd_gir": {
+      "name": "GIR",
+      "role": "Authorization registry"
+    },
+    "sd_provider": {
+      "role": "Validates the evidence"
+    }
+  },
+  "phases": [
+    {
+      "title": "Delegate, fetch evidence, call the service"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "The organization delegates once.",
+      "The supplier sends the evidence with every call."
+    ]
+  }
+}

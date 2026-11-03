@@ -10,30 +10,15 @@ Before querying GIR, Datastekker must obtain a DSGO bearer token. The token auth
 | **GIR** | Validates the JWT and certificate chain via the DSGO Participant Registry. Issues the access token. |
 | **DSGO Participant Registry** | Validates DSGO membership and certificate chain. |
 
-```likec4
-// view: datastekker_token_acquisition
-specification {
-  element actor
-  element system
-}
-
-model {
-  ds = actor 'Datastekker (2BA)'
-  gir = system 'GIR'
-  sat = system 'DSGO Participant Registry'
-}
-
-views {
-  dynamic view datastekker_token_acquisition {
-    title 'Phase 2 — Token Acquisition'
-    variant sequence
-
-    ds -> gir 'POST /connect/token (signed JWT)'
-    gir -> sat 'Validate membership and certificate'
-    sat -> gir 'Membership active'
-    gir -> ds 'access_token'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant ds as Datastekker (2BA)
+    participant gir as GIR
+    participant sat as DSGO Participant Registry
+    ds->>gir: POST /connect/token (signed JWT)
+    gir->>sat: Validate membership and certificate
+    sat->>gir: Membership active
+    gir->>ds: access_token
 ```
 
 ## Technical Implementation

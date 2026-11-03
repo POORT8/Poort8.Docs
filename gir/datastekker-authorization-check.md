@@ -10,33 +10,18 @@ For each data request, Datastekker queries GIR with the installer-provided compo
 | **Datastekker (2BA)** | Queries GIR by componentID, verifies authorization in GIR, and returns data. |
 | **GIR** | Evaluates the `AccessRight` policy and returns delegation evidence. |
 
-```likec4
-// view: datastekker_authorization_check
-specification {
-  element actor
-  element system
-}
-
-model {
-  inst = actor 'Installer'
-  ds = system 'Datastekker (2BA)'
-  gir = system 'GIR'
-}
-
-views {
-  dynamic view datastekker_authorization_check {
-    title 'Phase 3 — Authorization Check'
-    variant sequence
-
-    inst -> ds 'Data request with componentId (+ delegation_evidence if Software Supplier)'
-    ds -> ds 'Validate delegation evidence (Software Supplier only)'
-    ds -> gir 'POST /api/gir/v0/gir-basisdata-messages/_search {componentIdValue}'
-    gir -> ds 'GIRBasisdataMessage (installationId + manufacturer info)'
-    ds -> gir 'POST /v1/api/delegation — check installer + installationId'
-    gir -> ds 'Permit or Deny'
-    ds -> inst 'Authorised performance data'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant inst as Installer
+    participant ds as Datastekker (2BA)
+    participant gir as GIR
+    inst->>ds: Data request with componentId (+ delegation_evidence if Software Supplier)
+    ds->>ds: Validate delegation evidence (Software Supplier only)
+    ds->>gir: POST /api/gir/v0/gir-basisdata-messages/_search {componentIdValue}
+    gir->>ds: GIRBasisdataMessage (installationId + manufacturer info)
+    ds->>gir: POST /v1/api/delegation — check installer + installationId
+    gir->>ds: Permit or Deny
+    ds->>inst: Authorised performance data
 ```
 
 ## Technical Implementation

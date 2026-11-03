@@ -14,35 +14,20 @@ The New Installation Service Company submits a request via the TN GIR App. Keype
 | **Building owner** | Approves or rejects the request via eHerkenning. Before approving, the owner must tick two declarations on the Keyper approval screen: one about ownership of the building units, and one about responsibility and liability for use of the shared data. |
 | **GIR** | Stores the resulting `AccessRight` policy. |
 
-```likec4
-// view: dob_phase1
-specification {
-  element actor
-  element system
-}
-
-model {
-  new_installer = actor 'New Installation Service Company'
-  app = system 'TN GIR App'
-  keyper = system 'Keyper'
-  owner = actor 'Building Owner'
-  gir = system 'GIR'
-}
-
-views {
-  dynamic view dob_phase1 {
-    title 'Phase 1 — Owner Authorization'
-    variant sequence
-
-    new_installer -> app 'Submit request (owner, building, scope, validity)'
-    app -> keyper 'Approval request'
-    keyper -> owner 'Approval link by email'
-    owner -> keyper 'Authenticate via eHerkenning and approve'
-    keyper -> gir 'Register AccessRight policy (owner → New Installation Service Company)'
-    keyper -> app 'Confirmation'
-    app -> new_installer 'Confirmation'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant new_installer as New Installation Service Company
+    participant app as TN GIR App
+    participant keyper as Keyper
+    participant owner as Building Owner
+    participant gir as GIR
+    new_installer->>app: Submit request (owner, building, scope, validity)
+    app->>keyper: Approval request
+    keyper->>owner: Approval link by email
+    owner->>keyper: Authenticate via eHerkenning and approve
+    keyper->>gir: Register AccessRight policy (owner → New Installation Service Company)
+    keyper->>app: Confirmation
+    app->>new_installer: Confirmation
 ```
 
 ## Technical Implementation

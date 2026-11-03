@@ -1,0 +1,52 @@
+{
+  "page": "../digitaal-onderhoudsboekje.md",
+  "lang": "en",
+  "badge": "GIR",
+  "title": "Digitaal Onderhoudsboekje",
+  "subtitle": "How a new installer gets the maintenance history of an installation",
+  "participants": {
+    "new_installer": {
+      "name": "New installer",
+      "role": "Installation service company"
+    },
+    "app": {
+      "name": "TN GIR App",
+      "role": "Request portal"
+    },
+    "keyper": {
+      "role": "Orchestrates approval"
+    },
+    "owner": {
+      "name": "Building owner",
+      "role": "Rights holder"
+    },
+    "gir": {
+      "role": "Register and AR"
+    },
+    "software_supplier": {
+      "name": "Software supplier",
+      "role": "Acts for the installer"
+    },
+    "prev_software": {
+      "name": "Previous installer software",
+      "role": "Data service provider"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Per building"
+    },
+    {
+      "frequency": "Per software supplier"
+    },
+    {
+      "frequency": "Per data transfer"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "The owner grants access, the installer delegates.",
+      "Maintenance data moves machine to machine."
+    ]
+  }
+}

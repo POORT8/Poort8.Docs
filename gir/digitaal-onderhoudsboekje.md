@@ -16,49 +16,48 @@ When a building changes installation service company, the maintenance history is
 
 ## Three phases
 
-```likec4
-// view: dob_full_flow
-specification {
-  element actor
-  element system
-}
+<div data-flow-player="media/digitaal-onderhoudsboekje.scene.json"></div>
 
-model {
-  new_installer = actor 'New Installation Service Company'
-  app = system 'TN GIR App'
-  keyper = system 'Keyper'
-  owner = actor 'Building Owner'
-  gir = system 'GIR'
-  software_supplier = system 'Software Supplier'
-  prev_software = system 'Previous installation service company software'
-}
+```mermaid
+sequenceDiagram
+    participant new_installer as New Installation Service Company
+    participant app as TN GIR App
+    participant keyper as Keyper
+    participant owner as Building Owner
+    participant gir as GIR
+    participant software_supplier as Software Supplier
+    participant prev_software as Previous installation service company software
 
-views {
-  dynamic view dob_full_flow {
-    title 'Digitaal Onderhoudsboekje – Full Flow'
-    variant sequence
+    rect rgb(230, 240, 255)
+    note over new_installer,prev_software: Phase 1 – Owner authorization
+    new_installer->>app: Submit request (owner, VBO-ids, scope)
+    app->>keyper: Approval request
+    keyper->>owner: Approval link
+    owner->>keyper: Approve via eHerkenning
+    keyper->>gir: Register AccessRight (owner → New Installation Service Company)
+    keyper->>new_installer: Confirmation
+    end
 
-    new_installer -> app 'Submit request (owner, VBO-ids, scope)'
-    app -> keyper 'Approval request'
-    keyper -> owner 'Approval link'
-    owner -> keyper 'Approve via eHerkenning'
-    keyper -> gir 'Register AccessRight (owner → New Installation Service Company)'
-    keyper -> new_installer 'Confirmation'
-    new_installer -> app 'Supply Software Supplier details'
-    app -> keyper 'SupplierDelegation request'
-    keyper -> new_installer 'Approval link'
-    new_installer -> keyper 'Approve via eHerkenning'
-    keyper -> gir 'Register SupplierDelegation (New Installation Service Company → Software Supplier)'
-    new_installer -> software_supplier 'Delegation details + VBO-id(s)'
-    software_supplier -> gir 'Fetch SupplierDelegation evidence'
-    gir -> software_supplier 'delegation_token'
-    software_supplier -> prev_software 'Authenticate + request maintenance data (delegation_evidence header)'
-    prev_software -> prev_software 'Validate delegation evidence'
-    prev_software -> gir 'Verify AccessRight (owner → New Installation Service Company)'
-    gir -> prev_software 'Permit'
-    prev_software -> software_supplier 'Maintenance data'
-  }
-}
+    rect rgb(235, 250, 235)
+    note over new_installer,prev_software: Phase 2 – Supplier delegation
+    new_installer->>app: Supply Software Supplier details
+    app->>keyper: SupplierDelegation request
+    keyper->>new_installer: Approval link
+    new_installer->>keyper: Approve via eHerkenning
+    keyper->>gir: Register SupplierDelegation (New Installation Service Company → Software Supplier)
+    end
+
+    rect rgb(255, 245, 225)
+    note over new_installer,prev_software: Phase 3 – M2M maintenance data transfer
+    new_installer->>software_supplier: Delegation details + VBO-id(s)
+    software_supplier->>gir: Fetch SupplierDelegation evidence
+    gir->>software_supplier: delegation_token
+    software_supplier->>prev_software: Authenticate + request maintenance data (delegation_evidence header)
+    prev_software->>prev_software: Validate delegation evidence
+    prev_software->>gir: Verify AccessRight (owner → New Installation Service Company)
+    gir->>prev_software: Permit
+    prev_software->>software_supplier: Maintenance data
+    end
 ```
 
 | Phase | What happens |

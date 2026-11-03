@@ -4,27 +4,12 @@
 
 After the owner approval in Keyper completes, GIR automatically promotes matching `Pending` records to `Active`.
 
-```likec4
-// view: registrar_activation_verification
-specification {
-  element actor
-  element system
-}
-
-model {
-  app = actor 'Your Application'
-  gir = system 'GIR'
-}
-
-views {
-  dynamic view registrar_activation_verification {
-    title 'Activation Verification'
-    variant sequence
-
-    app -> gir 'Retrieve installation'
-    gir -> app 'Record with Active or Pending status'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant app as Your Application
+    participant gir as GIR
+    app->>gir: Retrieve installation
+    gir->>app: Record with Active or Pending status
 ```
 
 ## Visibility

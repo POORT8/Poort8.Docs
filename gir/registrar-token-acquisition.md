@@ -9,30 +9,15 @@ All GIR write requests require a DSGO bearer token. The token authenticates your
 | **Your application** | Creates the signed JWT and requests the token. |
 | **GIR** | Validates the JWT and certificate chain via the DSGO Participant Registry. Issues the access token. |
 
-```likec4
-// view: registrar_token_acquisition
-specification {
-  element actor
-  element system
-}
-
-model {
-  app = actor 'Your Application'
-  gir = system 'GIR'
-  sat = system 'DSGO Participant Registry'
-}
-
-views {
-  dynamic view registrar_token_acquisition {
-    title 'Token Acquisition'
-    variant sequence
-
-    app -> gir 'POST /connect/token (signed JWT)'
-    gir -> sat 'Validate membership and certificate'
-    sat -> gir 'Membership active'
-    gir -> app 'access_token'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant app as Your Application
+    participant gir as GIR
+    participant sat as DSGO Participant Registry
+    app->>gir: POST /connect/token (signed JWT)
+    gir->>sat: Validate membership and certificate
+    sat->>gir: Membership active
+    gir->>app: access_token
 ```
 
 ## Technical Implementation

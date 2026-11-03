@@ -22,42 +22,40 @@ This guide describes how an installer requests access through a form on the Tech
 
 The flow has two phases: a **one-time approval flow** and a **recurring operational data access pattern**.
 
-```likec4
-// view: datastekker_overview
-specification {
-  element actor
-  element system
-}
+<div data-flow-player="media/datastekker.scene.json"></div>
 
-model {
-  form = system 'TechniekNederland Form'
-  keyper = system 'Keyper'
-  owner = actor 'Building Owner'
-  gir = system 'GIR'
-  ds = system 'Datastekker (2BA)'
-  inst = actor 'Installer'
-}
+```mermaid
+sequenceDiagram
+    participant form as TechniekNederland Form
+    participant keyper as Keyper
+    participant owner as Building Owner
+    participant gir as GIR
+    participant ds as Datastekker (2BA)
+    participant inst as Installer
 
-views {
-  dynamic view datastekker_overview {
-    title 'Datastekker – Installer Access Flow'
-    variant sequence
+    rect rgb(230, 240, 255)
+    note over form,inst: Phase 1 – Approval flow
+    form->>keyper: Create access request (vboId, installer KvK, validity)
+    keyper->>owner: Approval link by email
+    owner->>keyper: Authenticate and approve
+    keyper->>gir: Register policy (installer ↔ vboId)
+    end
 
-    form -> keyper 'Create access request (vboId, installer KvK, validity)'
-    keyper -> owner 'Approval link by email'
-    owner -> keyper 'Authenticate and approve'
-    keyper -> gir 'Register policy (installer ↔ vboId)'
+    rect rgb(235, 250, 235)
+    note over form,inst: Phase 2 – Token acquisition
+    inst->>ds: Data request with componentId
+    ds->>gir: Obtain DSGO bearer token
+    gir->>ds: Bearer token
+    end
 
-    inst -> ds 'Data request with componentId'
-    ds -> gir 'Obtain DSGO bearer token'
-    gir -> ds 'Bearer token'
-    ds -> gir 'GET GIRBasisdataMessage by componentID'
-    gir -> ds 'GIRBasisdataMessage (installationId + manufacturer info)'
-    ds -> gir 'Verify AccessRight for installer + installationId'
-    gir -> ds 'Permit or Deny'
-    ds -> inst 'Authorised performance data'
-  }
-}
+    rect rgb(255, 245, 225)
+    note over form,inst: Phase 3 – Authorization check
+    ds->>gir: GET GIRBasisdataMessage by componentID
+    gir->>ds: GIRBasisdataMessage (installationId + manufacturer info)
+    ds->>gir: Verify AccessRight for installer + installationId
+    gir->>ds: Permit or Deny
+    ds->>inst: Authorised performance data
+    end
 ```
 
 ## Three phases

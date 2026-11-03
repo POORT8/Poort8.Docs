@@ -23,38 +23,37 @@ To successfully publish data to GIR, two conditions must be met:
 
 ## End-to-end flow
 
-```likec4
-// view: registrar_full_flow
-specification {
-  element actor
-  element system
-}
+<div data-flow-player="media/registrar.scene.json"></div>
 
-model {
-  app = actor 'Your Application'
-  keyper = system 'Keyper'
-  owner = actor 'Installation Owner'
-  gir = system 'GIR'
-  sat = system 'DSGO Participant Registry'
-}
+```mermaid
+sequenceDiagram
+    participant app as Your Application
+    participant keyper as Keyper
+    participant owner as Installation Owner
+    participant gir as GIR
+    participant sat as DSGO Participant Registry
 
-views {
-  dynamic view registrar_full_flow {
-    title 'Registrar Flow – End to End'
-    variant sequence
+    rect rgb(230, 240, 255)
+    note over app,sat: Phase 1 – Keyper approval
+    app->>keyper: Request write access for a VBO-ID
+    keyper->>owner: Notify owner
+    owner->>keyper: Authenticate and approve
+    keyper->>gir: Register write policy
+    end
 
-    app -> keyper 'Request write access for a VBO-ID'
-    keyper -> owner 'Notify owner'
-    owner -> keyper 'Authenticate and approve'
-    keyper -> gir 'Register write policy'
-    app -> gir 'Request DSGO bearer token'
-    gir -> sat 'Validate membership and certificate chain'
-    sat -> gir 'Membership active'
-    gir -> app 'Bearer token issued'
-    app -> gir 'Submit installation data'
-    gir -> app 'Record stored as Active or Pending'
-  }
-}
+    rect rgb(235, 250, 235)
+    note over app,sat: Phase 2 – Token acquisition
+    app->>gir: Request DSGO bearer token
+    gir->>sat: Validate membership and certificate chain
+    sat->>gir: Membership active
+    gir->>app: Bearer token issued
+    end
+
+    rect rgb(255, 245, 225)
+    note over app,sat: Phase 3 – Submit installation
+    app->>gir: Submit installation data
+    gir->>app: Record stored as Active or Pending
+    end
 ```
 
 ## Four phases

@@ -25,33 +25,18 @@ Because the New Installation Service Company is both requester and approver, Key
 | **Software Supplier** | Receives the delegation; authorized to call GIR data services on behalf of the New Installation Service Company in Phase 3. |
 | **GIR** | Stores the resulting `SupplierDelegation` policy. |
 
-```likec4
-// view: dob_phase2
-specification {
-  element actor
-  element system
-}
-
-model {
-  supplier_delegation_ni = actor 'New Installation Service Company'
-  supplier_delegation_app = system 'TN GIR App'
-  supplier_delegation_keyper = system 'Keyper'
-  supplier_delegation_gir = system 'GIR'
-}
-
-views {
-  dynamic view dob_phase2 {
-    title 'Phase 2 — SupplierDelegation'
-    variant sequence
-
-    supplier_delegation_ni -> supplier_delegation_app 'Supply Software Supplier details'
-    supplier_delegation_app -> supplier_delegation_keyper 'SupplierDelegation request (New Installation Service Company as requester and approver)'
-    supplier_delegation_app -> supplier_delegation_ni 'Redirect to Keyper approval screen'
-    supplier_delegation_ni -> supplier_delegation_keyper 'Authenticate via eHerkenning and approve'
-    supplier_delegation_keyper -> supplier_delegation_gir 'Register SupplierDelegation (New Installation Service Company → Software Supplier)'
-    supplier_delegation_gir -> supplier_delegation_ni 'Confirm'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant supplier_delegation_ni as New Installation Service Company
+    participant supplier_delegation_app as TN GIR App
+    participant supplier_delegation_keyper as Keyper
+    participant supplier_delegation_gir as GIR
+    supplier_delegation_ni->>supplier_delegation_app: Supply Software Supplier details
+    supplier_delegation_app->>supplier_delegation_keyper: SupplierDelegation request (New Installation Service Company as requester and approver)
+    supplier_delegation_app->>supplier_delegation_ni: Redirect to Keyper approval screen
+    supplier_delegation_ni->>supplier_delegation_keyper: Authenticate via eHerkenning and approve
+    supplier_delegation_keyper->>supplier_delegation_gir: Register SupplierDelegation (New Installation Service Company → Software Supplier)
+    supplier_delegation_gir->>supplier_delegation_ni: Confirm
 ```
 
 ## Technical Implementation

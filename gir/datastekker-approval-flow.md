@@ -11,31 +11,16 @@ The TechniekNederland form collects the access request and hands it off to Keype
 | **Building owner** | Approves or rejects the request. Before approving, the owner must tick two declarations on the Keyper approval screen: one about ownership of the building units, and one about responsibility and liability for use of the shared data. |
 | **GIR** | Stores the resulting `AccessRight` policy. |
 
-```likec4
-// view: datastekker_approval_flow
-specification {
-  element actor
-  element system
-}
-
-model {
-  form = system 'TechniekNederland Form'
-  keyper = system 'Keyper'
-  owner = actor 'Building Owner'
-  gir = system 'GIR'
-}
-
-views {
-  dynamic view datastekker_approval_flow {
-    title 'Phase 1 — Approval Flow'
-    variant sequence
-
-    form -> keyper 'POST /v1/api/approval-links (vboId, installer KvK, owner KvK, validity)'
-    keyper -> owner 'Approval link by email'
-    owner -> keyper 'Authenticate and approve'
-    keyper -> gir 'Register AccessRight policy (installer ↔ vboId)'
-  }
-}
+```mermaid
+sequenceDiagram
+    participant form as TechniekNederland Form
+    participant keyper as Keyper
+    participant owner as Building Owner
+    participant gir as GIR
+    form->>keyper: POST /v1/api/approval-links (vboId, installer KvK, owner KvK, validity)
+    keyper->>owner: Approval link by email
+    owner->>keyper: Authenticate and approve
+    keyper->>gir: Register AccessRight policy (installer ↔ vboId)
 ```
 
 ## Technical Implementation
