@@ -19,9 +19,10 @@ Voor applicaties die:
 - Hoe je een goedkeuringsverzoek indient via Keyper
 - Wat er na goedkeuring gebeurt en hoe je de status volgt
 - Hoe je na goedkeuring het gebouw (VBO) en de EAN's terugvindt
-- Hoe je vervolgens energiedata opvraagt bij de datadienst-aanbieder
+- Hoe je energiedata bij SDS opvraagt en de meterstanden interpreteert
+- Hoe je omgaat met ontbrekende gegevens en afwijzingen
 
-> **Buiten scope van deze gids:** Hoe de data-rechthebbende de aanvraag aanvult en goedkeurt verloopt via Keyper en valt buiten je eigen implementatie. Het opvraagformaat van de data (URL, parameters, response) wordt bepaald door de datadienst-aanbieder zelf; raadpleeg diens API-documentatie. Lees ook de [Keyper API documentatie ➚](<https://keyper-preview.poort8.nl/scalar/v1>) en de [DVU API documentatie ➚](<https://dvu-preview.poort8.nl/scalar/v1>) door.
+> **Buiten scope van deze gids:** Hoe de data-rechthebbende de aanvraag aanvult en goedkeurt verloopt via Keyper en valt buiten je eigen implementatie. Voor grootverbruik, het volledige responseschema en de actuele lijst met afwijscodes is de [SDS Swagger-documentatie voor de op DVU Preview aangesloten endpoints ➚](<https://dvu-test.smartdatasolutions.nl/swagger/index.html>) leidend. Lees ook de [Keyper API documentatie ➚](<https://keyper-preview.poort8.nl/scalar/v1>) en de [DVU API documentatie ➚](<https://dvu-preview.poort8.nl/scalar/v1>) door.
 
 ## Procesoverzicht
 
@@ -57,8 +58,8 @@ sequenceDiagram
             Keyper-->>App: status (Active / Approved / Rejected / Expired / Revoked)
         end
         note over App,SDS: Data opvragen
-        App->>Auth: Token ophalen (scope datadienst-aanbieder)
-        App->>SDS: Dataverzoek (EAN) + bearer token
+        App->>Auth: Token ophalen (scope SDS API)
+        App->>SDS: GET /service/v2/{EAN}/Jaarverbruik of /*
         SDS-->>App: 200 OK, energiedata
     end
 ```
@@ -192,7 +193,13 @@ Zodra `status` gelijk is aan `Approved`, bevat de response onder `addResourceGro
 
 ## Stap 4: Energiedata opvragen
 
-Vraag een nieuw token op, nu met de scope van de datadienst-aanbieder (de `client_id` van diens API zoals geregistreerd in de catalogus):
+> **Let op:** De informatie over de SDS API hieronder is opgesteld op basis van door SDS aangeleverde documentatie. Raadpleeg de [SDS Swagger-documentatie voor de op DVU Preview aangesloten endpoints ➚](<https://dvu-test.smartdatasolutions.nl/swagger/index.html>) voor het volledige en actuele schema. Klopt de informatie op deze pagina niet met de API, bel SDS.
+
+Vraag de gegevens per EAN op. Een gebouw kan meerdere EAN's hebben, bijvoorbeeld voor elektriciteit en gas of voor meerdere elektriciteitsaansluitingen. Gebruik daarom iedere EAN uit stap 3 afzonderlijk.
+
+### 4.1 Token ophalen voor SDS
+
+Het Keyper-token uit stap 1 is niet geldig voor de SDS API. Vraag daarvoor een apart token op met de scope van de SDS API. De `client_id` van deze API vind je in de catalogus; API-toegang vraag je aan via de portal (zie [Onboarding – stap 4](onboarding.md)).
 
 ```http
 POST https://auth.poort8.nl/realms/dvu-preview/protocol/openid-connect/token
@@ -201,17 +208,238 @@ Content-Type: application/x-www-form-urlencoded
 grant_type=client_credentials
 &client_id=<YOUR-CLIENT-ID>
 &client_secret=<YOUR-CLIENT-SECRET>
-&scope=<DATADIENST_AANBIEDER_API_CLIENT_ID>
+&scope=<SDS_API_CLIENT_ID>
 ```
 
-Stuur daarna het dataverzoek naar de datadienst-aanbieder, met een van de EAN's uit stap 3. De exacte URL, parameters en het responseformaat worden bepaald door de datadienst-aanbieder zelf — raadpleeg diens API-documentatie. Het enige dat DVU vereist is dat je een geldig bearer token meestuurt:
+In de preview omgeving is de scope `smart-data-solutions-test-api`. Het token is vijf minuten geldig. Vraag bij een `401 Unauthorized` een nieuw token aan; probeer het verzoek niet opnieuw met hetzelfde verlopen token.
+
+### 4.2 Welke data krijg je?
+
+De beschikbare gegevens hangen af van het type aansluiting. De data-rechthebbende geeft tijdens de goedkeuringsflow aan of het om kleinverbruik of grootverbruik gaat. Dit onderscheid staat niet in de SDS-response en wordt ook niet meegeleverd in de Keyper-response uit stap 3. Uit die stap haal je dus wel de EAN's, maar niet het aansluitingstype.
+
+| Type aansluiting | Elektriciteit | Gas | Bron en beschikbare historie |
+|---|---:|---:|---|
+| Kleinverbruik | ≤ 3 × 80 ampère | ≤ 40 m³/uur | P4-poort van de slimme meter: 13 maanden maandstanden, 40 dagen dagstanden en 10 dagen intervalstanden. Intervalstanden zijn per kwartier voor elektriciteit en per uur voor gas. |
+| Grootverbruik | > 3 × 80 ampère | > 40 m³/uur | Meetbedrijf: tot 24 maanden kwartierdata voor elektriciteit en 24 maanden uurdata voor gas, voor zover beschikbaar bij het meetbedrijf. |
+
+De beschikbare historie kan korter zijn, bijvoorbeeld als de meter recent is geplaatst of vervangen. Bij grootverbruik hangt de historie ook af van hoe lang de klant bij het meetbedrijf zit en welke historie daar is afgenomen. Ook bij kleinverbruik kan een gebeurtenis op de aansluiting ervoor zorgen dat minder data beschikbaar is, bijvoorbeeld een contractwisseling waarbij de naam anders is doorgegeven door de energieleverancier (zoals een wijziging tussen een holding en werkmaatschappij, of na een fusie of overname).
+
+Na goedkeuring is kleinverbruiksdata doorgaans na circa 24 uur beschikbaar. Bij grootverbruik kan dit tot drie weken duren. Is de data daarna nog niet beschikbaar, neem dan contact op met BeheerDVU via [BeheerDVU@rvo.nl](<mailto:BeheerDVU@rvo.nl>).
+
+De voorbeelden en uitleg van de response hieronder betreffen kleinverbruik (P4). Raadpleeg voor het responseformaat van grootverbruik de [SDS Swagger-documentatie voor de op DVU Preview aangesloten endpoints ➚](<https://dvu-test.smartdatasolutions.nl/swagger/index.html>).
+
+### 4.3 Dataproducten
+
+SDS biedt data per EAN aan via `GET /service/v2/{ean}/{dataproduct}`:
+
+| Dataproduct | Endpoint | Inhoud | Omvang |
+|---|---|---|---|
+| Jaarverbruik | `/service/v2/{ean}/Jaarverbruik` | Twee maandstanden: de eerste dag van de huidige maand en van twaalf maanden eerder. | Klein (ongeveer 2 KB) |
+| Alle data | `/service/v2/{ean}/*` | Alle beschikbare maand-, dag- en intervalstanden. | Groot (honderden KB bij kwartierdata) |
+
+`Jaarverbruik` is een deelverzameling van `*`: de twee standen komen overeen met de eerste en laatste maandstand uit `*`. Geen van beide endpoints berekent het verbruik voor je; je berekent dat door meterstanden van elkaar af te trekken.
+
+### 4.4 Jaarverbruik opvragen
 
 ```http
-GET https://<datadienst-aanbieder>/<endpoint-per-aanbieder>
-Authorization: Bearer <ACCESS_TOKEN>
+GET https://dvu-test.smartdatasolutions.nl/service/v2/871689260010498595/Jaarverbruik
+Authorization: Bearer <SDS-ACCESS-TOKEN>
+Accept: application/json
 ```
 
-De datadienst-aanbieder valideert het token, controleert of er een geldige policy bestaat, en levert daarna de data uit.
+De getoonde host hoort bij de testomgeving. Gebruik voor andere omgevingen de basis-URL die SDS daarvoor beschikbaar stelt.
+
+De response bevat onder meer `p4MeteringPointEnergyMeters`, met per opvraging de datum (`queryDate`), reden (`queryReason`) en meterregisters (`p4Register`). Een ingekort voorbeeld:
+
+```json
+{
+  "creationTimestamp": "2026-09-23T19:16:14.0449385+00:00",
+  "messageID": "1c5d48a3-1100-4cf6-8938-12169ad892fc",
+  "eanid": "871689260010498595",
+  "p4MeteringPointEnergyMeters": [
+    {
+      "queryDate": "2026-09-01T00:00:00",
+      "queryReason": "RCY",
+      "p4Register": [
+        {
+          "id": "1.8.1",
+          "measureUnit": "KWH",
+          "p4Reading": [{ "reading": 10993, "readingDateTime": "2026-09-01T00:00:00" }]
+        },
+        {
+          "id": "1.8.2",
+          "measureUnit": "KWH",
+          "p4Reading": [{ "reading": 21424, "readingDateTime": "2026-09-01T00:00:00" }]
+        },
+        {
+          "id": "2.8.1",
+          "measureUnit": "KWH",
+          "p4Reading": [{ "reading": 0, "readingDateTime": "2026-09-01T00:00:00" }]
+        },
+        {
+          "id": "2.8.2",
+          "measureUnit": "KWH",
+          "p4Reading": [{ "reading": 0, "readingDateTime": "2026-09-01T00:00:00" }]
+        }
+      ]
+    },
+    {
+      "queryDate": "2025-09-01T00:00:00",
+      "queryReason": "RCY",
+      "p4Register": [
+        {
+          "id": "1.8.1",
+          "measureUnit": "KWH",
+          "p4Reading": [{ "reading": 9313, "readingDateTime": "2025-09-01T00:00:00" }]
+        },
+        {
+          "id": "1.8.2",
+          "measureUnit": "KWH",
+          "p4Reading": [{ "reading": 17236, "readingDateTime": "2025-09-01T00:00:00" }]
+        }
+      ]
+    }
+  ],
+  "p4MeteringPointRejections": []
+}
+```
+
+Het jaarverbruik is het verschil tussen beide standen, per register:
+
+| Register | 1 sep 2026 | 1 sep 2025 | Verbruik |
+|---|---:|---:|---:|
+| `1.8.1` (afname laag tarief) | 10.993 kWh | 9.313 kWh | 1.680 kWh |
+| `1.8.2` (afname normaal tarief) | 21.424 kWh | 17.236 kWh | 4.188 kWh |
+| **Totaal afname** | | | **5.868 kWh** |
+
+Voor een gas-EAN werkt het hetzelfde, maar met één register (`1.8.0`, eenheid `MTQ`).
+
+### 4.5 Alle data opvragen
+
+```http
+GET https://dvu-test.smartdatasolutions.nl/service/v2/871689260010498595/*
+Authorization: Bearer <SDS-ACCESS-TOKEN>
+Accept: application/json
+```
+
+De getoonde host hoort bij de testomgeving. Gebruik voor andere omgevingen de basis-URL die SDS daarvoor beschikbaar stelt.
+
+De response heeft dezelfde structuur als bij `Jaarverbruik`, maar bevat alle beschikbare standen. Elk element in `p4MeteringPointEnergyMeters` is één opvraging:
+
+| `queryReason` | Gegevens | Elektriciteitsregisters | Gasregister | Beschikbare historie |
+|---|---|---|---|---|
+| `RCY` | Maandstanden, op de eerste dag van de maand | `1.8.1`, `1.8.2`, `2.8.1`, `2.8.2` in kWh | `1.8.0` in MTQ | 13 maanden |
+| `DAY` | Dagstanden, om 00:00 | `1.8.1`, `1.8.2`, `2.8.1`, `2.8.2` in kWh | `1.8.0` in MTQ | 40 dagen |
+| `INT` | Intervalstanden | `1.8.0`, `2.8.0` in Wh, per kwartier | `1.8.0` in MTQ, per uur | 10 dagen (bij een volledig etmaal van 24 uur: 97 elektriciteitsstanden of 25 gasstanden, inclusief begin- en eindstand) |
+
+De elementen staan op volgorde van nieuw naar oud.
+
+Voorbeeld intervalstanden elektriciteit (ingekort):
+
+```json
+{
+  "queryDate": "2026-09-22T00:00:00",
+  "queryReason": "INT",
+  "p4Register": [
+    {
+      "id": "1.8.0",
+      "measureUnit": "WH",
+      "p4Reading": [
+        { "reading": 32809348, "readingDateTime": "2026-09-21T22:00:00" },
+        { "reading": 32809413, "readingDateTime": "2026-09-21T22:15:00" },
+        { "reading": 32809496, "readingDateTime": "2026-09-21T22:30:00" }
+      ]
+    },
+    {
+      "id": "2.8.0",
+      "measureUnit": "WH",
+      "p4Reading": [
+        { "reading": 0, "readingDateTime": "2026-09-21T22:00:00" }
+      ]
+    }
+  ]
+}
+```
+
+Voorbeeld intervalstanden gas (ingekort):
+
+```json
+{
+  "queryDate": "2026-09-22T00:00:00",
+  "queryReason": "INT",
+  "p4Register": [
+    {
+      "id": "1.8.0",
+      "measureUnit": "MTQ",
+      "p4Reading": [
+        { "reading": 9888, "readingDateTime": "2026-09-21T22:00:00" },
+        { "reading": 9888, "readingDateTime": "2026-09-21T23:00:00" }
+      ]
+    }
+  ]
+}
+```
+
+### 4.6 De response lezen
+
+| Register (`id`) | Eenheid (`measureUnit`) | Betekenis |
+|---|---|---|
+| `1.8.1` | `KWH` | Afname elektriciteit, tarief 1 (laag-/daltarief) |
+| `1.8.2` | `KWH` | Afname elektriciteit, tarief 2 (normaal tarief) |
+| `2.8.1` | `KWH` | Teruglevering elektriciteit, tarief 1 |
+| `2.8.2` | `KWH` | Teruglevering elektriciteit, tarief 2 |
+| `1.8.0` | `WH` | Totale afname elektriciteit bij intervalstanden |
+| `2.8.0` | `WH` | Totale teruglevering elektriciteit bij intervalstanden |
+| `1.8.0` | `MTQ` | Totaal gasverbruik in m³ |
+
+Let op: `1.8.0` betekent iets anders voor elektriciteit dan voor gas. Kijk daarom altijd naar de combinatie van `id` en `measureUnit`. De response noemt niet apart of een EAN voor elektriciteit of gas is; leid dat af uit `measureUnit`. `MTQ` is de eenheidscode voor kubieke meter (m³).
+
+De waarden zijn **cumulatieve meterstanden**, geen verbruik. Bereken het verbruik over een periode door de oudere stand van de nieuwere af te trekken. Maandverbruik augustus 2026 is bijvoorbeeld de RCY-stand van 1 september min die van 1 augustus. Kwartierverbruik bereken je uit het verschil tussen twee opeenvolgende intervalstanden. Lees `reading` als een decimaal getal: de precisie verschilt per meter; elektriciteitsstanden kunnen bijvoorbeeld decimalen bevatten en gasstanden hebben bij maand- en dagstanden drie decimalen.
+
+Let ook op de eenheid: maand- en dagstanden voor elektriciteit zijn in kWh, intervalstanden voor elektriciteit in Wh. Teruglevering staat in aparte registers; netto afname is afname min teruglevering. Zonder opwek, bijvoorbeeld zonnepanelen, zijn de terugleveringsregisters nul. `messageID` is per opvraging uniek en is bruikbaar voor logging. Bij herhaalde opvragingen op dezelfde dag is de data verder identiek.
+
+Maand- en dagstanden gebruiken de Nederlandse kalenderdatum. Intervalstanden zijn in UTC. Nederlandse middernacht komt tijdens zomertijd overeen met 22:00 UTC op de voorgaande datum en tijdens wintertijd met 23:00 UTC op de voorgaande datum. Bij de overgang tussen zomer- en wintertijd duurt een Nederlandse kalenderdag 23 of 25 uur in plaats van 24 uur. Ga daarom niet uit van een vast aantal intervalstanden per kalenderdag; gebruik de tijdstippen van de standen om de periode te bepalen. De begin- en eindstand overlappen met de aangrenzende dag.
+
+Kwartierdata is preciezer dan dag- en maandstanden; kleine hoeveelheden, zoals enkele Wh teruglevering, kunnen in kWh-standen wegvallen door afronding.
+
+### 4.7 Afwijzingen
+
+Kan SDS de data voor een periode niet ophalen, dan staat die periode niet in `p4MeteringPointEnergyMeters`, maar in `p4MeteringPointRejections` met een reden. Per maand, dag of intervaldag krijg je dus óf meterstanden óf een afwijzing. Een lege `p4MeteringPointRejections` betekent dat alle opgevraagde data is opgehaald; een afwijzing voor één periode betekent niet automatisch dat er voor andere perioden geen data is.
+
+| Afwijscode | Betekenis | Mogelijke oorzaak |
+|---|---|---|
+| `007` | Geen slimme meter op de EAN-aansluiting op de gevraagde datum | Grootverbruikaansluiting, kleinverbruikaansluiting zonder slimme meter, of de meter was op die datum nog niet geplaatst |
+| `012` | De gevraagde meetdata is niet beschikbaar | Tijdelijke storing; probeer het later opnieuw |
+
+Een afwijzing voor één periode kan er bijvoorbeeld zo uitzien:
+
+```json
+{
+  "creationTimestamp": "2026-09-23T19:27:40.3172363+00:00",
+  "messageID": "7679892b-e3e1-4876-9dde-64fa500cd59e",
+  "eanid": "871687460009065667",
+  "p4MeteringPointEnergyMeters": [],
+  "p4MeteringPointRejections": [
+    {
+      "queryDate": "2026-09-01T00:00:00",
+      "queryReason": "RCY",
+      "rejection": {
+        "rejectionCode": "007",
+        "rejectionText": "Geen slimme meter op de EAN-aansluiting op gevraagde datum"
+      }
+    }
+  ]
+}
+```
+
+Raadpleeg de [SDS Swagger-documentatie voor de op DVU Preview aangesloten endpoints ➚](<https://dvu-test.smartdatasolutions.nl/swagger/index.html>) voor de volledige lijst met afwijscodes en het actuele responseschema.
+
+**Bekende beperkingen in de testomgeving:**
+
+- Bij `Jaarverbruik` kunnen de `queryDate` en `readingDateTime` van het tweede RCY-element naar de huidige maand verwijzen in plaats van naar twaalf maanden eerder. De meterstanden zelf kloppen. De nieuwste stand staat als eerste; je kunt het jaarverbruik ook afleiden uit `*`.
+- Uurstanden voor gas zijn in de testomgeving afgerond op hele m³. Omdat uurverbruik meestal minder dan 1 m³ is, zijn deze standen niet bruikbaar om uurverbruik te berekenen. Gebruik daarvoor de dagstanden.
+
+De SDS API valideert het token en controleert of voor jouw organisatie en de EAN een geldige policy bestaat voordat de data wordt uitgeleverd.
 
 ## Foutafhandeling
 
@@ -219,7 +447,7 @@ De datadienst-aanbieder valideert het token, controleert of er een geldige polic
 |------|-----------|-------|
 | `401 Unauthorized` | Token ontbreekt, is verlopen of ongeldig | Vraag een nieuw token aan |
 | `403 Forbidden` | Geen geldige policy gevonden | Controleer of de goedkeuring is afgerond (status `Approved`) |
-| `400 Bad Request` | Verkeerde of ontbrekende parameters | Controleer request parameters |
+| `400 Bad Request` | Verkeerde of ontbrekende parameters | Controleer de parameters in het verzoek |
 
 ## Hulp nodig?
 
