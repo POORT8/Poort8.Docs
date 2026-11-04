@@ -6,6 +6,8 @@ BunkerConnect is een federatieve dataspace voor het coördineren van bunkerdiens
 
 BunkerConnect faciliteert de coördinatie van bunkerdiensten via een federatief model waarin alle partijen hun eigen data beheren en toegang verlenen volgens overeengekomen autorisaties. Het systeem ondersteunt het hele proces van reservering tot levering, met real-time verificatie van toegangsrechten en volledige audit trails.
 
+<div data-flow-player="media/README.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant Schip as Scheepsoperator

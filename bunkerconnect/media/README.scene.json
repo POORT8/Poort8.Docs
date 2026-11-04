@@ -1,0 +1,38 @@
+{
+  "page": "../README.md",
+  "lang": "nl",
+  "badge": "BunkerConnect",
+  "title": "BunkerConnect",
+  "subtitle": "Hoe bunker suppliers toegang regelen en apps bunkerleveringen afnemen",
+  "participants": {
+    "Schip": {
+      "role": "Afnemer"
+    },
+    "App": {
+      "role": "App van de operator"
+    },
+    "Supplier": {
+      "role": "Data owner"
+    },
+    "BC": {
+      "role": "Authorization Registry"
+    },
+    "API": {
+      "role": "Bunkerdienst"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Eenmalig"
+    },
+    {
+      "frequency": "Per reservering"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "De supplier bepaalt de toegang.",
+      "BunkerConnect controleert elke aanvraag."
+    ]
+  }
+}
