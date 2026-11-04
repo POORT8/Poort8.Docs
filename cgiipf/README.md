@@ -6,6 +6,8 @@ De Interplant Federation is een federatieve dataspace voor het delen van product
 
 De Interplant Federation faciliteert data-uitwisseling tussen fabrieken en hun partners via een federatief model. Elke organisatie behoudt volledige controle over de eigen data, terwijl geautoriseerde partners toegang krijgen tot specifieke gegevens volgens overeengekomen policies. Het systeem ondersteunt real-time autorisatie controles.
 
+<div data-flow-player="media/README.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant App as Service Provider<br/>Applicatie

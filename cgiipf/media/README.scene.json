@@ -1,0 +1,33 @@
+{
+  "page": "../README.md",
+  "lang": "nl",
+  "badge": "Interplant Federation",
+  "title": "Interplant Federation",
+  "subtitle": "Hoe fabrieken toegang regelen en service providers productiedata opvragen",
+  "participants": {
+    "App": {
+      "name": "Applicatie",
+      "role": "Service provider"
+    },
+    "IPF": {
+      "role": "Authorization Registry"
+    },
+    "API": {
+      "role": "Dataservice"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Eenmalig"
+    },
+    {
+      "frequency": "Per dataverzoek"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "De fabriek bepaalt de toegang.",
+      "Elk dataverzoek wordt gecontroleerd."
+    ]
+  }
+}
