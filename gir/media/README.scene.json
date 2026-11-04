@@ -1,0 +1,41 @@
+{
+  "page": "../README.md",
+  "lang": "en",
+  "badge": "GIR",
+  "title": "GIR – Gebouw Installatie Registratie",
+  "subtitle": "How installations are registered and read, with the owner’s consent",
+  "participants": {
+    "Registrar": {
+      "name": "Registrar app",
+      "role": "Writes installations"
+    },
+    "Keyper": {
+      "role": "Orchestrates approval"
+    },
+    "Owner": {
+      "name": "Building owner",
+      "role": "Rights holder"
+    },
+    "GIR": {
+      "role": "Register and AR"
+    },
+    "Consumer": {
+      "name": "Data consumer app",
+      "role": "Reads installations"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "One-time setup"
+    },
+    {
+      "frequency": "Recurring"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "The owner approves who may write and read.",
+      "GIR checks the policy on every request."
+    ]
+  }
+}

@@ -6,6 +6,8 @@
 
 Organizations can register installation data and share it with authorized partners through an approval process. A registrar submits installation metadata to GIR; if the building owner approves write access through Keyper, the data becomes visible to data consumers who have also obtained read approval. All interactions require DSGO bearer tokens and pre-established policies.
 
+<div data-flow-player="media/README.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant Registrar as Registrar App
