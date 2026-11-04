@@ -4,9 +4,10 @@ The `datasetaccess` authorization model checks whether a requesting organization
 a valid grant from a dataset's publisher for that specific dataset. Both usable stored
 dataset facts and a matching grant are required.
 
-> **Current availability:** authorization support through the existing
-> `GET /v1/api/authorization/explained-enforce` endpoint with `useCase=datasetaccess`.
-> This does not provide catalogue storage, catalogue management APIs or DCAT ingestion.
+> **Current availability:** `datasetaccess` authorization is available through the existing
+> `GET /v1/api/authorization/explained-enforce` endpoint. The catalogue API supports
+> creating, reading and updating a publisher's Pending dataset draft only; publication,
+> dataset search and distribution management are not available.
 
 ## Checking Access
 
@@ -75,5 +76,42 @@ cases are not switched to this model. See
 for model selection and family-root matching.
 
 This is dataset authorization, not catalogue browsing or management authorization.
-Explicit catalogue identity, membership and storage APIs are outside the current
-support.
+Dataset-access grants do not grant catalogue browsing or draft-management rights.
+
+## Creating Dataset Drafts
+
+Use the catalogue API to save and retrieve a dataset draft as JSON-LD:
+
+| Method and path | Behavior |
+| --- | --- |
+| `PUT /v1/api/catalog/datasets/{datasetId}` | Creates a Pending draft (`201` with `Location`) or updates the caller's own Pending draft (`200`). |
+| `GET /v1/api/catalog/datasets/{datasetId}` | Returns that persisted draft as `application/ld+json`. |
+
+Both routes require the existing API read/write authorization and a strict active-organisation
+match: the token's active organisation, the publisher's single identifier and the stored draft
+issuer must agree. The publisher IRI uses the catalogue's organisation namespace followed
+by that organisation's EUID.
+Administrator, trusted-client and delegated authorization do not
+bypass this ownership check. Another organisation cannot read or overwrite the draft.
+
+Supply a UUID in `datasetId`. The server sets `@id` using the catalogue's dataset namespace
+followed by that UUID, and sets `identifier` to a one-item array containing the UUID.
+The draft remains Pending; submitting metadata cannot set publication state or grant
+`datasetaccess`. The API performs structural validation only, not SHACL validation.
+
+Each catalogue accepts one JSON-LD context. Use the context and organisation/dataset
+namespaces specified for the catalogue you integrate with, rather than assuming they are
+shared across deployments.
+A PUT may omit the root `@context`; the server adds the catalogue's context before storing
+the draft. If supplied, it must exactly match that context.
+Other values and nested `@context` properties are rejected with `400`. GET responses always
+contain this root context. Contexts are treated as identifiers; the API does not fetch
+them or perform JSON-LD expansion, RDF processing or SHACL validation.
+Duplicate JSON object members are rejected with `400`.
+
+For request and response definitions, see the
+[Catalog API (Scalar) ➚](https://noodlebar-preview.poort8.nl/scalar/#tag/catalog).
+
+The existing `GET /v1/datasets` endpoint returns demonstration data, not saved drafts.
+The ownership and Pending-state rules described here apply to the catalogue draft routes.
+Authorized ResourceGroup API clients can still manage the same records through that API.
