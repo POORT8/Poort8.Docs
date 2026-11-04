@@ -34,6 +34,8 @@ For bearer token access, read/write policies, and trusted API clients, see [Keyp
 
 A typical Keyper approval flow supports users of a dataspace service that need additional data from another service provider in the data space:
 
+<div data-flow-player="media/README.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant R as Requester

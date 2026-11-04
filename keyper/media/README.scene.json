@@ -1,0 +1,33 @@
+{
+  "page": "../README.md",
+  "lang": "en",
+  "badge": "Keyper",
+  "title": "Keyper",
+  "subtitle": "How a requester gets a set of transactions approved",
+  "participants": {
+    "R": {
+      "role": "Prepares transactions"
+    },
+    "K": {
+      "role": "Orchestrates approval"
+    },
+    "A": {
+      "role": "Authorizes"
+    },
+    "DS": {
+      "role": "Receive the transactions"
+    }
+  },
+  "phases": [
+    {
+      "title": "Request, approve, execute",
+      "frequency": "Per transaction set"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "The approver authenticates and approves.",
+      "Keyper executes and notifies the requester."
+    ]
+  }
+}
