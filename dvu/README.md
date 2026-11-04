@@ -16,6 +16,8 @@ DVU bestaat uit drie kerncomponenten:
 - **DVU Participantenregister** — beheert de deelnemende organisaties van de dataspace.
 - **Keyper** — verzorgt de goedkeuringsflow waarmee de data-rechthebbende toestemming geeft.
 
+<div data-flow-player="media/README.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     autonumber

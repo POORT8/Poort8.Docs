@@ -1,0 +1,36 @@
+{
+  "page": "../README.md",
+  "lang": "nl",
+  "badge": "DVU",
+  "title": "DVU",
+  "subtitle": "Hoe een gebouweigenaar toestemming geeft en energiedata wordt geleverd",
+  "participants": {
+    "Keyper": {
+      "role": "Regelt de goedkeuring"
+    },
+    "Meta": {
+      "role": "Gebouwgegevens"
+    },
+    "DVU": {
+      "name": "DVU Autorisatieregister",
+      "role": "Legt de policy vast"
+    },
+    "MB": {
+      "role": "Levert meetdata"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Eenmalig per gebouw"
+    },
+    {
+      "frequency": "Terugkerend"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "De gebouweigenaar geeft toestemming.",
+      "Het register controleert elke datalevering."
+    ]
+  }
+}
