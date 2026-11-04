@@ -10,6 +10,8 @@ Participant registration is managed by consortium partner **DAWEX**. All checks 
 
 > **⚠️ Note:** The technical interface between CircPlastX and DAWEX for participant verification is not yet defined. The diagrams below show DAWEX as an external component with a pending integration boundary.
 
+<div data-flow-player="media/README.scene.json"></div>
+
 ```mermaid
 sequenceDiagram
     participant Manufacturer

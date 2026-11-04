@@ -1,0 +1,51 @@
+{
+  "page": "../README.md",
+  "lang": "en",
+  "badge": "CircPlastX",
+  "title": "CircPlastX",
+  "subtitle": "How raw material data flows from producer to product passport",
+  "participants": {
+    "Manufacturer": {
+      "role": "Data service consumer"
+    },
+    "Keyper": {
+      "role": "Orchestrates approval"
+    },
+    "RawMatProducer": {
+      "name": "Raw material producer",
+      "role": "Rights holder"
+    },
+    "CircPlastX": {
+      "role": "NoodleBar"
+    },
+    "DAWEX": {
+      "role": "Participant check"
+    },
+    "ServiceProvider": {
+      "name": "Service provider",
+      "role": "Raw materials data"
+    },
+    "DPPConsumer": {
+      "name": "DPP consumer",
+      "role": "Public"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "One-time setup"
+    },
+    {
+      "frequency": "Interface TBD"
+    },
+    {
+      "frequency": "Recurring"
+    },
+    {}
+  ],
+  "closing": {
+    "lines": [
+      "The producer approves once.",
+      "The manufacturer builds the product passport."
+    ]
+  }
+}
