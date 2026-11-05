@@ -2,6 +2,50 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-10-30
+
+**Highlights:** GIR basis-data searches are now paginated, Keyper GIR approval links only accept GIR members as policy subjects, NoodleBar can evaluate dataset access against the dataset publisher, and GIR approval pages show the approved permissions after approval.
+
+### NoodleBar
+
+#### Added
+
+- `GET /v1/api/authorization/explained-enforce` supports the new `datasetaccess` use case. Access is granted only when the dataset is registered as an active, accessible resource group and a matching policy was issued by the dataset's stored publisher. The `serviceProvider`, `type`, and `attribute` fields are accepted; a non-empty `issuer` or any `context` returns `400 Bad Request`. A valid request without a matching grant returns `200 OK` with `allowed=false` and no explaining policies. See [Dataset Access](15%20-%20Dataset%20Access.md).
+- Added `GET /v1/datasets` and `GET /v1/datasets/{datasetId}` on the NoodleBar instance. They return a fixed, read-only KWR DigiLab demo catalogue of 26 datasets as JSON-LD (`application/ld+json`). Other `Accept` values return `406 Not Acceptable`; an invalid dataset ID returns `400 Bad Request` and an unknown one `404 Not Found`. Search, filters, and pagination are not available.
+
+#### Changed
+
+- `explained-enforce` requests with `useCase=kwr-digilab` now use the iSHARE authorization model, so `issuer`, `serviceProvider`, `type`, and `attribute` are accepted instead of rejected with `400 Bad Request`. `context` is still rejected for this use case.
+
+### NoodleBar (DVU)
+
+#### Changed
+
+- On the DVU instance, `enforce` and `explained-enforce` requests that omit `useCase` are now evaluated against the `dvu` use case instead of the generic `ishare` use case.
+
+### NoodleBar (GIR)
+
+#### Changed
+
+- **BREAKING:** `POST /api/gir/v0/gir-basisdata-messages/_search` now paginates results. Use the optional `limit` (default `100`, between `1` and `1000`) and `cursor` query parameters, and pass `meta.nextCursor` as `cursor` to fetch the next page. `meta.totalItems` contains the total number of authorized results. Clients that expect all results in one response must follow `meta.nextCursor`. An out-of-range `limit` or malformed `cursor` returns `400 Bad Request`. See [Search GIRBasisdataMessages](../gir/retrieve-installations.md#pagination).
+
+### Keyper
+
+#### Added
+
+- New `kwr-digilab@v1` approval flow for the KWR DigiLab use case on NoodleBar. It uses email one-time-code authentication; the calling application supplies the policy details, and Keyper sets the policy use case to `kwr-digilab`.
+
+#### Changed
+
+- **BREAKING:** For the GIR registrar, consumer, Datastekker, and maintenance-book (Digitaal Onderhoudsboekje) flows, `POST /v1/api/approval-links` and `PUT /v1/api/approval-links/{id}` now check that every policy subject has an active GIR membership at Techniek Nederland. Subjects without a membership are rejected with `400 Bad Request`. If the membership cannot be verified, the request returns `503 Service Unavailable` and can be retried later.
+- After approval, GIR approval pages now name the organization that received access, list the approved permissions with their actions and validity, and explain that permissions can be extended or stopped on the Keyper permissions page. Every step of GIR approval pages now shows that Keyper is a Poort8 service provided on behalf of Techniek Nederland.
+
+### DVU registration app
+
+#### Changed
+
+- When several addresses are added at once, all addresses are now shown on one page. Each address can be completed or skipped (and included again), and everything is confirmed with a single button instead of stepping through the addresses one by one.
+
 ## 2026-10-26
 
 **Highlights:** Keyper approval links are now bound to the dataspace of their orchestration flow, GIR approval pages ask for two explicit declarations and show the Techniek Nederland and DSGO logos, and Keyper Manager in GIR Preview signs users in with eHerkenning.
