@@ -41,9 +41,9 @@ POST https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search
 Authorization: Bearer <ACCESS_TOKEN>
 Content-Type: application/json
 
-{ "installationID": "<INSTALLATION_ID>" }
+{ "installationID": { "value": "<INSTALLATION_ID>", "type": "GUID" } }
 ```
 
-Use `installationID` to look up the record by its installation identifier. The single-record endpoint `GET /api/gir/v0/gir-basisdata-messages/{guid}` requires the GIR record GUID, not the installation ID.
+Use the installation identifier's `value` and `type` (`GUID` or `GIAI`) to look up the record; both must match. The single-record endpoint `GET /api/gir/v0/gir-basisdata-messages/{guid}` requires the GIR record GUID, not the installation ID.
 
 For filtered list retrieval, see [Retrieve Multiple Installations](retrieve-installations.md) and [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1).
