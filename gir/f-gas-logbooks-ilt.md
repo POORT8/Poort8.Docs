@@ -50,7 +50,7 @@ sequenceDiagram
 
     rect rgb(255, 245, 225)
     note over ILT,GIR: Phase 3 – Find installations
-    ILT->>GIR: POST /gir-basisdata-messages/_search (VBO-ID)
+    ILT->>GIR: POST /api/gir/v0/gir-basisdata-messages/_search (VBO-ID)
     GIR->>GIR: Validate token and AccessRight
     GIR-->>ILT: GIRBasisdataMessages (installationId, installer)
     end
