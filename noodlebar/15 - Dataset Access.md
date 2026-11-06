@@ -64,8 +64,8 @@ on drafts. Text fields such as title and description use language maps:
 
 This example uses placeholder contacts, classification and context. Code-list IRIs
 and namespaces must be configured for the deployment.
-Concepts can carry an `@id` and `prefLabel` language map. Distributions are embedded
-under `distribution`; each included distribution needs an `accessURL`.
+Concepts can carry an `@id` and `prefLabel` language map. Distributions are
+described under [Distributions](#distributions).
 Optional governance fields (`license`, `accessConditions`, `purposeLimitation`,
 `retentionPeriod`) are descriptive; they do not enforce data-plane restrictions.
 
@@ -86,6 +86,40 @@ For endpoint schemas and request/response definitions, see the
 [Catalog API (Scalar) ➚](https://noodlebar-preview.poort8.nl/scalar/#tag/catalog).
 The separate `/v1/datasets` routes remain a fixed read-only demo corpus, not saved
 or published catalog data.
+
+## Distributions
+
+A distribution tells consumers where the data of a dataset can be retrieved. It is
+embedded in the dataset document under `distribution`, as a single object or an
+array, and is written and read with the dataset:
+
+```json
+"distribution": [
+  {
+    "@id": "https://example.test/distributions/water-quality-csv",
+    "@type": "Distribution",
+    "title": { "en": "Water quality measurements (CSV)" },
+    "format": "http://publications.europa.eu/resource/authority/file-type/CSV",
+    "accessURL": "https://data-plane.example.test/datasets/water-quality"
+  }
+]
+```
+
+- `accessURL` is the protected retrieval endpoint in the data plane. It must be an
+  absolute IRI, and every distribution of a published dataset needs one. The
+  catalog stores it as given and does not check where it points.
+- Other accepted fields are `title`, `description`, `accessService`, `format`,
+  `availability`, `status`, `license`, `language` and `temporalResolution`; see the
+  Scalar schema for their types. `@id` is optional and chosen by you; the server does
+  not manage it or check its uniqueness.
+- There are no separate distribution endpoints. To add, change or remove a
+  distribution, PUT the whole dataset document; distributions you leave out are
+  removed. Ownership, draft visibility and publication rules are those of the dataset.
+- `downloadURL` is not supported and returns `400`.
+
+Reading a distribution grants no access to its data. The data plane authorizes each
+retrieval against the dataset `@id` (see [Checking Data Access](#checking-data-access));
+distributions have no policies or grants of their own.
 
 ## Searching Published Metadata
 
