@@ -2,6 +2,27 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-11-06
+
+**Highlights:** NoodleBar has a catalogue API for saving, publishing and reading your own dataset metadata, and Keyper approval-request emails have clearer sender details, with a new text for GIR Datastekker requests.
+
+### NoodleBar
+
+#### Added
+
+- New catalogue dataset endpoints on the NoodleBar instance. All use JSON-LD (`application/ld+json`), take a lowercase, hyphenated UUID of your choice as `datasetId`, and require an API token with an active organisation (service-account tokens included). See [Dataset Access](15%20-%20Dataset%20Access.md#creating-and-publishing-datasets).
+  - `PUT /v1/api/catalog/datasets/{datasetId}` creates a Pending draft (`201 Created` with `Location`) or updates your own Pending draft (`200 OK`). Saving only checks the structure, so an incomplete draft can be saved and completed later. The publisher must be your active organisation; the server sets `@id` and `identifier`, and adds the catalogue's JSON-LD context when `@context` is omitted. A different context, nested `@context` properties, or duplicate JSON members return `400 Bad Request`; a request body that is not `application/ld+json` returns `415 Unsupported Media Type`; an ID that is already in use or a published dataset returns `409 Conflict`.
+  - `POST /v1/api/catalog/datasets/{datasetId}/publish` (no request body) publishes your own Pending draft and returns the published metadata with `lifecycleStatus` (`active`) and `modificationDate`. The draft must contain nonblank plain-text `title` and `description` values. Otherwise the response is `422 Unprocessable Entity` with an `errors` list of `path` and `message` entries, and the draft stays unchanged. Publishing an already published dataset returns `409 Conflict`. Publishing makes the dataset available for access grants from its publisher, but does not grant access by itself.
+  - `GET /v1/api/catalog/datasets/{datasetId}` returns published metadata to any organisation, without a dataset-access grant. A Pending draft is returned only to its publisher; other organisations receive `403 Forbidden`.
+  - Only the publisher's active organisation can save or publish a dataset; administrator and trusted-client access do not override this. Published datasets cannot yet be edited or withdrawn, and search and listing are not available.
+
+### Keyper
+
+#### Changed
+
+- In approval-request emails, the "More information" section now labels each party: the authorised party ("Authorised party" or "Gemachtigde") and the data service provider ("Data service provider" or "Datadienst aanbieder"). The authorised party is no longer shown when it is the requester's own organisation.
+- GIR Datastekker approval-request emails have a new subject and text. They now name the requester and their organisation, explain that data is shared through the Installatie Register and that the approval screen shows the purpose and duration, and include a note below the button on how to revoke the approval later. These emails are now sent from `noreply@poort8.nl`.
+
 ## 2026-10-30
 
 **Highlights:** GIR basis-data searches are now paginated, Keyper GIR approval links only accept GIR members as policy subjects, NoodleBar can evaluate dataset access against the dataset publisher, and GIR approval pages show the approved permissions after approval.

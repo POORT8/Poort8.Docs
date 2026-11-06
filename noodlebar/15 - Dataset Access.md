@@ -87,6 +87,37 @@ For endpoint schemas and request/response definitions, see the
 The separate `/v1/datasets` routes remain a fixed read-only demo corpus, not saved
 or published catalog data.
 
+## Searching Published Metadata
+
+`GET /v1/api/catalog/datasets` lists published datasets across organisations with
+the same token requirements as the detail read. Drafts are never listed, including
+your own, and finding a dataset does not grant access to its data. The response is
+`application/json`: `{ totalItems, page, pageSize, member, facets }`, where each
+`member` is the document the detail GET returns.
+
+```http
+GET /v1/api/catalog/datasets?q=pfas%20rhine&classification=https%3A%2F%2Fexample.test%2Fclassification%2Frestricted
+Authorization: Bearer <token>
+Accept: application/json
+```
+
+- `q` matches any of its words, case-insensitively, in title, description and
+  keyword (all languages) and in parameter labels. Datasets matching more
+  different words rank first, then newer `issued` dates. `issued` is the date you
+  supply on the dataset, not the moment it was published.
+- `theme`, `parameter`, `location`, `organisation`, `project` and `classification`
+  filter on exact values. Repeat a filter to match any of its values; different
+  filters and `q` must all match.
+- `facets` lists, per filter, the available values with their label and count.
+  A facet ignores its own filter, so other values stay visible.
+- `page` starts at 1; `pageSize` defaults to 20 and is at most 100. Unknown query
+  parameters return `400`.
+
+Facet values and labels come from the published records themselves, not from a
+controlled vocabulary. See the
+[Catalog API (Scalar) ➚](https://noodlebar-preview.poort8.nl/scalar/#tag/catalog)
+for the field mapping of each filter.
+
 ## Checking Data Access
 
 Use the returned dataset **`@id` IRI**, not its bare `identifier`, as the policy
