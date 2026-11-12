@@ -202,10 +202,21 @@ The data plane validates the user's own token and passes what it established in
 }
 ```
 
-Unknown fields, a missing `context` or a malformed one return `400`. The identifier
-format for `person` is [TBD]. Do not pass values the user supplied without
-validating them: the decision relies on them. The dataset owner and its draft or
-published status are not part of `context`; they come from the catalog record.
+Unknown fields, a missing `context` or a malformed one return `400`. Do not pass
+values the user supplied without validating them: the decision relies on them. The
+dataset owner and its draft or published status are not part of `context`; they
+come from the catalog record.
+
+- For `can_read`, `person` is the subject identifier from the validated user token,
+  passed unchanged (with Keycloak, the `sub` claim). Send the same value as
+  `subject`. The comparison ignores case.
+- For `can_create` and `can_update`, send the organization's EUID from
+  `context.organization` as `subject`, not the person's `sub`. It must match the
+  upload policy's issuer and subject and the catalog record owner.
+- `roles` holds the roles from the token, unfiltered. Rules only look at the roles
+  they name, so other roles in the list do not matter.
+- `organization` is always sent. For `can_create` and `can_update` it decides the
+  outcome. For `can_read` it does not, but it is recorded in the audit.
 
 Uploads need a catalog record. Save the draft metadata first (see
 [Saving and Publishing Metadata](#saving-and-publishing-metadata)), then ask for
@@ -218,6 +229,8 @@ Uploads need a catalog record. Save the draft metadata first (see
 | `can_read` | Issued by the dataset's stored publisher to one person, action `can_read`, concrete dataset `@id`. | `person` and `subject` equal the policy subject and the policy's Rules hold. |
 
 Each policy needs Rules; a policy without valid Rules never allows these actions.
+Creating or updating a `datasetaccess` policy with action `can_create`, `can_update`
+or `can_read` through the policy API returns `400` when its Rules are empty or invalid.
 Rules combine `HasRole(role)`, `DatasetStatus(status)`, `AnyOf(...)` and `AllOf(...)`.
 For example, steward or data user on a draft:
 

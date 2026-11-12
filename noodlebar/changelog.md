@@ -2,6 +2,16 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-11-12
+
+**Highlights:** NoodleBar rejects data-plane dataset-access policies with invalid Rules when they are created or updated.
+
+### NoodleBar
+
+#### Changed
+
+- `POST` and `PUT /v1/api/policies` return `400 Bad Request` for a `datasetaccess` policy with action `can_create`, `can_update` or `can_read` whose `rules` are empty or invalid, for example `hasrole(x)` instead of `HasRole(x)`. Allowed functions are `HasRole`, `DatasetStatus`, `AnyOf` and `AllOf`. Previously such a policy was saved and then never allowed access. Other policies are unaffected. See [Dataset Access](15%20-%20Dataset%20Access.md#data-plane-decisions-upload-and-personal-read).
+
 ## 2026-11-06
 
 **Highlights:** NoodleBar has a catalogue API for saving, publishing and reading your own dataset metadata, and Keyper approval-request emails have clearer sender details, with a new text for GIR Datastekker requests.
