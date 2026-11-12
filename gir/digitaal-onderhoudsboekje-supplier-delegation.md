@@ -21,7 +21,7 @@ Because the New Installation Service Company is both requester and approver, Key
 |-------|------|
 | **New Installation Service Company** | Initiates and self-approves the delegation to their Software Supplier. |
 | **TN GIR App** | Collects Software Supplier details and hands off to Keyper. |
-| **Keyper** | Orchestrates the self-approval flow and registers the policy in GIR. |
+| **Keyper** | Orchestrates the self-approval flow, registers the policy in GIR and emails the New Installation Service Company a confirmation. |
 | **Software Supplier** | Receives the delegation; authorized to call GIR data services on behalf of the New Installation Service Company in Phase 3. |
 | **GIR** | Stores the resulting `SupplierDelegation` policy. |
 

@@ -12,7 +12,7 @@ Supplier delegation is optional in every GIR flow. GIR implements it as option 3
 |-------|-----------|-------------|
 | Your organization | Legal data service consumer | Holds the access right (or write policy) and authorizes its Software Supplier. |
 | Software Supplier | Authorized data service consumer | Calls the data service on behalf of your organization. |
-| Keyper *(Poort8)* | — | Orchestrates the self-approval of the SupplierDelegation via eHerkenning and registers it in GIR. |
+| Keyper *(Poort8)* | — | Orchestrates the self-approval of the SupplierDelegation via eHerkenning, registers it in GIR and emails the approver a confirmation. |
 | GIR | Authorization registry | Stores the SupplierDelegation and issues signed delegation evidence via `POST /v1/api/delegation`. |
 | Data service provider | Data service provider | Validates the delegation evidence and checks the access right of your organization. This is GIR itself for `GIRBasisdataMessage`, or a third party such as Datastekker. |
 

@@ -7,7 +7,7 @@ The TechniekNederland form collects the access request and hands it off to Keype
 | Actor | Role |
 |-------|------|
 | **TechniekNederland Form** | Collects request data and calls Keyper. |
-| **Keyper** | Orchestrates the approval flow. Registers the policy in GIR on approval. |
+| **Keyper** | Orchestrates the approval flow. Registers the policy in GIR on approval and emails the building owner a confirmation. |
 | **Building owner** | Approves or rejects the request. Before approving, the owner must tick two declarations on the Keyper approval screen: one about ownership of the building units, and one about responsibility and liability for use of the shared data. |
 | **GIR** | Stores the resulting `AccessRight` policy. |
 

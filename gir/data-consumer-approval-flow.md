@@ -5,7 +5,7 @@
 | Actor | Role |
 |-------|------|
 | **Your application** | Creates the approval link request in Keyper. |
-| **Keyper** | Orchestrates the approval flow via eHerkenning. Registers the read policy in GIR on approval. |
+| **Keyper** | Orchestrates the approval flow via eHerkenning. Registers the read policy in GIR on approval and emails the installation owner a confirmation. |
 | **Installation owner** | Approves or rejects the request. Before approving, the owner must tick two declarations on the Keyper approval screen: one about ownership of the building units, and one about responsibility and liability for use of the shared data. |
 | **GIR** | Stores the resulting read policy. |
 

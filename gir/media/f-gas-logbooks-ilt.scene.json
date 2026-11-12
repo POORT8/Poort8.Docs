@@ -3,29 +3,29 @@
   "lang": "en",
   "badge": "Design draft · GIR",
   "title": "F-gas logbooks for ILT",
-  "subtitle": "How the inspectorate gets access, with the building owner's consent",
+  "subtitle": "How installation software sends logbooks to the inspectorate, with the building owner's consent",
   "illustration": { "type": "building", "tags": ["F-gas", "F-gas", "F-gas"] },
   "participants": {
-    "ILT": { "role": "Data service consumer" },
+    "Installer": { "role": "Legal data service consumer" },
+    "SW": { "role": "Data service consumer" },
     "Keyper": { "role": "Orchestrates approval" },
     "Owner": { "name": "Building owner", "role": "Rights holder" },
-    "GIR": { "role": "Register and AR" },
-    "SAT": { "name": "DSGO registry", "role": "Participant check" },
-    "SW": { "role": "Data service provider" }
+    "GIR": { "role": "Authorization registry" },
+    "ILT": { "role": "Data service provider" }
   },
   "phases": [
+    { "frequency": "Once per software relationship" },
     { "frequency": "Once per building, until the policy expires" },
     { "frequency": "Each time the token expires" },
-    { "frequency": "Per inspection" },
-    { "title": "Retrieve logbook", "frequency": "Per installation" }
+    { "title": "Check access and send logbook", "frequency": "Per logbook submission" }
   ],
   "annotations": [
-    { "phase": 1, "after": 5, "type": "card", "at": "SAT", "title": "AccessRight in GIR",
-      "lines": ["Issuer: building owner · Subject: ILT", "Resource: VBO-ID · Rules: F-gas installations"] },
-    { "phase": 2, "after": 4, "type": "chip", "at": "ILT", "text": "Token" }
+    { "phase": 2, "after": 5, "type": "card", "at": "ILT", "title": "AccessRight in GIR",
+      "lines": ["Issuer: building owner · Subject: installer", "Resource: VBO-ID · Rules: F-gas installations"] },
+    { "phase": 3, "after": 2, "type": "chip", "at": "SW", "text": "Token" }
   ],
   "closing": {
     "badge": "Design draft · not ready for implementation",
-    "lines": ["Consent lives in GIR.", "Logbooks stay with the installer."]
+    "lines": ["Consent lives in GIR.", "The installation software pushes logbooks to ILT."]
   }
 }
