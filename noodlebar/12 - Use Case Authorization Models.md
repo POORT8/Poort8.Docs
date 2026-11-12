@@ -14,7 +14,10 @@ Every policy stored in the Authorization Registry has a `useCase` field. This fi
 
 `datasetaccess` requires usable stored dataset facts and a valid grant from the stored
 publisher for the concrete dataset ID. Use `useCase=datasetaccess` on the existing
-HTTP explained-enforce endpoint.
+HTTP explained-enforce endpoint. The actions `can_create`, `can_update` and `can_read`
+are decided on separate paths for data planes, with organisation-scoped
+upload policies on datasets with a catalog record and personal read grants, each
+requiring Rules.
 See [Dataset Access](15%20-%20Dataset%20Access.md) for the dataset representation and
 grant requirements.
 

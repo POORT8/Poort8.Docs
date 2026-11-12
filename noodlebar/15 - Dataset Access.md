@@ -167,7 +167,8 @@ non-catalog dataset facts continue to use their registry ID.
 
 Send `subject`, concrete dataset `resource`, `action`, `serviceProvider`, `type`
 and `attribute` to `GET /v1/api/authorization/explained-enforce`. Omit `issuer`;
-a nonempty issuer or unsupported `context` returns `400`. A valid request returns
+a nonempty issuer returns `400`, and so does `context` except for the data plane
+actions below. A valid request returns
 `200`, with `allowed=true` and matching `explainPolicies` only when the publisher's
 grant and its validity period match. Without a matching grant the response is
 `allowed=false` and an empty explanation.
@@ -179,6 +180,60 @@ membership do not expand dataset access to distributions or files.
 
 See the [Authorization API (Scalar) ➚](https://noodlebar-preview.poort8.nl/scalar/#tag/authorization)
 and [Use Case Authorization Models](12%20-%20Use%20Case%20Authorization%20Models.md).
+
+## Data Plane Decisions: Upload and Personal Read
+
+A data plane can ask for three further decisions with the actions `can_create`,
+`can_update` and `can_read`. They are separate rights: uploading does not grant
+reading, and none of them grants catalog publication. The existing `read`, `GET`
+and other actions keep the behaviour described above; they are not aliases.
+
+NoodleBar decides and the data plane enforces: the answer only authorizes the data
+plane that asked, for data it holds itself.
+
+The data plane validates the user's own token and passes what it established in
+`context`, a JSON object (URL-encoded in the query string):
+
+```json
+{
+  "organization": "NLNHR.12345678",
+  "person": "user-identifier",
+  "roles": ["example-role"]
+}
+```
+
+Unknown fields, a missing `context` or a malformed one return `400`. The identifier
+format for `person` is [TBD]. Do not pass values the user supplied without
+validating them: the decision relies on them. The dataset owner and its draft or
+published status are not part of `context`; they come from the catalog record.
+
+Uploads need a catalog record. Save the draft metadata first (see
+[Saving and Publishing Metadata](#saving-and-publishing-metadata)), then ask for
+`can_create` or `can_update` with the dataset `@id` IRI as `resource`.
+
+| Action | Policy | Allowed when |
+| --- | --- | --- |
+| `can_create` | Issued by your organisation to itself, action `can_create`, `resourceId` concrete or `*`. | The dataset has a catalog record (draft or published) owned by your organisation, `organization` and `subject` equal the policy organisation, and the policy's Rules hold. |
+| `can_update` | As above, action `can_update`. | As above. |
+| `can_read` | Issued by the dataset's stored publisher to one person, action `can_read`, concrete dataset `@id`. | `person` and `subject` equal the policy subject and the policy's Rules hold. |
+
+Each policy needs Rules; a policy without valid Rules never allows these actions.
+Rules combine `HasRole(role)`, `DatasetStatus(status)`, `AnyOf(...)` and `AllOf(...)`.
+For example, steward or data user on a draft:
+
+```text
+AnyOf(HasRole(example-steward),AllOf(HasRole(example-data-user),DatasetStatus(draft)))
+```
+
+Role names are compared exactly. `DatasetStatus` is the catalog record's
+`publicationStatus` (`draft` or `published`), ignores case and is false without a
+record. A policy action of `*`, an empty action or an HTTP
+method such as `POST` does not grant these actions. Read grants match only the
+named person, never an organisation or group. When a person loses a role, the grant
+stays stored but the next decision denies once the data plane sends the new roles.
+
+`allowed` is the full decision and `explainPolicies` lists only the policy that met
+every condition. Treat any other response, including an error, as a denial.
 
 ## Current Limitations
 
