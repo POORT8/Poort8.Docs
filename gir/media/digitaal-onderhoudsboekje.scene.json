@@ -41,9 +41,6 @@
     },
     {
       "frequency": "Per data transfer"
-    },
-    {
-      "frequency": "Per building"
     }
   ],
   "closing": {

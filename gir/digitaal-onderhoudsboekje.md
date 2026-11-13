@@ -14,7 +14,7 @@ When a building changes installation service company, the maintenance history is
 | Keyper *(Poort8)* | — | Orchestrates approval flows via eHerkenning. Registers policies in GIR on approval. |
 | GIR | Installation register and authorization registry | Stores GIRBasisdataMessages (latest copy only) and enforces `AccessRight` and `SupplierDelegation` policies. |
 
-## Four phases
+## Three phases
 
 <div data-flow-player="media/digitaal-onderhoudsboekje.scene.json"></div>
 
@@ -59,13 +59,6 @@ sequenceDiagram
     gir->>prev_software: Permit
     prev_software->>software_supplier: Maintenance data
     end
-
-    rect rgb(245, 235, 250)
-    note over new_installer,prev_software: Phase 4 – Determine previous installers
-    new_installer->>gir: Search installations for the VBO-id
-    gir->>new_installer: Registrations incl. registrarChamberOfCommerceNumber
-    new_installer->>new_installer: registrarChamberOfCommerceNumber per installation = previous installer
-    end
 ```
 
 | Phase | What happens |
@@ -73,8 +66,6 @@ sequenceDiagram
 | [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md) | Building owner approves the New Installation Service Company via eHerkenning. Keyper registers the `AccessRight` in GIR. |
 | [Phase 2 — SupplierDelegation](digitaal-onderhoudsboekje-supplier-delegation.md) | New Installation Service Company delegates to their Software Supplier. Keyper registers the `SupplierDelegation` in GIR. Optional; once per software relationship. |
 | [Phase 3 — M2M Data Transfer](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md) | Software Supplier retrieves maintenance data directly from the previous installation service company's software, presenting delegation evidence from GIR. The previous installation service company's software validates the evidence and verifies the `AccessRight` in GIR at request time. |
-| [Phase 4 — Determine Previous Installers](digitaal-onderhoudsboekje-determine-previous-installers.md) | After Phase 1, the New Installation Service Company reads the previous installer of each installation from GIR. Requires a read `AccessRight` via the [Data Consumer flow](data-consumer-flow.md). |
-
 ## DSGO authorization types
 
 | Type | Meaning |
