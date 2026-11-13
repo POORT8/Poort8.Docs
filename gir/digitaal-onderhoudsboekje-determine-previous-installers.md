@@ -1,35 +1,20 @@
 # Phase 4 — Determine Previous Installers from GIR Metadata
 
-> **Context**: This is a substep within [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md). After the building owner is selected but before the approval request is submitted, the system must determine which installation companies previously registered data for this building, so the building owner can approve the transfer from a known previous installer.
+> **Context**: This is Phase 4 of the [Digitaal Onderhoudsboekje flow](digitaal-onderhoudsboekje.md). It runs after [Phase 1](digitaal-onderhoudsboekje-owner-authorization.md) and requires a read `AccessRight` on `GIRBasisdataMessage` for the VBO-id, obtained via the [Data Consumer flow](data-consumer-flow.md). The `AccessRight` from Phase 1 (`GIRMaintenanceLog`) does not give access to installation data.
 
-## Overview
+## Functional Overview
 
-When a building changes installation service companies, the maintenance history is locked in the previous installer's system. Before authorizing the transfer, the building owner needs to know: *from which installer(s) should the data be transferred?*
+This phase queries GIR for existing `GIRBasisdataMessage` registrations on the selected building (VBO-id), reads the `registrarChamberOfCommerceNumber` of each installation, and displays the identified previous installer(s) to the New Installation Service Company.
 
-This step queries GIR for existing `GIRBasisdataMessage` registrations on the selected building (VBO-id), extracts the `metadata.issuer` from the most recent registration per installation, and displays the identified previous installer(s) to the New Installation Service Company for confirmation.
+## Technical Implementation
 
-## Data Flow
-
-```
-1. Building owner selects a building (VBO-id) in the TN GIR App
-2. TN GIR App queries GIR for all GIRBasisdataMessages registered for that VBO-id
-3. For each installation in the building:
-   - Extract the most recent GIRBasisdataMessage
-   - Read its metadata.issuer field (the DSGO-id of the previous installer)
-   - Convert DSGO-id to KVK number and company name
-4. Display the identified previous installer(s) to the New Installation Service Company
-5. New Installation Service Company confirms and proceeds to Phase 1
-```
-
-## Implementation
-
-### Step 1: Query GIR for Existing Registrations
+### Step 1: Query GIR for existing registrations
 
 Query the GIR endpoint for all `GIRBasisdataMessage` records matching the selected VBO-id:
 
 ```http
 POST https://gir-preview.poort8.nl/api/gir/v0/gir-basisdata-messages/_search
-Authorization: Bearer <DSGO_ACCESS_TOKEN>
+Authorization: Bearer <GIR_ACCESS_TOKEN>
 Content-Type: application/json
 
 { "vboID": "<VBO_ID>" }
@@ -42,7 +27,7 @@ Response:
   "data": [
     {
       "guid": "<GUID>",
-      "registrarChamberOfCommerceNumber": "<REGISTRAR_KVK>",
+      "registrarChamberOfCommerceNumber": "<PREVIOUS_INSTALLER_KVK>",
       "installationBaseData": {
         "installationID": { "value": "<INSTALLATION_ID>", "type": "GUID" },
         "installationOwnerChamberOfCommerceNumber": "<OWNER_KVK>",
@@ -52,7 +37,7 @@ Response:
         "classifications": [...]
       },
       "metadata": {
-        "issuer": "did:ishare:EU.NL.NTRNL-<PREVIOUS_INSTALLER_KVK>",
+        "issuer": "did:ishare:EU.NL.NTRNL-<SUBMITTER_KVK>",
         "createdAt": "2026-01-15T10:30:00Z",
         "updatedAt": "2026-07-20T14:45:00Z",
         "status": "Active"
@@ -67,42 +52,17 @@ Response:
 }
 ```
 
-### Step 2: Identify the Most Recent Registration Per Installation
+### Step 2: Read the previous installer per installation
 
-Group the results by `installationID`. For each installation, select the registration with the most recent `metadata.updatedAt` timestamp.
+GIR keeps one registration per installation. Its `registrarChamberOfCommerceNumber` is the KvK number of the previous installer.
 
-```pseudocode
-grouped = results.GroupBy(r => r.installationID)
-for each installation in grouped:
-  mostRecent = installation.OrderByDescending(r => r.metadata.updatedAt).First()
-  previousInstallerDid = mostRecent.metadata.issuer
-  add (installationID, previousInstallerDid) to list
-```
+Do not use `metadata.issuer`: that is the DSGO identity that submitted the registration, which can be the installer's Software Supplier.
 
-### Step 3: Extract the Previous Installer's KVK
+### Step 3: Resolve the company name (optional)
 
-The `metadata.issuer` field contains a DSGO identifier in the format:
+Optionally, look up the company name from the DSGO registry using the KvK number. This improves the user experience by showing company names instead of KvK numbers.
 
-```
-did:ishare:EU.NL.NTRNL-<KVK>
-```
-
-Extract the KVK number (rightmost segment after the final `-`):
-
-```csharp
-var issuer = "did:ishare:EU.NL.NTRNL-12345678";
-var previousInstallerKvK = issuer.Split('-').Last();  // "12345678"
-```
-
-### Step 4: Resolve Company Name (Optional)
-
-Optionally, look up the company name from a DSGO registry or local database using the KVK number. This improves the user experience by showing company names instead of KVK numbers:
-
-```http
-GET https://dsgo-registry.example.com/organizations/NL-<KVK>
-```
-
-### Step 5: Display to the New Installation Service Company
+### Step 4: Display to the New Installation Service Company
 
 Show the identified previous installer(s) in the TN GIR App:
 
@@ -111,79 +71,28 @@ Show the identified previous installer(s) in the TN GIR App:
 
 Previous installations found:
   □ Installation ID: HVAC-2019
-    Previous installer: ABC Installation (KVK: 12345678)
+    Previous installer: ABC Installation (KvK: 12345678)
     Last updated: 2026-07-20
 
   □ Installation ID: ELECTRICAL-2020
-    Previous installer: ABC Installation (KVK: 12345678)
+    Previous installer: ABC Installation (KvK: 12345678)
     Last updated: 2026-06-15
 
   □ Installation ID: PLUMBING-2018
-    Previous installer: XYZ Service Company (KVK: 87654321)
+    Previous installer: XYZ Service Company (KvK: 87654321)
     Last updated: 2026-01-10
 
 [Next →] [Cancel]
 ```
 
-### Step 6: Confirm and Proceed to Phase 1
-
-The New Installation Service Company confirms the previous installer(s) and proceeds with Phase 1 (Owner Authorization). The approval request now includes verified previous installer information.
-
-## Critical Implementation Notes
-
-### `metadata.issuer` Must Be Populated from the DSGO Token Subject
-
-For this mechanism to work, every `GIRBasisdataMessage` registration **must** have its `metadata.issuer` field set to the **subject claim (`sub`) from the DSGO bearer token** used to register it.
-
-⚠️ **This is a security requirement**: The `metadata.issuer` must be cryptographically bound to the authentication token and cannot be derived from request body fields like `registrarChamberOfCommerceNumber`.
-
-**Example (correct)**:
-```csharp
-// In the GIR registration endpoint
-var dsgoBearerToken = /* extract from Authorization header */
-var issuerFromToken = dsgoBearerToken.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
-// issuerFromToken = "did:ishare:EU.NL.NTRNL-12345678"
-entity.Issuer = issuerFromToken;  // ✅ Use token subject, not request body
-```
-
-**Example (WRONG)**:
-```csharp
-// INCORRECT - using request body field
-entity.Issuer = $"did:ishare:EU.NL.NTRNL-{request.RegistrarChamberOfCommerceNumber}";  // ❌ WRONG
-```
-
-### Single Previous Installer Per Installation (Current Phase)
-
-For the current phase, the TN GIR App displays the most recent `metadata.issuer` per installation. This assumes one previous installer per installation.
-
-Later phases may support:
-- Multiple previous installers (full history)
-- Granular installer selection per NL/SfB classification
-- Batched transfers across multiple previous installers
-
-### No Manual Entry
-
-The previous installer is **determined automatically from GIR metadata**, not entered manually by the New Installation Service Company. This prevents data entry errors and ensures the authorization is bound to verified registration data.
-
-## Testing
-
-When testing this flow:
-
-1. **Register a GIRBasisdataMessage** with a known DSGO token (issuer A)
-2. **Query GIR** for that VBO-id
-3. **Verify** that `metadata.issuer` matches issuer A's DSGO-id
-4. **Simulate a later registration** by a different installer (issuer B)
-5. **Verify** that the most recent `metadata.issuer` is issuer B
-6. **Confirm** the mechanism correctly identifies the current previous installer
-
-🔗 [Digitaal Onderhoudsboekje — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md) · [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
+🔗 [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
 
 ---
 
-## Known Limitations
+## Known blockers
 
-| Limitation | Status |
-|------------|--------|
+| Blocker | Status |
+|---------|--------|
 | Company name lookup (DSGO registry) | Open — depends on DSGO registry availability |
 | Multi-installer history selection | Open — currently shows only the most recent per installation |
 | NL/SfB-scoped installer lookup | Open — planned as a later refinement |

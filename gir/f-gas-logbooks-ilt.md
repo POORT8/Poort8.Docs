@@ -107,7 +107,9 @@ sequenceDiagram
 
 ## Further reading
 
+- [Data Consumer](data-consumer-flow.md)
+- [Datastekker](datastekker.md)
 - [Supplier Delegation](supplier-delegation.md)
-- [Datastekker – Installer Access Flow](datastekker.md)
+- [Discovering Data Services](dataservices.md)
 - [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
 - [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)

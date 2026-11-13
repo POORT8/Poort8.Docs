@@ -108,7 +108,7 @@ Filtering and authorization are two separate steps. GIR first applies your query
 
 Records that do not pass authorization are silently excluded — they do not cause an error.
 
-To set up a read policy for your organization, see [Data-Consumer Flow](data-consumer-flow.md).
+To set up a read policy for your organization, see [Data Consumer](data-consumer-flow.md).
 
 ## Response
 

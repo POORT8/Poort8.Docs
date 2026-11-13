@@ -4,7 +4,7 @@
 
 All GIR data endpoints require a DSGO bearer token. This guide walks you through calling `POST /connect/token` to obtain one.
 
-> If you are here as part of the data-consumer integration, you can also read this section in context: [Data-Consumer Flow — Step 2](data-consumer-flow.md#step-2-obtain-a-dsgo-bearer-token).
+> If you are here as part of the data consumer integration, you can also read this step in context: [Data Consumer — Phase 3](data-consumer-m2m-installation-data-transfer.md).
 
 ## When you need this
 

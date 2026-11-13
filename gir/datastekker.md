@@ -1,26 +1,22 @@
-# Datastekker – Installer Access Flow
+# Datastekker
 
 > **⚠️ Design document — not ready for implementation**
 
 Datastekker (developed by 2BA) retrieves performance data from installation manufacturers and translates it into uniform performance data using the Heatpump Common Ontology. To access this data, an installer needs explicit consent from the building owner. GIR manages that authorization.
-
-This guide describes how an installer requests access through a form on the TechniekNederland website, how the building owner approves the request via Keyper, and how Datastekker validates authorization against GIR on every data request.
 
 ## Parties
 
 | Party | DSGO role | Description |
 |-------|-----------|-------------|
 | Installer | Data service consumer | Installation company requesting access to performance data for buildings they maintain. |
-| Software Supplier *(optional)* | Authorized data service consumer | Calls Datastekker on behalf of the installer, using a `SupplierDelegation` — see [Supplier Delegation](supplier-delegation.md). |
+| Software Supplier *(optional)* | Authorized data service consumer | Receives a `SupplierDelegation` from the installer; calls Datastekker on the installer's behalf. |
 | Building owner | Data service rights holder | Approves the access request; has authority over the installations in the building. |
 | TechniekNederland | — | Hosts the form through which the access request is initiated. |
-| Datastekker (2BA) | Data service provider | Retrieves installation data from manufacturers and exposes it via an API. |
-| Keyper *(Poort8)* | — | Orchestrates the approval flow via eHerkenning. Registers the policy in GIR on approval. |
-| GIR | Authorization registry | Stores and enforces the `AccessRight` policies at every data request. |
+| Datastekker (2BA) | Data service provider | Retrieves installation data from manufacturers and exposes it via an API. Verifies authorization in GIR at request time. |
+| Keyper *(Poort8)* | — | Orchestrates approval flows via eHerkenning. Registers policies in GIR on approval. |
+| GIR | Installation register and authorization registry | Stores and enforces the `AccessRight` and `SupplierDelegation` policies at every data request. |
 
-## End-to-end flow
-
-The flow has two phases: a **one-time approval flow** and a **recurring operational data access pattern**.
+## Three phases
 
 <div data-flow-player="media/datastekker.scene.json"></div>
 
@@ -30,57 +26,69 @@ sequenceDiagram
     participant keyper as Keyper
     participant owner as Building Owner
     participant gir as GIR
-    participant ds as Datastekker (2BA)
     participant inst as Installer
+    participant software_supplier as Software Supplier
+    participant ds as Datastekker (2BA)
 
     rect rgb(230, 240, 255)
-    note over form,inst: Phase 1 – Approval flow
-    form->>keyper: Create access request (vboId, installer KvK, validity)
+    note over form,ds: Phase 1 – Owner authorization
+    form->>keyper: Create access request (VBO-id, installer KvK, validity)
     keyper->>owner: Approval link by email
     owner->>keyper: Authenticate and approve
-    keyper->>gir: Register policy (installer ↔ vboId)
+    keyper->>gir: Register AccessRight (owner → installer)
+    keyper->>owner: Confirmation email
     end
 
     rect rgb(235, 250, 235)
-    note over form,inst: Phase 2 – Token acquisition
-    inst->>ds: Data request with componentId
-    ds->>gir: Obtain DSGO bearer token
-    gir->>ds: Bearer token
+    note over form,ds: Phase 2 – Supplier delegation
+    inst->>keyper: SupplierDelegation request
+    keyper->>inst: Approval link
+    inst->>keyper: Approve via eHerkenning
+    keyper->>gir: Register SupplierDelegation (installer → Software Supplier)
+    keyper->>inst: Confirmation email
     end
 
     rect rgb(255, 245, 225)
-    note over form,inst: Phase 3 – Authorization check
-    ds->>gir: GET GIRBasisdataMessage by componentID
+    note over form,ds: Phase 3 – M2M performance data transfer
+    software_supplier->>gir: Fetch SupplierDelegation evidence
+    gir->>software_supplier: delegation_token
+    software_supplier->>ds: Data request with componentId (delegation_evidence header)
+    ds->>ds: Validate delegation evidence
+    ds->>gir: Obtain DSGO bearer token
+    gir->>ds: Bearer token
+    ds->>gir: Search GIRBasisdataMessage by componentID
     gir->>ds: GIRBasisdataMessage (installationId + manufacturer info)
-    ds->>gir: Verify AccessRight for installer + installationId
+    ds->>gir: Verify AccessRight (owner → installer)
     gir->>ds: Permit or Deny
-    ds->>inst: Authorised performance data
+    ds->>software_supplier: Authorised performance data
     end
 ```
 
-## Three phases
+| Phase | What happens |
+|-------|-------------|
+| [Phase 1 — Owner Authorization](datastekker-owner-authorization.md) | Building owner approves the installer via eHerkenning. Keyper registers the `AccessRight` in GIR. |
+| [Phase 2 — SupplierDelegation](datastekker-supplier-delegation.md) | Installer delegates to their Software Supplier. Keyper registers the `SupplierDelegation` in GIR. Optional; once per software relationship. |
+| [Phase 3 — M2M Data Transfer](datastekker-m2m-performance-data-transfer.md) | The installer (or its Software Supplier) requests performance data from Datastekker. Datastekker obtains a DSGO bearer token, queries GIR by componentID, checks the `AccessRight` and returns authorised data. |
 
-| Phase | What happens | Frequency |
-|-------|-------------|-----------|
-| [Phase 1 — Approval Flow](datastekker-approval-flow.md) | Building owner approves the installer via Keyper. Policy is registered in GIR. | Once per installer / building |
-| [Phase 2 — Token Acquisition](datastekker-token-acquisition.md) | Datastekker obtains a DSGO bearer token from GIR. | Per token expiry (3600 s) |
-| [Phase 3 — Authorization Check](datastekker-authorization-check.md) | Datastekker queries GIR by componentID, checks the `AccessRight` policy, and returns authorised data to the installer. | Every data request |
+## DSGO authorization types
 
-> Note: Querying `GIRBasisdataMessage` by `componentID` may return non-unique results. Handling these edge cases is the responsibility of the data service provider.
+| Type | Meaning |
+|------|---------|
+| `AccessRight` | The building owner (rights holder) authorizes the installer (data service consumer) to read performance data (`GIRDatastekker`, `can_read`) for a building. Created in Phase 1. |
+| `SupplierDelegation` | The installer authorizes their Software Supplier (authorized data service consumer) to call Datastekker on their behalf. Optional; created in Phase 2. See [Supplier Delegation](supplier-delegation.md). |
 
-## Optional: Software Supplier acting for the installer
+## Authorization scope
 
-An installer may let its Software Supplier call Datastekker on its behalf. The installer registers a `SupplierDelegation` of type `GIRDatastekker` in GIR once; the Software Supplier then fetches delegation evidence from GIR and sends it in the `delegation_evidence` header with each request. Datastekker validates the evidence and checks the installer's `AccessRight` as usual. See [Supplier Delegation](supplier-delegation.md) and [Phase 3 — Authorization Check](datastekker-authorization-check.md).
+| Field | Values | What it does |
+|-------|--------|---------------|
+| `resourceId` | 16-digit BAG VBO-id | The `AccessRight` covers one building. |
+| `attribute` | `"*"` (default), or a specific installation id | Matched per request against the installation id Datastekker sends in its authorization check ([Phase 3](datastekker-m2m-performance-data-transfer.md#step-4-verify-authorization-in-gir)): `"*"` matches any installation, a specific id matches only that one |
 
-## Policy parameters
+## Special cases
 
-| Parameter | Description | Status |
-|-----------|-------------|--------|
-| `issuerId` | DID of the building owner (policy issuer) | Required |
-| `subjectId` | DID of the installer (access subject) | Required |
-| `resourceId` / `identifiers` | 16-digit BAG VBO-id (building level). Consent at building level covers all its installations. | Required |
-| `notBefore` / `expiration` | Validity period of the granted access | Optional — defaults to `now` / `now` + 1 year |
-| `attribute` | `*` (wildcard); future: predefined dataset identifier — see [Potential future extensions](#potential-future-extensions) | Optional — defaults to `*` |
+| Case | Implementation |
+|------|----------------|
+| **Multiple GIR records for the same componentID** | Querying `GIRBasisdataMessage` by `componentID` may return non-unique results. Handling these edge cases is the responsibility of the data service provider, for example with additional filters such as `vboID` or owner KvK. |
 
 ## Potential future extensions
 
@@ -92,11 +100,4 @@ Which fixed sets of data elements can be authorized? The definition of these set
 **Attribute hierarchy in GIR *(optional)***
 Consent is granted at the level of a predefined data-element set. At runtime, Datastekker may need to evaluate access at individual data-element level. This could be supported by declaring an attribute hierarchy on GIR modelled on the Heatpump Common Ontology (SAREF-based). Questions include whether GIR supports attribute hierarchies today, how sets map to ontology terms, and how versioning governance would work.
 
----
-
-## Further reading
-
-- [Data-Consumer Flow](data-consumer-flow.md)
-- [Retrieve Multiple Installations](retrieve-installations.md)
-- [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
-- [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)
+🔗 [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1) · [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)

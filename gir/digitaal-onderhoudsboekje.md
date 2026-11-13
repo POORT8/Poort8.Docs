@@ -7,14 +7,14 @@ When a building changes installation service company, the maintenance history is
 | Party | DSGO role | Description |
 |-------|-----------|-------------|
 | Building owner | Data service rights holder | Approves the transfer via eHerkenning. |
-| New Installation Service Company | Legal data service consumer | Initiates the request; receives the `AccessRight` from the building owner. |
-| Software Supplier | Authorized data service consumer | Receives a `SupplierDelegation` from the New Installation Service Company; performs the M2M data retrieval. |
+| New Installation Service Company | Data service consumer | Initiates the request; receives the `AccessRight` from the building owner. |
+| Software Supplier *(optional)* | Authorized data service consumer | Receives a `SupplierDelegation` from the New Installation Service Company; performs the M2M data retrieval. |
 | Previous installation service company's software | Data service provider | Serves maintenance data and verifies authorization in GIR at request time. |
 | TN GIR App *(TechniekNederland)* | — | Shared portal for GIR permission flows. Holds no credentials. |
 | Keyper *(Poort8)* | — | Orchestrates approval flows via eHerkenning. Registers policies in GIR on approval. |
-| GIR | Installation (metadata) register and authorization registry | Stores GIRBasisdataMessages (latest copy only) and enforces `AccessRight` and `SupplierDelegation` policies. |
+| GIR | Installation register and authorization registry | Stores GIRBasisdataMessages (latest copy only) and enforces `AccessRight` and `SupplierDelegation` policies. |
 
-## Three phases
+## Four phases
 
 <div data-flow-player="media/digitaal-onderhoudsboekje.scene.json"></div>
 
@@ -35,7 +35,7 @@ sequenceDiagram
     keyper->>owner: Approval link
     owner->>keyper: Approve via eHerkenning
     keyper->>gir: Register AccessRight (owner → New Installation Service Company)
-    keyper->>new_installer: Confirmation
+    keyper->>owner: Confirmation email
     end
 
     rect rgb(235, 250, 235)
@@ -45,6 +45,7 @@ sequenceDiagram
     keyper->>new_installer: Approval link
     new_installer->>keyper: Approve via eHerkenning
     keyper->>gir: Register SupplierDelegation (New Installation Service Company → Software Supplier)
+    keyper->>new_installer: Confirmation email
     end
 
     rect rgb(255, 245, 225)
@@ -58,20 +59,28 @@ sequenceDiagram
     gir->>prev_software: Permit
     prev_software->>software_supplier: Maintenance data
     end
+
+    rect rgb(245, 235, 250)
+    note over new_installer,prev_software: Phase 4 – Determine previous installers
+    new_installer->>gir: Search installations for the VBO-id
+    gir->>new_installer: Registrations incl. registrarChamberOfCommerceNumber
+    new_installer->>new_installer: registrarChamberOfCommerceNumber per installation = previous installer
+    end
 ```
 
 | Phase | What happens |
 |-------|-------------|
 | [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md) | Building owner approves the New Installation Service Company via eHerkenning. Keyper registers the `AccessRight` in GIR. |
-| [Phase 2 — SupplierDelegation](digitaal-onderhoudsboekje-supplier-delegation.md) | New Installation Service Company delegates the `AccessRight` to their Software Supplier. Keyper registers the `SupplierDelegation` in GIR. |
+| [Phase 2 — SupplierDelegation](digitaal-onderhoudsboekje-supplier-delegation.md) | New Installation Service Company delegates to their Software Supplier. Keyper registers the `SupplierDelegation` in GIR. Optional; once per software relationship. |
 | [Phase 3 — M2M Data Transfer](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md) | Software Supplier retrieves maintenance data directly from the previous installation service company's software, presenting delegation evidence from GIR. The previous installation service company's software validates the evidence and verifies the `AccessRight` in GIR at request time. |
+| [Phase 4 — Determine Previous Installers](digitaal-onderhoudsboekje-determine-previous-installers.md) | After Phase 1, the New Installation Service Company reads the previous installer of each installation from GIR. Requires a read `AccessRight` via the [Data Consumer flow](data-consumer-flow.md). |
 
 ## DSGO authorization types
 
 | Type | Meaning |
 |------|---------|
-| `AccessRight` | The building owner (rights holder) authorizes the New Installation Service Company (legal consumer) to access a data service. Created in Phase 1. |
-| `SupplierDelegation` | The New Installation Service Company authorizes their Software Supplier (authorized party) to act on their behalf. Optional; created in Phase 2. See [Supplier Delegation](supplier-delegation.md). |
+| `AccessRight` | The building owner (rights holder) authorizes the New Installation Service Company (data service consumer) to read maintenance data (`GIRMaintenanceLog`, `can_read`) for a building. Created in Phase 1. |
+| `SupplierDelegation` | The New Installation Service Company authorizes their Software Supplier (authorized data service consumer) to act on their behalf. Optional; created in Phase 2. See [Supplier Delegation](supplier-delegation.md). |
 
 ## Authorization scope
 
@@ -79,8 +88,9 @@ sequenceDiagram
 
 | Field | Values | What it does |
 |-------|--------|---------------|
-| `attribute` | `"*"` (default), or a specific installation id | Matched per request against the installation id the caller is checking access for: `"*"` matches any installation, a specific id matches only that one |
-| `rules` | Absent (default), or `"Classificaties(<NLSfB-code>,...)"` | Absent means no classification restriction; otherwise GIR looks up the NL/SfB classification it has registered for the installation under check and matches it against the listed codes |
+| `resourceId` | 16-digit BAG VBO-id | The `AccessRight` covers one building. |
+| `attribute` | `"*"` (default), or a specific installation id | Matched per request against the installation id the data provider sends in its authorization check ([Phase 3](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md#step-3-verify-authorization-in-gir)): `"*"` matches any installation, a specific id matches only that one |
+| `rules` | Absent (default), or `"Classificaties(<NLSfB-code>,...)"` | Absent means no classification restriction; otherwise GIR looks up the NL/SfB classification it has registered for the installation under check and matches it against the listed codes. Installations without an NL/SfB code never match. |
 
 The typical partial-transfer case — "any installation with classification 52.16 or 52.20" — keeps `attribute: "*"` and adds `rules: "Classificaties(NLSfB-52.16,NLSfB-52.20)"`. Restricting `attribute` to one specific installation id is a separate, narrower option that works with or without a classification `rules` filter.
 
@@ -93,6 +103,6 @@ Either way, `attribute` never carries a classification value — the requester c
 | Case | Implementation |
 |----------|--------|
 | **Multiple New Installation Service Companies** | Each New Installation Service Company initiates their own approval request; the building owner approves each independently. |
-| **Multiple previous installation service companies** | By default, each approval request uses a wildcard for service provider, effectively validating data transfer from any previous installation company. More granular permissions are possible, but yet supported. |
+| **Multiple previous installation service companies** | By default, each approval request uses a wildcard for service provider, effectively validating data transfer from any previous installation company. More granular permissions are possible, but not yet supported. |
 
 🔗 [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1) · [Keyper API Docs ➚](https://keyper-preview.poort8.nl/scalar/v1)

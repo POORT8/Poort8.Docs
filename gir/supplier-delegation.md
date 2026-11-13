@@ -29,6 +29,7 @@ sequenceDiagram
     participant sd_provider as Data service provider
     sd_org->>sd_keyper: Request and self-approve SupplierDelegation (once)
     sd_keyper->>sd_gir: Register SupplierDelegation (your organization → Software Supplier)
+    sd_keyper->>sd_org: Confirmation email
     sd_supplier->>sd_gir: POST /v1/api/delegation (per request)
     sd_gir->>sd_supplier: delegation_token
     sd_supplier->>sd_provider: Data service request + delegation_evidence header
@@ -61,14 +62,14 @@ Content-Type: application/json
 ```json
 {
   "requester": {
-    "name": "<YOUR CONTACT NAME>",
-    "email": "<YOUR EMAIL>",
-    "organization": "<YOUR ORGANIZATION>",
+    "name": "<YOUR_CONTACT_NAME>",
+    "email": "<YOUR_EMAIL>",
+    "organization": "<YOUR_ORGANIZATION>",
     "organizationId": "did:ishare:EU.NL.NTRNL-<YOUR_KVK>"
   },
   "approver": {
-    "email": "<YOUR APPROVER EMAIL>",
-    "organization": "<YOUR ORGANIZATION>",
+    "email": "<YOUR_APPROVER_EMAIL>",
+    "organization": "<YOUR_ORGANIZATION>",
     "organizationId": "did:ishare:EU.NL.NTRNL-<YOUR_KVK>"
   },
   "dataspace": {
@@ -76,14 +77,14 @@ Content-Type: application/json
   },
   "addPolicyTransactions": [
     {
-      "type": "<DELEGATED TYPE>",
+      "type": "<DELEGATED_TYPE>",
       "action": "*",
       "license": "DSGO.0010",
       "subjectId": "did:ishare:EU.NL.NTRNL-<SOFTWARE_SUPPLIER_KVK>",
       "resourceId": "*",
       "attribute": "*",
-      "notBefore": "<UNIX TIMESTAMP>",
-      "expiration": "<UNIX TIMESTAMP>"
+      "notBefore": "<UNIX_TIMESTAMP>",
+      "expiration": "<UNIX_TIMESTAMP>"
     }
   ],
   "orchestration": {
@@ -95,7 +96,7 @@ Content-Type: application/json
 - Unlike the other GIR flows, Keyper does not fill in fixed values for this flow. Supply all fields shown above. Use the delegated `type` from the [table above](#support-per-flow); add one transaction per type.
 - `resourceId: "*"` and `attribute: "*"` make the delegation generic: it covers all buildings and installations of your organization for that type.
 - `action: "*"` covers every action your organization is itself authorized for.
-- Leave `serviceProvider` out; it is stored as `*`. Keyper derives `issuerId` from `approver.organizationId`.
+- Keyper derives `issuerId` from `approver.organizationId`.
 - Redirect the user to the `url` in the Keyper response to complete the approval.
 
 A SupplierDelegation never widens access. It only says *who* may act for your organization; your organization's own access right (or read policy) remains the limiting factor, including any NL/SfB classification restriction on it.
@@ -104,11 +105,11 @@ To revoke a SupplierDelegation, use the [Keyper Manager ➚](https://keyper-prev
 
 ## Step 2: The Software Supplier fetches delegation evidence
 
-Before each data service request, the Software Supplier requests delegation evidence from GIR with its own DSGO bearer token (see [Obtaining a DSGO Bearer Token](connect-token.md)):
+Before each data service request, the Software Supplier requests delegation evidence from GIR with its own DSGO bearer token (see [Obtaining a DSGO Token](connect-token.md)):
 
 ```http
 POST https://gir-preview.poort8.nl/v1/api/delegation
-Authorization: Bearer <SOFTWARE_SUPPLIER_GIR_ACCESS_TOKEN>
+Authorization: Bearer <GIR_ACCESS_TOKEN>
 Content-Type: application/json
 ```
 
@@ -123,22 +124,23 @@ Content-Type: application/json
       "policies": [{
         "target": {
           "resource": {
-            "type": "<DELEGATED TYPE>",
+            "type": "<DELEGATED_TYPE>",
             "identifiers": ["<IDENTIFIER>"],
             "attributes": ["<ATTRIBUTE>"]
           },
           "actions": ["can_read"],
           "environment": {
-            "serviceProviders": ["<DATA SERVICE PROVIDER DID>"]
+            "serviceProviders": ["<DATA_SERVICE_PROVIDER_DID>"]
           }
-        }
+        },
+        "rules": [{ "effect": "Permit" }]
       }]
     }]
   }
 }
 ```
 
-The request must contain exactly one policy set, one policy, and one value each for `identifiers`, `attributes`, `actions` and `serviceProviders`. Use the values the data service provider expects:
+The request must contain exactly one policy set, one policy, one rule with `effect` `Permit`, and one value each for `identifiers`, `attributes`, `actions` and `serviceProviders`. Use the values the data service provider expects:
 
 | Data service provider | `identifiers` | `attributes` | `serviceProviders` |
 |-----------------------|---------------|--------------|--------------------|
@@ -152,8 +154,8 @@ The response contains a `delegation_token`: a JWT signed by GIR (`iss` = `did:is
 The Software Supplier calls the data service with its own DSGO bearer token and adds the `delegation_token` as the `delegation_evidence` header:
 
 ```http
-GET <DATA SERVICE ENDPOINT>
-Authorization: Bearer <SOFTWARE_SUPPLIER_ACCESS_TOKEN>
+GET <DATA_SERVICE_ENDPOINT>
+Authorization: Bearer <DSGO_ACCESS_TOKEN>
 delegation_evidence: <DELEGATION_TOKEN>
 ```
 
@@ -166,7 +168,7 @@ When GIR is the data service provider, GIR performs these checks itself. A third
 1. **Validate the token.** Verify the signature using the certificate chain in the token's `x5c` header, check that `iss` and `sub` are GIR (`did:ishare:EU.NL.NTRNL-76660680`), that the token has not expired, and that `aud` is the caller identified by the bearer token.
 2. **Validate the delegation evidence.** In the `delegationEvidence` claim, check that `target.accessSubject` equals the caller, that the current time lies between `notBefore` and `notOnOrAfter`, that `rules[0].effect` is `Permit`, and that `type`, `identifiers`, `actions` and `serviceProviders` match the request and your own DID.
 3. **Determine who the supplier acts for.** This is the evidence's `policyIssuer`: the legal data service consumer.
-4. **Check the access right of that organization in GIR.** Call `POST /v1/api/delegation` with `policyIssuer` = the building owner and `target.accessSubject` = the `policyIssuer` from step 3 — **not** the caller. See the flow-specific authorization check: [Digitaal Onderhoudsboekje Phase 3](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md#step-3-verify-authorization-in-gir) or [Datastekker Phase 3](datastekker-authorization-check.md).
+4. **Check the access right of that organization in GIR.** Call `POST /v1/api/delegation` with `policyIssuer` = the building owner and `target.accessSubject` = the `policyIssuer` from step 3 — **not** the caller. See the flow-specific authorization check: [Digitaal Onderhoudsboekje Phase 3](digitaal-onderhoudsboekje-m2m-maintenance-data-transfer.md#step-3-verify-authorization-in-gir) or [Datastekker Phase 3](datastekker-m2m-performance-data-transfer.md#step-4-verify-authorization-in-gir).
 5. Serve the data only if both the evidence and the access right result in `Permit`; otherwise return `403 Forbidden`.
 
 ## Limitations

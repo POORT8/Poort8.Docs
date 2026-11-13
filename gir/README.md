@@ -18,25 +18,25 @@ sequenceDiagram
 
     rect rgb(200, 220, 255)
     note over Registrar,GIR: Approval Flow (one-time setup)
-    Registrar->>Keyper: Request write access for VBO-ID
+    Registrar->>Keyper: Request write access for VBO-id
     Keyper-->>Registrar: Approval link created
     Keyper->>Owner: Send approval request via email
     Owner->>Keyper: Authenticate and approve
-    Keyper->>GIR: Register write policy
-    GIR-->>Keyper: Policy stored
+    Keyper->>GIR: Register write AccessRight
+    GIR-->>Keyper: AccessRight stored
     end
 
     rect rgb(220, 255, 220)
     note over Consumer,GIR: Operational Data Flow (recurring)
     Registrar->>GIR: POST installation data (with DSGO token)
-    GIR->>GIR: Check write policy and token
+    GIR->>GIR: Check write AccessRight and token
     GIR-->>Registrar: 201 Created (status: Active/Pending)
-    Consumer->>Keyper: Request read access for VBO-ID
+    Consumer->>Keyper: Request read access for VBO-id
     Keyper->>Owner: Send approval request
     Owner->>Keyper: Approve
-    Keyper->>GIR: Register read policy
+    Keyper->>GIR: Register read AccessRight
     Consumer->>GIR: GET installation data (with DSGO token)
-    GIR->>GIR: Check read policy
+    GIR->>GIR: Check read AccessRight
     GIR-->>Consumer: Installation records
     end
 ```
@@ -49,7 +49,7 @@ sequenceDiagram
 4. **Setup: Request read approval** — Data consumers ask the building owner for permission to access installation data via Keyper.
 5. **Setup: Obtain DSGO token** — Data consumers obtain their own DSGO bearer token.
 6. **Retrieve installation data** — Data consumers query installations via `POST /api/gir/v0/gir-basisdata-messages/_search` or `GET /api/gir/v0/gir-basisdata-messages/{guid}` and receive only records they are authorized to access. The legacy `/v1/api/GIRBasisdataMessages` routes have been removed; see the [Changelog](changelog.md).
-7. **Verification** — Installation records transition to **Active** after policy approval and are visible to all authorized parties.
+7. **Verification** — Installation records transition to **Active** after owner approval and are visible to all authorized parties.
 
 ## Data Transactions
 
@@ -71,10 +71,12 @@ All endpoints require a DSGO bearer token, obtained via `POST /connect/token`.
 
 | What you need | Where to find it |
 |---------------|------------------|
-| **Understand the registrar flow** | [Registrar Integration Guide](registrar.md) |
-| **Understand the data consumer flow** | [Data Consumer Integration Guide](data-consumer-flow.md), [Phase 1 — Approval Flow](data-consumer-approval-flow.md) |
+| **Understand the registrar flow** | [Registrar](registrar.md) |
+| **Understand the data consumer flow** | [Data Consumer](data-consumer-flow.md) |
+| **Understand the Digitaal Onderhoudsboekje flow** | [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje.md) |
+| **Understand the Datastekker flow** | [Datastekker](datastekker.md) |
 | **Let a Software Supplier act for you** | [Supplier Delegation](supplier-delegation.md) (optional in every flow) |
-| **Obtain a DSGO token** | [Obtaining a DSGO Bearer Token](connect-token.md) |
+| **Obtain a DSGO bearer token** | [Obtaining a DSGO Token](connect-token.md) |
 | **Register or update an installation** | [Post a GIRBasisdataMessage](insert-installation.md) |
 | **Retrieve a single installation** | [Retrieve a GIRBasisdataMessage by GUID](retrieve-installation.md) |
 | **Retrieve multiple installations** | [Retrieve Multiple GIRBasisdataMessages](retrieve-installations.md) |

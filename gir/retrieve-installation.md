@@ -61,7 +61,7 @@ GIR checks the following conditions to decide whether to return the record. Acce
 
 If the GUID exists but none of these conditions are met, GIR returns `403 Forbidden`.
 
-To set up a read policy for your organization, see [Data-Consumer Flow](data-consumer-flow.md).
+To set up a read policy for your organization, see [Data Consumer](data-consumer-flow.md).
 
 ## Response
 
@@ -113,7 +113,7 @@ A successful `200` response returns a single `GIRBasisdataMessage` object:
 | Status | Meaning | Action |
 |--------|---------|--------|
 | `200 OK` | Installation found and you are authorized to view it | — |
-| `403 Forbidden` | Installation exists but your organization has no read policy, registrar ownership, or valid delegated access for it | Request access via a Keyper approval link — see [Data-Consumer Flow](data-consumer-flow.md) |
+| `403 Forbidden` | Installation exists but your organization has no read policy, registrar ownership, or valid delegated access for it | Request access via a Keyper approval link — see [Data Consumer](data-consumer-flow.md) |
 | `404 Not Found` | No installation with this GUID exists in GIR | Verify the GUID is correct |
 | `400 Bad Request` | Invalid request format | Check the GUID format |
 | `401 Unauthorized` | Missing or expired DSGO bearer token | Obtain a new token — see [Obtaining a DSGO Bearer Token](connect-token.md) |

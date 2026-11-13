@@ -6,6 +6,19 @@
   - [Changelog](changelog.md)
   - [Supplier Delegation (optional)](supplier-delegation.md)
 
+- **Registrar**
+  - [Introduction](registrar.md)
+    - [Phase 1 — Owner Authorization](registrar-owner-authorization.md)
+    - [Phase 2 — SupplierDelegation](registrar-supplier-delegation.md)
+    - [Phase 3 — M2M Data Transfer](registrar-m2m-installation-data-transfer.md)
+    - [Phase 4 — Activation Verification](registrar-activation-verification.md)
+
+- **Data Consumer**
+  - [Introduction](data-consumer-flow.md)
+    - [Phase 1 — Owner Authorization](data-consumer-owner-authorization.md)
+    - [Phase 2 — SupplierDelegation](data-consumer-supplier-delegation.md)
+    - [Phase 3 — M2M Data Transfer](data-consumer-m2m-installation-data-transfer.md)
+
 - **Digitaal Onderhoudsboekje**
   - [Introduction](digitaal-onderhoudsboekje.md)
     - [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md)
@@ -15,23 +28,12 @@
 
 - **Datastekker**
   - [Introduction](datastekker.md)
-    - [Phase 1 — Approval Flow](datastekker-approval-flow.md)
-    - [Phase 2 — Token Acquisition](datastekker-token-acquisition.md)
-    - [Phase 3 — Authorization Check](datastekker-authorization-check.md)
+    - [Phase 1 — Owner Authorization](datastekker-owner-authorization.md)
+    - [Phase 2 — SupplierDelegation](datastekker-supplier-delegation.md)
+    - [Phase 3 — M2M Data Transfer](datastekker-m2m-performance-data-transfer.md)
 
 - **F-Gas Logbooks (ILT)**
   - [Introduction](f-gas-logbooks-ilt.md)
-
-- **Registrar**
-  - [Introduction](registrar.md)
-    - [Phase 1 — Keyper Approval](registrar-keyper-approval.md)
-    - [Phase 2 — Token Acquisition](registrar-token-acquisition.md)
-    - [Phase 3 — Submit Installation](registrar-submit-installation.md)
-    - [Phase 4 — Activation Verification](registrar-activation-verification.md)
-
-- **Data Consumer**
-  - [Introduction](data-consumer-flow.md)
-    - [Phase 1 — Approval Flow](data-consumer-approval-flow.md)
 
 - **Endpoint Integration Guides**
   - [Obtaining a DSGO Token](connect-token.md)

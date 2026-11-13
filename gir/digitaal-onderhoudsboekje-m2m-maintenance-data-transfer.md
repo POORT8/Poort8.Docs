@@ -35,26 +35,25 @@ sequenceDiagram
 | Requirement | Details |
 |-------------|---------|
 | DSGO membership | Registered with `EU.DS.NL.DSGO` dataspace membership |
-| RSA key pair + eSeal | An eIDAS-qualified electronic seal (eSeal) certificate issued by a Trust Service Provider, containing an RSA key pair. Used to sign the JWT client assertion in the DSGO client credentials flow. |
-| Organization DIDs of your company and for any installation owner | `did:ishare:EU.NL.NTRNL-<KVK>` |
+| RSA key pair + eSeal | eIDAS-qualified eSeal certificate with an RSA key pair, used to sign the JWT client assertion for GIR |
 
 ### Step 1: Receive the request from the New Installation Service Company (or its Software Supplier)
 
-The New Installation Service Company's software — or, if Phase 2 was completed, their Software Supplier acting on their behalf — authenticates to your platform using the same DSGO client credentials flow described in [Obtaining a DSGO Bearer Token](connect-token.md), then requests maintenance data:
+The New Installation Service Company's software — or, if Phase 2 was completed, their Software Supplier acting on their behalf — authenticates to your platform using the same DSGO client credentials flow described in [Obtaining a DSGO Token](connect-token.md), then requests maintenance data:
 
 ```http
-GET <YOUR_ENDPOINT>/maintenance-data?installationId=<INSTALLATION_ID>
-Authorization: Bearer <ACCESS_TOKEN>
+GET <YOUR_ENDPOINT>/maintenance-data?vboId=<VBO_ID>
+Authorization: Bearer <DSGO_ACCESS_TOKEN>
 delegation_evidence: <DELEGATION_TOKEN>
 ```
 
-The `installationId` is the 16-digit BAG VBO-id (Verblijfsobjectidentificatie) identifying the building. The `delegation_evidence` header is only present when a Software Supplier calls on behalf of the New Installation Service Company.
+The `vboId` is the 16-digit BAG VBO-id (Verblijfsobjectidentificatie) identifying the building. The `delegation_evidence` header is only present when a Software Supplier calls on behalf of the New Installation Service Company.
 
-### Step 2: Obtain a GIR access token
+### Step 2: Obtain a DSGO bearer token
 
-Use the DSGO client credentials flow to get a bearer token from GIR. See [Obtaining a DSGO Bearer Token](connect-token.md) for the full procedure.
+Use the DSGO client credentials flow to get a bearer token from GIR. See [Obtaining a DSGO Token](connect-token.md) for the full procedure.
 
-> The GIR access token is valid for 3600 seconds and can be reused across multiple requests within that window.
+> The DSGO bearer token is valid for 3600 seconds and can be reused across multiple requests within that window.
 
 ### Step 3: Verify authorization in GIR
 
@@ -67,7 +66,7 @@ First determine on whose behalf the request is made:
 
 If the header is present, validate the delegation evidence as described in [Supplier Delegation — Step 4](supplier-delegation.md#step-4-the-data-service-provider-validates-the-evidence): signature by GIR, expiry, `accessSubject` equals the caller, `Permit`, type `GIRMaintenanceLog`, action `can_read`, and your DID as service provider. If validation fails, return `403 Forbidden`.
 
-Then verify the `AccessRight` of the New Installation Service Company — **not** the Software Supplier:
+Then verify the `AccessRight` of the New Installation Service Company — **not** the Software Supplier — for each installation you hold for that building. Send the installation's GIR installation ID (`installationID.value`) in `attributes`:
 
 ```http
 POST https://gir-preview.poort8.nl/v1/api/delegation
@@ -85,30 +84,31 @@ Content-Type: application/json
         "target": {
           "resource": {
             "type": "GIRMaintenanceLog",
-            "identifiers": ["<INSTALLATION_ID>"],
-            "attributes": ["*"]
+            "identifiers": ["<VBO_ID>"],
+            "attributes": ["<GIR_INSTALLATION_ID>"]
           },
           "actions": ["can_read"],
           "environment": {
             "serviceProviders": ["did:ishare:EU.NL.NTRNL-<YOUR_KVK>"]
           }
-        }
+        },
+        "rules": [{ "effect": "Permit" }]
       }]
     }]
   }
 }
 ```
 
-Check `delegationEvidence.policySets[0].policies[0].rules[0].effect` in the response:
+The response contains a `delegation_token` (JWT). Decode it and check `policySets[0].policies[0].rules[0].effect` in its `delegationEvidence` claim:
 
-- `"Permit"` → proceed to serve data
-- `"Deny"` → return `403 Forbidden` to the caller
+- `"Permit"` → serve the data of this installation
+- `"Deny"` → do not serve the data of this installation
 
 > **NL/SfB scoping**: if the underlying `AccessRight` was scoped to specific NL/SfB classifications (via `rules: "Classificaties(...)"`, see [Phase 1 — Owner Authorization](digitaal-onderhoudsboekje-owner-authorization.md)), GIR enforces that scope using its own registered classification for the installation.
 
 ### Step 4: Serve data or deny
 
-Return the maintenance data set on Permit. On Deny or any GIR error, return `403 Forbidden`.
+Return the maintenance data of the installations with `Permit`. If no installation has `Permit`, or on any GIR error, return `403 Forbidden`.
 
 🔗 [GIR API Docs ➚](https://gir-preview.poort8.nl/scalar/v1)
 

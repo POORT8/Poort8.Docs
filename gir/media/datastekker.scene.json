@@ -19,12 +19,16 @@
     "gir": {
       "role": "Register and AR"
     },
+    "inst": {
+      "role": "Data service consumer"
+    },
+    "software_supplier": {
+      "name": "Software supplier",
+      "role": "Acts for the installer"
+    },
     "ds": {
       "name": "Datastekker",
       "role": "2BA, data service provider"
-    },
-    "inst": {
-      "role": "Data service consumer"
     }
   },
   "phases": [
@@ -32,7 +36,7 @@
       "frequency": "Per building"
     },
     {
-      "frequency": "Each time the token expires"
+      "frequency": "Per software supplier"
     },
     {
       "frequency": "Per data request"

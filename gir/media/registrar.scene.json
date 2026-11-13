@@ -2,7 +2,7 @@
   "page": "../registrar.md",
   "lang": "en",
   "badge": "GIR",
-  "title": "Registrar flow",
+  "title": "Registrar",
   "subtitle": "How an application registers installations in GIR",
   "participants": {
     "app": {
@@ -26,18 +26,21 @@
   },
   "phases": [
     {
-      "frequency": "Per VBO-ID"
+      "frequency": "Per VBO-id"
     },
     {
-      "frequency": "Each time the token expires"
+      "frequency": "Per software supplier"
     },
     {
       "frequency": "Per installation"
+    },
+    {
+      "frequency": "When a record is Pending"
     }
   ],
   "closing": {
     "lines": [
-      "First a write policy, then a token.",
+      "First a write AccessRight, then a token.",
       "GIR stores the installation as Active or Pending."
     ]
   }
