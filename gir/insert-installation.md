@@ -208,8 +208,6 @@ A Software Supplier may submit installations on behalf of a registrar only if th
 4. GIR validates the evidence (signature, validity, `accessSubject` equals the caller, `Permit`, scope) and then checks the **registrar's** write policy. The record becomes `Active` or `Pending` exactly as if the registrar had submitted it.
 5. If the caller is not the registrar in `registrarChamberOfCommerceNumber` and presents no valid delegation evidence, GIR rejects the submission with `403 Forbidden`.
 
-> **⚠️ Upcoming change** — This section describes the intended behaviour; GIR does not enforce it yet. Today, GIR does not accept a `delegation_evidence` header on `POST /api/gir/v0/gir-basisdata-messages` and does not compare the caller with `registrarChamberOfCommerceNumber`: it checks the write policy of the registrar named in the body, whoever submits. Once the change is live, a submission on behalf of another registrar without valid delegation evidence is rejected with `403 Forbidden`. Planned date: [TBD]. If your software submits on behalf of registrars today, set up a [Supplier Delegation](supplier-delegation.md) per registrar now.
-
 ## Status codes
 
 | Status | Meaning |
@@ -218,7 +216,7 @@ A Software Supplier may submit installations on behalf of a registrar only if th
 | `200 OK` | An existing installation record was updated |
 | `400 Bad Request` | The JSON body failed validation |
 | `401 Unauthorized` | Missing or invalid DSGO bearer token |
-| `403 Forbidden` | Authenticated caller is not allowed to use the endpoint, or (upcoming, see above) submits on behalf of another registrar without valid delegation evidence |
+| `403 Forbidden` | Authenticated caller is not allowed to use the endpoint, or submits on behalf of another registrar without valid delegation evidence |
 | `415 Unsupported Media Type` | Request is not sent as JSON |
 
 ## API reference

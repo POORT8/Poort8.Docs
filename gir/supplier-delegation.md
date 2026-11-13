@@ -41,13 +41,13 @@ sequenceDiagram
 
 ## Support per flow
 
-| Flow | Delegated `type` | Action | Data service provider | Status |
-|------|------------------|--------|-----------------------|--------|
-| [Data Consumer](data-consumer-flow.md) — retrieve installations | `GIRBasisdataMessage` | `can_read` | GIR | Supported |
-| [Registrar](registrar.md) — read back your own records | `GIRBasisdataMessage` | `can_read` | GIR | Supported, if the registrar also holds its own read policy (see [Limitations](#limitations)) |
-| [Registrar](registrar.md) — submit installations | `GIRBasisdataMessage` | `can_write` | GIR | ⚠️ Upcoming — see [Submit on behalf of another registrar](insert-installation.md#submit-on-behalf-of-another-registrar-software-supplier) |
-| [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje.md) | `GIRMaintenanceLog` | `can_read` | Previous installation service company's software | Supported; the provider implements [Step 4](#step-4-the-data-service-provider-validates-the-evidence) |
-| [Datastekker](datastekker.md) | `GIRDatastekker` | `can_read` | Datastekker (2BA) | Supported; Datastekker implements [Step 4](#step-4-the-data-service-provider-validates-the-evidence) |
+| Flow | Delegated `type` | Action | Data service provider |
+|------|------------------|--------|-----------------------|
+| [Data Consumer](data-consumer-flow.md) — retrieve installations | `GIRBasisdataMessage` | `can_read` | GIR |
+| [Registrar](registrar.md) — read back your own records | `GIRBasisdataMessage` | `can_read` | GIR |
+| [Registrar](registrar.md) — [submit installations](insert-installation.md#submit-on-behalf-of-another-registrar-software-supplier) | `GIRBasisdataMessage` | `can_write` | GIR |
+| [Digitaal Onderhoudsboekje](digitaal-onderhoudsboekje.md) | `GIRMaintenanceLog` | `can_read` | Previous installation service company's software |
+| [Datastekker](datastekker.md) | `GIRDatastekker` | `can_read` | Datastekker |
 
 ## Step 1: Register the SupplierDelegation
 
@@ -173,7 +173,6 @@ When GIR is the data service provider, GIR performs these checks itself. A third
 
 ## Limitations
 
-- **⚠️ Writes on GIR are upcoming.** GIR accepts `delegation_evidence` on `GET /api/gir/v0/gir-basisdata-messages/{guid}` and `POST /api/gir/v0/gir-basisdata-messages/_search` today. Accepting it on `POST /api/gir/v0/gir-basisdata-messages` (action `can_write`), and rejecting submissions on behalf of another registrar without it, is not live yet — see [Submit on behalf of another registrar](insert-installation.md#submit-on-behalf-of-another-registrar-software-supplier).
 - **One installation per evidence on GIR.** GIR evidence is scoped to one `vboID` and one `installationID`, so a `_search` call returns at most one record through delegation. Request separate evidence per installation.
 - **The delegating organization needs its own read policy on GIR.** GIR evaluates the read policy of the `policyIssuer`. Being the original registrar of a record is not enough; register a read policy for the registrar if it delegates retrieval to a Software Supplier.
 

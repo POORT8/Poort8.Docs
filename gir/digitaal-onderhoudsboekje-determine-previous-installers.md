@@ -27,7 +27,7 @@ Response:
   "data": [
     {
       "guid": "<GUID>",
-      "registrarChamberOfCommerceNumber": "<PREVIOUS_INSTALLER_KVK>",
+      "registrarChamberOfCommerceNumber": "<REGISTRAR_KVK>",
       "installationBaseData": {
         "installationID": { "value": "<INSTALLATION_ID>", "type": "GUID" },
         "installationOwnerChamberOfCommerceNumber": "<OWNER_KVK>",

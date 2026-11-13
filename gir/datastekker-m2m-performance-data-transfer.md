@@ -2,7 +2,7 @@
 
 > **Context**: This is Phase 3 of the [Datastekker flow](datastekker.md). It starts after Phase 1 (building owner authorized the installer via Keyper) and (optionally) Phase 2 (installer delegated to their Software Supplier) have completed. It runs on every data request.
 >
-> **Audience**: Unlike Phases 1 and 2, which are addressed to the installer and the TechniekNederland form, this phase is addressed to **Datastekker (2BA)** as the data service provider that verifies authorization before serving data.
+> **Audience**: Unlike Phases 1 and 2, which are addressed to the installer and the TechniekNederland form, this phase is addressed to **Datastekker** as the data service provider that verifies authorization before serving data.
 
 ## Functional Overview
 
@@ -13,13 +13,13 @@ Before querying GIR, Datastekker must obtain a DSGO bearer token. The token auth
 | Actor | Role |
 |-------|------|
 | **Installer** (or its Software Supplier) | Sends a data request with a componentId to Datastekker. A Software Supplier adds the `delegation_evidence` header. |
-| **Datastekker (2BA)** | Obtains a DSGO bearer token, queries GIR by componentID, verifies authorization in GIR, and returns data. |
+| **Datastekker** | Obtains a DSGO bearer token, queries GIR by componentID, verifies authorization in GIR, and returns data. |
 | **GIR** | Issues the access token, returns the `GIRBasisdataMessage`, and evaluates the `AccessRight` policy. |
 
 ```mermaid
 sequenceDiagram
     participant inst as Installer (or its Software Supplier)
-    participant ds as Datastekker (2BA)
+    participant ds as Datastekker
     participant gir as GIR
     inst->>ds: Data request with componentId (+ delegation_evidence if Software Supplier)
     ds->>ds: Validate delegation evidence (Software Supplier only)

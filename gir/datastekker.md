@@ -1,7 +1,5 @@
 # Datastekker
 
-> **⚠️ Design document — not ready for implementation**
-
 Datastekker (developed by 2BA) retrieves performance data from installation manufacturers and translates it into uniform performance data using the Heatpump Common Ontology. To access this data, an installer needs explicit consent from the building owner. GIR manages that authorization.
 
 ## Parties
@@ -12,7 +10,7 @@ Datastekker (developed by 2BA) retrieves performance data from installation manu
 | Software Supplier *(optional)* | Authorized data service consumer | Receives a `SupplierDelegation` from the installer; calls Datastekker on the installer's behalf. |
 | Building owner | Data service rights holder | Approves the access request; has authority over the installations in the building. |
 | TechniekNederland | — | Hosts the form through which the access request is initiated. |
-| Datastekker (2BA) | Data service provider | Retrieves installation data from manufacturers and exposes it via an API. Verifies authorization in GIR at request time. |
+| Datastekker | Data service provider | Retrieves installation data from manufacturers and exposes it via an API. Verifies authorization in GIR at request time. |
 | Keyper *(Poort8)* | — | Orchestrates approval flows via eHerkenning. Registers policies in GIR on approval. |
 | GIR | Installation register and authorization registry | Stores and enforces the `AccessRight` and `SupplierDelegation` policies at every data request. |
 
@@ -28,7 +26,7 @@ sequenceDiagram
     participant gir as GIR
     participant inst as Installer
     participant software_supplier as Software Supplier
-    participant ds as Datastekker (2BA)
+    participant ds as Datastekker
 
     rect rgb(230, 240, 255)
     note over form,ds: Phase 1 – Owner authorization

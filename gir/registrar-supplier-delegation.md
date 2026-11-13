@@ -158,12 +158,12 @@ Content-Type: application/json
 
 The response contains a `delegation_token` (JWT, valid for 30 seconds). Send it in the `delegation_evidence` header of the request to GIR.
 
-| Use | Action in the evidence | Status |
-|-----|------------------------|--------|
-| Submit installations on behalf of the registrar ([Phase 3](registrar-m2m-installation-data-transfer.md)) | `can_write` | ⚠️ Upcoming |
-| Read back the registrar's records | `can_read` | Supported, if the registrar also holds its own read `AccessRight` |
+| Use | Action in the evidence |
+|-----|------------------------|
+| Submit installations on behalf of the registrar ([Phase 3](registrar-m2m-installation-data-transfer.md)) | `can_write` |
+| Read back the registrar's records | `can_read` |
 
-**Submitting on behalf of the registrar (⚠️ upcoming).** The Software Supplier submits with its own DSGO bearer token, the registrar's KvK number in `registrarChamberOfCommerceNumber`, and delegation evidence (action `can_write`) in the `delegation_evidence` header. GIR then checks the registrar's write `AccessRight`; without valid evidence the submission is rejected with `403 Forbidden`. See [Submit on behalf of another registrar](insert-installation.md#submit-on-behalf-of-another-registrar-software-supplier) for the steps.
+**Submitting on behalf of the registrar.** The Software Supplier submits with its own DSGO bearer token, the registrar's KvK number in `registrarChamberOfCommerceNumber`, and delegation evidence (action `can_write`) in the `delegation_evidence` header. GIR then checks the registrar's write `AccessRight`; without valid evidence the submission is rejected with `403 Forbidden`. See [Submit on behalf of another registrar](insert-installation.md#submit-on-behalf-of-another-registrar-software-supplier) for the steps.
 
 **Reading back the registrar's records.** The Software Supplier fetches delegation evidence (action `can_read`) for one installation and sends it in the `delegation_evidence` header. GIR then evaluates the registrar's **read** `AccessRight`. Being the record's registrar is not enough: the registrar needs its own read `AccessRight` for the building, otherwise the Software Supplier gets an empty result (or `403` for a single record). Records the Software Supplier submitted itself are visible to it without evidence: GIR registers the submitter as `metadata.issuer`.
 
