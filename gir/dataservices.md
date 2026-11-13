@@ -53,6 +53,8 @@ Authorization: Bearer <access_token>
 |-----------|-------|-------|
 | `Authorization` (header) | `Bearer <access_token>` | Required |
 | `format` (query) | `jwt` or `json` | Optional. Defaults to `jwt` |
+| `limit` (query) | `1` to `1000` | Optional. Maximum number of data services per page. Defaults to `100` |
+| `cursor` (query) | Value of `next` or `previous` from an earlier response | Optional. Omit it to get the first page |
 
 ### Example (curl)
 
@@ -93,7 +95,7 @@ GIR signs the `dataServicesToken` with `RS256` and includes its certificate chai
     "count": 3,
     "totalCount": 3,
     "currentPage": 1,
-    "pageSize": 3,
+    "pageSize": 100,
     "totalPages": 1,
     "data": [
       {
@@ -135,7 +137,8 @@ With `?format=json`, GIR returns this same payload as the response body, unsigne
 | `aud` | Your organization's DID | |
 | `exp` | `iat + 30` | The `dataServicesToken` is valid for 30 seconds |
 | `dataServicesInfo.data` | Array of `dataServiceInfo` objects | One per GIRBasisdataMessage endpoint |
-| `dataServicesInfo.currentPage`, `totalPages` | `1` | GIR returns all data services in a single page; `next` and `previous` are omitted |
+| `dataServicesInfo.pageSize` | The applied `limit` | `100` unless you pass `limit` |
+| `dataServicesInfo.next`, `previous` | Opaque cursor | Pass it as `cursor` to get the next or previous page. Omitted when there is no such page |
 | `serviceLevelAgreements` | Array | Contains one `availability` object (one entry per weekday) and one `performance` object |
 
 ## Errors
@@ -144,8 +147,10 @@ With `?format=json`, GIR returns this same payload as the response body, unsigne
 |-------------|---------|-------|
 | `400 Bad Request` | Validation error: `Authorization header must use the Bearer scheme.` | The `Authorization` header uses a scheme other than `Bearer` |
 | `400 Bad Request` | Validation error on `format` | `format` is not `jwt` or `json` |
+| `400 Bad Request` | Validation error on `limit` | `limit` is not between `1` and `1000` |
+| `400 Bad Request` | Validation error on `cursor` | `cursor` is not a value from `next` or `previous` |
 | `401 Unauthorized` | No body | The bearer token is missing, invalid or expired |
-| `501 Not Implemented` | No body | The request contains a query parameter other than `format`, such as `page` or `size` |
+| `501 Not Implemented` | No body | The request contains a query parameter other than `format`, `limit` or `cursor`, such as `page` or `size` |
 
 ## Common issues
 
@@ -154,7 +159,7 @@ With `?format=json`, GIR returns this same payload as the response body, unsigne
 | 401 without a token | `GET /dataServices` always requires a DSGO bearer token, unlike `GET /capabilities` |
 | 401 with a token that worked before | The DSGO bearer token has expired after 3600 seconds: request a new one via `POST /connect/token` |
 | 401 with a token from another identity provider | GIR only accepts DSGO bearer tokens obtained from `POST /connect/token` |
-| 501 when requesting a page | GIR does not support pagination on `GET /dataServices`: omit `page` and `size` |
+| 501 when requesting a page | GIR pages with `limit` and `cursor`, not with `page` and `size` |
 
 ## API reference
 
