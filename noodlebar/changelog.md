@@ -2,6 +2,46 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-11-13
+
+**Highlights:** The NoodleBar catalogue now follows the DCAT v0.9 metadata format, supports search and distributions, and allows published metadata to be replaced; NoodleBar can decide upload and personal read access to datasets; and Keyper sends a confirmation email after a GIR approval.
+
+### NoodleBar
+
+#### Added
+
+- New `GET /v1/api/catalog/datasets` searches published catalogue datasets and returns `application/json` with `totalItems`, `page`, `pageSize`, `member` and `facets`. Drafts are never listed, not even your own. See [Searching Published Metadata](15%20-%20Dataset%20Access.md#searching-published-metadata).
+  - `q` (free text, optional): matches any of its words, case-insensitively, in title, description, keywords and parameter labels. Results are ranked by the number of matched words, then by newest `issued` date.
+  - Filters `theme`, `parameter`, `location`, `organisation`, `project` and `classification` match exact values. Repeat a filter to match any of its values; different filters narrow the results together.
+  - `facets` lists the available values with their label and count per filter, ignoring that filter's own selection.
+  - `page` starts at 1; `pageSize` defaults to 20 with a maximum of 100. Unsupported query parameters return `400 Bad Request`.
+  - Uses the same token requirements as reading a dataset. Finding a dataset does not grant access to its data.
+- Dataset metadata can include one or more `distribution` entries that describe how the data is offered, with `title`, `description`, `accessURL`, `accessService`, `format`, `availability`, `status`, `license`, `language` and `temporalResolution`. Every distribution of a published dataset needs an absolute `accessURL`; `downloadURL` is not accepted. Distributions are saved with the dataset document: a distribution left out of a `PUT` is removed. Reading a distribution does not grant access to the data. See [Distributions](15%20-%20Dataset%20Access.md#distributions).
+- `GET /v1/api/authorization/explained-enforce` with use case `datasetaccess` can now decide data-plane actions. `can_create` and `can_update` check whether an organisation may upload to a dataset it owns in the catalogue; `can_read` checks whether a person has their own grant from the dataset publisher. These actions require a `context` parameter with the URL-encoded JSON `{"organization", "person", "roles"}`, taken from the validated user token; a missing or invalid `context` returns `400 Bad Request`. They are separate rights: existing `read` checks are unchanged. See [Data Plane Decisions](15%20-%20Dataset%20Access.md#data-plane-decisions-upload-and-personal-read).
+
+#### Changed
+
+- **BREAKING:** Catalogue dataset metadata now follows the DCAT v0.9 metadata format. Update existing clients and drafts as follows. See [Metadata Format and Validation](15%20-%20Dataset%20Access.md#metadata-format-and-validation).
+  - `datasetId` is no longer limited to a UUID: use 1–128 ASCII letters, digits, `.`, `_`, `~` or `-`. Lookups are case-insensitive; the dataset's public IRI keeps the casing used when it was created.
+  - Every `PUT` must include the catalogue's root `@context` IRI. Inline or nested contexts, unknown terms, duplicate members and unsupported JSON-LD structures return `400 Bad Request`, also for drafts.
+  - `title` and `description` are language maps, for example `{"en": "PFAS measurements"}`.
+  - The server sets `@id`, `@type`, `identifier`, `publisher.identifier` and `publicationStatus` and ignores client values. `publicationStatus` is `draft` or `published` and replaces `lifecycleStatus` and `modificationDate`. The organisation that creates a dataset becomes its permanent owner.
+  - Publishing now checks a minimal profile: a title and description, one named publisher, one named data owner (`dataOwner`), at least one named data steward (`dataSteward`), `mailto:` contact addresses, a classification (`accessRights`) and an access URL for each distribution. Failures return `422 Unprocessable Entity` with an `errors` list of `path` and `message`.
+  - Published datasets can now be replaced with `PUT`. The replacement is validated first; if it fails, the response is `422 Unprocessable Entity` and the published metadata stays unchanged.
+  - Dataset-access policies and access checks must use the dataset's full `@id` IRI as resource, not the bare dataset ID. Reissue existing grants that use a bare ID.
+  - Optional governance fields `license`, `accessConditions`, `purposeLimitation` and `retentionPeriod` are descriptive only and do not grant or restrict access.
+- **BREAKING:** The read-only KWR demo catalogue (`GET /v1/datasets` and `GET /v1/datasets/{datasetId}`) now returns the same metadata shape: a single `identifier`, language maps for `title`, `description` and `keyword`, a single publisher and owner `name`, a list of `dataSteward` entries, `distribution` entries with `accessURL`, `issued` instead of `modificationDate`, and `dataAssetCategory` instead of `assetCategory`.
+
+### Keyper
+
+#### Added
+
+- After approving a GIR request (registrar, consumer, Datastekker, onderhoudsboekje or supplier delegation), the approver now receives a confirmation email, for example "Toestemming geactiveerd voor …". It repeats the approved permissions and their validity and links to Keyper to extend or stop them. No email is sent for validity changes or revocations.
+
+#### Changed
+
+- GIR permission descriptions on approval pages and in emails now name the address object ("voor verblijfsobject …") instead of "voor het opgegeven gebouw".
+
 ## 2026-11-12
 
 **Highlights:** NoodleBar rejects data-plane dataset-access policies with invalid Rules when they are created or updated.
