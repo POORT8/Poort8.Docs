@@ -144,7 +144,7 @@ The `organization` claim identifies the consumer's organization in the dataspace
 }
 ```
 
-The key of the object (e.g., `NLNHR.12345678`) is the organization's **EUID** — the same identifier that was assigned and verified during registration with the Association Registry. This is not a self-declared value: the EUID is derived from the organization's official business registration number (KvK, KBO, or court registration), verified by the administrator before the organization was approved.
+The key of the object (e.g., `NLNHR.12345678`) is the organization's **EUID**, derived from the business registration number provided during registration. Verification depends on the dataspace configuration: a KvK lookup may be disabled, so the identifier alone does not prove that the registration was checked against KvK. Check the dataspace's onboarding and approval process for its verification requirements.
 
 Use this to:
 
