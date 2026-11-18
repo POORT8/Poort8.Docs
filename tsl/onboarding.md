@@ -23,14 +23,14 @@ Voordat je applicaties of API's kunt registreren, moet je organisatie zijn opgen
 
 ```mermaid
 flowchart LR
-    A[Gebruiker registreert organisatie] --> B[Automatische KvK-controle]
+    A[Gebruiker registreert organisatie] --> B[Automatische KvK-controle voor Nederlandse organisaties]
     B --> C[Emailverificatie]
     C --> D[TSL admin beoordeelt en keurt goed]
     D --> E[Organisatie actief]
 ```
 
 1. Ga naar het [TSL Self-Service Portal](https://tsl.poort8.nl/portal).
-2. Registreer je organisatie met KvK-nummer en organisatienaam.
+2. Kies het land van je organisatie en vul het handelsregisternummer en de organisatienaam in. Voor Nederland gebruik je een KvK-nummer; voor België een KBO-nummer in het formaat `0XXX.XXX.XXX` of `1XXX.XXX.XXX`.
 3. Vul je eigen gegevens in (naam, e-mail, telefoonnummer) - je ontvangt een e-mail om je account te activeren.
 4. Verifieer je e-mailadres via de ontvangen link.
 5. Een TSL admin beoordeelt de aanvraag en keurt je organisatie goed of af.
@@ -41,9 +41,11 @@ Na goedkeuring is je organisatie actief en kun je applicaties en API's registrer
 
 | Stap | Wie | Wat |
 |------|-----|-----|
-| KvK-controle | Automatisch | Valideert het KvK-nummer en vergelijkt de officiële naam |
+| KvK-controle (Nederland) | Automatisch | Valideert het KvK-nummer en vergelijkt de officiële naam |
 | E-mailverificatie | Registrerende gebruiker | Bevestigt dat de opgegeven gebruiker het e-mailadres beheert |
 | Goedkeuring | TSL admin | Definitieve beslissing over deelname |
+
+Voor Belgische organisaties controleert TSL het formaat van het KBO-nummer, maar zoekt de organisatie niet op in de KBO. De ingevoerde organisatienaam wordt overgenomen. De goedkeuring door een TSL-beheerder blijft gelden.
 
 ### Organisatie-identifiers
 
@@ -52,6 +54,7 @@ Elke organisatie in TSL wordt geïdentificeerd met een EUID (European Unique Ide
 | Land | Formaat | Voorbeeld |
 |------|---------|-----------|
 | Nederland | `NLNHR.{kvkNummer}` | `NLNHR.12345678` |
+| België | `BEKBOBCE.{kboNummer}` | `BEKBOBCE.0123.456.789` |
 
 Deze identifier wordt door de hele dataspace gebruikt in policies, tokens en autorisatiechecks.
 
