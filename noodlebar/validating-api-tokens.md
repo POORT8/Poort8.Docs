@@ -144,7 +144,9 @@ The `organization` claim identifies the consumer's organization in the dataspace
 }
 ```
 
-The key of the object (e.g., `NLNHR.12345678`) is the organization's **EUID**, derived from the business registration number provided during registration. Verification depends on the dataspace configuration: a KvK lookup may be disabled, so the identifier alone does not prove that the registration was checked against KvK. Check the dataspace's onboarding and approval process for its verification requirements.
+The key of the object (e.g., `NLNHR.12345678`) is the organization's **EUID**, derived from the business registration number provided during registration. A dataspace can accept Dutch or Belgian registrations without looking them up in KvK or KBO, respectively. The EUID alone does not prove that the registration was checked against the business register. Check the dataspace's onboarding and approval process for its verification requirements.
+
+For example, NoodleBar preview checks the format of Belgian KBO numbers and uses the organization name entered during onboarding, without looking up the organization in KBO. Administrator approval still applies.
 
 Use this to:
 
