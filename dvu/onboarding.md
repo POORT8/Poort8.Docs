@@ -56,6 +56,8 @@ grant_type=client_credentials
 &scope=<API-CLIENT-ID>
 ```
 
+Dit is het token-endpoint van de preview omgeving. In productie gebruik je `https://auth.poort8.nl/realms/dvu/protocol/openid-connect/token`.
+
 Een geldig antwoord bevat een `access_token`. Gebruik `noodlebar-api` als scope voor het DVU Autorisatieregister en `keyper-api` voor Keyper.
 
 ## Wat moet geregistreerd zijn per rol

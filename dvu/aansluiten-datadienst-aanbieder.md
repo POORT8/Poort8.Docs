@@ -109,8 +109,8 @@ De validatie wordt door SDS lokaal uitgevoerd op basis van de OpenID Connect met
 
 | Check | Wat | Waarmee |
 | -- | -- | -- |
-| **Signature** | Het token is ondertekend door het DVU Keycloak-realm | Public keys via JWKS-discovery, authority `https://auth.poort8.nl/realms/dvu-preview` |
-| **Issuer** | `iss`-claim komt overeen met het DVU Keycloak-realm | `https://auth.poort8.nl/realms/dvu-preview` |
+| **Signature** | Het token is ondertekend door het DVU Keycloak-realm | Public keys via JWKS-discovery, authority `https://auth.poort8.nl/realms/dvu-preview` (preview) of `https://auth.poort8.nl/realms/dvu` (productie) |
+| **Issuer** | `iss`-claim komt overeen met het DVU Keycloak-realm | `https://auth.poort8.nl/realms/dvu-preview` (preview) of `https://auth.poort8.nl/realms/dvu` (productie) |
 | **Audience** | `aud`-claim is bedoeld voor SDS | API client ID waarmee SDS is geregistreerd in DVU (zie [§ Voorbereiding](#voorbereiding)) |
 | **Expiry** | `exp` ligt in de toekomst en `nbf` (indien aanwezig) in het verleden | Lifetime validation met beperkte clock skew |
 
@@ -166,6 +166,8 @@ grant_type=client_credentials
 &client_secret=<YOUR-CLIENT-SECRET>
 &scope=noodlebar-api
 ```
+
+Dit is het token-endpoint van de preview omgeving. In productie gebruik je `https://auth.poort8.nl/realms/dvu/protocol/openid-connect/token`.
 
 Het verkregen access token authenticeert SDS als *applicatie* tegen het DVU AR. Het is uitdrukkelijk **geen** identiteitstoken tussen David en SDS — de identiteiten van issuer/subject/serviceProvider worden expliciet als query-parameters meegegeven aan `explained-enforce` (zie [§ Stap 3](#stap-3-explained-enforce-request)).
 

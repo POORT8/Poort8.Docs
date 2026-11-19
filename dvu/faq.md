@@ -8,7 +8,7 @@ DVU is de NoodleBar Keycloak-variant van het Datastelsel Verduurzaming Utiliteit
 ## Authenticatie
 
 **Welk Keycloak-realm gebruikt DVU?**
-Preview: `https://auth.poort8.nl/realms/dvu-preview`.
+Preview: `https://auth.poort8.nl/realms/dvu-preview`. Productie: `https://auth.poort8.nl/realms/dvu`.
 
 **Welk scope vraag ik aan op de token-endpoint?**
 Dat hangt af van de API die je wilt aanroepen. Gebruik `keyper-api` voor de Keyper API en de `client_id` van de betreffende API (zoals geregistreerd in de catalogus) voor de datadienst-aanbieder API. Zie [Onboarding – Stap 4](onboarding.md).

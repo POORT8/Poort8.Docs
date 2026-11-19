@@ -83,7 +83,7 @@ sequenceDiagram
 
 - **Preview:** https://dvu-preview.poort8.nl/
 
-Authenticatie verloopt via het Keycloak-realm `dvu-preview` op `https://auth.poort8.nl/`.
+Authenticatie verloopt via Keycloak op `https://auth.poort8.nl/`: het realm `dvu-preview` voor de preview omgeving en het realm `dvu` voor productie.
 
 ## Aan de slag
 

@@ -87,6 +87,8 @@ grant_type=client_credentials
 &scope=keyper-api
 ```
 
+De voorbeelden in deze gids gebruiken het token-endpoint van de preview omgeving (realm `dvu-preview`). In productie gebruik je `https://auth.poort8.nl/realms/dvu/protocol/openid-connect/token`.
+
 Voor verzoeken aan de datadienst-aanbieder heb je later een apart token nodig met de scope van die aanbieder (zie [Stap 4](#stap-4-energiedata-opvragen)).
 
 ## Stap 2: Goedkeuringsverzoek aanmaken via Keyper
