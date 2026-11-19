@@ -112,7 +112,10 @@ A decoded access token from a consumer looks like this:
   "client_id": "CONSUMER_APP_CLIENT_ID",
   "organization": {
     "NLNHR.12345678": {
-      "id": "ORGANIZATION_UUID"
+      "id": "ORGANIZATION_UUID",
+      "EUID": ["NLNHR.12345678"],
+      "KVK": ["12345678"],
+      "ISHARE": ["did:ishare:EU.NL.NTRNL-12345678"]
     }
   }
 }
@@ -138,7 +141,11 @@ The `organization` claim identifies the consumer's organization in the dataspace
 {
   "organization": {
     "NLNHR.12345678": {
-      "id": "550e8400-e29b-41d4-a716-446655440000"
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "EUID": ["NLNHR.12345678"],
+      "KVK": ["12345678"],
+      "ISHARE": ["did:ishare:EU.NL.NTRNL-12345678"],
+      "EORI": ["NL123456789"]
     }
   }
 }
@@ -147,6 +154,16 @@ The `organization` claim identifies the consumer's organization in the dataspace
 The key of the object (e.g., `NLNHR.12345678`) is the organization's **EUID**, derived from the business registration number provided during registration. A dataspace can accept Dutch or Belgian registrations without looking them up in KvK or KBO, respectively. The EUID alone does not prove that the registration was checked against the business register. Check the dataspace's onboarding and approval process for its verification requirements.
 
 For example, NoodleBar preview checks the format of Belgian KBO numbers and uses the organization name entered during onboarding, without looking up the organization in KBO. Administrator approval still applies.
+
+Inside the entry, `id` is the organization's internal identifier in the Association Registry. The other properties are the organization's registered identifiers, each as an array of strings:
+
+| Property | Present |
+|----------|---------|
+| `EUID` | Always |
+| `KVK`, `KBO` or `HRB` | The business registration number, depending on the country of registration (Netherlands, Belgium or Germany) |
+| `ISHARE`, `EORI`, `LEI`, `VAT` | Only when known for the organization |
+
+Read the identifier your dataspace uses from its array, for example `organization["NLNHR.12345678"].ISHARE[0]`.
 
 Use this to:
 
