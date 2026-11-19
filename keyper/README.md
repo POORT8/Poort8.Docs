@@ -92,6 +92,6 @@ Keyper is designed for modular, composable dataspaces like **NoodleBar**, where 
 - issuing granular access rights across federated data providers;
 - signing off on sensitive data transactions with audit-ready consent records.
 
-The API supports structured JSON requests and handles both **human-to-machine (H2M)** and **machine-to-machine (M2M)** authentication. All API endpoints require a bearer token; see [Keyper API Authentication](api-authentication.md) for the supported token types (Keycloak per dataspace, with legacy Auth0 still supported) and how read/write access is evaluated.
+The API supports structured JSON requests and **machine-to-machine (M2M)** authentication. All API endpoints require a Keycloak bearer token for a configured dataspace; see [Keyper API Authentication](api-authentication.md) for token requirements and how organization, ownership, dataspace, and trusted-client settings affect approval-link access.
 
 For sample payloads or implementation support, contact the Poort8 team or refer to the detailed endpoint documentation.
