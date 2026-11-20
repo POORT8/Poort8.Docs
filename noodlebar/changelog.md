@@ -2,6 +2,40 @@
 
 All notable customer-visible changes to the Poort8 NoodleBar, Keyper and the API's are listed in this weekly changelog.
 
+## 2026-11-20
+
+**Highlights:** The Keyper API now accepts only Keycloak bearer tokens; the GIR data services list is paginated; KvK and KBO lookups during onboarding are optional per instance; email verification for new users works again; and the KWR instance is now called WaterWeb.
+
+### NoodleBar
+
+#### Changed
+
+- Business register lookups during registration are now optional per instance. When an instance does not use the KvK (Netherlands) or KBO (Belgium) lookup, onboarding and the "Add organization" dialog accept the organization name as entered. The "Registration details verified" banner is not shown, and the organization details page shows "CoC check not performed" or "KBO check not performed" with the reason that verification is not configured. Admin approval still applies. In the `businessRegisterInfo` of the `POST /api/onboarding` response, `officialName` is `null` when no lookup was done, and `providedName` now always contains the name you entered.
+  - On NoodleBar Preview and TSL, Belgian registrations no longer use the KBO lookup: only the KBO number format is checked.
+
+#### Fixed
+
+- New users again receive a working account email that asks them to verify their email address and set their password.
+
+### NoodleBar (GIR)
+
+#### Changed
+
+- **BREAKING:** `GET /dataServices` now paginates results. Use the optional `limit` (default `100`, between `1` and `1000`) and `cursor` query parameters, and pass the returned `next` or `previous` value as `cursor` to get another page. An invalid `limit` or `cursor` returns `400 Bad Request`. Clients that expect all data services in one response must follow the pages when there are more than 100.
+
+### NoodleBar (KWR)
+
+#### Changed
+
+- The KWR DigiLab instance is now called WaterWeb. The API reference is titled "WaterWeb API" and the `noodlebar-api` scope is described as "Access the WaterWeb API". Endpoints and scopes are unchanged.
+
+### Keyper
+
+#### Changed
+
+- **BREAKING:** The Keyper API accepts only Keycloak bearer tokens issued for a configured dataspace. Auth0 bearer tokens are no longer accepted and return `401 Unauthorized`; request a Keycloak token for your dataspace instead. Separate `read` and `write` scopes are no longer required: any valid token for the dataspace can call the approval-link endpoints, and access to each link is still checked against your organization and dataspace. See [Keyper API Authentication](../keyper/api-authentication.md).
+- On GIR approval pages, the "Niet gemachtigd" message now says that your eHerkenning means is not authorized to validate requests on behalf of the organization, instead of referring to your email address.
+
 ## 2026-11-13
 
 **Highlights:** The NoodleBar catalogue now follows the DCAT v0.9 metadata format, supports search and distributions, and allows published metadata to be replaced; NoodleBar can decide upload and personal read access to datasets; and Keyper sends a confirmation email after a GIR approval.
