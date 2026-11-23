@@ -40,6 +40,30 @@ Poort8 can configure such an integration as a trusted API client for a specific 
 
 Trusted access is constrained to the dataspace of the token. A trusted client for one dataspace is not allowed to access approval links that belong to another dataspace.
 
+## Personal Dataset Access Requests
+
+The NoodleBar flow `datasetaccess@v1` can create an approval link for a personal dataset-read policy. Ask Poort8 to configure the calling client and its organization as a pair in the dataspace's `PersonAccessRequestClients` list. Keyper matches the token's `azp` client ID and resolved organization against the pair, within the token's dataspace. Missing or unmatched configuration or claims do not grant this permission.
+
+This list is separate from `TrustedApiClients`: it permits eligible clients to request person subjects, but does not grant access to approval links owned by another organization. A trusted API client does not automatically have permission to request person subjects. Normal ownership and dataspace checks still apply.
+
+For a personal request, provide the person's UUID in `subjectId`, in hyphenated UUID format. The requesting application must obtain the unchanged user identifier from a validated user token and is responsible for connecting it to the signed-in user. Keyper checks the UUID format and client permission; it does not check whether that user exists or whether the identifier belongs to the signed-in user. These checks also apply when updating a link while retaining a personal subject.
+
+Use the published dataset's `@id` IRI as `resourceId` and its publisher as the approver organization. The policy issuer defaults to the approver organization; if supplied, it must match. Keyper sets the following policy fields when omitted and rejects conflicting values:
+
+| Field | Value |
+| --- | --- |
+| `useCase` | `datasetaccess` |
+| `action` | `can_read` |
+| `type` | `dataset` |
+| `attribute` | `*` |
+| `rules` | `HasRole(digilab-data-user)` |
+
+`rules` must match exactly, including case. The flow supplies defaults for `serviceProvider` and `license` when omitted; provide the appropriate values for your integration if they differ. `serviceProvider` must be a valid EUID. If omitted, `notBefore` defaults to the current time and `expiration` to one calendar year later; clients may supply either timestamp instead. Approval links expire after seven days and cannot be renewed. This link lifetime is separate from the resulting policy's validity.
+
+The approver verifies their email using a one-time code. For a Keycloak-backed NoodleBar, the approver's organization must be active and the email must belong to a member of that organization. Keyper does not check whether the approver is the owner or steward of this particular dataset; the integration must account for this limitation. This flow does not send an approval-link notification; the requester must securely provide the link to the approver.
+
+For dataset publication and enforcement requirements, see [Dataset Access](../noodlebar/15%20-%20Dataset%20Access.md). See the [Keyper API reference ➚](https://keyper-preview.poort8.nl/scalar/v1) for the approval-link request and response schemas.
+
 ## Responses
 
 Approval link endpoints can return the following access-related responses:
