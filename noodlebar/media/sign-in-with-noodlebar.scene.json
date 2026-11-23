@@ -1,0 +1,38 @@
+{
+  "page": "../sign-in-with-noodlebar.md",
+  "lang": "en",
+  "badge": "NoodleBar · Preview",
+  "title": "Signing in with NoodleBar",
+  "subtitle": "How an app lets users sign in and checks their organization",
+  "participants": {
+    "user": {
+      "role": "Member of an organization"
+    },
+    "app": {
+      "role": "Relying party"
+    },
+    "signin": {
+      "role": "Identity and membership"
+    },
+    "api": {
+      "role": "Organization status"
+    }
+  },
+  "phases": [
+    {
+      "frequency": "Per sign-in"
+    },
+    {
+      "frequency": "At sign-in, then at least every 5 minutes"
+    },
+    {
+      "frequency": "When the user signs out"
+    }
+  ],
+  "closing": {
+    "lines": [
+      "NoodleBar says who the user is and where they work.",
+      "Your app checks that the organization is active."
+    ]
+  }
+}
