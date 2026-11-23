@@ -27,12 +27,14 @@ supported. Casing is preserved, so path values differing only by case identify
 the same dataset. The public IRI keeps the casing used when the dataset was
 created.
 
-The server ignores input values for `@id`, `@type`, `identifier`,
-`publisher.identifier` and `publicationStatus`. It sets the dataset IRI from the
+The server ignores input values for `@id`, `@type`, dataset-level `identifier`,
+`publisher.euid` and `publicationStatus`. It sets the dataset IRI from the
 instance's configured base plus the path ID, sets `identifier` to the path ID,
-and sets `publisher.identifier` to the owning organisation. `publicationStatus`
-is `draft` or `published`; PUT never changes it. Publisher metadata is optional on
-an incomplete draft.
+and sets `publisher.euid` to the owning organisation's EUID when a publisher
+object is present. `publicationStatus` is `draft` or `published`; PUT never
+changes it. The configured profile controls which metadata is required.
+Where the profile follows the v1.0 Agent model, Agent `identifier` is not
+supported and returns `400`; dataset-level `identifier` remains valid.
 
 The organisation creating a draft becomes its immutable owner. Existing stored
 ownership is checked before accepting a replacement, not inferred from the submitted
@@ -55,10 +57,9 @@ on drafts. Text fields such as title and description use language maps:
   "description": { "en": "Example research measurements." },
   "publisher": { "name": "Example publisher" },
   "dataOwner": { "name": "Example owner", "email": "mailto:owner@example.test" },
-  "dataSteward": [
-    { "name": "Example steward", "email": "mailto:steward@example.test" }
-  ],
-  "accessRights": "https://example.test/classification/restricted"
+  "dataSteward": { "name": "Example steward", "email": "mailto:steward@example.test" },
+  "accessRights": "https://example.test/classification/restricted",
+  "requestPurpose": ["https://example.test/request-purpose/scientific-research"]
 }
 ```
 
@@ -66,14 +67,20 @@ This example uses placeholder contacts, classification and context. Code-list IR
 and namespaces must be configured for the deployment.
 Concepts can carry an `@id` and `prefLabel` language map. Distributions are
 described under [Distributions](#distributions).
-Optional governance fields (`license`, `accessConditions`, `purposeLimitation`,
-`retentionPeriod`) are descriptive; they do not enforce data-plane restrictions.
+Descriptive fields such as `license` and `requestPurpose` do not enforce data-plane
+restrictions.
 
 Draft PUT checks the document structure but allows incomplete metadata. Publishing,
 and replacing an already published record, runs the configured minimal SHACL profile.
-The configured MVP profile requires nonblank title and description, one named publisher,
-one named owner, at least one named steward, `mailto:` contact addresses, one
-classification IRI, and access URLs for distributions that are present.
+The configured profile requires nonblank title and description, named Agents
+where present, at most one publisher, owner and steward, and at most one
+classification. In the v1.0 Agent model, publisher, owner and classification
+are optional; creators may repeat; EUID and email are optional and limited to
+one value each. A supplied email must be a `mailto:` IRI. The profile also
+requires access URLs for distributions that are present, and a title and at
+least one endpoint URL for each data service. Data-service endpoint
+descriptions, landing pages and served datasets may each contain multiple
+values.
 This is not full DCAT-AP conformance or code-list validation.
 
 Only SHACL Violations block publication. A rejected published replacement or publish
@@ -110,7 +117,13 @@ array, and is written and read with the dataset:
   catalog stores it as given and does not check where it points.
 - Other accepted fields are `title`, `description`, `accessService`, `format`,
   `availability`, `status`, `license`, `language` and `temporalResolution`; see the
-  Scalar schema for their types. `@id` is optional and chosen by you; the server does
+  Scalar schema for their types.
+- `accessService` describes the data service that provides access. Embed it with a
+  `title` and an `endpointURL`; `endpointDescription`, `landingPage`,
+  `servesDataset`, `theme` and one `publisher` with a `name` are optional. A draft
+  may refer to a data service by IRI only, but publication then fails. Errors on a
+  data service have a path such as `distribution.accessService.endpointURL`. There
+  are no separate data service endpoints. `@id` is optional and chosen by you; the server does
   not manage it or check its uniqueness.
 - There are no separate distribution endpoints. To add, change or remove a
   distribution, PUT the whole dataset document; distributions you leave out are
