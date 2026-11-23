@@ -188,6 +188,9 @@ A data plane can ask for three further decisions with the actions `can_create`,
 reading, and none of them grants catalog publication. The existing `read`, `GET`
 and other actions keep the behaviour described above; they are not aliases.
 
+For requesting a personal read policy through an approval link, see
+[Keyper personal dataset access requests](../keyper/api-authentication.md#personal-dataset-access-requests).
+
 NoodleBar decides and the data plane enforces: the answer only authorizes the data
 plane that asked, for data it holds itself.
 
