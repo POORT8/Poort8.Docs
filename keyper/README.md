@@ -1,6 +1,6 @@
 # Keyper
 
-**Keyper** is an API-first solution developed by Poort8 to enable secure, auditable approval of transactions within dataspaces. It allows organizations to formalize consent and authorization flows across parties, with a focus on traceability, orchestration, and flexible authentication. Keyper can be used to interact with dataspaces, for example Poort8's NoodleBar.
+**Keyper** is an API-first solution developed by Poort8 to enable secure, auditable approval of transactions within dataspaces. It allows organizations to formalize consent and authorization flows across parties, with a focus on traceability, orchestration, and flexible authentication.
 
 ## What is Keyper?
 
@@ -86,7 +86,7 @@ Because the flow determines the dataspace, `dataspace.baseUrl` in a create or up
 
 ## Use Cases
 
-Keyper is designed for modular, composable dataspaces like **NoodleBar**, where multiple systems and roles interact. Typical use cases include:
+Keyper is designed for modular, composable dataspaces where multiple systems and roles interact. Typical use cases include:
 
 - formalizing onboarding of new organizations;
 - issuing granular access rights across federated data providers;
