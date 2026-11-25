@@ -28,7 +28,7 @@ To start using Keyper in your dataspace application:
 
 For detailed implementation guidance, see the [FAQ](faq.md) section.
 
-For bearer token access, read/write policies, and trusted API clients, see [Keyper API Authentication](api-authentication.md).
+For bearer-token authentication and approval-link access rules, see [Keyper API Authentication](api-authentication.md).
 
 ## Approval Flow Overview
 
@@ -92,6 +92,6 @@ Keyper is designed for modular, composable dataspaces where multiple systems and
 - issuing granular access rights across federated data providers;
 - signing off on sensitive data transactions with audit-ready consent records.
 
-The API supports structured JSON requests and **machine-to-machine (M2M)** authentication. All API endpoints require a Keycloak bearer token for a configured dataspace; see [Keyper API Authentication](api-authentication.md) for token requirements and how organization, ownership, dataspace, and trusted-client settings affect approval-link access.
+The API supports **machine-to-machine (M2M)** authentication. All API endpoints require a bearer token: Keycloak tokens are used for configured dataspaces, and dataspaces that use the DSGO participant registry (such as GIR) also accept DSGO tokens issued by Keyper. See [Keyper API Authentication](api-authentication.md) for token requirements and how organization, ownership, dataspace, and trusted-client settings affect approval-link access.
 
 For sample payloads or implementation support, contact the Poort8 team or refer to the detailed endpoint documentation.
