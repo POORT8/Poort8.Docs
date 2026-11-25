@@ -2,6 +2,8 @@
 
 Registrars publish and maintain installation data in GIR. Your application calls GIR with a valid DSGO bearer token. A record becomes `Active` once your organization holds a write `AccessRight` for the building; until then, it is stored as `Pending`.
 
+For Keyper API calls, use a separate Keyper-issued DSGO token (recommended). For a Keycloak token, contact Poort8 for configuration. See [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir).
+
 ## Parties
 
 | Party | DSGO role | Description |

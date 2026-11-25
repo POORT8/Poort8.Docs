@@ -6,6 +6,14 @@ All GIR data endpoints require a DSGO bearer token. This guide walks you through
 
 > If you are here as part of the data consumer integration, you can also read this step in context: [Data Consumer — Phase 3](data-consumer-m2m-installation-data-transfer.md).
 
+## Keyper tokens for GIR
+
+For Keyper approval-link API requests, the recommended option is a DSGO bearer token issued by Keyper. Request it from `POST https://keyper-preview.poort8.nl/GIR/connect/token` using the same form parameters as for GIR and a fresh signed client assertion. See [Keyper API Authentication](../keyper/api-authentication.md#dsgo-bearer-tokens) for the complete request and response.
+
+Keyper and GIR issue separate tokens: use the Keyper-issued token only for Keyper API calls, and request a GIR-issued token for GIR data calls. Create a new client assertion for each token request; do not reuse an assertion between Keyper and GIR.
+
+Keycloak tokens can also be used for Keyper API access. Contact Poort8 to configure the Keycloak client and its organization for GIR.
+
 ## When you need this
 
 Request a fresh DSGO bearer token before calling any of these endpoints:

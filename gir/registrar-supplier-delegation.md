@@ -43,7 +43,7 @@ sequenceDiagram
 | Requirement | Details |
 |-------------|---------|
 | DSGO membership | Both parties must be registered in DSGO |
-| Keyper access token | See [Keyper API Authentication](../keyper/api-authentication.md) |
+| Keyper access token | Use a Keyper-issued DSGO token (recommended); for Keycloak, contact Poort8 for configuration. See [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir). |
 
 ### Step 1: Submit the SupplierDelegation request
 

@@ -23,6 +23,8 @@ GIR also uses standard NoodleBar endpoints for approval workflows and authorizat
 
 These follow **NoodleBar's versioning**, which may differ from GIR's endpoint versions.
 
+For Keyper approval-link requests, use a Keyper-issued DSGO token (recommended); for Keycloak, contact Poort8 for configuration. Keyper's `POST /GIR/connect/token` endpoint is unversioned. See [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir).
+
 ## Changelog
 
 See the [Changelog](changelog.md) for breaking changes to GIR-specific endpoints.

@@ -2,6 +2,8 @@
 
 Data consumers read installation data from GIR. Your application calls GIR with a valid DSGO bearer token. GIR only returns installations for which your organization holds a read `AccessRight` from the installation owner.
 
+For Keyper API calls, use a separate Keyper-issued DSGO token (recommended). For a Keycloak token, contact Poort8 for configuration. See [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir).
+
 ## Parties
 
 | Party | DSGO role | Description |

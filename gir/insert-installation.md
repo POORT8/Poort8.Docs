@@ -14,6 +14,8 @@ Use this endpoint when your application needs to submit a `GIRBasisdataMessage` 
 - A valid BAG VBO-ID for the building where the installation belongs.
 - At least one component in the payload.
 
+If your application also requests owner approval through the Keyper API, use a separate Keyper-issued DSGO token (recommended). For a Keycloak token, contact Poort8 for configuration. See [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir).
+
 If no approved write policy exists yet for the registrar and VBO-ID combination, GIR still accepts the message but stores it as `Pending`.
 
 ## How it works

@@ -53,6 +53,8 @@ sequenceDiagram
 
 This is done once per software relationship. Your organization is both requester and approver: Keyper forwards you directly to the approval screen, where you authenticate via eHerkenning and approve. No building owner is involved.
 
+For `<KEYPER_ACCESS_TOKEN>`, use a Keyper-issued DSGO token (recommended). For a Keycloak token, contact Poort8 for configuration. See [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir).
+
 ```http
 POST https://keyper-preview.poort8.nl/v1/api/approval-links
 Authorization: Bearer <KEYPER_ACCESS_TOKEN>

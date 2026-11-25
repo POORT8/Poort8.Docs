@@ -6,6 +6,8 @@ The Human Environment and Transport Inspectorate (ILT) enforces the F-gas regula
 
 The flow uses a push pattern: ILT exposes a webhook and the installation software sends the logbooks to it. The installer requests the owner's consent through the installation software, so the software knows which installations it sends logbooks for. Before each submission, the software checks the consent in GIR. GIR does not store the logbooks.
 
+For Keyper API calls, use a Keyper-issued DSGO token (recommended). For a Keycloak token, contact Poort8 for configuration. A separate GIR-issued token is needed for GIR data calls. See [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir).
+
 Most GIR flows are request-driven: the data service consumer requests the data from the data service provider. In this flow, the data service consumer sends the data to the data service provider.
 
 ## Parties

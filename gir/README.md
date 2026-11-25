@@ -4,7 +4,9 @@
 
 ## How it works
 
-Organizations can register installation data and share it with authorized partners through an approval process. A registrar submits installation metadata to GIR; if the building owner approves write access through Keyper, the data becomes visible to data consumers who have also obtained read approval. All interactions require DSGO bearer tokens and pre-established policies.
+Organizations can register installation data and share it with authorized partners through an approval process. A registrar submits installation metadata to GIR; if the building owner approves write access through Keyper, the data becomes visible to data consumers who have also obtained read approval. Access to installation data requires a GIR DSGO bearer token and the appropriate policies.
+
+For approval requests to Keyper, the recommended option is a separate Keyper-issued DSGO token. For a Keycloak token, contact Poort8 for configuration. See [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir).
 
 <div data-flow-player="media/README.scene.json"></div>
 
@@ -65,7 +67,7 @@ GIR is available at:
 - **Preview:** https://gir-preview.poort8.nl/
 - **Production:** TBD — available after production deployment
 
-All endpoints require a DSGO bearer token, obtained via `POST /connect/token`.
+GIR data endpoints require a DSGO bearer token obtained from GIR via `POST /connect/token`. Use a separate Keyper token for Keyper API requests; see [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir).
 
 ## Getting Started
 
@@ -77,6 +79,7 @@ All endpoints require a DSGO bearer token, obtained via `POST /connect/token`.
 | **Understand the Datastekker flow** | [Datastekker](datastekker.md) |
 | **Let a Software Supplier act for you** | [Supplier Delegation](supplier-delegation.md) (optional in every flow) |
 | **Obtain a DSGO bearer token** | [Obtaining a DSGO Token](connect-token.md) |
+| **Authenticate to Keyper for GIR** | [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir) |
 | **Register or update an installation** | [Post a GIRBasisdataMessage](insert-installation.md) |
 | **Retrieve a single installation** | [Retrieve a GIRBasisdataMessage by GUID](retrieve-installation.md) |
 | **Retrieve multiple installations** | [Retrieve Multiple GIRBasisdataMessages](retrieve-installations.md) |

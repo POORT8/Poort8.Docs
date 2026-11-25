@@ -2,6 +2,8 @@
 
 Datastekker (developed by 2BA) retrieves performance data from installation manufacturers and translates it into uniform performance data using the Heatpump Common Ontology. To access this data, an installer needs explicit consent from the building owner. GIR manages that authorization.
 
+For Keyper API calls, use a Keyper-issued DSGO token (recommended). For a Keycloak token, contact Poort8 for configuration. A separate GIR-issued token is needed for GIR data calls. See [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir).
+
 ## Parties
 
 | Party | DSGO role | Description |

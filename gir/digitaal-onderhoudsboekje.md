@@ -2,6 +2,8 @@
 
 When a building changes installation service company, the maintenance history is typically locked in the previous installation service company's software. **Digitaal Onderhoudsboekje** defines the authorization model and M2M transfer protocol that enables the building owner to authorize a transfer, allowing the New Installation Service Company to automatically retrieve maintenance history from the previous installation service company, using GIR to store and enforce access rights.
 
+For Keyper API calls, use a Keyper-issued DSGO token (recommended). For a Keycloak token, contact Poort8 for configuration. A separate GIR-issued token is needed for GIR data calls. See [Keyper tokens for GIR](connect-token.md#keyper-tokens-for-gir).
+
 ## Parties
 
 | Party | DSGO role | Description |
