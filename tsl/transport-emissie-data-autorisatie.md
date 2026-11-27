@@ -143,6 +143,18 @@ grant_type=client_credentials
 &scope=noodlebar-api
 ```
 
+Voorbeeld JSON token-respons:
+```json
+{
+  "access_token": "<ACCESS_TOKEN>",
+  "expires_in": 300,
+  "refresh_expires_in": 0,
+  "token_type": "Bearer",
+  "not-before-policy": 0,
+  "scope": "noodlebar-api organization"
+}
+```
+
 Het verkregen access token authenticeert BigMile als applicatie tegen de TSL API. Het bepaalt niet wie de issuer, subject of serviceProvider in de dataspace-transactie zijn; die waarden geef je expliciet mee aan `explained-enforce`.
 
 ## Stap 3: Bevraag explained-enforce

@@ -104,6 +104,18 @@ grant_type=client_credentials
 &scope=noodlebar-api
 ```
 
+Voorbeeld JSON token-respons:
+```json
+{
+  "access_token": "<ACCESS_TOKEN>",
+  "expires_in": 300,
+  "refresh_expires_in": 0,
+  "token_type": "Bearer",
+  "not-before-policy": 0,
+  "scope": "noodlebar-api organization"
+}
+```
+
 **Voorbeeld in cURL:**
 ```bash
 curl -X POST https://auth.poort8.nl/realms/tsl/protocol/openid-connect/token \
