@@ -84,7 +84,7 @@ For a personal request, provide the person's UUID in `subjectId`, in hyphenated 
 
 For a personal request, `requester.name` and `requester.email` must identify the same person as `subjectId`: a person can only request access for themselves. Requests on behalf of another person, such as a manager requesting access for an employee, are not supported. Keyper cannot resolve `subjectId` to a name, so the approval page shows the requester as the person who receives access. Keyper does not verify that the requester and `subjectId` are the same person; the requesting application is responsible for this.
 
-For dataset requests, Keyper does not check whether the approver is the owner or steward of the dataset; the integration must account for this limitation. Policy fields, approver authentication, link expiry, renewal and notifications depend on the selected flow. Contact Poort8 for the requirements of your integration and see the [Keyper API reference ➚](https://keyper-preview.poort8.nl/scalar/v1) for request and response schemas.
+In the `datasetaccess@v1` flow, the approver must be the data steward named in the dataset's published catalogue record and a member of their own organization. That organization may differ from the dataset's publisher, which is the issuer of the policy: provide the publisher's organization identifier in `issuerId` on every policy, or Keyper rejects the request. Validity updates and revocations in this flow can only be approved by a member of the issuing organization. Keyper checks the catalogue right after it creates the link, so `201 Created` does not mean the link can be approved: if the check fails, the steward sees the error when opening the link. An update to a link that passed the check returns `403 Forbidden` when the updated link no longer passes it. Other flows do not check whether the approver is the owner or steward of a dataset. Policy fields, approver authentication, link expiry, renewal and notifications depend on the selected flow. Contact Poort8 for the requirements of your integration and see the [Keyper API reference ➚](https://keyper-preview.poort8.nl/scalar/v1) for request and response schemas.
 
 ## Responses
 
@@ -93,7 +93,7 @@ Approval link endpoints can return the following access-related responses:
 | Response | Meaning |
 | --- | --- |
 | `401 Unauthorized` | The bearer token is missing, invalid, expired, issued by an unconfigured identity provider, or does not contain an organization that Keyper can resolve. |
-| `403 Forbidden` | The token is valid, but the caller is not allowed to access or update the approval link, or the caller's dataspace does not match the orchestration flow's dataspace when creating, reading, or updating a link. |
+| `403 Forbidden` | The token is valid, but the caller is not allowed to access or update the approval link, or the caller's dataspace does not match the orchestration flow's dataspace when creating, reading, or updating a link. Updating a link that already passed a flow's additional validation, such as the steward check in `datasetaccess@v1`, also returns `403` when the updated link fails that validation. |
 | `404 Not Found` | The approval link was not found for the caller, or a trusted lookup did not find a matching approval link. |
 
 ## Integration Checklist
