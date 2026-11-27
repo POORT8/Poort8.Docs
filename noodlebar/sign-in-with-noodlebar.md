@@ -160,7 +160,7 @@ After your library has validated the ID token and before it creates the session,
 3. Call the validate endpoint with that identifier. Use a short timeout of a few seconds.
 4. Admit the user only on `isValid: true`. Refuse on any other answer, on an error and on a timeout, and show the user an access-denied page rather than an error.
 
-The two HTTP calls:
+The first HTTP call:
 
 ```bash
 curl -X POST https://auth.poort8.nl/realms/{realm}/protocol/openid-connect/token \
@@ -169,7 +169,22 @@ curl -X POST https://auth.poort8.nl/realms/{realm}/protocol/openid-connect/token
   -d "client_id=YOUR_STATUS_CLIENT_ID" \
   -d "client_secret=YOUR_STATUS_CLIENT_SECRET" \
   -d "scope=noodlebar-api"
+```
 
+Example JSON respons:
+```json
+{
+  "access_token": "ACCESS_TOKEN",
+  "expires_in": 300,
+  "refresh_expires_in": 0,
+  "token_type": "Bearer",
+  "not-before-policy": 0,
+  "scope": "noodlebar-api organization"
+}
+```
+
+The second HTTP call:
+```bash
 curl https://{domain}.poort8.nl/v1/api/organization-registry/NLNHR.12345678/validate \
   -H "Authorization: Bearer ACCESS_TOKEN"
 ```
