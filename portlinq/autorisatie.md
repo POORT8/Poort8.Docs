@@ -58,13 +58,25 @@ curl -X POST https://auth.poort8.nl/realms/portlinq-preview/protocol/openid-conn
   -d "scope=noodlebar-api"
 ```
 
+Voorbeeld JSON token-respons:
+```json
+{
+  "access_token": "ACCESS_TOKEN",
+  "expires_in": 300,
+  "refresh_expires_in": 0,
+  "token_type": "Bearer",
+  "not-before-policy": 0,
+  "scope": "noodlebar-api organization"
+}
+```
+
 > ℹ️ Dit token authenticeert jouw platform als *applicatie* tegenover de Authorization Registry. Het is geen identiteitstoken tussen David en jouw platform — de organisatie-identiteit van de consumer geef je expliciet mee als `subject`-queryparameter.
 
 ## Stap 2 — Bevraag het explained-enforce endpoint
 
 ```bash
 curl -G https://portlinq-preview.poort8.nl/v1/api/authorization/explained-enforce \
-  -H "Authorization: Bearer {token}" \
+  -H "Authorization: Bearer {ACCESS_TOKEN}" \
   --data-urlencode "issuer={DATA_RECHTHEBBENDE}" \
   --data-urlencode "subject={DATA_CONSUMER}" \
   --data-urlencode "serviceProvider={JOUW_ORG}" \
