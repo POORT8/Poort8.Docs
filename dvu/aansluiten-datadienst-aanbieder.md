@@ -167,6 +167,18 @@ grant_type=client_credentials
 &scope=noodlebar-api
 ```
 
+Voorbeeld JSON token-respons:
+```json
+{
+  "access_token": "<ACCESS-TOKEN>",
+  "expires_in": 300,
+  "refresh_expires_in": 0,
+  "token_type": "Bearer",
+  "not-before-policy": 0,
+  "scope": "noodlebar-api organization"
+}
+```
+
 Dit is het token-endpoint van de preview omgeving. In productie gebruik je `https://auth.poort8.nl/realms/dvu/protocol/openid-connect/token`.
 
 Het verkregen access token authenticeert SDS als *applicatie* tegen het DVU AR. Het is uitdrukkelijk **geen** identiteitstoken tussen David en SDS — de identiteiten van issuer/subject/serviceProvider worden expliciet als query-parameters meegegeven aan `explained-enforce` (zie [§ Stap 3](#stap-3-explained-enforce-request)).

@@ -87,6 +87,18 @@ grant_type=client_credentials
 &scope=keyper-api
 ```
 
+Voorbeeld JSON token-respons:
+```json
+{
+  "access_token": "<ACCESS_TOKEN>",
+  "expires_in": 300,
+  "refresh_expires_in": 0,
+  "token_type": "Bearer",
+  "not-before-policy": 0,
+  "scope": "keyper-api organization"
+}
+```
+
 De voorbeelden in deze gids gebruiken het token-endpoint van de preview omgeving (realm `dvu-preview`). In productie gebruik je `https://auth.poort8.nl/realms/dvu/protocol/openid-connect/token`.
 
 Voor verzoeken aan de datadienst-aanbieder heb je later een apart token nodig met de scope van die aanbieder (zie [Stap 4](#stap-4-energiedata-opvragen)).
@@ -211,6 +223,18 @@ grant_type=client_credentials
 &client_id=<YOUR-CLIENT-ID>
 &client_secret=<YOUR-CLIENT-SECRET>
 &scope=<SDS_API_CLIENT_ID>
+```
+
+Voorbeeld JSON token-respons:
+```json
+{
+  "access_token": "<ACCESS-TOKEN>",
+  "expires_in": 300,
+  "refresh_expires_in": 0,
+  "token_type": "Bearer",
+  "not-before-policy": 0,
+  "scope": "<SDS_API_CLIENT_ID> organization"
+}
 ```
 
 In de preview omgeving is de scope `smart-data-solutions-test-api`. Het token is vijf minuten geldig. Vraag bij een `401 Unauthorized` een nieuw token aan; probeer het verzoek niet opnieuw met hetzelfde verlopen token.

@@ -166,6 +166,18 @@ grant_type=client_credentials
 &scope=<SCOPE-UIT-CATALOGUS>
 ```
 
+Voorbeeld JSON token-respons:
+```json
+{
+  "access_token": "<ACCESS-TOKEN>",
+  "expires_in": 300,
+  "refresh_expires_in": 0,
+  "token_type": "Bearer",
+  "not-before-policy": 0,
+  "scope": "<SCOPE-UIT-CATALOGUS> organization"
+}
+```
+
 Dit is het token-endpoint van de preview omgeving (realm `dvu-preview`). In productie gebruik je `https://auth.poort8.nl/realms/dvu/protocol/openid-connect/token`.
 
 Voor het Participantenregister, de Gebouw Context Service, de DVU Registratie Service en het DVU Autorisatieregister vraag je op dezelfde manier een token aan, telkens met de scope die je bij de registratie van je app voor die dienst hebt gekregen.

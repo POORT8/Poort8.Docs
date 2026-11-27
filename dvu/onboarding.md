@@ -56,6 +56,18 @@ grant_type=client_credentials
 &scope=<API-CLIENT-ID>
 ```
 
+Voorbeeld JSON token-respons:
+```json
+{
+  "access_token": "<ACCESS-TOKEN>",
+  "expires_in": 300,
+  "refresh_expires_in": 0,
+  "token_type": "Bearer",
+  "not-before-policy": 0,
+  "scope": "<API-CLIENT-ID> organization"
+}
+```
+
 Dit is het token-endpoint van de preview omgeving. In productie gebruik je `https://auth.poort8.nl/realms/dvu/protocol/openid-connect/token`.
 
 Een geldig antwoord bevat een `access_token`. Gebruik `noodlebar-api` als scope voor het DVU Autorisatieregister en `keyper-api` voor Keyper.
